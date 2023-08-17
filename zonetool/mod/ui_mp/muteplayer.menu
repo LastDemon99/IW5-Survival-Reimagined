@@ -1,0 +1,159 @@
+/* base menu Dumped by aerosoul94 */
+
+{
+	menuDef
+	{
+		name "muteplayer"
+		rect 0 0 640 480 0 0
+		forecolor 1 1 1 1
+		focuscolor 1 1 1 1
+		blurWorld 4.8
+		
+		onOpen
+		{
+			setLocalVarBool "ui_hideBack" ( 1 );
+		}
+		
+		onEsc
+		{
+			setLocalVarBool "ui_hideBack" ( 0 );
+			close self;
+		}
+		
+		itemDef
+		{
+			rect -427 -240 854 480 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 0 0 0 0.4
+			background "white"
+			textscale 0.55
+			visible when ( ( dvarbool( "ui_multiplayer" ) && ( dvarbool( "cl_ingame" ) || dvarbool( "sv_running" ) ) ) && ( dvarstring( "gameMode" ) == "mp" || ( dvarstring( "gameMode" ) == "so" && !dvarbool( "solo_play" ) ) ) )
+		}
+		itemDef
+		{
+			rect 0 0 272 28 1 1
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textalign 6
+			textalignx -60
+			textscale 0.5
+			text "@MPUI_MUTEPLAYERS"
+		}
+		itemDef
+		{
+			name "playermutelist"
+			rect -160 80 320 288 2 1
+			visible 1
+			style 1
+			border 1
+			bordersize 1
+			forecolor 1 1 1 1
+			bordercolor 1 1 1 0.15
+			outlinecolor 1 1 1 0.2
+			type 6
+			textalignx 6
+			textscale 0.4
+			feeder 19
+			elementWidth 120
+			elementHeight 24
+//			numcol			xpos	xwidth	textlen	  alignment
+			columns 2		2		62		10		  0
+							64		172		25		  0
+			doubleClick
+			{
+				play "mouse_click";
+				"uiScript" "mutePlayer";
+			}
+			exp rect h ( 24 * min( 12 , getFeederData( "playermutelist" , "count" ) ) + 2 )
+			mouseEnter
+			{
+				setitemcolor "maplist" bordercolor 1 1 1 "0.55";
+			}
+			mouseExit
+			{
+				setitemcolor "maplist" bordercolor 1 1 1 "0.15";
+			}
+		}
+		itemDef
+		{
+			rect 0 0 0 20 3 3
+			visible 1
+			forecolor 1 1 1 1
+			type 1
+			textfont 3
+			textalign 8
+			textscale 0.375
+			exp rect x ( ( 0 ) - ( 0 * 5 ) - 20 - getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) )
+			exp rect y ( ( ( 0 - 20.667 ) ) )
+			exp rect w ( getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) + 20 )
+			visible when ( 1 )
+			
+			action
+			{
+				play "mouse_click";
+				escape self;
+			}
+			onFocus
+			{
+				setLocalVarInt ui_ralign_index 1;
+				setLocalVarString ui_ralign_group muteplayers;
+				play "mouse_over";
+			}
+			leaveFocus
+			{
+				setLocalVarInt ui_ralign_index -1;
+				setLocalVarString ui_ralign_group ( "" );
+			}
+		}
+		itemDef
+		{
+			rect 0 0 0 8.666 3 3
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "navbar_selection_bar_shadow"
+			textscale 0.55
+			exp rect x ( ( 0 ) - ( 0 * 5 ) - ( 20 ) - getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) )
+			exp rect y ( ( ( 0 - 20.667 ) ) + 20 )
+			exp rect w ( getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) + 20 )
+			visible when ( ( 1 ) && ( ! 0 ) && ( localvarint( "ui_ralign_index" ) == 1 && localvarstring( "ui_ralign_group" ) == "muteplayers" ) )
+		}
+		itemDef
+		{
+			rect 0 0 0 20 3 3
+			decoration
+			visible 1
+			style 1
+			forecolor 1 1 1 1
+			backcolor 0.6 0.6314 0.6 1
+			textscale 0.55
+			exp rect x ( ( 0 ) - ( 0 * 5 ) - ( 20 ) - getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) )
+			exp rect y ( ( ( 0 - 20.667 ) ) )
+			exp rect w ( getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) + 20 )
+			visible when ( ( 1 ) && ( localvarint( "ui_ralign_index" ) == 1 && localvarstring( "ui_ralign_group" ) == "muteplayers" ) )
+		}
+		itemDef
+		{
+			rect 0 0 0 20 3 3
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 3
+			textalign 8
+			textscale 0.375
+			exp rect x ( ( 0 ) - ( 0 * 5 ) - ( 20 / 2 ) - getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) )
+			exp rect y ( ( ( 0 - 20.667 ) ) )
+			exp rect w ( getTextWidth( locstring( "@PLATFORM_BACK_SHORTCUT" ) , 3 , 0.375 ) )
+			exp forecolor r ( select( ( localvarint( "ui_ralign_index" ) == 1 && localvarstring( "ui_ralign_group" ) == "muteplayers" ) , select( isdemoplaying( ) , ( sin( milliseconds( ) / 80 ) * 0.3 + 1 ) , ( sin( localclientuimilliseconds( ) / 80 ) * 0.3 + 1 ) ) , 1 ) )
+			exp forecolor g ( select( ( localvarint( "ui_ralign_index" ) == 1 && localvarstring( "ui_ralign_group" ) == "muteplayers" ) , select( isdemoplaying( ) , ( sin( milliseconds( ) / 80 ) * 0.3 + 1 ) , ( sin( localclientuimilliseconds( ) / 80 ) * 0.3 + 1 ) ) , 1 ) )
+			exp forecolor b ( select( ( localvarint( "ui_ralign_index" ) == 1 && localvarstring( "ui_ralign_group" ) == "muteplayers" ) , select( isdemoplaying( ) , ( sin( milliseconds( ) / 80 ) * 0.3 + 1 ) , ( sin( localclientuimilliseconds( ) / 80 ) * 0.3 + 1 ) ) , 1 ) )
+			visible when ( 1 )
+			exp text ( "@PLATFORM_BACK_SHORTCUT" )
+		}
+	}
+}

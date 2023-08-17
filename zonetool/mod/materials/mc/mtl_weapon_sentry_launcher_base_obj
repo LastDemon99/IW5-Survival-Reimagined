@@ -1,0 +1,50 @@
+{
+    "animationX": 1,
+    "animationY": 1,
+    "cameraRegion": 1,
+    "constantTable": [
+        {
+            "literal": [
+                1.0,
+                1.0,
+                0.5,
+                1.0
+            ],
+            "name": "colorObjMax",
+            "nameHash": 2065593518
+        },
+        {
+            "literal": [
+                0.25,
+                0.15000000596046448,
+                0.0,
+                1.0
+            ],
+            "name": "colorObjMin",
+            "nameHash": 2065593776
+        }
+    ],
+    "gameFlags": 4,
+    "maps": [
+        {
+            "firstCharacter": 99,
+            "image": "sentry_grenade_launcher_col",
+            "lastCharacter": 112,
+            "sampleState": 11,
+            "semantic": 2,
+            "typeHash": 2695565377
+        }
+    ],
+    "name": "mc/mtl_weapon_sentry_launcher_base_obj",
+    "sortKey": 29,
+    "stateFlags": 27,
+    "stateMap": [
+        [
+            1477609490,
+            13
+        ]
+    ],
+    "surfaceTypeBits": 0,
+    "techniqueSet->name": "mc_objective",
+    "unknown": 4096
+}

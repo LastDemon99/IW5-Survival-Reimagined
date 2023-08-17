@@ -1,0 +1,13 @@
+{
+	menuDef
+	{
+		name "main"
+		rect 0 0 640 480 0 0
+		forecolor 1 1 1 0
+		
+		onOpen
+		{
+			close self;
+		}
+	}
+}

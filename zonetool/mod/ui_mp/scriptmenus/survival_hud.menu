@@ -1,0 +1,561 @@
+/* Menu by LastDemon99 */
+
+{
+    menuDef
+    {
+        name "survival_hud"
+        rect 0 0 640 200 4 4
+		forecolor 1 1 1 0
+		
+		execKeyInt 171
+		{
+			scriptmenuresponse "skip_timer";
+		}
+        
+        onOpen
+        {
+			setDvar g_hardcore 1;
+			setDvar cg_drawCrosshair 1;
+			setDvar cg_drawCrosshairNames 0;
+            setDvar cl_bypassMouseInput 1;
+        }
+        
+        onClose
+        {
+            setDvar cl_bypassMouseInput 0;
+        }
+		
+		onEsc
+        {
+            scriptmenuresponse "back";
+        }
+		
+		itemDef
+		{
+			name "minimap_border"
+			rect 6 6 100 100 8 8
+			visible 1
+			border 1
+			bordersize 0.666667
+			forecolor 1 1 1 1
+			bordercolor 1 1 1 0.35
+		}
+		itemDef
+		{
+			rect 6 6 100 100 8 8
+			visible 1
+			style 3
+			forecolor 0.89 0.98 0.95 0.05
+			background "minimap_scanlines"
+		}
+		itemDef
+		{
+			name "minimap_map"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 159
+			forecolor 1 1 1 1
+			background "compass_map_default"
+			type 8
+		}
+		itemDef
+		{
+			name "minimap_friendlies"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 158
+			forecolor 1 1 1 1
+			type 8
+			exp forecolor a ( 1 - radarjamintensity( ) )
+		}
+		itemDef
+		{
+			name "minimap_enemies"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 175
+			forecolor 1 1 1 1
+			type 8
+			exp forecolor a ( 1 - radarjamintensity( ) )
+		}
+		itemDef
+		{
+			name "minimap_vehicles"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 155
+			forecolor 1 1 1 1
+			type 8
+			exp forecolor a ( 1 - radarjamintensity( ) )
+		}
+		itemDef
+		{
+			name "minimap_planes"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 156
+			forecolor 1 1 1 1
+			type 8
+			exp forecolor a ( 1 - radarjamintensity( ) )
+		}
+		itemDef
+		{
+			name "minimap_sentries"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 165
+			forecolor 1 1 1 1
+			type 8
+			exp forecolor a ( 1 - radarjamintensity( ) )
+		}
+		itemDef
+		{
+			name "minimap_player"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 150
+			forecolor 1 1 1 1
+			background "compassping_player"
+			type 8
+			exp forecolor a ( 1 - radarjamintensity( ) )
+		}
+		itemDef
+		{
+			name "minimap_objectives"
+			rect 6 6 100 100 8 8
+			visible 1
+			ownerdraw 152
+			forecolor 1 1 1 1
+			background "objective_line"
+			type 8
+			textscale 0.55
+		}
+		itemDef
+		{
+			rect 6 6 100 100 8 8
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "stencil_base"
+		}
+		itemDef
+		{
+			rect 6 6 100 100 8 8
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "scanlines_stencil"
+			exp rect y ( ( 0 - 100 ) + ( ( 100 * 2 ) * ( 1 - ( ( milliseconds( ) % 4000 ) / 4000 ) ) ) )
+		}
+		itemDef
+		{
+			rect 6 6 100 100 8 8
+			visible 1
+			style 3
+			forecolor 0.89 0.98 0.95 1
+			background "stencil_fill"
+		}
+		itemDef
+		{
+			name "minimap_ticker_background"
+			rect 6 6 100 0 8 8
+			visible 1
+			style 3
+			forecolor 0 0 0 0.5
+			background "white"
+		}
+		itemDef
+		{
+			name "minimap_ticker"
+			rect 6 6 100 9 8 8
+			visible 1
+			ownerdraw 146
+			forecolor 1 1 1 1
+			background "minimap_tickertape_mp"
+			type 8
+		}
+		itemDef
+		{
+			name "minimap_ticker_foreground"
+			rect 6 6 100 0 8 8
+			visible 1
+			style 3
+			forecolor 0 0 0 0.65
+			background "gradient_center"
+		}
+		
+		itemDef
+		{
+			rect -246.667 -41.3333 200 21.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_iw5_divider"
+		}
+		
+		itemDef
+		{
+			rect -115.333 -25.3333 37.3333 0.666667 10 10
+			decoration
+			visible 1
+			ownerdraw 119
+			forecolor 1 1 1 1
+			type 8
+			textfont 9
+			textscale 0.437475
+			textstyle 6
+			visible when ( dvarstring("ui_use_slot") == "none" )
+		}
+		
+		itemDef
+		{
+			rect -115.333 -25.3333 37.3333 0.666667 10 10
+			decoration
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 9
+            textscale 0.437475
+			textstyle 6
+            exp text ( dvarint( "ui_" + dvarstring("ui_use_slot") ) )
+			visible when ( dvarstring("ui_use_slot") == "claymore" || dvarstring("ui_use_slot") == "c4" || dvarstring("ui_use_slot") == "throwingknife" )
+		}
+		
+		itemDef
+        {
+            name "clipGraphic"
+            rect -115.333 -36 0 0 10 10
+            decoration
+            visible 1
+            type 8
+            forecolor 1 1 1 0.65
+            ownerdraw 117
+            visible when (dvarstring("ui_use_slot") == "none")
+        }
+		
+		itemDef
+		{
+			name "clipGraphic"
+			rect -115.333 -48 0 0 10 10
+			decoration
+			visible 1
+			ownerdraw 121
+			forecolor 1 1 1 0.65
+			type 8
+			visible when ( dvarstring("ui_use_slot") == "none" )
+		}
+		
+		itemDef
+		{
+			rect -92 -45 37.3333 0.666667 10 10
+			decoration
+			visible 1
+			ownerdraw 81
+			forecolor 1 1 1 1
+			type 8
+			textfont 10
+			textalign 2
+			textscale 0.3333
+			textstyle 3
+		}
+		
+		itemDef
+		{
+			name "lowammowarning"
+			rect -50 -20 100 100 2 2
+			decoration
+			visible 1
+			ownerdraw 120
+			forecolor 1 1 1 0.65
+			type 8
+			textfont 9
+			textalign 9
+			textscale 0.3333
+			textstyle 3
+			visible when ( ( ! ( inkillcam( ) ) ) && ( ! ( spectatingclient( ) ) ) && ( !isdemoplaying( ) ) && dvarstring( "ui_gametype" ) != "oic" )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -96 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 3 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -100 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 2 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -104 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 1 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -108 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 1 1 1 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -127 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 3 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -131 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 2 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -135 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 1 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -139 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 1 1 1 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) )
+		}
+		
+		itemDef
+		{
+			rect -60 4 -300 5 1 3
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "navbar_tick"
+		}
+		
+		itemDef
+		{
+			rect -60 4 -300 5 1 3
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "navbar_tick"
+		}
+		
+		itemDef
+        {
+            rect -60 -3 100 40 1 3
+            decoration
+            visible 1
+            forecolor 1 1 1 1
+            textfont 9
+            textalign 8
+            textscale 0.45
+			textstyle 3
+            exp text ( "$ " + dvarInt("ui_money") )
+        }
+		
+		itemDef
+		{
+			rect -150 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "specialty_self_revive" )
+			visible when ( dvarint("ui_self_revive") )
+		}
+		
+		itemDef
+		{
+			rect -185 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk1") )
+			visible when ( dvarstring("ui_perk1") != "" )
+		}
+		
+		itemDef
+		{
+			rect -220 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk2") )
+			visible when ( dvarstring("ui_perk2") != "" )
+		}
+		
+		itemDef
+		{
+			rect -255 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk3") )
+			visible when ( dvarstring("ui_perk3") != "" )
+		}
+		
+		itemDef
+		{
+			rect -17.5 170 35 35 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "teamperk_blast_shield" )
+			visible when ( dvarint("ui_body_armor") )
+		}
+		
+		itemDef
+		{
+			rect -9 207 18 18 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "hud_icon_claymore" )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect -3.5 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 1" ) )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect 17 220 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( dvarint("ui_claymore") )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect 51 207 18 18 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "hud_icon_c4" )
+			visible when ( dvarint("ui_c4") )
+		}
+		
+		itemDef
+		{
+			rect 57 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 5" ) )
+			visible when ( dvarint("ui_c4") )
+		}
+		
+		itemDef
+		{
+			rect 77 220 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( dvarint("ui_c4") )
+			visible when ( dvarint("ui_c4") )
+		}
+		
+		itemDef
+		{
+			rect 111 209 20 20 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_streak") )
+			visible when ( dvarstring("ui_streak") != "" )
+		}
+		
+		itemDef
+		{
+			rect 117 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 4" ) )
+			visible when ( dvarstring("ui_streak") != "" )
+		}
+    }
+}

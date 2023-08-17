@@ -1,0 +1,285 @@
+/* Menu by LastDemon99 */
+
+{
+	menuDef
+	{
+		name "wave_summary"
+		rect 0 0 640 480 0 0
+		popup
+		
+		itemDef
+		{
+			rect -58 -65 -270 16 1 2
+			decoration
+			visible 1
+			style 3
+			forecolor 0.8 0.8 0.8 0.6
+			background "gradient_fadein"
+		}
+		
+		itemDef
+		{
+			rect -58 -49 -270 108 1 2
+			decoration
+			visible 1
+			style 3
+			forecolor 0 0 0 0.8
+			background "gradient_fadein"
+		}
+		
+		itemDef
+		{
+			rect -58 59 -270 16 1 2
+			decoration
+			visible 1
+			style 3
+			forecolor 0.8 0.8 0.8 0.6
+			background "gradient_fadein"
+		}
+		
+		itemDef
+		{
+			rect -55 -50 170 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3333
+			textstyle 3
+			text "combat performance"
+		}
+		
+		itemDef
+		{
+			rect -45 -49 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 10
+			textstyle 3
+			text "time:"
+		}
+		
+		itemDef
+		{
+			rect 55 -49 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "^:" + dvarstring("ui_wave_time") )
+		}
+		
+		itemDef
+		{
+			rect 95 -49 95 16 1 2
+			decoration
+			visible 1
+			forecolor 0.67 0.88 0.69 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "+$" + dvarint("ui_wave_time_bonus") )
+		}
+		
+		itemDef
+		{
+			rect -45 -31 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 10
+			textstyle 3
+			text "wave:"
+		}
+		
+		itemDef
+		{
+			rect 55 -31 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "^:" + dvarint("ui_wave") )
+		}
+		
+		itemDef
+		{
+			rect 95 -31 95 16 1 2
+			decoration
+			visible 1
+			forecolor 0.67 0.88 0.69 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "+$" + (dvarint("ui_wave") * 30) )
+		}
+		
+		itemDef
+		{
+			rect -45 -13 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 10
+			textstyle 3
+			text "kills:"
+		}
+		
+		itemDef
+		{
+			rect 55 -13 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "^:" + dvarint("ui_wave_kills") )
+		}
+		
+		itemDef
+		{
+			rect 95 -13 95 16 1 2
+			decoration
+			visible 1
+			forecolor 0.67 0.88 0.69 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "+$" + (dvarint("ui_wave_kills") * 10) )
+		}
+		
+		itemDef
+		{
+			rect -45 5 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 10
+			textstyle 3
+			text "headshots:"
+		}
+		
+		itemDef
+		{
+			rect 55 5 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "^:" + dvarint("ui_wave_headshots") )
+		}
+		
+		itemDef
+		{
+			rect 95 5 95 16 1 2
+			decoration
+			visible 1
+			forecolor 0.67 0.88 0.69 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "+$" + (dvarint("ui_wave_headshots") * 20) )
+		}
+		
+		itemDef
+		{
+			rect -45 23 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 10
+			textstyle 3
+			text "accuracy:"
+		}
+		
+		itemDef
+		{
+			rect 55 23 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "^:" + dvarint("ui_wave_accuracy") + "%" )
+		}
+		
+		itemDef
+		{
+			rect 95 23 95 16 1 2
+			decoration
+			visible 1
+			forecolor 0.67 0.88 0.69 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "+$" + (dvarint("ui_wave_accuracy") * 3) )
+		}
+		
+		itemDef
+		{
+			rect -45 41 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 10
+			textstyle 3
+			text "damage taken:"
+		}
+		
+		itemDef
+		{
+			rect 55 41 95 16 1 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textscale 0.3
+			textalign 8
+			textstyle 3
+			exp text ( "^:" + dvarint("ui_wave_damagetaken") )
+		}
+		
+		itemDef
+		{
+			rect -55 74 170 16 1 2
+			decoration
+			visible 1
+			forecolor 0.67 0.88 0.69 1
+			textfont 9
+			textscale 0.3333
+			textstyle 3
+			exp text ( "wave bonus: $" + dvarint("ui_wave_time_bonus") + (dvarint("ui_wave") * 30) + (dvarint("ui_wave_kills") * 10) + (dvarint("ui_wave_headshots") * 20) + (dvarint("ui_wave_accuracy") * 3) )
+		}
+	}
+}
