@@ -18,7 +18,7 @@
 - This version does not have bug fixes if you host it on a server, it may work but it may also have a variety of errors that will be printed on console :D
 
 # Download
-- Mod files: [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5_Mods/releases/download/iw5-mp-survival-v1.3/iw5-mp-survival-v1.3.rar)
+- Mod files: [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v1.3/iw5-mp-survival-v1.3.rar)
   
 # <a name="sponsor"></a>Sponsor
 If you like my work and wish to contribute:<br><br/>
