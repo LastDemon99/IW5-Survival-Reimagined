@@ -13,6 +13,8 @@ main()
 	precacheMenu("survival_hud");
 	precacheMenu("shop_menu");
 	precacheMenu("custom_options");
+
+	setModeDvars();
 }
 
 init()
@@ -33,7 +35,6 @@ init()
 	thread maps\mp\survival\_uav::init();
 	
 	setDefaultLoadout();
-	setModeDvars();
 	clearScoreInfo();	
 		
 	level.wave_num = 0;
