@@ -224,9 +224,9 @@ sentryAttackTargets()
 	}
 }
 
-knife()
+knife(target)
 {
-	if (isDefined(self.bot.target) && isDefined(self.bot.target.classname) && self.bot.target.classname == "misc_turret") return;
+	if (!isDefined(target) || target.classname == "misc_turret") return;
 	
 	self endon("death");
 	self endon("disconnect");
