@@ -1,0 +1,14 @@
+{
+	menuDef
+	{
+		name "onplayerscore"
+		rect 0 0 640 1 1 0
+		decoration
+		forecolor 1 1 1 1
+		onOpen
+		{
+			setLocalVarInt "ui_score_popup" ( milliseconds( ) );
+			close self;
+		}
+	}
+}

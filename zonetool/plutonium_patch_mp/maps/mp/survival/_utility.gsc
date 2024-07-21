@@ -88,15 +88,15 @@ notifyHideInMenu(hide)
 
 setScore(score)
 {
-	score = int(score);
 	self.pers["score"] = score;
-	self.score = score;
-	self setClientDvar("ui_money", score);
+	self.score = self.pers["score"];
+	self setClientDvar("ui_money", self.pers["score"]);
 }
 
-giveScore(score)
+giveScore(score, type)
 {
-	self setScore(self.score + score);
+	if (!isDefined(type)) type = undefined;
+	maps\mp\gametypes\_gamescore::giveplayerscore("survival", self, undefined, int(score), type);
 }
 
 onDamageArmor(damage)
@@ -181,7 +181,7 @@ updateChallenge(index, text)
 		ch["amount"]++;		
 		if (ch["amount"] == bar.useTime)
 		{
-			award = 500 * (((bar.useTime - 5) / 2) + 1);
+			award = int(500 * (((bar.useTime - 5) / 2) + 1));
 			
 			self giveScore(award);
 			notifyData = spawnStruct();

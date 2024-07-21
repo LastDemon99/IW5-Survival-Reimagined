@@ -167,6 +167,7 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 
 onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 {
+	self giveScore(bot.botPrice);
 	self.summary["kills"]++;
 	
 	if (isDefined(self.laststand)) self notify("lastStandKill");

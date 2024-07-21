@@ -162,9 +162,24 @@ handlenormaldeath( var_0, var_1, var_2, var_3, var_4 )
     self setcarddisplayslot( var_1, 7 );
     //self openmenu( "killedby_card_display" );
 
-	if(isDefined(self.botPrice)) var_5 = self.botPrice;
-	else var_5 = maps\mp\gametypes\_rank::getscoreinfovalue( "kill" );
-	
+    if ( var_4 == "MOD_HEAD_SHOT" )
+    {
+        var_1 maps\mp\_utility::incpersstat( "headshots", 1 );
+        var_1.headshots = var_1 maps\mp\_utility::getpersstat( "headshots" );
+        var_1 maps\mp\_utility::incplayerstat( "headshots", 1 );
+
+        if ( isdefined( var_1.laststand ) )
+            var_5 = maps\mp\gametypes\_rank::getscoreinfovalue( "kill" ) * 2;
+        else
+            var_5 = undefined;
+
+        var_1 playlocalsound( "bullet_impact_headshot_2" );
+    }
+    else if ( isdefined( var_1.laststand ) )
+        var_5 = maps\mp\gametypes\_rank::getscoreinfovalue( "kill" ) * 2;
+    else
+        var_5 = undefined;
+
     var_1 thread maps\mp\gametypes\_rank::giverankxp( "kill", var_5, var_3, var_4 );
     var_1 maps\mp\_utility::incpersstat( "kills", 1 );
     var_1.kills = var_1 maps\mp\_utility::getpersstat( "kills" );
@@ -190,9 +205,6 @@ handlenormaldeath( var_0, var_1, var_2, var_3, var_4 )
         {
             var_1 thread maps\mp\killstreaks\_killstreaks::giveadrenaline( "kill" );
             var_1.pers["cur_kill_streak"]++;
-
-            if ( !maps\mp\_utility::iskillstreakweapon( var_3 ) )
-                var_1.pers["cur_kill_streak_for_nuke"]++;
         }
 
         var_1 maps\mp\_utility::setplayerstatifgreater( "killstreak", var_1.pers["cur_kill_streak"] );
@@ -216,7 +228,6 @@ handlenormaldeath( var_0, var_1, var_2, var_3, var_4 )
     maps\mp\_skill::processkill( var_1, self );
     var_8 = maps\mp\gametypes\_tweakables::gettweakablevalue( "game", "deathpointloss" );
     maps\mp\gametypes\_gamescore::_getplayerscore( self, maps\mp\gametypes\_gamescore::_setplayerscore( self ) - var_8 );
-	var_1 maps\mp\survival\_utility::setScore(var_1.score);
 
     if ( isdefined( level.ac130player ) && level.ac130player == var_1 )
         level notify( "ai_killed", self );

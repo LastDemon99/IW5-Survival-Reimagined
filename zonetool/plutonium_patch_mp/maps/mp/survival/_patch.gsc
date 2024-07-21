@@ -23,6 +23,7 @@ init()
 	player_patch_replacefunc();
 	bots_patch_replacefunc();
 	action_slots_replacefunc();
+	scorePopUpReplacefunc();
 	
 	level.onRespawnDelay = ::getRespawnDelay;
 	level thread hook_callbacks();
@@ -526,4 +527,141 @@ onEquipmentDeath(trigger)
 {
 	self waittill("death");
 	trigger notify("delete");
+}
+
+//////////////////////////////////////////////////////
+//	Money menu hud									//
+//////////////////////////////////////////////////////
+
+scorePopUpReplacefunc()
+{
+	replacefunc(maps\mp\gametypes\_gamescore::giveplayerscore, ::giveplayerscore); // giveplayerscore set cdvar old_money for money animation
+	replacefunc(maps\mp\gametypes\_rank::xpeventpopupfinalize, ::xpeventpopupfinalize); // money animation moveOverTime left_down
+	replacefunc(maps\mp\gametypes\_rank::xppointspopup, ::xppointspopup); // money animation moveOverTime left_down
+}
+
+giveplayerscore(type, player, victim, custom_amount, var_4)
+{
+	if (type != "survival") return;
+
+	score = player.pers["score"];
+	player setClientDvar("ui_old_money", score);
+    player.pers["score"] += custom_amount;
+	player.score = player.pers["score"];
+
+	player thread maps\mp\gametypes\_rank::xppointspopup(custom_amount, 0, undefined, 0);
+    player maps\mp\gametypes\_persistence::statadd("score", custom_amount);
+    player maps\mp\gametypes\_persistence::statsetchild("round", "score", player.score);
+}
+
+xpeventpopupfinalize(event, hudColor, glowAlpha)
+{
+    self endon("disconnect");
+    self endon("joined_team");
+    self endon("joined_spectators");
+    self notify("xpEventPopup");
+    self endon("xpEventPopup");
+
+    if (level.hardcoremode) return;
+
+    wait 0.05;
+
+    if (!isdefined(hudColor)) hudColor = (1.0, 1.0, 0.5);
+    if (!isdefined(glowAlpha)) glowAlpha = 0;
+    if (!isdefined(self)) return;
+
+	self.hud_xpEventPopup.x = 55;
+	self.hud_xpEventPopup.y = -35;
+	
+    self.hud_xpeventpopup.color = hudColor;
+    self.hud_xpeventpopup.glowcolor = hudColor;
+    self.hud_xpeventpopup.glowalpha = glowAlpha;
+    self.hud_xpeventpopup settext(event);
+    self.hud_xpeventpopup.alpha = 0.85;
+    wait 1.0;
+
+    if (!isdefined(self)) return;
+
+	self.hud_xpeventpopup moveOverTime(0.5);
+	score_str = "" + self.pers["score"];
+	self.hud_xpeventpopup.x -= 400 - score_str.size * 20;
+	self.hud_xpeventpopup.y += 270;
+	
+    self.hud_xpeventpopup fadeovertime(0.6);
+	self.hud_xpeventpopup.alpha = 0;
+    
+	self notify("PopComplete");
+}
+
+xppointspopup(amount, bonus, hudColor, glowAlpha)
+{
+	self thread xppointspopupfinalize(amount, bonus, hudColor, glowAlpha);
+    self thread xppointspopupterminate();
+}
+
+xppointspopupfinalize(amount, bonus, hudColor, glowAlpha)
+{
+    self endon("disconnect");
+    self endon("joined_team");
+    self endon("joined_spectators");
+
+    if (amount == 0) return;
+	if (!isdefined(hudColor)) hudColor = (1.0, 1.0, 0.5);
+    if (!isdefined(glowAlpha)) glowAlpha = 0;
+    if (!isdefined(self)) return;
+	
+	self.hud_xpPointsPopup.x = 30;
+	self.hud_xpPointsPopup.y = -50;
+
+    self notify("xpPointsPopup");
+    self endon("xpPointsPopup");
+    self.xpupdatetotal += amount;
+    self.bonusupdatetotal += bonus;
+    wait 0.05;
+
+    if (self.xpupdatetotal < 0) self.hud_xppointspopup.label = &"";
+    else self.hud_xppointspopup.label = &"MP_PLUS";
+
+    self.hud_xppointspopup.color = hudColor;
+    self.hud_xppointspopup.glowcolor = hudColor;
+    self.hud_xppointspopup.glowalpha = glowAlpha;
+    self.hud_xppointspopup setvalue(self.xpupdatetotal);
+    self.hud_xppointspopup.alpha = 0.85;
+    self.hud_xppointspopup thread maps\mp\gametypes\_hud::fontpulse(self);
+    
+	increment = max(int(self.bonusupdatetotal / 20), 1);
+
+    if (self.bonusupdatetotal)
+    {
+        while (self.bonusupdatetotal > 0)
+        {
+            self.xpupdatetotal += min(self.bonusupdatetotal, increment);
+            self.bonusupdatetotal -= min(self.bonusupdatetotal, increment);
+            self.hud_xppointspopup setvalue(self.xpupdatetotal);
+            wait 0.05;
+        }
+    }
+    else wait 1.0;
+
+	self.hud_xpPointsPopup moveOverTime(0.5);
+	score_str = "" + self.pers["score"];
+	self.hud_xpPointsPopup.x -= 400 - score_str.size * 20;
+	self.hud_xpPointsPopup.y += 275;
+    self.xpupdatetotal = 0;
+	
+	wait 0.75;
+	self.hud_xppointspopup fadeovertime(0.75);
+    self.hud_xppointspopup.alpha = 0;
+	self openpopupmenu("onplayerscore");
+	self setClientDvar("ui_money", self.pers["score"]);
+	
+	self notify("ScorePopComplete");
+}
+
+xppointspopupterminate()
+{
+    self endon("ScorePopComplete");
+    common_scripts\utility::waittill_any("joined_team", "joined_spectators");
+    self.hud_xppointspopup fadeovertime(0.05);
+    self.hud_xppointspopup.alpha = 0;
 }

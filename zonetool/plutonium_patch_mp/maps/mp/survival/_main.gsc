@@ -5,6 +5,7 @@
 
 main()
 {
+	precachemenu("onplayerscore"); // set localvar "ui_score_popup", animation start
 	precacheMenu("client_cmd");
 	precacheMenu("wave_summary");
 	precacheMenu("scoreboard");
@@ -317,7 +318,7 @@ checkBotTypeDialogIndex(var, type, index)
 
 clearScoreInfo()
 {
-	maps\mp\gametypes\_rank::registerScoreInfo( "kill", 100 );
+	maps\mp\gametypes\_rank::registerScoreInfo( "kill", 0 );
     maps\mp\gametypes\_rank::registerScoreInfo( "assist", 0);
     maps\mp\gametypes\_rank::registerScoreInfo( "suicide", 0);
     maps\mp\gametypes\_rank::registerScoreInfo( "teamkill", 0);
@@ -340,9 +341,7 @@ clearScoreInfo()
 
 setModeDvars()
 {
-	makeDvarServerInfo("cg_drawCrosshairNames", 0);
-	makeDvarServerInfo("g_hardcore", 1);
-	
+	makeDvarServerInfo("cg_drawCrosshairNames", 0);	
 	setDvarIfUninitialized("max_survivors", 4);
 	
 	setDvar("ui_start_time", gettime());
