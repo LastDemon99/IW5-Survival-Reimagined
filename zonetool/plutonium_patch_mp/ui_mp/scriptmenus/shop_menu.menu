@@ -10,15 +10,9 @@
         
         onOpen
         {
-            exec "closemenu survival_hud";
             setLocalVarInt ui_index -1;
         }
-        
-        onClose
-        {
-            exec "openmenu survival_hud";
-        }
-        
+                
         onEsc
         {
             scriptmenuresponse back;

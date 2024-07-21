@@ -41,13 +41,11 @@ stringtable,mp/killstreakTable.csv
 # MENUS
 menufile,ui_mp/scriptmenus/custom_options.menu
 menufile,ui_mp/scriptmenus/shop_menu.menu
-menufile,ui_mp/scriptmenus/survival_hud.menu
 menufile,ui_mp/scriptmenus/wave_summary.menu
 menufile,ui_mp/scriptmenus/client_cmd.menu
 menufile,ui_mp/connect.menu
 menufile,ui_mp/scoreboard.menu
 menufile,ui_mp/muteplayer.menu
-#menufile,ui_mp/main.menu
 
 # XMODEL
 xmodel,com_laptop_2_open

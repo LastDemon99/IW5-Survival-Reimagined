@@ -11,13 +11,6 @@ onMenuResponse()
     {
         self waittill("menuresponse",  menu, response);
 		
-		if (menu == "survival_hud" && response == "back")
-		{
-			self openDynamicMenu("main_options");
-			self notify("hide_hud");
-			continue;
-		}
-		
 		if (menu != "custom_options" || !isDefined(self.currMenu)) continue;
 		if (self.currMenu != "main_options") continue;
 		
@@ -26,15 +19,8 @@ onMenuResponse()
 		
 		if (str(response) == "back")
 		{
-			if (self.pers["menu_pages"].size == 1)
-			{
-				self closeDynamicMenu();
-				waitmenu();
-				self _openMenu("survival_hud");
-				self notify("show_hud");
-				continue;
-			}
-			self _popPage();
+			if (self.pers["menu_pages"].size == 1) self closeDynamicMenu();
+			else self _popPage();
 			continue;
 		}
 		

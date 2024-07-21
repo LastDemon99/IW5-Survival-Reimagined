@@ -375,7 +375,6 @@ watchSkipResponse()
 	{
 		self waittill("menuresponse", menu, response);
 		
-		if (menu != "survival_hud") continue;
 		if (response != "skip_timer") continue;
 		
 		level.timerSkip++;
@@ -430,7 +429,6 @@ triggerUseHandle()
 		{			
 			self maps\mp\lethalbeats\_dynamic_menu::openDynamicMenu(trigger.tag);
 			self loadItemCost();
-			self notify("hide_hud");
 			
 			if (trigger.tag == "equipment_shop") self maps\mp\survival\_menu_equipment::checkOwnedEquipment();
 			else if (trigger.tag == "support_shop") self maps\mp\survival\_menu_support::checkAllowedSupport();
@@ -547,12 +545,8 @@ watchTotalShots()
 
 hudInit()
 {
-	self _openMenu("survival_hud");
-		
 	self armorHudInit();
 	self waveChallengesHudInit();
-	self thread onOpenMenu();
-	self thread onCloseMenu();
 	self maps\mp\lethalbeats\_trigger::clearCustomHintString();
 }
 
@@ -610,56 +604,4 @@ summaryInit()
 	self.summary["damagetaken"] = 0;
 	self.summary["totalshots"] = 0;
 	self.summary["hits"] = 0;
-}
-
-onOpenMenu()
-{
-	self notifyOnPlayerCommand("hide_hud", "+scores");
-	self.hudHide = false;
-	
-	for(;;)
-	{
-		self waittill("hide_hud");
-		
-		if(self.hudHide) continue;
-		
-		foreach(hud in self.armorHuds) hud.alpha = 0;
-		foreach(hud in self.ch1["huds"]) hud.alpha = 0;
-		foreach(hud in self.ch2["huds"]) hud.alpha = 0;
-		self.ch1["huds"][0].bar.alpha = 0;
-		self.ch2["huds"][0].bar.alpha = 0;
-		self.hudHide = true;
-		
-		if (isDefined(self.hintString)) self.hintString.alpha = 0;
-	}
-}
-
-onCloseMenu()
-{
-	self notifyOnPlayerCommand("show_hud", "-scores");
-	self.hudHide = false;
-	
-	for(;;)
-	{
-		self waittill("show_hud");
-		
-		if(!self.hudHide || isDefined(self.currMenu)) continue;
-		
-		if(self.bodyArmor > 0)
-		{
-			foreach(hud in self.armorHuds) hud.alpha = 0.8;
-			self notify("armor_damage");
-			self thread onDamageArmorHud();
-		}
-		
-		foreach(hud in self.ch1["huds"]) hud.alpha = 0.8;
-		foreach(hud in self.ch2["huds"]) hud.alpha = 0.8;
-		self.ch1["huds"][0].alpha = 0.5;
-		self.ch2["huds"][0].alpha = 0.5;
-		self.ch1["huds"][0].bar.alpha = 1;
-		self.ch2["huds"][0].bar.alpha = 1;
-		self.hudHide = false;
-		
-		if (isDefined(self.hintString)) self.hintString.alpha = 1;
-	}
 }

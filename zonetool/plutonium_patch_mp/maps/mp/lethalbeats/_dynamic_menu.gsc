@@ -44,7 +44,6 @@ popPage()
 	if (self.pers["menu_pages"].size == 1)
 	{
 		self closeDynamicMenu();
-		self notify("show_hud");
 		return;
 	}
 	if (!isDefined(self.pers["menu_pages"]) || self.pers["menu_pages"].size < 1) return;

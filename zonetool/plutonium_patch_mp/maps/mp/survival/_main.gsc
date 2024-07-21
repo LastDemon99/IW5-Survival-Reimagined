@@ -10,7 +10,6 @@ main()
 	precacheMenu("scoreboard");
 	precacheMenu("muteplayer");
 	precacheMenu("popup_leavegame");
-	precacheMenu("survival_hud");
 	precacheMenu("shop_menu");
 	precacheMenu("custom_options");
 
@@ -201,7 +200,6 @@ isLastWave() //this mod is under development, so there are still some things to 
 	
 	foreach(player in level.players)
 	{
-		player notify("hide_hud");
 		player _unsetPerk("specialty_finalstand");
 		player setClientDvar("ui_self_revive", 0);
 	}
