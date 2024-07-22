@@ -40,8 +40,8 @@ stringtable,mp/killstreakTable.csv
 
 # MENUS
 menufile,ui_mp/patch_mp_ingame.txt
+menufile,ui_mp/ui_display.menu
 menufile,ui_mp/scorebar_hd.menu
-menufile,ui_mp/onplayerscore.menu
 menufile,ui_mp/scriptmenus/custom_options.menu
 menufile,ui_mp/scriptmenus/shop_menu.menu
 menufile,ui_mp/scriptmenus/wave_summary.menu
@@ -173,6 +173,7 @@ xanim,german_shepherd_run_pain
 weapon,iw5_dog_mp
 
 # MATERIALS
+material,hud_weaponbar_line
 material,specialty_self_revive
 material,equipment_body_armor
 material,teamperk_blast_shield

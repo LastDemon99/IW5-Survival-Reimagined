@@ -77,6 +77,12 @@ waitmenu()
 //	Hud								    //
 //////////////////////////////////////////
 
+hudDisplay(hud)
+{
+	self setClientDvar("ui_display", hud);
+	self openpopupmenu("ui_display");
+}
+
 notifyHideInMenu(hide)
 {
 	self.notifyTitle.hideWhenInMenu = hide;
@@ -148,80 +154,46 @@ destroyIntermissionTimer()
 	level.timerHud = undefined;
 }
 
+setChallenge(index, label, steps)
+{
+	challenge["label"] = label;
+	challenge["type"] = toLower(strTok(label, " ")[0]);
+	challenge["step"] = 0;
+	challenge["max_step"] = steps;	
+	self.challenges[index] = challenge;
+
+	self setClientDvar("ui_ch_label_" + index, label);	
+	self setClientDvar("ui_ch_step_" + index, 0);
+	self setClientDvar("ui_ch_maxstep_" + index, steps);
+}
+
 checkChallenge(type)
 {
-	if (!isAlive(self)) return;
-	
-	tag1 = strTok(self.ch1["type"], " ")[0];
-	tag2 = strTok(self.ch2["type"], " ")[0];
-	
-	if (isDefined(tag1) && tolower(tag1) == type) index = 0;
-	else if (isDefined(tag2) && tolower(tag2) == type) index = 1;
+	if (self.challenges[0]["type"] == type) index = 0;
+	else if (self.challenges[1]["type"] == type) index = 1;
 	else return;
-	
-	self updateChallenge(index);
-}
 
-updateChallenge(index, text)
-{
-	ch = index ? self.ch2 : self.ch1;
-	
-	bar = ch["huds"][0];
-	
-	if (isDefined(text)) 
+	if (self.challenges[index]["step"] == self.challenges[index]["max_step"] - 1)
 	{
-		ch["type"] = text;
-		ch["amount"] = 0;
-		ch["huds"][0].useTime = 5;
-		ch["huds"][1] setText(text);
-		ch["huds"][2] setText("$ 500");
-	}
-	else
-	{	
-		ch["amount"]++;		
-		if (ch["amount"] == bar.useTime)
-		{
-			award = int(500 * (((bar.useTime - 5) / 2) + 1));
-			
-			self giveScore(award);
-			notifyData = spawnStruct();
-			notifyData.titleText = ch["type"] + " $ " + award;
-			notifyData.glowColor = (1, 0.49, 0);
-			notifyData.sound = "survival_bonus_splash";
-			notifyData.foreground = true;
-			notifyData.hidewheninmenu = false;			
-			self maps\mp\gametypes\_hud_message::notifyMessage(notifyData);
-			
-			bar.useTime += 2;
-			ch["amount"] = 0;
-			ch["huds"][2] setText("$ " + (award + 500));
-		}
-	}
-	
-	bar updateBar(ch["amount"] / bar.useTime, 0);
-	
-	if (index) self.ch2 = ch;
-	else self.ch1 = ch;
-}
+		award = int(500 * (((self.challenges[index]["max_step"] - 5) / 2) + 1));
 
-createChallengeHud(offset, text, reward)
-{
-	chBar = self createBar((1, 1, 1), 66, 6);
-	chBar setPoint("BOTTOM LEFT", "BOTTOM LEFT", 5, offset);
-	chBar.useTime = 5;
-	chBar.bar.y = offset - 2;
-	
-	chText = self createFontString("hudbig", 0.5);
-	chText setPoint("BOTTOM LEFT", "BOTTOM LEFT", 5, offset - 10);
-	chText setText(text);
-	chText.alpha = 0.8;
-	
-	chReward = self createFontString("hudbig", 0.6);
-	chReward setPoint("BOTTOM LEFT", "BOTTOM LEFT", 80, offset + 2);
-	chReward setText("$ " + reward);
-	chReward.alpha = 0.8;
-	
-	return [chBar, chText, chReward];
+		notifyData = spawnStruct();
+		notifyData.titleText = self.challenges[index]["label"] + " $ " + award;
+		notifyData.glowColor = (1, 0.49, 0);
+		notifyData.sound = "survival_bonus_splash";
+		notifyData.foreground = true;
+		notifyData.hidewheninmenu = true;
+
+		self giveScore(award);
+		self maps\mp\gametypes\_hud_message::notifyMessage(notifyData);
+
+		self.challenges[index]["step"] = 0;
+		self.challenges[index]["max_step"] += 2;
+		self setClientDvar("ui_ch_maxstep_" + index, self.challenges[index]["max_step"]);
+	}
+	else self.challenges[index]["step"]++;
+
+	self setClientDvar("ui_ch_step_" + index, self.challenges[index]["step"]);
 }
 
 destroySurvivalHuds()

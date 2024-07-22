@@ -1,5 +1,5 @@
-{	
-	menuDef
+{
+    menuDef
     {
         name "ui_display"
         rect 0 0 640 1 1 0

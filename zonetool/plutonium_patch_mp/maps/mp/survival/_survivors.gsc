@@ -574,26 +574,18 @@ armorHudInit()
 
 waveChallengesHudInit()
 {
-	ch1 = random(level.challenges);
-	ch2 = random(level.challenges);
-	
-	while(ch2 == ch1)
-		ch2 = random(level.challenges);
-	
-	if (isDefined(self.ch1))
-	{
-		self updateChallenge(0, ch1);
-		self updateChallenge(1, ch2);
-		return;
-	}
-	
-	self.ch1["type"] = ch1;
-	self.ch1["amount"] = 0;
-	self.ch1["huds"] = createChallengeHud(-34, ch1, 500);
-	
-	self.ch2["type"] = ch2;
-	self.ch2["amount"] = 0;
-	self.ch2["huds"] = createChallengeHud(-60, ch2, 500);
+	foreach(player in level.players)
+		if(!(player isTestClient()))
+		{
+			ch0 = random(level.challenges);
+			ch1 = random(level.challenges);
+			
+			while(ch1 == ch0)
+				ch1 = random(level.challenges);
+
+			player setChallenge(0, ch0, 5);
+			player setChallenge(1, ch1, 5);
+		}
 }
 
 summaryInit()

@@ -566,16 +566,12 @@ xpeventpopupfinalize(event, hudColor, glowAlpha)
 
     wait 0.05;
 
-    if (!isdefined(hudColor)) hudColor = (1.0, 1.0, 0.5);
-    if (!isdefined(glowAlpha)) glowAlpha = 0;
-    if (!isdefined(self)) return;
-
 	self.hud_xpEventPopup.x = 55;
 	self.hud_xpEventPopup.y = -35;
 	
-    self.hud_xpeventpopup.color = hudColor;
-    self.hud_xpeventpopup.glowcolor = hudColor;
-    self.hud_xpeventpopup.glowalpha = glowAlpha;
+    self.hud_xpeventpopup.color = (0.7, 1, 0.7);
+    self.hud_xpeventpopup.glowcolor = (0.7, 1, 0.7);
+    self.hud_xpeventpopup.glowalpha = 0;
     self.hud_xpeventpopup settext(event);
     self.hud_xpeventpopup.alpha = 0.85;
     wait 1.0;
@@ -587,7 +583,7 @@ xpeventpopupfinalize(event, hudColor, glowAlpha)
 	self.hud_xpeventpopup.x -= 400 - score_str.size * 20;
 	self.hud_xpeventpopup.y += 270;
 	
-    self.hud_xpeventpopup fadeovertime(0.6);
+    self.hud_xpeventpopup fadeovertime(0.45);
 	self.hud_xpeventpopup.alpha = 0;
     
 	self notify("PopComplete");
@@ -606,8 +602,6 @@ xppointspopupfinalize(amount, bonus, hudColor, glowAlpha)
     self endon("joined_spectators");
 
     if (amount == 0) return;
-	if (!isdefined(hudColor)) hudColor = (1.0, 1.0, 0.5);
-    if (!isdefined(glowAlpha)) glowAlpha = 0;
     if (!isdefined(self)) return;
 	
 	self.hud_xpPointsPopup.x = 30;
@@ -622,9 +616,9 @@ xppointspopupfinalize(amount, bonus, hudColor, glowAlpha)
     if (self.xpupdatetotal < 0) self.hud_xppointspopup.label = &"";
     else self.hud_xppointspopup.label = &"MP_PLUS";
 
-    self.hud_xppointspopup.color = hudColor;
-    self.hud_xppointspopup.glowcolor = hudColor;
-    self.hud_xppointspopup.glowalpha = glowAlpha;
+    self.hud_xppointspopup.color = (0.7, 1, 0.7);
+    self.hud_xppointspopup.glowcolor = (0.7, 1, 0.7);
+    self.hud_xppointspopup.glowalpha = 0;
     self.hud_xppointspopup setvalue(self.xpupdatetotal);
     self.hud_xppointspopup.alpha = 0.85;
     self.hud_xppointspopup thread maps\mp\gametypes\_hud::fontpulse(self);
@@ -652,8 +646,8 @@ xppointspopupfinalize(amount, bonus, hudColor, glowAlpha)
 	wait 0.75;
 	self.hud_xppointspopup fadeovertime(0.75);
     self.hud_xppointspopup.alpha = 0;
-	self openpopupmenu("onplayerscore");
 	self setClientDvar("ui_money", self.pers["score"]);
+	self hudDisplay("animate_money");
 	
 	self notify("ScorePopComplete");
 }

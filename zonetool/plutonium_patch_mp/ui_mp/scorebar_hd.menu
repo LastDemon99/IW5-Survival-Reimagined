@@ -5,17 +5,24 @@
 		rect 0 0 0 0 3 3
 		visible 1
 		forecolor 1 1 1 1
+		fadeClamp 1
+        fadeCycle 1
+        fadeAmount 0.1
 		visible when ( ( ( ! ( ui_active( ) ) ) && ( ! ( dvarbool( "g_hardcore" ) ) ) && ( ! ( flashbanged( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_ac130_mp" ) || ( weaponname( ) == "killstreak_helicopter_minigun_mp" ) || ( weaponname( ) == "killstreak_predator_missile_mp" ) || ( ( weaponname( ) == "ac130_105mm_mp" ) || ( weaponname( ) == "ac130_40mm_mp" ) || ( weaponname( ) == "ac130_25mm_mp" ) ) || ( adsjavelin( ) ) || ( weaponname( ) == "heli_remote_mp" ) || missilecam( ) || ( weaponname( ) == "uav_remote_mp" ) || ( ( weaponname( ) == "mortar_remote_mp" ) || ( weaponname( ) == "mortar_remote_zoom_mp" ) ) || ( weaponname( ) == "killstreak_remote_tank_remote_mp" ) || ( weaponname( ) == "killstreak_remote_turret_remote_mp" ) ) ) && ( !isempjammed( ) ) && ( ! ( dvarint( "scr_gameended" ) ) ) && ( ( !isdemoplaying( ) ) || ( !isdemofreecamera( ) && !isdemofollowcamera( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_remote_tank_laptop_mp" ) || ( weaponname( ) == "killstreak_remote_turret_laptop_mp" ) ) ) ) && ! ( selecting_location( ) ) && ( ! ( spectatingclient( ) || spectatingfree( ) ) ) && ( ! ( inkillcam( ) ) ) && ( ! ( milliseconds( ) - localvarint( "ui_show_killedBy" ) < 4000 || ( inkillcam( ) ) ) ) )
-			
+		
+		//////////////////////////////
+		//	     	MONEY			//
+		//////////////////////////////
+
 		itemDef
 		{
-			rect 6 -28 -300 7 8 10
-			decoration 
+			rect 6 -70 -260 56 8 10
+            decoration                  
             visible 1
             style 3
-            forecolor 1 1 1 1
-			background "navbar_tick"
-		}		
+			forecolor 1 1 1 1
+            background "hud_weaponbar_line"
+		}
 		
 		itemDef
         {
@@ -25,10 +32,10 @@
             forecolor 1 1 1 1
             textfont 9
             textalign 8
-            textscale 0.45
+            textscale 0.47
 			textstyle 3
 			exp text ( "$ " + dvarint("ui_money") )
-			visible when ( milliseconds( ) - localvarint( "ui_score_popup" ) > 2000 )
+			visible when ( milliseconds( ) - localvarint( "animate_money_start" ) > 2000 )
         }
 		
 		itemDef
@@ -36,13 +43,103 @@
             rect 6 -35 100 40 8 10
             decoration
             visible 1
-            forecolor 0.55 0.71 0 1
+            forecolor 0.7 1 0.7 0.85
             textfont 9
             textalign 8
             textscale 0.6
 			textstyle 3
-			exp text ( "$ " + int(max(dvarint("ui_old_money"), min(dvarint("ui_money"), dvarint("ui_old_money") + (dvarint("ui_money") - dvarint("ui_old_money")) * ((milliseconds() - localvarint("ui_score_popup")) / 1800)))) )		
-			visible when ( milliseconds( ) - localvarint( "ui_score_popup" ) < 2000 )
+			exp text ( "$ " + int(max(dvarint("ui_old_money"), min(dvarint("ui_money"), dvarint("ui_old_money") + (dvarint("ui_money") - dvarint("ui_old_money")) * ((milliseconds() - localvarint("animate_money_start")) / 1800)))) )		
+			visible when ( milliseconds( ) - localvarint( "animate_money_start" ) < 2000 )
         }
+
+		//////////////////////////////
+		//	     CHALLENGE	    	//
+		//////////////////////////////
+
+		itemDef
+		{
+			rect 5 -68 70 7 8 10
+            decoration
+			borderSize 1                
+            visible 1
+            style 3
+			forecolor 0 0 0 0.5
+            background "white"
+		}
+		itemDef
+		{
+			rect 5 -67 70 5 8 10
+            decoration            
+            visible 1
+            style 3
+			forecolor 1 1 1 1
+            background "white"
+			exp rect w (2 + ((dvarint("ui_ch_step_0") / dvarint("ui_ch_maxstep_0")) * 68));
+		}
+		itemDef
+        {
+            rect 5 -69 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text (dvarstring("ui_ch_label_0"));
+		}
+		itemDef
+        {
+            rect 90 -58.5 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text ("$ " + int(500 * (((dvarint("ui_ch_maxstep_0") - 5) / 2) + 1)));
+		}
+
+		itemDef
+		{
+			rect 5 -42 70 7 8 10
+            decoration
+			borderSize 1                
+            visible 1
+            style 3
+			forecolor 0 0 0 0.5
+            background "white"
+		}
+		itemDef
+		{
+			rect 5 -41.3 70 5 8 10
+            decoration            
+            visible 1
+            style 3
+			forecolor 1 1 1 1
+            background "white"
+			exp rect w (2 + ((dvarint("ui_ch_step_1") / dvarint("ui_ch_maxstep_1")) * 68));
+		}
+		itemDef
+        {
+            rect 5 -43 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text (dvarstring("ui_ch_label_1"));
+		}
+		itemDef
+        {
+            rect 90 -33 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text ("$ " + int(500 * (((dvarint("ui_ch_maxstep_1") - 5) / 2) + 1)));
+		}
 	}
 }

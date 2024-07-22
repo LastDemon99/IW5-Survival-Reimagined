@@ -5,7 +5,7 @@
 
 main()
 {
-	precachemenu("onplayerscore"); // set localvar "ui_score_popup", animation start
+	precachemenu("ui_display");
 	precacheMenu("client_cmd");
 	precacheMenu("wave_summary");
 	precacheMenu("scoreboard");

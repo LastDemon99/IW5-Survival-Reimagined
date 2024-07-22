@@ -1,0 +1,29 @@
+{
+    "animationX": 1,
+    "animationY": 1,
+    "cameraRegion": 4,
+    "constantTable": null,
+    "gameFlags": 0,
+    "maps": [
+        {
+            "firstCharacter": 99,
+            "image": "hud_weaponbar_line",
+            "lastCharacter": 112,
+            "sampleState": -30,
+            "semantic": 0,
+            "typeHash": 2695565377
+        }
+    ],
+    "name": "hud_weaponbar_line",
+    "sortKey": 54,
+    "stateFlags": 3,
+    "stateMap": [
+        [
+            403870053,
+            3759013890
+        ]
+    ],
+    "surfaceTypeBits": 0,
+    "techniqueSet->name": "2d",
+    "unknown": 0
+}
