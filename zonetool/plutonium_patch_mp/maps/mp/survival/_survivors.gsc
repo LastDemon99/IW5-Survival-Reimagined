@@ -337,14 +337,11 @@ summaryMonitor()
 			self setClientDvar("ui_wave_kills", self.summary["kills"]);
 			self setClientDvar("ui_wave_headshots", self.summary["headshots"]);
 			self setClientDvar("ui_wave_accuracy", self.summary["accuracy"]);
-			self setClientDvar("ui_wave_damagetaken", self.summary["damagetaken"]);
-			
-			self _openMenu("wave_summary");
+			self setClientDvar("ui_wave_damagetaken", self.summary["damagetaken"]);			
+			self hudDisplay("wave_summary");
 			self giveScore(int(level.score_base / time) + (level.wave_num * 30) + (self.summary["kills"] * 10) + (self.summary["headshots"] * 20) + (self.summary["accuracy"] * 3));
 			continue;
 		}
-		
-		self _closeMenu("wave_summary");
 		self summaryInit();
 	}
 }

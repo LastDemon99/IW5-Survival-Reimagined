@@ -3,9 +3,13 @@
 {
 	menuDef
 	{
-		name "wave_summary"
-		rect 0 0 640 480 0 0
-		popup
+		name "demo_playercard_hd"
+		rect 0 0 640 480 4 4
+		fadeClamp 1
+        fadeCycle 1
+        fadeAmount 0.1
+		visible when (milliseconds() - localvarint("wave_summary_start") < 9000)
+		exp rect x ((0 -275) + (max(min(((milliseconds() - localvarint("wave_summary_start")) / 500), 1), 0) * 275) - (max(min(((milliseconds() - localvarint("wave_summary_start") - 8000) / 500), 1), 0) * 275))
 		
 		itemDef
 		{
@@ -80,12 +84,12 @@
 			rect 95 -49 95 16 1 2
 			decoration
 			visible 1
-			forecolor 0.67 0.88 0.69 1
+			forecolor 0.7 1 0.7 1
 			textfont 9
 			textscale 0.3
 			textalign 8
 			textstyle 3
-			exp text ( "+$" + dvarint("ui_wave_time_bonus") )
+			exp text ( "+$" + int(min(dvarint("ui_wave_time_bonus"), (dvarint("ui_wave_time_bonus") * ((milliseconds() - localvarint("wave_summary_start")) / 1500)))) )
 		}
 		
 		itemDef
@@ -119,12 +123,12 @@
 			rect 95 -31 95 16 1 2
 			decoration
 			visible 1
-			forecolor 0.67 0.88 0.69 1
+			forecolor 0.7 1 0.7 1
 			textfont 9
 			textscale 0.3
 			textalign 8
 			textstyle 3
-			exp text ( "+$" + (dvarint("ui_wave") * 30) )
+			exp text ( "+$" + int(min(dvarint("ui_wave") * 30, ((dvarint("ui_wave") * 30) * ((milliseconds() - localvarint("wave_summary_start")) / 1500)))) )
 		}
 		
 		itemDef
@@ -158,12 +162,12 @@
 			rect 95 -13 95 16 1 2
 			decoration
 			visible 1
-			forecolor 0.67 0.88 0.69 1
+			forecolor 0.7 1 0.7 1
 			textfont 9
 			textscale 0.3
 			textalign 8
 			textstyle 3
-			exp text ( "+$" + (dvarint("ui_wave_kills") * 10) )
+			exp text ( "+$" + int(min(dvarint("ui_wave_kills") * 10, ((dvarint("ui_wave_kills") * 10) * ((milliseconds() - localvarint("wave_summary_start")) / 1500)))) )
 		}
 		
 		itemDef
@@ -197,12 +201,12 @@
 			rect 95 5 95 16 1 2
 			decoration
 			visible 1
-			forecolor 0.67 0.88 0.69 1
+			forecolor 0.7 1 0.7 1
 			textfont 9
 			textscale 0.3
 			textalign 8
 			textstyle 3
-			exp text ( "+$" + (dvarint("ui_wave_headshots") * 20) )
+			exp text ( "+$" + int(min(dvarint("ui_wave_headshots") * 20, ((dvarint("ui_wave_headshots") * 20) * ((milliseconds() - localvarint("wave_summary_start")) / 1500)))) )
 		}
 		
 		itemDef
@@ -236,12 +240,12 @@
 			rect 95 23 95 16 1 2
 			decoration
 			visible 1
-			forecolor 0.67 0.88 0.69 1
+			forecolor 0.7 1 0.7 1
 			textfont 9
 			textscale 0.3
 			textalign 8
 			textstyle 3
-			exp text ( "+$" + (dvarint("ui_wave_accuracy") * 3) )
+			exp text ( "+$" + int(min(dvarint("ui_wave_accuracy") * 3, ((dvarint("ui_wave_accuracy") * 3) * ((milliseconds() - localvarint("wave_summary_start")) / 1500)))) )
 		}
 		
 		itemDef
@@ -272,14 +276,15 @@
 		
 		itemDef
 		{
-			rect -55 74 170 16 1 2
+			rect 95 41 95 16 1 2
 			decoration
 			visible 1
-			forecolor 0.67 0.88 0.69 1
+			forecolor 0.7 1 0.7 1
 			textfont 9
-			textscale 0.3333
+			textscale 0.3
+			textalign 8
 			textstyle 3
-			exp text ( "wave bonus: $" + dvarint("ui_wave_time_bonus") + (dvarint("ui_wave") * 30) + (dvarint("ui_wave_kills") * 10) + (dvarint("ui_wave_headshots") * 20) + (dvarint("ui_wave_accuracy") * 3) )
+			exp text ( "+$" + int(min(dvarint("ui_wave_time_bonus") + (dvarint("ui_wave") * 30) + (dvarint("ui_wave_kills") * 10) + (dvarint("ui_wave_headshots") * 20) + (dvarint("ui_wave_accuracy") * 3), ((dvarint("ui_wave_time_bonus") + (dvarint("ui_wave") * 30) + (dvarint("ui_wave_kills") * 10) + (dvarint("ui_wave_headshots") * 20) + (dvarint("ui_wave_accuracy") * 3)) * ((milliseconds() - localvarint("wave_summary_start")) / 1500)))) )
 		}
 	}
 }

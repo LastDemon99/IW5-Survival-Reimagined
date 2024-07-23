@@ -7,7 +7,6 @@ main()
 {
 	precachemenu("ui_display");
 	precacheMenu("client_cmd");
-	precacheMenu("wave_summary");
 	precacheMenu("scoreboard");
 	precacheMenu("muteplayer");
 	precacheMenu("popup_leavegame");
