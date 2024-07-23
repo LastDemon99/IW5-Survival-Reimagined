@@ -15,6 +15,11 @@
             {
                 setLocalVarInt wave_summary_start (milliseconds());
             }
+            if (dvarstring("ui_display") == "bind_skip_intermission")
+            {
+                execnow "bind F5 skip";
+                execnow "bind BUTTON_START skip";
+            }
             close self;
         }
     }

@@ -26,7 +26,6 @@ onPlayerConnecting()
 		
 		player thread onPlayerSpawn();
 		player thread onChangeWeapons();
-		player thread onIntermission();
 	}
 }
 
@@ -346,69 +345,33 @@ summaryMonitor()
 	}
 }
 
-onIntermission()
-{
-	level endon("game_ended");
-	self endon("death");
-	self endon("disconnect");
-	
-	for(;;)
-	{
-		level waittill("intermission");
-		
-		self waveChallengesHudInit();
-		self thread watchGlobalSkip();
-		self thread watchSkipResponse();
-	}
-}
-
 watchSkipResponse()
 {
-	level endon("wave_start");
-	level endon("game_ended");
-	self endon("death");
+	level endon("intermission_end");
 	self endon("disconnect");
-	
-	for(;;)
-	{
-		self waittill("menuresponse", menu, response);
-		
-		if (response != "skip_timer") continue;
-		
-		level.timerSkip++;
-		level notify("intermission_skip", survivorsCount() == 1);
-		break;
-	}
-}
 
-watchGlobalSkip()
-{
-	level endon("game_ended");
-	self endon("death");
-	self endon("disconnect");
-	
+	self hudDisplay("bind_skip_intermission");
+
 	timerLabel = self createFontString("hudsmall", 0.8);
 	timerLabel setPoint("TOP RIGHT", "TOP RIGHT", -135, 150);
-	timerLabel setText("Press ^3F5 ^7to ready up: ");
+	timerLabel setText("Press ^3[{skip}] ^7to ready up: ");	
 	timerLabel.sort = 1001;
 	timerLabel.foreground = true;
 	timerLabel.hidewheninmenu = false;
 	timerLabel.alpha = 0;	
 	timerLabel fadeOverTime(0.8);
 	timerLabel.alpha = 1;
+	self.skipLabel = timerLabel;
 	
-	for(;;)
-	{
-		level waittill("intermission_skip", globalSkip);
+	self notifyonplayercommand("skip_intermission", "skip");
+	self waittill("skip_intermission");
 		
-		if (globalSkip)
-		{
-			timerLabel destroy();
-			destroyIntermissionTimer();
-			level notify("intermission_end");
-			break;
-		}
-		else if (survivorsCount() < 2) timerLabel setText("Waiting other players ^3" + level.timerSkip + "^7/" + survivorsCount() + ": ");
+	level.skip_intermission++;
+	if (level.skip_intermission == survivorsCount())
+	{
+		if (survivorsCount() > 1) timerLabel setText("     Waiting other players ^3" + level.skip_intermission + "^7/" + survivorsCount() + ": ");
+		level.timerHud destroy();
+		level notify("intermission_end");
 	}
 }
 

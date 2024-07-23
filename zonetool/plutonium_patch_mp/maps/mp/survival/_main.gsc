@@ -37,7 +37,6 @@ init()
 	clearScoreInfo();	
 		
 	level.wave_num = 0;
-	level.timerSkip = 0;
 	level.axisTarget = undefined;
 	
 	level.bots_connected = 0;
@@ -123,7 +122,7 @@ onWaveEnd()
 			array_thread(level.players, maps\mp\gametypes\_hud_message::notifyMessage, level.notifyDialog);
 			
 			wait 8;
-			onIntermission();
+			onIntermission();			
 			startedWaveTimer();
 		}
 		
@@ -158,9 +157,7 @@ onIntermission()
 {
 	level endon("intermission_end");
 	level notify("intermission");
-	
-	level.timerSkip = 0;
-	
+
 	timer = createServerFontString("hudsmall", 0.8);
 	timer setPoint("TOP RIGHT", "TOP RIGHT", -120, 150);
 	timer.sort = 1001;
@@ -168,30 +165,30 @@ onIntermission()
 	timer.hidewheninmenu = false;
 	timer.alpha = 0;	
 	timer fadeOverTime(0.8);
-	timer.alpha = 1;	
+	timer.alpha = 1;
 	timer maps\mp\gametypes\_hud::fontPulseInit();
+	timer setValue(30);
 	level.timerHud = timer;
-	
-	offset = 0;
-	countTime = 30;	
+
+	level.skip_intermission = 0;
+	survivors = getSurvivorsAlive();
+
+	foreach(survivor in survivors)
+	{
+		survivor maps\mp\survival\_survivors::waveChallengesHudInit();
+		survivor thread maps\mp\survival\_survivors::watchSkipResponse();
+	}
+
+	countTime = 30;
 	while (countTime > 0)
 	{
-		if(level.timerSkip == survivorsCount()) break;		
-		if(!offset && countTime < 10)
-		{
-			offset = 1;
-			timer setPoint("TOP RIGHT", "TOP RIGHT", -125, 150);
-		}
-		
 		wait (timer.inFrames * 0.066);
 		timer setValue(countTime);
 		countTime--;
 		wait (1 - (timer.inFrames * 0.066));
 	}
-	
-	level notify("intermission_skip", 1);
 	timer destroy();
-	level.timerHud = undefined;
+	level notify("intermission_end");
 }
 
 isLastWave() //this mod is under development, so there are still some things to be implemented :c
@@ -209,6 +206,13 @@ isLastWave() //this mod is under development, so there are still some things to 
 
 startedWaveTimer()
 {
+	foreach(player in level.players)
+		if (isDefined(player.skipLabel))
+		{
+			player.skipLabel destroyElem();
+			player.skipLabel = undefined;
+		}
+
 	timer = createServerFontString("hudbig", 1);
 	timer setPoint("CENTER", "CENTER", 0, 0);
 	timer.sort = 1001;
