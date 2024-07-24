@@ -474,10 +474,44 @@ dogAbility()
 	dogModel.hitBox = hitBox;	
 	self.dogModel = dogModel;
 	
+	self thread dogObjetive();
 	self thread onDogDeath();
 	self thread onDogDamage();
 	self thread dogSounds();
 	self thread dogTest();
+}
+
+dogObjetive()
+{
+	self endon("death");
+	self endon("disconnect");
+	level endon("game_ended");
+	
+	target = undefined;
+
+	for (;;)
+	{
+		for (i = 0; i < level.players.size; i++)
+		{
+			player = level.players[i];
+			
+			if (player == self || !isreallyalive(player) || player.team == "axis") 
+				continue;
+			
+			if (!isDefined(target) || distancesquared(self.origin, player.origin) < distancesquared(self.origin, target.origin))
+				target = player;
+		}
+		
+		if (isDefined(target))
+		{
+			self maps\mp\bots\_bot_utility::SetScriptGoal(target.origin, 32);
+			self thread maps\mp\bots\_bot_script::stop_go_target_on_death(target);
+			
+			if (self waittill_any_return("goal", "bad_path", "new_goal") != "new_goal")
+				self maps\mp\bots\_bot_utility::ClearScriptGoal();
+		}
+		wait 0.35;
+	}
 }
 
 onDogDamage()

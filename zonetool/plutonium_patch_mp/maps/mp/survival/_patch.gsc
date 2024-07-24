@@ -3,6 +3,7 @@
 #include maps\mp\survival\_utility;
 #include maps\mp\bots\_bot_utility;
 #include maps\mp\bots\_bot_internal;
+#include maps\mp\bots\_bot_script;
 #include maps\mp\gametypes\_weapons;
 #include maps\mp\gametypes\_hud_util;
 
@@ -308,9 +309,57 @@ _playDeathSound()
 
 bots_patch_replacefunc()
 {
-	replacefunc(maps\mp\bots\_bot::add_bot, maps\mp\survival\_bots::addBot);
-	replacefunc(maps\mp\bots\_bot_internal::doBotMovement_loop, ::_doBotMovement_loop);
+	replacefunc(maps\mp\bots\_bot::add_bot, maps\mp\survival\_bots::addBot);	
+	replacefunc(maps\mp\bots\_bot_internal::crouch, ::_crouch);
+	replacefunc(maps\mp\bots\_bot_internal::prone, ::_prone);
 	replacefunc(maps\mp\bots\_bot_internal::jump, ::_jump);
+	replacefunc(maps\mp\bots\_bot_internal::doBotMovement_loop, ::_doBotMovement_loop);
+	replacefunc(maps\mp\bots\_bot_script::start_bot_threads, ::_start_bot_threads);
+}
+
+_crouch()
+{
+	if (self isusingremote() || self is_dog())
+		return;
+	
+	self BotBuiltinBotAction( "+gocrouch" );
+	self BotBuiltinBotAction( "-goprone" );
+}
+
+_prone()
+{
+	if (self isusingremote() || self is_dog())
+		return;
+	
+	self BotBuiltinBotAction( "-gocrouch" );
+	self BotBuiltinBotAction( "+goprone" );
+}
+
+_jump(surfaceInFront) //dog jump anim move the origin, real jump if has surface in front
+{
+	self endon("death");
+	self endon("disconnect");
+	self notify("bot_jump");
+	self endon("bot_jump");
+
+	if (self IsUsingRemote())
+		return;
+
+	if (self getStance() != "stand")
+	{
+		self stand();
+		wait 1;
+	}
+	
+	if (self is_dog() && !isDefined(surfaceInFront))
+	{
+		self thread _setDogAnim("german_shepherd_run_jump_40", 0.65);
+		return;
+	}
+
+	self botAction("+gostand");
+	wait 0.05;
+	self botAction("-gostand");
 }
 
 _doBotMovement_loop(data) //define surfaceInFront to _jump()
@@ -406,39 +455,49 @@ _doBotMovement_loop(data) //define surfaceInFront to _jump()
 				self thread sprint();
 		}
 	}
+
+	if (self is_dog()) self.dogModel.angles = (0, dir[1], 0);
 }
 
-_jump(surfaceInFront) //dog jump anim move the origin, real jump if has surface in front
+_start_bot_threads()
 {
-	self endon("death");
 	self endon("disconnect");
-	self notify("bot_jump");
-	self endon("bot_jump");
-
-	if (self IsUsingRemote())
-		return;
-
-	if (self getStance() != "stand")
+	level endon("game_ended");
+	self endon("death");
+	
+	gameflagwait("prematch_done");
+	
+	self thread bot_weapon_think();
+	self thread doReloadCancel();
+	
+	// script targeting
+	if (getdvarint("bots_play_target_other") && !(self is_dog()))
 	{
-		self stand();
-		wait 1;
+		self thread bot_target_vehicle();
+		self thread bot_equipment_kill_think();
 	}
 	
-	if (isSubStr(self.botType, "dog_")) 
-	{	
-		if(isdefined(surfaceInFront))
-		{
-			self botAction("+gostand");
-			wait 0.05;
-			self botAction("-gostand");
-		}
-		else self thread _setDogAnim("german_shepherd_run_jump_40", 0.65);
-	}
-	else
+	// awareness
+	self thread bot_uav_think();
+	self thread bot_listen_to_steps();
+	self thread follow_target();
+	
+	// camp and follow
+	if (getdvarint("bots_play_camp") && !(self is_dog()))
 	{
-		self botAction("+gostand");
-		wait 0.05;
-		self botAction("-gostand");
+		self thread bot_think_follow();
+		self thread bot_think_camp();
+	}
+	
+	// nades
+	if (getdvarint("bots_play_nade") && !(self is_dog()))
+	{
+		self thread bot_jav_loc_think();
+		self thread bot_use_tube_think();
+		self thread bot_use_grenade_think();
+		self thread bot_use_equipment_think();
+		self thread bot_watch_riot_weapons();
+		self thread bot_watch_think_mw2(); // bots play mw2
 	}
 }
 

@@ -6,7 +6,6 @@ init()
 	replacefunc(maps\mp\killstreaks\_autosentry::sentry_initSentry, ::sentryInitSentry);
 	replacefunc(maps\mp\killstreaks\_autosentry::sentry_setPlaced, ::sentrySetPlaced);
 	replacefunc(maps\mp\killstreaks\_autosentry::updateSentryPlacement, ::updateSentryPlacement);
-	replacefunc(maps\mp\bots\_bot_internal::knife, ::knife);
 	replacefunc(maps\mp\_equipment::trophyBreak, ::trophyBreak);
 	replacefunc(maps\mp\_equipment::trophyUseListener, ::trophyUseListener);
 	
@@ -222,29 +221,6 @@ sentryAttackTargets()
 			self thread maps\mp\killstreaks\_autosentry::sentry_burstFireStop();
 		}
 	}
-}
-
-knife(target)
-{
-	if (!isDefined(target) || target.classname == "misc_turret") return;
-	
-	self endon("death");
-	self endon("disconnect");
-	self notify("bot_knife");
-	self endon("bot_knife");
-
-	self.bot.isknifing = true;
-	self.bot.isknifingafter = true;
-
-	self botAction("+melee");
-	wait 0.05;
-	self botAction("-melee");
-
-	self.bot.isknifing = false;
-
-	wait 1;
-
-	self.bot.isknifingafter = false;
 }
 
 onSentryDeath()

@@ -403,7 +403,7 @@ is_bot()
 
 is_dog()
 {
-	return self is_bot() && isSubStr(self.botType, "dog_");
+	return isDefined(self.botType) && string_starts_with(self.botType, "dog_");
 }
 
 survivorsCount()
