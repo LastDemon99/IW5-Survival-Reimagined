@@ -49,6 +49,7 @@ menufile,ui_mp/connect.menu
 menufile,ui_mp/scoreboard.menu
 menufile,ui_mp/muteplayer.menu
 menufile,ui_mp/demo_playercard_hd.menu
+menufile,ui_mp/weaponbar_hd.menu
 
 # XMODEL
 xmodel,com_laptop_2_open

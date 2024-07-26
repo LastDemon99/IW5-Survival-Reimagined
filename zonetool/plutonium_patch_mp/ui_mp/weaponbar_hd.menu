@@ -1,0 +1,272 @@
+{
+	menuDef
+	{
+		name "weaponbar_hd"
+		rect 0 0 640 480 4 4
+		visible 1
+		forecolor 1 1 1 1
+        visible when(((!(ui_active())) && (!(dvarbool(g_hardcore))) && (!(flashbanged())) && (!((weaponname() == "killstreak_ac130_mp") || (weaponname() == "killstreak_helicopter_minigun_mp") || (weaponname() == "killstreak_predator_missile_mp") || ((weaponname() == "ac130_105mm_mp") || (weaponname() == "ac130_40mm_mp") || (weaponname() == "ac130_25mm_mp")) || (adsjavelin()) || (weaponname() == "heli_remote_mp") || missilecam() || (weaponname() == "uav_remote_mp") || ((weaponname() == "mortar_remote_mp") || (weaponname() == "mortar_remote_zoom_mp")) || (weaponname() == "killstreak_remote_tank_remote_mp") || (weaponname() == "killstreak_remote_turret_remote_mp"))) && (!isempjammed()) && (!(dvarint(scr_gameended))) && ((!isdemoplaying()) || (!isdemofreecamera() && !isdemofollowcamera())) && (!((weaponname() == "killstreak_remote_tank_laptop_mp") || (weaponname() == "killstreak_remote_turret_laptop_mp")))) && !(selecting_location()) && (!(spectatingfree())));
+
+		itemDef
+		{
+			rect -246.667 -39.3333 200 21.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_iw5_divider"
+		}
+		
+		itemDef
+		{
+			rect -115.333 -25.3333 37.3333 0.666667 10 10
+			decoration
+			visible 1
+			ownerdraw 119
+			forecolor 1 1 1 1
+			type 8
+			textfont 9
+			textscale 0.437475
+			textstyle 6
+			visible when ( dvarstring("ui_use_slot") == "none" )
+		}
+		
+		itemDef
+		{
+			rect -115.333 -25.3333 37.3333 0.666667 10 10
+			decoration
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 9
+            textscale 0.437475
+			textstyle 6
+            exp text ( dvarint( "ui_" + dvarstring("ui_use_slot") ) )
+			visible when ( dvarstring("ui_use_slot") == "claymore" || dvarstring("ui_use_slot") == "c4" || dvarstring("ui_use_slot") == "throwingknife" )
+		}
+		
+		itemDef
+        {
+            name "clipGraphic"
+            rect -115.333 -36 0 0 10 10
+            decoration
+            visible 1
+            type 8
+            forecolor 1 1 1 0.65
+            ownerdraw 117
+            visible when (dvarstring("ui_use_slot") == "none")
+        }
+		
+		itemDef
+		{
+			name "clipGraphic"
+			rect -115.333 -48 0 0 10 10
+			decoration
+			visible 1
+			ownerdraw 121
+			forecolor 1 1 1 0.65
+			type 8
+			visible when ( dvarstring("ui_use_slot") == "none" )
+		}
+		
+		itemDef
+		{
+			rect -92 -45 37.3333 0.666667 10 10
+			decoration
+			visible 1
+			ownerdraw 81
+			forecolor 1 1 1 1
+			type 8
+			textfont 10
+			textalign 2
+			textscale 0.3333
+			textstyle 3
+		}
+		
+		itemDef
+		{
+			name "lowammowarning"
+			rect -50 -20 100 100 2 2
+			decoration
+			visible 1
+			ownerdraw 120
+			forecolor 1 1 1 0.65
+			type 8
+			textfont 9
+			textalign 9
+			textscale 0.3333
+			textstyle 3
+			visible when ( ( ! ( inkillcam( ) ) ) && ( ! ( spectatingclient( ) ) ) && ( !isdemoplaying( ) ) && dvarstring( "ui_gametype" ) != "oic" )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -96 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 3 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -100 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 2 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -104 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 1 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -108 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 1 1 1 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -127 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 3 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -131 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 2 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -135 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 1 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -139 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 1 1 1 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) )
+		}
+
+        itemDef
+		{
+			rect -9 207 18 18 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "hud_icon_claymore" )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect -3.5 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 1" ) )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect 17 220 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( dvarint("ui_claymore") )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect 51 207 18 18 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "hud_icon_c4" )
+			visible when ( dvarint("ui_c4") )
+		}
+		
+		itemDef
+		{
+			rect 57 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 5" ) )
+			visible when ( dvarint("ui_c4") )
+		}
+		
+		itemDef
+		{
+			rect 77 220 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( dvarint("ui_c4") )
+			visible when ( dvarint("ui_c4") )
+		}
+	}
+}
