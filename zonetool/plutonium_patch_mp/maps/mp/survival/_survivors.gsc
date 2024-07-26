@@ -48,7 +48,7 @@ onPlayerSpawn()
 		self setNades("frag_grenade_mp", 2);
 		
 		self setClientDvar("ui_streak", "");
-		self setClientDvar("ui_body_armor", 1);
+		self setClientDvar("ui_body_armor", 250);
 		self setClientDvar("ui_self_revive", 1);
 		self setClientDvar("ui_use_slot", "none");
 		self setClientDvar("client_cmd", "");
@@ -159,7 +159,7 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 {
 	self clearLastStand();
 	if (isDefined(self.currMenu)) self maps\mp\lethalbeats\_dynamic_menu::closeDynamicMenu();
-	self hideArmorHud();
+	self setClientDvar("ui_body_armor", 0);
 	
 	self [[level.prevCallbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 }
@@ -197,7 +197,7 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 	self.lastStand = 1;	
 	
 	if (isDefined(self.currMenu)) self maps\mp\lethalbeats\_dynamic_menu::closeDynamicMenu();
-	self hideArmorHud();
+	self setClientDvar("ui_body_armor", 0);
 	
 	lastStandParams = spawnstruct();
     lastStandParams.einflictor = eInflictor;
@@ -506,30 +506,8 @@ watchTotalShots()
 
 hudInit()
 {
-	self armorHudInit();
 	self waveChallengesHudInit();
 	self maps\mp\lethalbeats\_trigger::clearCustomHintString();
-}
-
-armorHudInit()
-{
-	if (isDefined(self.armorHuds)) return;
-	
-	armorText = self createFontString("default", 1.5);
-	armorText setPoint("CENTER", "BOTTOM", -35, -55);
-	armorText setText("Armor");
-	armorText.alpha = 0.8;
-	armorText.glowColor = (0.71, 0.65, 0.26);
-	armorText fadeOverTime(0.5);
-	
-	armorAmount = self createFontString("default", 1.5);
-	armorAmount setPoint("CENTER", "BOTTOM", 35, -55);
-	armorAmount.alpha = 0.8;
-	armorAmount.glowColor = (0.71, 0.65, 0.26);
-	armorAmount fadeOverTime(0.5);
-	
-	self.armorHuds = [armorText, armorAmount];	
-	self thread onDamageArmorHud();
 }
 
 waveChallengesHudInit()

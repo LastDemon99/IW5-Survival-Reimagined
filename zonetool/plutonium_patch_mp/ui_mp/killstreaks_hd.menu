@@ -1,0 +1,137 @@
+{
+	menuDef
+	{
+		name "killstreaks_hd"
+		rect 0 0 640 480 10 10
+		visible 1
+		forecolor 1 1 1 1
+		visible when ( ( ( ! ( ui_active( ) ) ) && ( ! ( dvarbool( "g_hardcore" ) ) ) && ( ! ( flashbanged( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_ac130_mp" ) || ( weaponname( ) == "killstreak_helicopter_minigun_mp" ) || ( weaponname( ) == "killstreak_predator_missile_mp" ) || ( ( weaponname( ) == "ac130_105mm_mp" ) || ( weaponname( ) == "ac130_40mm_mp" ) || ( weaponname( ) == "ac130_25mm_mp" ) ) || ( adsjavelin( ) ) || ( weaponname( ) == "heli_remote_mp" ) || missilecam( ) || ( weaponname( ) == "uav_remote_mp" ) || ( ( weaponname( ) == "mortar_remote_mp" ) || ( weaponname( ) == "mortar_remote_zoom_mp" ) ) || ( weaponname( ) == "killstreak_remote_tank_remote_mp" ) || ( weaponname( ) == "killstreak_remote_turret_remote_mp" ) ) ) && ( !isempjammed( ) ) && ( ! ( dvarint( "scr_gameended" ) ) ) && ( ( !isdemoplaying( ) ) || ( !isdemofreecamera( ) && !isdemofollowcamera( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_remote_tank_laptop_mp" ) || ( weaponname( ) == "killstreak_remote_turret_laptop_mp" ) ) ) ) && ! ( selecting_location( ) ) && ( ! ( spectatingclient( ) || spectatingfree( ) ) ) && ( ! ( inkillcam( ) ) ) && ( ! ( milliseconds( ) - localvarint( "ui_show_killedBy" ) < 4000 || ( inkillcam( ) ) ) ) )
+		
+		itemDef
+		{
+			rect -17.5 170 35 35 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.6
+			exp material ( "teamperk_blast_shield" )
+			visible when ( dvarint("ui_body_armor") )
+			exp rect w (35 + (max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 15) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 15))
+			exp rect h (35 + (max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 15) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 15))
+			exp rect x ((0 - 17.5) - ((max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 7.5) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 7.5)))
+			exp rect y (170 - ((max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 7.5) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 7.5)))
+		}
+
+		itemDef
+		{
+			rect -17.5 170 35 35 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "teamperk_blast_shield" )
+			visible when ( dvarint("ui_body_armor") )
+			exp forecolor r (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.2))
+			exp forecolor g (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.7))
+    		exp forecolor b (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.8))
+			exp forecolor a (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.3))
+			exp rect y (170 + (select(milliseconds() - localvarint("armor_damage_start") < 200, sin((milliseconds() - localvarint("armor_damage_start")) * 0.05) * 4, 0)))
+		}
+
+		itemDef
+		{
+			rect -55 195 1 1 2 2
+			decoration
+			visible 1
+			forecolor 0.9 1 0.6 0.8
+			textfont 3
+			textscale 0.35
+			textstyle 3
+			text "Armor"
+			visible when ( dvarint("ui_body_armor") )
+			exp forecolor a (1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1))
+		}
+		
+		itemDef
+		{
+			rect 27 195 1 1 2 2
+			decoration
+			visible 1
+			forecolor 0.9 1 0.6 0.8
+			textfont 3
+			textscale 0.35
+			textstyle 3
+			exp text ( dvarint("ui_body_armor") + "" )
+			visible when ( dvarint("ui_body_armor") )
+			exp forecolor a (1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1))
+		}
+
+		itemDef
+		{
+			rect -150 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "specialty_self_revive" )
+			visible when ( dvarint("ui_self_revive") )
+		}
+		
+		itemDef
+		{
+			rect -185 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk1") )
+			visible when ( dvarstring("ui_perk1") != "" )
+		}
+		
+		itemDef
+		{
+			rect -220 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk2") )
+			visible when ( dvarstring("ui_perk2") != "" )
+		}
+		
+		itemDef
+		{
+			rect -255 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk3") )
+			visible when ( dvarstring("ui_perk3") != "" )
+		}
+
+		itemDef
+		{
+			rect 111 209 20 20 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_streak") )
+			visible when ( dvarstring("ui_streak") != "" )
+		}
+		
+		itemDef
+		{
+			rect 117 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 4" ) )
+			visible when ( dvarstring("ui_streak") != "" )
+		}
+	}
+}

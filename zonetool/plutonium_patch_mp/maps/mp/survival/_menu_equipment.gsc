@@ -49,7 +49,7 @@ onMenuResponse()
 			else if (response == 7)
 			{
 				self.bodyArmor = 250;
-				self setClientDvar("ui_body_armor", 1);
+				self setClientDvar("ui_body_armor", self.bodyArmor);
 			}
 			else if (response == 8)
 			{

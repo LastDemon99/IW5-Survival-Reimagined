@@ -20,7 +20,40 @@
                 execnow "bind F5 skip";
                 execnow "bind BUTTON_START skip";
             }
+            if (dvarstring("ui_display") == "armor_damage")
+            {
+                setLocalVarInt armor_damage_start (milliseconds());
+            }
             close self;
         }
+    }
+    menuDef
+    {
+        name "shield_effect"     
+        rect 0 0 640 480 10 10
+        decoration
+
+        onOpen
+        {
+            lerp alpha from 1 to 1 over "0.0";
+            lerp scale from 1 to "1.0" over "0.0";
+            setLocalVarInt armor_update_time (milliseconds() + 3000);
+        }
+        
+        onRequestClose
+        {
+            lerp alpha from 1 to 0 over "1.0";
+        }
+
+        itemDef
+		{
+			rect -17.5 170 45 45 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.85
+			exp material ( "teamperk_blast_shield" )
+            // exp forecolor a (min(((localvarint("armor_update_time") - milliseconds()) / 6000) * 2, 1));
+		}
     }
 }

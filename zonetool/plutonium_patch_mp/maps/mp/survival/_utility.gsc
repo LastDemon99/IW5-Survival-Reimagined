@@ -112,39 +112,13 @@ onDamageArmor(damage)
 	if (armor <= 0)
 	{
 		self.bodyArmor = 0;
-		self hideArmorHud();
+		self setClientDvar("ui_body_armor", 0);
 		return;
 	}
 	
 	self.bodyArmor = armor;
-	self notify("armor_damage");
-	self thread onDamageArmorHud();
-}
-
-onDamageArmorHud()
-{
-	self endon("death");
-	self endon("disconnect");
-	self endon("armor_damage");
-	
-	self.armorHuds[0].alpha = 0.8;
-	self.armorHuds[1].alpha = 0.8;
-	self.armorHuds[1] setValue(self.bodyArmor);
-	
-	wait 4;
-	
-	self.armorHuds[0] fadeOverTime(0.5);
-	self.armorHuds[0].alpha = 0;
-	
-	self.armorHuds[1] fadeOverTime(0.5);
-	self.armorHuds[1].alpha = 0;
-}
-
-hideArmorHud()
-{
-	self.armorHuds[0].alpha = 0;
-	self.armorHuds[1].alpha = 0;
-	self setClientDvar("ui_body_armor", 0);
+	self setClientDvar("ui_body_armor", self.bodyArmor);
+	self hudDisplay("armor_damage");
 }
 
 destroyIntermissionTimer()
@@ -224,10 +198,6 @@ destroySurvivalHuds()
 	ch["huds"][1] destroy();
 	ch["huds"][2] destroy();
 	self.ch2 = undefined;
-	
-	self.armorHuds[0] destroy();
-	self.armorHuds[1] destroy();
-	self.armorHuds = undefined;
 }
 
 updatePerks()
