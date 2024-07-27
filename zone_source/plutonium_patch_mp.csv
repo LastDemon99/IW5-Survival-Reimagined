@@ -40,7 +40,6 @@ stringtable,mp/killstreakTable.csv
 
 # MENUS
 menufile,ui_mp/patch_mp_ingame.txt
-menufile,ui_mp/ui_display.menu
 menufile,ui_mp/scorebar_hd.menu
 menufile,ui_mp/scriptmenus/custom_options.menu
 menufile,ui_mp/scriptmenus/shop_menu.menu

@@ -80,7 +80,7 @@ waitmenu()
 hudDisplay(hud)
 {
 	self setClientDvar("ui_display", hud);
-	self openpopupmenu("ui_display");
+	self OpenMenu("ui_display");
 }
 
 notifyHideInMenu(hide)
