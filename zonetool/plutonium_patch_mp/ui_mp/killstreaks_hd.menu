@@ -5,133 +5,920 @@
 		rect 0 0 640 480 10 10
 		visible 1
 		forecolor 1 1 1 1
-		visible when ( ( ( ! ( ui_active( ) ) ) && ( ! ( dvarbool( "g_hardcore" ) ) ) && ( ! ( flashbanged( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_ac130_mp" ) || ( weaponname( ) == "killstreak_helicopter_minigun_mp" ) || ( weaponname( ) == "killstreak_predator_missile_mp" ) || ( ( weaponname( ) == "ac130_105mm_mp" ) || ( weaponname( ) == "ac130_40mm_mp" ) || ( weaponname( ) == "ac130_25mm_mp" ) ) || ( adsjavelin( ) ) || ( weaponname( ) == "heli_remote_mp" ) || missilecam( ) || ( weaponname( ) == "uav_remote_mp" ) || ( ( weaponname( ) == "mortar_remote_mp" ) || ( weaponname( ) == "mortar_remote_zoom_mp" ) ) || ( weaponname( ) == "killstreak_remote_tank_remote_mp" ) || ( weaponname( ) == "killstreak_remote_turret_remote_mp" ) ) ) && ( !isempjammed( ) ) && ( ! ( dvarint( "scr_gameended" ) ) ) && ( ( !isdemoplaying( ) ) || ( !isdemofreecamera( ) && !isdemofollowcamera( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_remote_tank_laptop_mp" ) || ( weaponname( ) == "killstreak_remote_turret_laptop_mp" ) ) ) ) && ! ( selecting_location( ) ) && ( ! ( spectatingclient( ) || spectatingfree( ) ) ) && ( ! ( inkillcam( ) ) ) && ( ! ( milliseconds( ) - localvarint( "ui_show_killedBy" ) < 4000 || ( inkillcam( ) ) ) ) )
+		visible when ( ( dvarstring( "g_gametype" ) != "survival" ) && ( ( ! ( ui_active( ) ) ) && ( ! ( dvarbool( "g_hardcore" ) ) ) && ( ! ( flashbanged( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_ac130_mp" ) || ( weaponname( ) == "killstreak_helicopter_minigun_mp" ) || ( weaponname( ) == "killstreak_predator_missile_mp" ) || ( ( weaponname( ) == "ac130_105mm_mp" ) || ( weaponname( ) == "ac130_40mm_mp" ) || ( weaponname( ) == "ac130_25mm_mp" ) ) || ( adsjavelin( ) ) || ( weaponname( ) == "heli_remote_mp" ) || missilecam( ) || ( weaponname( ) == "uav_remote_mp" ) || ( ( weaponname( ) == "mortar_remote_mp" ) || ( weaponname( ) == "mortar_remote_zoom_mp" ) ) || ( weaponname( ) == "killstreak_remote_tank_remote_mp" ) || ( weaponname( ) == "killstreak_remote_turret_remote_mp" ) ) ) && ( !isempjammed( ) ) && ( ! ( dvarint( "scr_gameended" ) ) ) && ( ( !isdemoplaying( ) ) || ( !isdemofreecamera( ) && !isdemofollowcamera( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_remote_tank_laptop_mp" ) || ( weaponname( ) == "killstreak_remote_turret_laptop_mp" ) ) ) ) && ! ( selecting_location( ) ) && ( ! ( spectatingclient( ) || spectatingfree( ) ) ) && ( ! ( inkillcam( ) ) ) && ( ! ( milliseconds( ) - localvarint( "ui_show_killedBy" ) < 4000 || ( inkillcam( ) ) ) ) )
 		
 		itemDef
 		{
-			rect -17.5 170 35 35 2 2
-			decoration
-			visible 1
-			style 3
-			forecolor 1 1 1 0.6
-			exp material ( "teamperk_blast_shield" )
-			visible when ( dvarint("ui_body_armor") )
-			exp rect w (35 + (max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 15) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 15))
-			exp rect h (35 + (max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 15) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 15))
-			exp rect x ((0 - 17.5) - ((max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 7.5) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 7.5)))
-			exp rect y (170 - ((max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 7.5) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 7.5)))
-		}
-
-		itemDef
-		{
-			rect -17.5 170 35 35 2 2
+			rect -14.6667 -66.6667 13.3333 6.66667 10 10
 			decoration
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			exp material ( "teamperk_blast_shield" )
-			visible when ( dvarint("ui_body_armor") )
-			exp forecolor r (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.2))
-			exp forecolor g (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.7))
-    		exp forecolor b (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.8))
-			exp forecolor a (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.3))
-			exp rect y (170 + (select(milliseconds() - localvarint("armor_damage_start") < 200, sin((milliseconds() - localvarint("armor_damage_start")) * 0.05) * 4, 0)))
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 1 ) )
 		}
-
 		itemDef
 		{
-			rect -55 195 1 1 2 2
-			decoration
-			visible 1
-			forecolor 0.9 1 0.6 0.8
-			textfont 3
-			textscale 0.35
-			textstyle 3
-			text "Armor"
-			visible when ( dvarint("ui_body_armor") )
-			exp forecolor a (1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1))
-		}
-		
-		itemDef
-		{
-			rect 27 195 1 1 2 2
-			decoration
-			visible 1
-			forecolor 0.9 1 0.6 0.8
-			textfont 3
-			textscale 0.35
-			textstyle 3
-			exp text ( dvarint("ui_body_armor") + "" )
-			visible when ( dvarint("ui_body_armor") )
-			exp forecolor a (1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1))
-		}
-
-		itemDef
-		{
-			rect -150 170 28 28 2 2
+			rect -14.6667 -66.6667 13.3333 6.66667 10 10
 			decoration
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			exp material ( "specialty_self_revive" )
-			visible when ( dvarint("ui_self_revive") )
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 0 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 ) )
 		}
-		
 		itemDef
 		{
-			rect -185 170 28 28 2 2
+			rect -14.6667 -72 13.3333 6.66667 10 10
 			decoration
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			exp material ( dvarstring("ui_perk1") )
-			visible when ( dvarstring("ui_perk1") != "" )
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 1 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 2 ) )
 		}
-		
 		itemDef
 		{
-			rect -220 170 28 28 2 2
+			rect -14.6667 -72 13.3333 6.66667 10 10
 			decoration
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			exp material ( dvarstring("ui_perk2") )
-			visible when ( dvarstring("ui_perk2") != "" )
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 1 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 1 ) )
 		}
-		
 		itemDef
 		{
-			rect -255 170 28 28 2 2
+			rect -14.6667 -77.3333 13.3333 6.66667 10 10
 			decoration
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			exp material ( dvarstring("ui_perk3") )
-			visible when ( dvarstring("ui_perk3") != "" )
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 2 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 3 ) )
 		}
-
 		itemDef
 		{
-			rect 111 209 20 20 2 2
+			rect -14.6667 -77.3333 13.3333 6.66667 10 10
 			decoration
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			exp material ( dvarstring("ui_streak") )
-			visible when ( dvarstring("ui_streak") != "" )
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 2 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 2 ) )
 		}
-		
 		itemDef
 		{
-			rect 117 237 7 14 2 2
+			rect -14.6667 -82.6667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 3 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 4 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -82.6667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 3 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 3 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -88 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 4 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 5 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -88 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 4 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 4 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -93.3333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 5 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 6 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -93.3333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 5 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 5 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -98.6667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 6 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 7 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -98.6667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 6 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 6 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -104 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 7 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 8 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -104 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 7 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 7 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -109.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 8 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 9 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -109.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 8 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 8 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -114.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 9 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 10 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -114.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 9 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 9 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -120 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 10 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 11 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -120 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 10 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 10 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -125.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 11 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 12 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -125.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 11 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 11 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -130.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 12 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 13 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -130.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 12 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 12 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -136 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 13 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 14 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -136 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 13 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 13 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -141.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 14 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 15 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -141.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 14 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 14 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -146.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 15 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 16 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -146.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 15 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 15 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -152 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 16 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 17 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -152 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 16 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 16 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -157.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 17 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 18 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -157.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 17 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 17 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -162.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 18 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 19 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -162.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 18 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 18 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -168 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 19 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 20 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -168 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 19 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 19 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -173.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 20 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 21 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -173.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 20 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 20 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -178.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 21 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 22 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -178.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 21 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 21 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -184 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 22 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 23 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -184 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 22 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 22 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -189.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 23 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 24 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -189.333 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 23 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 23 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -194.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_empty"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 24 ) && ( ( getplayerdata( "killstreaksState" , "count" ) ) < 25 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 -194.667 13.3333 6.66667 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bar_full"
+			textscale 0.55
+			visible when ( ( ( getplayerdata( "killstreaksState" , "count" ) ) > 24 ) && ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 24 ) )
+		}
+		itemDef
+		{
+			rect -14.6667 0 13.3333 0 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_frame_fade_top"
+			textscale 0.55
+			exp rect h ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) ) * ( 9 * 0.666 ) )
+			exp rect y ( ( - 65 ) - ( ( ( getplayerdata( "killstreaksState" , "countToNext" ) ) - 1 ) * ( 9 * 0.666 ) ) )
+		}
+		itemDef
+		{
+			rect -42.6667 -80 20 20 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_frame"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "nextIndex" ) == 1 && ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 )
+		}
+		itemDef
+		{
+			rect -42.6667 -100 20 20 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_frame"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "nextIndex" ) == 2 && ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 )
+		}
+		itemDef
+		{
+			rect -42.6667 -120 20 20 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_frame"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "nextIndex" ) == 3 && ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 )
+		}
+		itemDef
+		{
+			rect -23.3333 -74.6667 9.33333 9.33333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bridge"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "nextIndex" ) == 1 && ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 )
+		}
+		itemDef
+		{
+			rect -23.3333 -94.6667 9.33333 9.33333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bridge"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "nextIndex" ) == 2 && ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 )
+		}
+		itemDef
+		{
+			rect -23.3333 -114.667 9.33333 9.33333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_bridge"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "nextIndex" ) == 3 && ( getplayerdata( "killstreaksState" , "countToNext" ) ) > 0 )
+		}
+		itemDef
+		{
+			rect -45.3333 -62.6667 25.3333 25.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_highlight"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 0 ) )
+		}
+		itemDef
+		{
+			rect -45.3333 -82.6667 25.3333 25.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_highlight"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 1 ) )
+		}
+		itemDef
+		{
+			rect -45.3333 -102.667 25.3333 25.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_highlight"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 2 ) )
+		}
+		itemDef
+		{
+			rect -45.3333 -122.667 25.3333 25.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_killstreak_highlight"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 3 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -58.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			textscale 0.55
+			exp rect x ( ( - 49 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) + 7 )
+			exp rect y ( ( - 75 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) + 18 )
+			exp rect w ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			exp rect h ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 0 ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 0 ) , 16 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -58.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.5
+			background "hud_iw5_killstreak_box"
+			textscale 0.55
+			visible when ( ! getplayerdata( "killstreaksState" , "hasStreak" , 0 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -78.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.35
+			textscale 0.55
+			visible when ( ! getplayerdata( "killstreaksState" , "hasStreak" , 1 ) && getplayerdata( "killstreaksState" , "icons" , 1 ) != 0 )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 1 ) , 17 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -78.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			textscale 0.55
+			exp rect x ( ( - 49 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) + 7 )
+			exp rect y ( ( ( - 75 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 0 - 26 - 4 ) + 28 )
+			exp rect w ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			exp rect h ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 1 ) && getplayerdata( "killstreaksState" , "icons" , 1 ) != 0 && ! getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 1 ) , 16 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -78.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 1 ) && getplayerdata( "killstreaksState" , "icons" , 1 ) != 0 && getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 1 ) , 14 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -78.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.5
+			background "hud_iw5_killstreak_box"
+			textscale 0.55
+			visible when ( ! getplayerdata( "killstreaksState" , "hasStreak" , 1 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -98.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.35
+			textscale 0.55
+			visible when ( ! getplayerdata( "killstreaksState" , "hasStreak" , 2 ) && getplayerdata( "killstreaksState" , "icons" , 2 ) != 0 )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 2 ) , 17 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -98.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			textscale 0.55
+			exp rect x ( ( - 49 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) + 7 )
+			exp rect y ( ( ( - 75 - 0 - 26 * 2 - 4 * 2 ) + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) + 38 )
+			exp rect w ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			exp rect h ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 2 ) && getplayerdata( "killstreaksState" , "icons" , 2 ) != 0 && ! getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 2 ) , 16 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -98.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 2 ) && getplayerdata( "killstreaksState" , "icons" , 2 ) != 0 && getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 2 ) , 14 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -98.6667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.5
+			background "hud_iw5_killstreak_box"
+			textscale 0.55
+			visible when ( ! getplayerdata( "killstreaksState" , "hasStreak" , 2 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -118.667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.35
+			textscale 0.55
+			visible when ( ! getplayerdata( "killstreaksState" , "hasStreak" , 3 ) && getplayerdata( "killstreaksState" , "icons" , 3 ) != 0 )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 3 ) , 17 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -118.667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			textscale 0.55
+			exp rect x ( ( - 49 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) + 7 )
+			exp rect y ( ( ( - 75 - 0 - 26 * 3 - 4 * 3 ) + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) + 48 )
+			exp rect w ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			exp rect h ( ( 26 + ( ( sin( milliseconds( ) / 90 ) ) * 0.65 ) ) - 10 )
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 3 ) && getplayerdata( "killstreaksState" , "icons" , 3 ) != 0 && ! getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 3 ) , 16 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -118.667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 3 ) && getplayerdata( "killstreaksState" , "icons" , 3 ) != 0 && getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , getplayerdata( "killstreaksState" , "icons" , 3 ) , 14 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -118.667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.5
+			background "hud_iw5_killstreak_box"
+			textscale 0.55
+			visible when ( ! getplayerdata( "killstreaksState" , "hasStreak" , 3 ) )
+		}
+		itemDef
+		{
+			rect -41.3333 -138.667 17.3333 17.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "specialty_perks_all"
+			textscale 0.55
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 4 ) )
+		}
+		itemDef
+		{
+			rect -26.6667 -57 6.66667 14 10 10
 			decoration
 			visible 1
 			forecolor 1 1 0 1
 			textfont 6
-			textscale 0.25
+			textalign 2
+			textalignx -5
+			textaligny 15
 			textstyle 6
+			textscale 0.25
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 0 ) )
 			exp text ( "^3" + keybinding( "+actionslot 4" ) )
-			visible when ( dvarstring("ui_streak") != "" )
+		}
+		itemDef
+		{
+			rect -26.6667 -77 6.66667 14 10 10
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textalign 2
+			textalignx -5
+			textaligny 15
+			textstyle 6
+			textscale 0.25
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 1 ) && ! getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp text ( "^3" + keybinding( "+actionslot 5" ) )
+		}
+		itemDef
+		{
+			rect -26.6667 -97 6.66667 14 10 10
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textalign 2
+			textalignx -5
+			textaligny 15
+			textstyle 6
+			textscale 0.25
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 2 ) && ! getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp text ( "^3" + keybinding( "+actionslot 6" ) )
+		}
+		itemDef
+		{
+			rect -26.6667 -117 6.66667 14 10 10
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textalign 2
+			textalignx -5
+			textaligny 15
+			textstyle 6
+			textscale 0.25
+			visible when ( getplayerdata( "killstreaksState" , "hasStreak" , 3 ) && ! getplayerdata( "killstreaksState" , "isSpecialist" ) )
+			exp text ( "^3" + keybinding( "+actionslot 7" ) )
 		}
 	}
 }

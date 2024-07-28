@@ -11,7 +11,6 @@ main()
 	precacheMenu("muteplayer");
 	precacheMenu("popup_leavegame");
 	precacheMenu("shop_menu");
-	precacheMenu("custom_options");
 
 	setModeDvars();
 }
@@ -65,14 +64,6 @@ init()
 	level.waveEndMsg.duration = 2;
 	level.waveEndMsg.sound = "survival_wave_end_splash";
 	
-	level.waveHud = createServerFontString("hudsmall", 1);
-	level.waveHud setPoint("TOP LEFT", "TOP LEFT", 5, 105);
-	level.waveHud setText("Wave 1");
-	level.waveHud.sort = 1001;
-	level.waveHud.foreground = true;
-	level.waveHud.hidewheninmenu = false;
-	level.waveHud.alpha = 0;
-	
 	level.maxPerPlayerExplosives = 10;
 	level.healthRegenDisabled = 0;
 	
@@ -106,7 +97,6 @@ onWaveEnd()
 		if (!level.wave_num) 
 		{
 			level notify("callback_init");
-			level.waveHud.alpha = 1;
 			level.notifyDialog.sound = survivorsCount() == 1 ? "so_hq_mission_intro_sp" : "so_hq_mission_intro";
 			array_thread(level.players, maps\mp\gametypes\_hud_message::notifyMessage, level.notifyDialog);
 			wait 6;
@@ -140,7 +130,6 @@ onWaveEnd()
 		
 		thread botTypeDialog();
 		
-		level.waveHud setText("Wave " + level.wave_num);
 		array_thread(level.players, maps\mp\gametypes\_hud_message::notifyMessage, level.notifyHostiles);
 		array_thread(level.players, maps\mp\gametypes\_hud_message::notifyMessage, level.notifyHostiles2);
 		
@@ -354,18 +343,18 @@ setModeDvars()
 	setDvar("bots_manage_add", 18 - getDvarInt("max_survivors"));
 	setDvar("bots_main_chat", 0);
 	setDvar("bots_main_menu", 0);
-	setDvar("scr_war_timeLimit", 0);	
-	setDvar("scr_war_scorelimit", 0);	
-	setDvar("scr_war_numLives", 0);	
+	setDvar("scr_survival_timeLimit", 0);
+	setDvar("scr_survival_scorelimit", 0);	
+	setDvar("scr_survival_numLives", 0);	
 	setDvar("scr_player_maxhealth", 100);
 	setDvar("scr_player_healthregentime", 5);	
-	setDvar("scr_war_winlimit", 0);	
-    setDvar("scr_war_roundlimit", 0);	
-	setDvar("scr_war_roundswitch", 0);	
-    setDvar("scr_war_halftime", 0);	
-    setDvar("scr_war_promode", 0);	
-	setDvar("scr_war_playerrespawndelay", 0);
-	setDvar("scr_war_waverespawndelay", 0);	
+	setDvar("scr_survival_winlimit", 0);	
+    setDvar("scr_survival_roundlimit", 0);	
+	setDvar("scr_survival_roundswitch", 0);	
+    setDvar("scr_survival_halftime", 0);	
+    setDvar("scr_survival_promode", 0);	
+	setDvar("scr_survival_playerrespawndelay", 0);
+	setDvar("scr_survival_waverespawndelay", 0);	
 	setDvar("scr_game_graceperiod", 0);
 	setDvar("scr_game_playerwaittime", 0);
 	setDvar("scr_game_matchstarttime", 0);

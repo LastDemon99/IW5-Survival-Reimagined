@@ -25,6 +25,7 @@
 			visible 1
 			forecolor 1 1 1 1
 			textfont 10
+			textstyle 3
 			textscale 0.3333
 			exp text ( "Wave " + dvarInt("ui_wave") )
 		}
@@ -37,6 +38,7 @@
 			forecolor 1 1 1 1
 			textfont 9
 			textalign 1
+			textstyle 3
 			textscale 0.3333
 			exp rect x ( ( !dvarbool( "widescreen" ) * 64 ) )
 			exp text ( "Survival" )
@@ -50,6 +52,7 @@
 			forecolor 1 0.5 0 1
 			textfont 10
 			textalign 2
+			textstyle 3
 			textscale 0.3333
 			exp text ( secondsascountdown( ( gettime() - dvarInt("ui_start_time") ) / 1000 ) )
 		}

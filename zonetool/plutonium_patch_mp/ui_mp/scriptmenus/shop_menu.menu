@@ -272,7 +272,7 @@
             {
                 if ( dvarstring("menu_option0") != "@" && dvarstring("menu_option0") != "@-" && dvarInt("menu_options_range") > 0 &&  dvarInt("optionType0") != 0 && dvarInt("optionType0") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 0;
                 }
@@ -337,7 +337,7 @@
             {
                 if ( dvarstring("menu_option1") != "@" && dvarstring("menu_option1") != "@-" && dvarInt("menu_options_range") > 1 &&  dvarInt("optionType1") != 0 && dvarInt("optionType1") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 1;
                 }
@@ -402,7 +402,7 @@
             {
                 if ( dvarstring("menu_option2") != "@" && dvarstring("menu_option2") != "@-" && dvarInt("menu_options_range") > 2 &&  dvarInt("optionType2") != 0 && dvarInt("optionType2") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 2;
                 }
@@ -467,7 +467,7 @@
             {
                 if ( dvarstring("menu_option3") != "@" && dvarstring("menu_option3") != "@-" && dvarInt("menu_options_range") > 3 &&  dvarInt("optionType3") != 0 && dvarInt("optionType3") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 3;
                 }
@@ -532,7 +532,7 @@
             {
                 if ( dvarstring("menu_option4") != "@" && dvarstring("menu_option4") != "@-" && dvarInt("menu_options_range") > 4 &&  dvarInt("optionType4") != 0 && dvarInt("optionType4") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 4;
                 }
@@ -597,7 +597,7 @@
             {
                 if ( dvarstring("menu_option5") != "@" && dvarstring("menu_option5") != "@-" && dvarInt("menu_options_range") > 5 &&  dvarInt("optionType5") != 0 && dvarInt("optionType5") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 5;
                 }
@@ -662,7 +662,7 @@
             {
                 if ( dvarstring("menu_option6") != "@" && dvarstring("menu_option6") != "@-" && dvarInt("menu_options_range") > 6 &&  dvarInt("optionType6") != 0 && dvarInt("optionType6") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 6;
                 }
@@ -727,7 +727,7 @@
             {
                 if ( dvarstring("menu_option7") != "@" && dvarstring("menu_option7") != "@-" && dvarInt("menu_options_range") > 7 &&  dvarInt("optionType7") != 0 && dvarInt("optionType7") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 7;
                 }
@@ -792,7 +792,7 @@
             {
                 if ( dvarstring("menu_option8") != "@" && dvarstring("menu_option8") != "@-" && dvarInt("menu_options_range") > 8 &&  dvarInt("optionType8") != 0 && dvarInt("optionType8") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 8;
                 }
@@ -857,7 +857,7 @@
             {
                 if ( dvarstring("menu_option9") != "@" && dvarstring("menu_option9") != "@-" && dvarInt("menu_options_range") > 9 &&  dvarInt("optionType9") != 0 && dvarInt("optionType9") != 1 )
                 {
-                    scriptmenuresponse localVarInt( "ui_index" );
+                    scriptmenuresponse localVarString( "ui_index" );
                     play "mouse_click";
                     setLocalVarInt ui_index 9;
                 }

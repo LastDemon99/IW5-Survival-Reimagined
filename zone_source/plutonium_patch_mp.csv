@@ -6,9 +6,9 @@
 rawfile,maps/mp/lethalbeats/_dynamic_menu.gsc
 rawfile,maps/mp/lethalbeats/_trigger.gsc
 
-rawfile,maps/mp/gametypes/war.txt
-rawfile,maps/mp/gametypes/_menus.gsc
-rawfile,maps/mp/gametypes/_damage.gsc
+rawfile,maps/mp/gametypes/_gametypes.txt
+rawfile,maps/mp/gametypes/survival.txt
+rawfile,maps/mp/gametypes/survival.gsc
 
 rawfile,maps/mp/dynamic_menu_utility.gsc
 
@@ -28,6 +28,7 @@ rawfile,maps/mp/survival/_survivors.gsc
 rawfile,maps/mp/survival/_trigger.gsc
 rawfile,maps/mp/survival/_uav.gsc
 rawfile,maps/mp/survival/_utility.gsc
+rawfile,maps/mp/survival/_damage.gsc
 
 # STRINGTABLES
 stringtable,mp/main_options.csv
@@ -40,16 +41,17 @@ stringtable,mp/killstreakTable.csv
 
 # MENUS
 menufile,ui_mp/patch_mp_ingame.txt
-menufile,ui_mp/scorebar_hd.menu
 menufile,ui_mp/scriptmenus/custom_options.menu
 menufile,ui_mp/scriptmenus/shop_menu.menu
 menufile,ui_mp/scriptmenus/client_cmd.menu
 menufile,ui_mp/connect.menu
-menufile,ui_mp/scoreboard.menu
-menufile,ui_mp/muteplayer.menu
+menufile,ui_mp/democontrols_hd.menu
 menufile,ui_mp/demo_playercard_hd.menu
-menufile,ui_mp/weaponbar_hd.menu
 menufile,ui_mp/killstreaks_hd.menu
+menufile,ui_mp/scorebar_hd.menu
+menufile,ui_mp/weaponbar_hd.menu
+menufile,ui_mp/muteplayer.menu
+menufile,ui_mp/scoreboard.menu
 
 # XMODEL
 xmodel,com_laptop_2_open

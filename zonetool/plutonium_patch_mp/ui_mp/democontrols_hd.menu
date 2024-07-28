@@ -1,0 +1,545 @@
+{
+    menuDef
+    {
+        name "democontrols_hd"
+        rect 0 0 640 480 4 4
+        visible when ( ( dvarstring( "g_gametype" ) == "survival" ) && ( ( ! ( ui_active( ) ) ) && ( ! ( dvarbool( "g_hardcore" ) ) ) && ( ! ( flashbanged( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_ac130_mp" ) || ( weaponname( ) == "killstreak_helicopter_minigun_mp" ) || ( weaponname( ) == "killstreak_predator_missile_mp" ) || ( ( weaponname( ) == "ac130_105mm_mp" ) || ( weaponname( ) == "ac130_40mm_mp" ) || ( weaponname( ) == "ac130_25mm_mp" ) ) || ( adsjavelin( ) ) || ( weaponname( ) == "heli_remote_mp" ) || missilecam( ) || ( weaponname( ) == "uav_remote_mp" ) || ( ( weaponname( ) == "mortar_remote_mp" ) || ( weaponname( ) == "mortar_remote_zoom_mp" ) ) || ( weaponname( ) == "killstreak_remote_tank_remote_mp" ) || ( weaponname( ) == "killstreak_remote_turret_remote_mp" ) ) ) && ( !isempjammed( ) ) && ( ! ( dvarint( "scr_gameended" ) ) ) && ( ( !isdemoplaying( ) ) || ( !isdemofreecamera( ) && !isdemofollowcamera( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_remote_tank_laptop_mp" ) || ( weaponname( ) == "killstreak_remote_turret_laptop_mp" ) ) ) ) && ! ( selecting_location( ) ) && ( ! ( spectatingclient( ) || spectatingfree( ) ) ) && ( ! ( inkillcam( ) ) ) && ( ! ( milliseconds( ) - localvarint( "ui_show_killedBy" ) < 4000 || ( inkillcam( ) ) ) ) )
+		
+		itemDef
+		{
+			rect 5 120 1 1 8 8
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 10
+			textstyle 3
+			textscale 0.3333
+			exp text ( "Wave " + dvarInt("ui_wave") )
+		}
+
+        //////////////////////////////
+		//	     PERKS REGION	    //
+		//////////////////////////////
+
+        itemDef
+		{
+			rect -17.5 170 35 35 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 0.6
+			exp material ( "teamperk_blast_shield" )
+			visible when ( dvarint("ui_body_armor") )
+			exp rect w (35 + (max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 15) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 15))
+			exp rect h (35 + (max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 15) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 15))
+			exp rect x ((0 - 17.5) - ((max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 7.5) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 7.5)))
+			exp rect y (170 - ((max(min(((milliseconds() - localvarint("armor_damage_start")) / 100), 1), 0) * 7.5) - (max(min(((milliseconds() - localvarint("armor_damage_start") - 200) / 100), 1), 0) * 7.5)))
+		}
+
+		itemDef
+		{
+			rect -17.5 170 35 35 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "teamperk_blast_shield" )
+			visible when ( dvarint("ui_body_armor") )
+			exp forecolor r (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.2))
+			exp forecolor g (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.7))
+    		exp forecolor b (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.8))
+			exp forecolor a (1 - (int(milliseconds( ) - localvarint( "armor_damage_start" ) < 200) * 0.3))
+			exp rect y (170 + (select(milliseconds() - localvarint("armor_damage_start") < 200, sin((milliseconds() - localvarint("armor_damage_start")) * 0.05) * 4, 0)))
+		}
+
+		itemDef
+		{
+			rect -55 195 1 1 2 2
+			decoration
+			visible 1
+			forecolor 0.9 1 0.6 0.8
+			textfont 3
+			textscale 0.35
+			textstyle 3
+			text "Armor"
+			visible when ( dvarint("ui_body_armor") )
+			exp forecolor a (1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1))
+		}
+		
+		itemDef
+		{
+			rect 27 195 1 1 2 2
+			decoration
+			visible 1
+			forecolor 0.9 1 0.6 0.8
+			textfont 3
+			textscale 0.35
+			textstyle 3
+			exp text ( dvarint("ui_body_armor") + "" )
+			visible when ( dvarint("ui_body_armor") )
+			exp forecolor a (1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1))
+		}
+
+		itemDef
+		{
+			rect -150 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "specialty_self_revive" )
+			visible when ( dvarint("ui_self_revive") )
+		}
+		
+		itemDef
+		{
+			rect -185 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk1") )
+			visible when ( dvarstring("ui_perk1") != "" )
+		}
+		
+		itemDef
+		{
+			rect -220 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk2") )
+			visible when ( dvarstring("ui_perk2") != "" )
+		}
+		
+		itemDef
+		{
+			rect -255 170 28 28 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_perk3") )
+			visible when ( dvarstring("ui_perk3") != "" )
+		}
+
+		itemDef
+		{
+			rect 111 209 20 20 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( dvarstring("ui_streak") )
+			visible when ( dvarstring("ui_streak") != "" )
+		}
+		
+		itemDef
+		{
+			rect 117 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 4" ) )
+			visible when ( dvarstring("ui_streak") != "" )
+		}
+
+        //////////////////////////////
+		//	     WEAPON REGION	    //
+		//////////////////////////////
+
+        itemDef
+		{
+			rect -246.667 -39.3333 200 21.3333 10 10
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			background "hud_iw5_divider"
+		}
+		
+		itemDef
+		{
+			rect -115.333 -25.3333 37.3333 0.666667 10 10
+			decoration
+			visible 1
+			ownerdraw 119
+			forecolor 1 1 1 1
+			type 8
+			textfont 9
+			textscale 0.437475
+			textstyle 6
+			visible when ( dvarstring("ui_use_slot") == "none" )
+		}
+		
+		itemDef
+		{
+			rect -115.333 -25.3333 37.3333 0.666667 10 10
+			decoration
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 9
+            textscale 0.437475
+			textstyle 6
+            exp text ( dvarint( "ui_" + dvarstring("ui_use_slot") ) )
+			visible when ( dvarstring("ui_use_slot") == "claymore" || dvarstring("ui_use_slot") == "c4" || dvarstring("ui_use_slot") == "throwingknife" )
+		}
+		
+		itemDef
+        {
+            name "clipGraphic"
+            rect -115.333 -36 0 0 10 10
+            decoration
+            visible 1
+            type 8
+            forecolor 1 1 1 0.65
+            ownerdraw 117
+            visible when (dvarstring("ui_use_slot") == "none")
+        }
+		
+		itemDef
+		{
+			name "clipGraphic"
+			rect -115.333 -48 0 0 10 10
+			decoration
+			visible 1
+			ownerdraw 121
+			forecolor 1 1 1 0.65
+			type 8
+			visible when ( dvarstring("ui_use_slot") == "none" )
+		}
+		
+		itemDef
+		{
+			rect -92 -45 37.3333 0.666667 10 10
+			decoration
+			visible 1
+			ownerdraw 81
+			forecolor 1 1 1 1
+			type 8
+			textfont 10
+			textalign 2
+			textscale 0.3333
+			textstyle 3
+		}
+		
+		itemDef
+		{
+			name "lowammowarning"
+			rect -50 -20 100 100 2 2
+			decoration
+			visible 1
+			ownerdraw 120
+			forecolor 1 1 1 0.65
+			type 8
+			textfont 9
+			textalign 9
+			textscale 0.3333
+			textstyle 3
+			visible when ( ( ! ( inkillcam( ) ) ) && ( ! ( spectatingclient( ) ) ) && ( !isdemoplaying( ) ) && dvarstring( "ui_gametype" ) != "oic" )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -96 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 3 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -100 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 2 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -104 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) > 1 )
+		}
+		
+		itemDef
+		{
+			name "offhandFragIcon"
+			rect -108 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 103
+			forecolor 1 1 1 1
+			type 8
+			visible when ( dvarint( "ui_lethal" ) )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -127 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 3 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -131 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.5 0.5 0.5 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 2 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -135 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 0.75 0.75 0.75 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) > 1 )
+		}
+		
+		itemDef
+		{
+			name "offhandSmokeIcon"
+			rect -139 -21 18 18 10 10
+			decoration
+			visible 1
+			ownerdraw 104
+			forecolor 1 1 1 1
+			type 8
+			visible when ( dvarint( "ui_tactical" ) )
+		}
+
+        itemDef
+		{
+			rect -9 207 18 18 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "hud_icon_claymore" )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect -3.5 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 1" ) )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect 17 220 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( dvarint("ui_claymore") )
+			visible when ( dvarint("ui_claymore") )
+		}
+		
+		itemDef
+		{
+			rect 51 207 18 18 2 2
+			decoration
+			visible 1
+			style 3
+			forecolor 1 1 1 1
+			exp material ( "hud_icon_c4" )
+			visible when ( dvarint("ui_c4") )
+		}
+		
+		itemDef
+		{
+			rect 57 237 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 0 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( "^3" + keybinding( "+actionslot 5" ) )
+			visible when ( dvarint("ui_c4") )
+		}
+		
+		itemDef
+		{
+			rect 77 220 7 14 2 2
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 6
+			textscale 0.25
+			textstyle 6
+			exp text ( dvarint("ui_c4") )
+			visible when ( dvarint("ui_c4") )
+		}
+
+        //////////////////////////////
+		//	     SCORE REGION	    //
+		//////////////////////////////
+
+		itemDef
+		{
+			rect 6 -70 -260 56 8 10
+            decoration                  
+            visible 1
+            style 3
+			forecolor 1 1 1 1
+            background "hud_weaponbar_line"
+		}
+		
+		itemDef
+        {
+            rect 6 -35 100 40 8 10
+            decoration
+            visible 1
+            forecolor 1 1 1 1
+            textfont 9
+            textalign 8
+            textscale 0.47
+			textstyle 3
+			exp text ( "$ " + dvarint("ui_money") )
+			visible when ( milliseconds( ) - localvarint( "animate_money_start" ) > 2000 )
+        }
+		
+		itemDef
+        {
+            rect 6 -35 100 40 8 10
+            decoration
+            visible 1
+            forecolor 0.7 1 0.7 0.85
+            textfont 9
+            textalign 8
+            textscale 0.6
+			textstyle 3
+			exp text ( "$ " + int(max(dvarint("ui_old_money"), min(dvarint("ui_money"), dvarint("ui_old_money") + (dvarint("ui_money") - dvarint("ui_old_money")) * ((milliseconds() - localvarint("animate_money_start")) / 1800)))) )		
+			visible when ( milliseconds( ) - localvarint( "animate_money_start" ) < 2000 )
+        }
+
+		itemDef
+		{
+			rect 5 -68 70 7 8 10
+            decoration
+			borderSize 1                
+            visible 1
+            style 3
+			forecolor 0 0 0 0.5
+            background "white"
+		}
+		itemDef
+		{
+			rect 5 -67 70 5 8 10
+            decoration            
+            visible 1
+            style 3
+			forecolor 1 1 1 1
+            background "white"
+			exp rect w (2 + ((dvarint("ui_ch_step_0") / dvarint("ui_ch_maxstep_0")) * 68));
+		}
+		itemDef
+        {
+            rect 5 -69 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text (dvarstring("ui_ch_label_0"));
+		}
+		itemDef
+        {
+            rect 90 -58.5 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text ("$ " + int(500 * (((dvarint("ui_ch_maxstep_0") - 5) / 2) + 1)));
+		}
+
+		itemDef
+		{
+			rect 5 -42 70 7 8 10
+            decoration
+			borderSize 1                
+            visible 1
+            style 3
+			forecolor 0 0 0 0.5
+            background "white"
+		}
+		itemDef
+		{
+			rect 5 -41.3 70 5 8 10
+            decoration            
+            visible 1
+            style 3
+			forecolor 1 1 1 1
+            background "white"
+			exp rect w (2 + ((dvarint("ui_ch_step_1") / dvarint("ui_ch_maxstep_1")) * 68));
+		}
+		itemDef
+        {
+            rect 5 -43 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text (dvarstring("ui_ch_label_1"));
+		}
+		itemDef
+        {
+            rect 90 -33 70 7 8 10
+            decoration
+			visible 1
+            textscale 0.27
+            textstyle 3
+            textfont 9
+            forecolor 1 1 1 0.8
+			exp text ("$ " + int(500 * (((dvarint("ui_ch_maxstep_1") - 5) / 2) + 1)));
+		}
+    }
+}

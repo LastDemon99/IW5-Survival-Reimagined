@@ -1,0 +1,17 @@
+dm
+dom
+sd
+sab
+war
+koth
+dd
+ctf
+oic
+grnd
+tdef
+conf
+infect
+jugg
+gun
+tjugg
+survival

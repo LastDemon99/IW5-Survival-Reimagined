@@ -36,26 +36,21 @@ init()
 
 patch_replacefun()
 {
+	replacefunc(maps\mp\gametypes\_menus::init, ::blank);
+	replacefunc(maps\mp\gametypes\_hud_message::init, ::initHudMessage);
 	replacefunc(maps\mp\gametypes\_hud_message::notifyMessage, ::notifyMessage);
 	replacefunc(maps\mp\gametypes\_weapons::watchweaponusage, ::_watchweaponusage);
 	replacefunc(maps\mp\gametypes\_missions::playerKilled, ::blank);
-	replacefunc(maps\mp\bots\_bot_chat::bot_chat_death_watch, ::blank);
 	replacefunc(maps\mp\gametypes\_quickmessages::init, ::blank);
+	replacefunc(maps\mp\bots\_bot_chat::bot_chat_death_watch, ::blank);
 	replacefunc(maps\mp\bots\_bot_chat::doquickmessage, ::blank);
-	replacefunc(maps\mp\_utility::updateMainMenu, ::updateMainMenu);
 	replacefunc(maps\mp\gametypes\_deathicons::adddeathicon, ::blank);
 	replacefunc(maps\mp\_events::multiKill, ::multiKill);
-	replacefunc(maps\mp\gametypes\_shellshock::init, ::_shellshock_init);
-	replacefunc(maps\mp\gametypes\_shellshock::dirtEffect, ::blank);
-	replacefunc(maps\mp\gametypes\_shellshock::bloodEffect, ::blank);
 	replacefunc(maps\mp\gametypes\_playerlogic::initClientDvars, ::initClientDvars);
 	replacefunc(maps\mp\killstreaks\_remotemissile::missileEyes, maps\mp\killstreaks\_aamissile::missileEyes);
-}
-
-updateMainMenu()
-{
-	self setClientDvar("client_cmd", "");
-	self setClientDvar("g_scriptMainMenu", "client_cmd");
+	replacefunc(maps\mp\gametypes\_damage::playerkilled_internal, maps\mp\survival\_damage::playerkilled_internal);
+	replacefunc(maps\mp\gametypes\_damage::handlenormaldeath, maps\mp\survival\_damage::handlenormaldeath);
+	replacefunc(maps\mp\gametypes\_damage::callback_playerlaststand, maps\mp\survival\_damage::callback_playerlaststand);
 }
 
 notifyMessage(notifyData) //disabled team splash msg on start
@@ -139,14 +134,6 @@ multiKill(killId, killCount) //check wave challenges [ double, triple, multi ]
 	self incPlayerStat("mostmultikills", 1);
 }
 
-_shellshock_init() //removed dirt menu effect, gives bug with survival huds
-{
-    precacheshellshock("frag_grenade_mp");
-    precacheshellshock("damage_mp");
-    precacherumble("artillery_rumble");
-    precacherumble("grenade_rumble");
-}
-
 initClientDvars()
 {
 	makeDvarServerInfo("cg_drawTalk", 1);
@@ -174,6 +161,36 @@ initClientDvars()
     }
 }
 
+initHudMessage() // removed unnecessary menus precache
+{
+	precacheString( &"MP_FIRSTPLACE_NAME" );
+	precacheString( &"MP_SECONDPLACE_NAME" );
+	precacheString( &"MP_THIRDPLACE_NAME" );
+	precacheString( &"MP_MATCH_BONUS_IS" );
+
+    precachemenu( "perk_display" );
+    precachemenu( "perk_hide" );
+    precachemenu( "killedby_card_hide" );
+
+	game["menu_endgameupdate"] = "endgameupdate";
+	precacheMenu(game["menu_endgameupdate"]);
+
+	game["strings"]["draw"] = &"MP_DRAW";
+	game["strings"]["round_draw"] = &"MP_ROUND_DRAW";
+	game["strings"]["round_win"] = &"MP_ROUND_WIN";
+	game["strings"]["round_loss"] = &"MP_ROUND_LOSS";
+	game["strings"]["victory"] = &"MP_VICTORY";
+	game["strings"]["defeat"] = &"MP_DEFEAT";
+	game["strings"]["halftime"] = &"MP_HALFTIME";
+	game["strings"]["overtime"] = &"MP_OVERTIME";
+	game["strings"]["roundend"] = &"MP_ROUNDEND";
+	game["strings"]["intermission"] = &"MP_INTERMISSION";
+	game["strings"]["side_switch"] = &"MP_SWITCHING_SIDES";
+	game["strings"]["match_bonus"] = &"MP_MATCH_BONUS_IS";
+	
+	level thread maps\mp\gametypes\_hud_message::onPlayerConnect();
+}
+
 blank(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {} //some func give errors with certain modifications, replace with blank func... it has no errors >:)
 
 //////////////////////////////////////////
@@ -183,36 +200,9 @@ blank(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {} //some func give errors
 player_patch_replacefunc()
 {
 	replacefunc(maps\mp\gametypes\_music_and_dialog::onPlayerSpawned, ::blank);
-	replacefunc(maps\mp\gametypes\war::getSpawnPoint, ::getSpawnPoint);
 	replacefunc(maps\mp\_utility::playDeathSound, ::_playDeathSound);
 	replacefunc(maps\mp\_utility::waitForTimeOrNotify, ::_respawnDealy);
 	replacefunc(maps\mp\gametypes\_spawnlogic::getallotherplayers, ::getSurvivorsAlive);
-}
-
-getSpawnPoint()
-{	
-	if(!isDefined(self.firstSpawn))
-	{
-		self.pers["gamemodeLoadout"] = level.survivalLoadout;
-	
-		self.pers["class"] = "gamemode";
-		self.pers["lastClass"] = "";
-		self.class = self.pers["class"];
-		self.lastClass = self.pers["lastClass"];
-		self.firstSpawn = 1;
-	}
-	
-	team = isDefined(self.pers["isBot"]) ? "axis" : "allies";	
-	maps\mp\gametypes\_menus::addToTeam(team, 1);
-	
-	if (!level.wave_num && team == "allies")
-	{
-		spawnPoints = maps\mp\gametypes\_spawnlogic::getSpawnpointArray("mp_tdm_spawn_allies_start");
-		return maps\mp\gametypes\_spawnlogic::getSpawnpoint_random(spawnPoints);
-	}
-	
-	spawnPoints = maps\mp\gametypes\_spawnlogic::getTeamSpawnPoints(team);
-	return maps\mp\gametypes\_spawnlogic::getSpawnpoint_nearTeam(spawnPoints);
 }
 
 hook_callbacks()
