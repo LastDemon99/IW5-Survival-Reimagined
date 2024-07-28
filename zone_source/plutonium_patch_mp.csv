@@ -29,6 +29,7 @@ rawfile,maps/mp/survival/_trigger.gsc
 rawfile,maps/mp/survival/_uav.gsc
 rawfile,maps/mp/survival/_utility.gsc
 rawfile,maps/mp/survival/_damage.gsc
+rawfile,maps/mp/survival/_menus.gsc
 
 # STRINGTABLES
 stringtable,mp/main_options.csv

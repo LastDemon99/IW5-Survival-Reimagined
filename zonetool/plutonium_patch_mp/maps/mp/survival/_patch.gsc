@@ -36,12 +36,9 @@ init()
 
 patch_replacefun()
 {
-	replacefunc(maps\mp\gametypes\_menus::init, ::blank);
-	replacefunc(maps\mp\gametypes\_hud_message::init, ::initHudMessage);
 	replacefunc(maps\mp\gametypes\_hud_message::notifyMessage, ::notifyMessage);
 	replacefunc(maps\mp\gametypes\_weapons::watchweaponusage, ::_watchweaponusage);
 	replacefunc(maps\mp\gametypes\_missions::playerKilled, ::blank);
-	replacefunc(maps\mp\gametypes\_quickmessages::init, ::blank);
 	replacefunc(maps\mp\bots\_bot_chat::bot_chat_death_watch, ::blank);
 	replacefunc(maps\mp\bots\_bot_chat::doquickmessage, ::blank);
 	replacefunc(maps\mp\gametypes\_deathicons::adddeathicon, ::blank);
@@ -51,6 +48,44 @@ patch_replacefun()
 	replacefunc(maps\mp\gametypes\_damage::playerkilled_internal, maps\mp\survival\_damage::playerkilled_internal);
 	replacefunc(maps\mp\gametypes\_damage::handlenormaldeath, maps\mp\survival\_damage::handlenormaldeath);
 	replacefunc(maps\mp\gametypes\_damage::callback_playerlaststand, maps\mp\survival\_damage::callback_playerlaststand);
+}
+
+purgeUnnecessaryMenus()
+{
+    replacefunc(maps\mp\gametypes\_quickmessages::init, ::blank);
+	replacefunc(maps\mp\gametypes\_hud_message::init, ::initHudMessage);
+	replacefunc(maps\mp\gametypes\_menus::init, maps\mp\survival\_menus::init);
+	replacefunc(maps\mp\gametypes\_menus::addtoteam, maps\mp\survival\_menus::addtoteam);
+}
+
+initHudMessage() // removed unnecessary menus precache
+{
+	precacheString( &"MP_FIRSTPLACE_NAME" );
+	precacheString( &"MP_SECONDPLACE_NAME" );
+	precacheString( &"MP_THIRDPLACE_NAME" );
+	precacheString( &"MP_MATCH_BONUS_IS" );
+
+    precachemenu( "perk_display" );
+    precachemenu( "perk_hide" );
+    precachemenu( "killedby_card_hide" );
+
+	game["menu_endgameupdate"] = "endgameupdate";
+	precacheMenu(game["menu_endgameupdate"]);
+
+	game["strings"]["draw"] = &"MP_DRAW";
+	game["strings"]["round_draw"] = &"MP_ROUND_DRAW";
+	game["strings"]["round_win"] = &"MP_ROUND_WIN";
+	game["strings"]["round_loss"] = &"MP_ROUND_LOSS";
+	game["strings"]["victory"] = &"MP_VICTORY";
+	game["strings"]["defeat"] = &"MP_DEFEAT";
+	game["strings"]["halftime"] = &"MP_HALFTIME";
+	game["strings"]["overtime"] = &"MP_OVERTIME";
+	game["strings"]["roundend"] = &"MP_ROUNDEND";
+	game["strings"]["intermission"] = &"MP_INTERMISSION";
+	game["strings"]["side_switch"] = &"MP_SWITCHING_SIDES";
+	game["strings"]["match_bonus"] = &"MP_MATCH_BONUS_IS";
+	
+	level thread maps\mp\gametypes\_hud_message::onPlayerConnect();
 }
 
 notifyMessage(notifyData) //disabled team splash msg on start
@@ -159,36 +194,6 @@ initClientDvars()
             self setclientdvar("ui_hitloc_" + var_0, "");
         self.hitlocinited = 1;
     }
-}
-
-initHudMessage() // removed unnecessary menus precache
-{
-	precacheString( &"MP_FIRSTPLACE_NAME" );
-	precacheString( &"MP_SECONDPLACE_NAME" );
-	precacheString( &"MP_THIRDPLACE_NAME" );
-	precacheString( &"MP_MATCH_BONUS_IS" );
-
-    precachemenu( "perk_display" );
-    precachemenu( "perk_hide" );
-    precachemenu( "killedby_card_hide" );
-
-	game["menu_endgameupdate"] = "endgameupdate";
-	precacheMenu(game["menu_endgameupdate"]);
-
-	game["strings"]["draw"] = &"MP_DRAW";
-	game["strings"]["round_draw"] = &"MP_ROUND_DRAW";
-	game["strings"]["round_win"] = &"MP_ROUND_WIN";
-	game["strings"]["round_loss"] = &"MP_ROUND_LOSS";
-	game["strings"]["victory"] = &"MP_VICTORY";
-	game["strings"]["defeat"] = &"MP_DEFEAT";
-	game["strings"]["halftime"] = &"MP_HALFTIME";
-	game["strings"]["overtime"] = &"MP_OVERTIME";
-	game["strings"]["roundend"] = &"MP_ROUNDEND";
-	game["strings"]["intermission"] = &"MP_INTERMISSION";
-	game["strings"]["side_switch"] = &"MP_SWITCHING_SIDES";
-	game["strings"]["match_bonus"] = &"MP_MATCH_BONUS_IS";
-	
-	level thread maps\mp\gametypes\_hud_message::onPlayerConnect();
 }
 
 blank(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {} //some func give errors with certain modifications, replace with blank func... it has no errors >:)

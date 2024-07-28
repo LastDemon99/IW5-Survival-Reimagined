@@ -1,9 +1,9 @@
 main()
 {
+    maps\mp\survival\_patch::purgeUnnecessaryMenus();
     maps\mp\gametypes\_globallogic::init();
     maps\mp\gametypes\_callbacksetup::setupcallbacks();
     maps\mp\gametypes\_globallogic::setupcallbacks();
-
     maps\mp\_utility::registerroundswitchdvar(level.gametype, 0, 0, 9);
 	maps\mp\_utility::registertimelimitdvar(level.gametype, 10);
 	maps\mp\_utility::registerscorelimitdvar(level.gametype, 500);
@@ -89,3 +89,5 @@ onNormalDeath(victim, attacker, lifeId)
 	if (game["state"] == "postgame" && game["teamScores"][attacker.team] > game["teamScores"][level.otherTeam[attacker.team]])
 		attacker.finalKill = true;
 }
+
+blank(args) {}
