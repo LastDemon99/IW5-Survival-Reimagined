@@ -222,28 +222,64 @@ airdropSmokeDetonate(drop)
 
 crateSetupForUse(hintString, mode, icon)
 {
-	if (string_starts_with(self.crateType, "specialty_")) hintString = "Press and hold [{+activate}] for equip perk";
-
+	self setCursorHint("HINT_NOICON");
+	self setHintString(string_starts_with(self.crateType, "specialty_") ? "^7Press and hold ^3[{+activate}]^7 for equip perk" : hintString);
+	self makeUsable();
 	self.mode = mode;
-	trigger = maps\mp\lethalbeats\_trigger::createTrigger(self.crateType, self.origin, 0, 55, 55, hintString, "allies");
-	trigger maps\mp\lethalbeats\_trigger::set2DIcon("allies", "compass_objpoint_ammo_friendly");
-	trigger maps\mp\lethalbeats\_trigger::set3DIcon("allies", icon, 12, 12, undefined, (0, 0, 24));
-	trigger maps\mp\lethalbeats\_trigger::setUseHold(500, &"MP_CAPTURING_CRATE");
-	trigger thread capturedMonitor(self);
-	trigger.condition = ::isValidUse;
-}
 
-isValidUse(player)
-{
-	return !player.isCarryObject && (string_starts_with(self.tag, "specialty_") || !(player maps\mp\survival\_utility::hasStreak()));
-}
+	if (level.teamBased || IsDefined(self.owner))
+	{
+		curObjID = maps\mp\gametypes\_gameobjects::getNextObjID();	
+		objective_add(curObjID, "invisible", (0,0,0));
+		objective_position(curObjID, self.origin);
+		objective_state(curObjID, "active");
+		
+		shaderName = "compass_objpoint_ammo_friendly";
+		if(mode == "trap")
+			shaderName = "compass_objpoint_trap_friendly";
+		objective_icon(curObjID, shaderName);
+		
+		if (!level.teamBased && IsDefined(self.owner))
+			Objective_PlayerTeam(curObjId, self.owner GetEntityNumber());
+		else
+			Objective_Team(curObjID, self.team);
+		
+		self.objIdFriendly = curObjID;
+	}
 
-capturedMonitor(crate)
-{
-	level endon("game_ended");
-	self endon("death");
+	curObjID = maps\mp\gametypes\_gameobjects::getNextObjID();	
+	objective_add(curObjID, "invisible", (0,0,0));
+	objective_position(curObjID, self.origin);
+	objective_state(curObjID, "active");
+	objective_icon(curObjID, "compass_objpoint_ammo_enemy");
+
+	if (!level.teamBased && IsDefined(self.owner))
+		Objective_PlayerEnemyTeam(curObjId, self.owner GetEntityNumber());
+	else
+		Objective_Team(curObjID, level.otherTeam[self.team]);
+
+	self.objIdEnemy = curObjID;
+
+	if (mode == "trap")
+	{	
+		self thread maps\mp\killstreaks\_airdrop::crateUseTeamUpdater(getOtherTeam(self.team));
+	}
+	else
+	{
+		self thread maps\mp\killstreaks\_airdrop::crateUseTeamUpdater();	
+		
+		if (isSubStr(self.crateType, "juggernaut"))
+		{
+			foreach (player in level.players)
+				if (player isJuggernaut())
+					self thread maps\mp\killstreaks\_airdrop::crateUsePostJuggernautUpdater(player);
+		}		
+
+		if (level.teamBased)
+			self maps\mp\_entityheadIcons::setHeadIcon(self.team, icon, (0,0,24), 14, 14, undefined, undefined, undefined, undefined, undefined, false);
+		else if (IsDefined(self.owner))
+			self maps\mp\_entityheadIcons::setHeadIcon(self.owner, icon, (0,0,24), 14, 14, undefined, undefined, undefined, undefined, undefined, false);
+	}
 	
-	self waittill("trigger_use_holded", player);
-	self notify("delete");
-	crate notify("captured", player);
+	self thread maps\mp\killstreaks\_airdrop::crateUseJuggernautUpdater();
 }

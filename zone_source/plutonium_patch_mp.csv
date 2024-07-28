@@ -25,7 +25,6 @@ rawfile,maps/mp/survival/_patch.gsc
 rawfile,maps/mp/survival/_sentry.gsc
 rawfile,maps/mp/survival/_shops.gsc
 rawfile,maps/mp/survival/_survivors.gsc
-rawfile,maps/mp/survival/_trigger.gsc
 rawfile,maps/mp/survival/_uav.gsc
 rawfile,maps/mp/survival/_utility.gsc
 rawfile,maps/mp/survival/_damage.gsc

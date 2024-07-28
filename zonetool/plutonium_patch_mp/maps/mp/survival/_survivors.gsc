@@ -384,8 +384,7 @@ triggerUseHandle()
 	for (;;)
 	{
 		self waittill("trigger_use", trigger);
-		
-		//shops		
+
 		if (!isDefined(self.currMenu) && (trigger.tag == "weapon_shop" || trigger.tag == "equipment_shop" || trigger.tag == "support_shop"))
 		{			
 			self maps\mp\lethalbeats\_dynamic_menu::openDynamicMenu(trigger.tag);
@@ -393,37 +392,6 @@ triggerUseHandle()
 			
 			if (trigger.tag == "equipment_shop") self maps\mp\survival\_menu_equipment::checkOwnedEquipment();
 			else if (trigger.tag == "support_shop") self maps\mp\survival\_menu_support::checkAllowedSupport();
-			continue;
-		}
-		
-		if (self.isCarryObject) continue;
-		
-		//sentry
-		if (trigger.tag == "sentry_move")
-		{
-			self.isCarryObject = 1;
-			
-			trigger.sentry SetMode("sentry_offline");
-			self thread maps\mp\killstreaks\_autosentry::setCarryingSentry(trigger.sentry, false);
-			self thread maps\mp\killstreaks\_autosentry::updateSentryPlacement(trigger.sentry);
-			trigger notify("delete");
-			continue;
-		}
-		
-		if (self hasStreak()) continue;
-		
-		//trophy
-		if (trigger.tag == "trophy_pickup" && !(self hasStreak()))
-		{			
-			self setClientDvar("ui_streak", "hud_icon_trophy");
-			self playLocalSound("scavenger_pack_pickup");
-			self giveweapon("trophy_mp");
-			self _setActionSlot(4, "weapon", "trophy_mp");
-			
-			trigger notify("delete");
-			if(isDefined(trigger.trophy)) trigger.trophy delete();
-			trigger.trophy notify("death");
-			continue;
 		}
 	}
 }

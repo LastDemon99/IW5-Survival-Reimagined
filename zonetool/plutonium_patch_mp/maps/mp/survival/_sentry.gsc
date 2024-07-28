@@ -1,13 +1,13 @@
 #include maps\mp\_utility;
 #include common_scripts\utility;
+#include maps\mp\killstreaks\_autosentry;
 
 init()
 {
 	replacefunc(maps\mp\killstreaks\_autosentry::sentry_initSentry, ::sentryInitSentry);
-	replacefunc(maps\mp\killstreaks\_autosentry::sentry_setPlaced, ::sentrySetPlaced);
-	replacefunc(maps\mp\killstreaks\_autosentry::updateSentryPlacement, ::updateSentryPlacement);
+	replacefunc(maps\mp\killstreaks\_autosentry::sentry_burstFireStart, ::sentryBurstFireStart);
+	replacefunc(maps\mp\killstreaks\_autosentry::sentry_setplaced, ::sentrySetPlaced);
 	replacefunc(maps\mp\_equipment::trophyBreak, ::trophyBreak);
-	replacefunc(maps\mp\_equipment::trophyUseListener, ::trophyUseListener);
 	
 	level.killStreakFuncs["minigun_turret"] = ::tryUseMinigun;
 	level.killStreakFuncs["gl_turret"] = ::tryUseGL;
@@ -83,178 +83,131 @@ sentryInitSentry(sentryType, owner)
 {
 	self.sentryType = sentryType;
 	self.canBePlaced = true;
-
 	self setModel(level.sentrySettings[self.sentryType].modelBase);
-	self.shouldSplash = true;
-
+	self.shouldSplash = true;	
 	self setCanDamage(true);
-	self SetDefaultDropPitch(-89.0);
+		
+	switch(sentryType)
+	{
+		case "minigun_turret":
+		case "gl_turret":
+			self SetLeftArc(80);
+			self SetRightArc(80);
+			self SetBottomArc(50);
+			self SetDefaultDropPitch(0.0);
+			self.originalOwner = owner;
+			break;
+		case "sam_turret":
+			self SetLeftArc(180);
+			self SetRightArc(180);
+			self SetTopArc(80);
+			self SetDefaultDropPitch(-89.0);
+			self.laser_on = false;
+			killCamEnt = Spawn("script_model", self GetTagOrigin("tag_laser"));
+			killCamEnt LinkTo(self);
+			self.killcament = killCamEnt;
+			self.killcament setscriptmoverkillcam("explosive");
+			break;
+		default:
+            self setdefaultdroppitch(-89.0);
+            break;
+	}	
+	
 	self makeTurretInoperable();
 	
-	if (sentryType == "sam_turret")
-	{
-		self SetLeftArc(180);
-		self SetRightArc(180);
-		self SetTopArc(80);
-		self.laser_on = false;
-		
-		killCamEnt = Spawn("script_model", self GetTagOrigin("tag_laser"));
-		killCamEnt LinkTo(self);
-		self.killCamEnt = killCamEnt;
-	}
-	
-	owner.isCarryObject = 1;
-		
 	self setTurretModeChangeWait(true);
-	self maps\mp\killstreaks\_autosentry::sentry_setInactive();
+	self sentry_setInactive();	
+	self sentry_setOwner(owner);
+	self thread sentry_handleDamage();
+	self thread sentry_handleDeath();
+	self thread sentry_timeOut();
 	
-	self  maps\mp\killstreaks\_autosentry::sentry_setOwner(owner);
-	self thread  maps\mp\killstreaks\_autosentry::sentry_handleDamage();
-	self thread  maps\mp\killstreaks\_autosentry::sentry_handleDeath();
-	self thread  maps\mp\killstreaks\_autosentry::sentry_timeOut();
-	
-	self thread maps\mp\killstreaks\_autosentry::sentry_handleUse();
-	self thread maps\mp\killstreaks\_autosentry::sentry_beepSounds();
-	
-	self thread onSentryDeath();	
-	if (sentryType != "sam_turret") self thread sentryAttackTargets();
+	switch(sentryType)
+	{
+		case "minigun_turret":
+		case "gl_turret":
+            self.momentum = 0;
+            self.heatlevel = 0;
+            self.cooldownwaittime = 0;
+            self.overheated = false;
+            thread sentry_handleuse();
+            thread sentry_attacktargets();
+            thread sentry_beepsounds();
+            break;
+		case "sam_turret":
+            thread sentry_handleuse();
+            thread sentry_beepsounds();
+            break;
+        default:
+            thread sentry_handleuse();
+            thread sentry_attacktargets();
+            thread sentry_beepsounds();
+            break;
+	}
+
+	self thread onSentryDeath();
+}
+
+sentryBurstFireStart()
+{
+	self endon("death");
+	self endon("stop_shooting");
+	level endon("game_ended");
+
+	self sentry_spinUp();
+	fireTime = weaponFireTime(level.sentrySettings[self.sentryType].weaponInfo);
+	minShots = level.sentrySettings[self.sentryType].burstMin;
+	maxShots = level.sentrySettings[self.sentryType].burstMax;
+	minPause = level.sentrySettings[self.sentryType].pauseMin;
+	maxPause = level.sentrySettings[self.sentryType].pauseMax;
+
+	is_gl = self.sentryType == "gl_turret";
+
+	for (;;)
+	{		
+		numShots = randomIntRange(minShots, maxShots + 1);		
+		for (i = 0; i < numShots && !self.overheated; i++)
+		{
+			if (is_gl) playsoundatpos(self.origin, "weap_m203_fire_npc");
+			
+			self shootTurret();
+			self.heatLevel += fireTime;
+			wait (fireTime);
+		}		
+		wait (randomFloatRange(minPause, maxPause));
+	}
 }
 
 sentrySetPlaced()
 {
-	self setModel(level.sentrySettings[self.sentryType].modelBase);
-	
-	self setSentryCarrier(undefined);
-	
-	self setCanDamage(true);	
-	self maps\mp\killstreaks\_autosentry::sentry_makeSolid();
+    self setmodel(level.sentrysettings[self.sentrytype].modelbase);
 
-	self.carriedBy forceUseHintOff();
-	self.carriedBy = undefined;
+    if (self getmode() == "manual")
+        self setmode(level.sentrysettings[self.sentrytype].sentrymodeoff);
 
-	if(IsDefined(self.owner)) self.owner.isCarrying = 0;
-	
-	trigger = maps\mp\lethalbeats\_trigger::createTrigger("sentry_move", self.origin, 0, 55, 55, &"SENTRY_MOVE", "allies");
-	trigger.sentry = self;
-	self.ownerTrigger = trigger;
-	
-	self SetMode(level.sentrySettings[self.sentryType].sentryModeOn);
-	self maps\mp\_entityheadicons::setTeamHeadIcon(self.team, (0, 0, 65));
-	self thread maps\mp\killstreaks\_autosentry::sentry_watchDisabled();
-	
-	self playSound("sentry_gun_plant");
-	self notify ("placed");
-	
-	self.owner.isCarryObject = 0;
-	if (!isDefined(self.firstPlaced))
+    self setsentrycarrier(undefined);
+    self setcandamage(1);
+
+    sentry_makesolid();
+    self.carriedby forceusehintoff();
+    self.carriedby = undefined;
+
+    if (isdefined(self.owner))
 	{
-		self.firstPlaced = 1;
+		self.owner.iscarrying = 0;
 		self.owner setClientDvar("ui_streak", "");
 	}
-	
-	self.owner maps\mp\lethalbeats\_trigger::clearCustomHintString();
-}
 
-updateSentryPlacement(sentryGun)
-{
-	self endon ("death");
-	self endon ("disconnect");
-	level endon ("game_ended");
-	
-	sentryGun endon ("placed");
-	sentryGun endon ("death");
-	
-	sentryGun.canBePlaced = true;
-	lastCanPlaceSentry = -1;
-
-	for(;;)
-	{
-		placement = self canPlayerPlaceSentry();
-
-		sentryGun.origin = placement["origin"];
-		sentryGun.angles = placement["angles"];
-		sentryGun.canBePlaced = self isOnGround() && placement["result"] && (abs(sentryGun.origin[2]-self.origin[2]) < 10);
-	
-		if (sentryGun.canBePlaced != lastCanPlaceSentry)
-		{
-			if (sentryGun.canBePlaced)
-			{
-				sentryGun setModel(level.sentrySettings[sentryGun.sentryType].modelPlacement);
-				self maps\mp\lethalbeats\_trigger::setCustomHintString(&"SENTRY_PLACE");
-			}
-			else
-			{
-				sentryGun setModel(level.sentrySettings[sentryGun.sentryType].modelPlacementFailed);
-				self maps\mp\lethalbeats\_trigger::setCustomHintString(&"SENTRY_CANNOT_PLACE");
-			}
-		}
-		
-		lastCanPlaceSentry = sentryGun.canBePlaced;		
-		wait 0.05;
-	}
-}
-
-sentryAttackTargets()
-{
-	self endon("death");
-	level endon("game_ended");
-
-	self.momentum = 0;
-	self.heatLevel = 0;
-	self.overheated = false;
-	
-	self thread maps\mp\killstreaks\_autosentry::sentry_heatMonitor();
-	
-	for (;;)
-	{
-		self waittill_either("turretstatechange", "cooled");
-
-		if (self isFiringTurret())
-		{
-			self thread maps\mp\killstreaks\_autosentry::sentry_burstFireStart();
-			self LaserOn();
-		}
-		else
-		{
-			self LaserOff();
-			self maps\mp\killstreaks\_autosentry::sentry_spinDown();
-			self thread maps\mp\killstreaks\_autosentry::sentry_burstFireStop();
-		}
-	}
+    sentry_setactive();
+    self playsound("sentry_gun_plant");
+    self notify("placed");
 }
 
 onSentryDeath()
 {
-	level endon("game_ended");
-	
-	self waittill_any("death", "disconnect");
-	
-	if(isDefined(self.ownerTrigger))
-	{
-		self.ownerTrigger notify("delete");
-		level.sentry--;
-	}
-	else self.owner maps\mp\lethalbeats\_trigger::clearCustomHintString();
-}
-
-trophyUseListener(owner)
-{
-	self endon ("death");
-	level endon ("game_ended");
-	owner endon ("disconnect");
-	owner endon ("death");
-	
-	if(isDefined(self.trigger)) 
-	{
-		self.trigger MakeUnusable();
-		self.trigger delete();
-	}
-	
-	trigger = maps\mp\lethalbeats\_trigger::createTrigger("trophy_pickup", self.origin, 0, 32, 32, &"MP_PICKUP_TROPHY", "allies");
-	trigger.trophy = self;	
-	self._trigger = trigger;
-	
-	owner.isCarryObject = 0;
+	level endon("game_ended");	
+	self waittill_any("death", "deleting");
+	level.sentry--;
 }
 
 trophyBreak()
@@ -264,14 +217,13 @@ trophyBreak()
 	
 	self playsound("sentry_explode");	
 	self notify("death");
+	self.trigger makeunusable();
 	
-	if (self.owner maps\mp\survival\_utility::is_survivor()) 
-	{
-		self._trigger notify("delete");
+	if (self.owner maps\mp\survival\_utility::is_survivor())
 		level.sentry--;
-	}
-	
-	placement = self.origin;
+
 	wait 3;
+
+	if (IsDefined(self.trigger)) self.trigger delete();
 	if(IsDefined(self)) self delete();
 }

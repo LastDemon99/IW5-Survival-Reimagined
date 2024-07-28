@@ -60,14 +60,14 @@ purgeUnnecessaryMenus()
 
 initHudMessage() // removed unnecessary menus precache
 {
-	precacheString( &"MP_FIRSTPLACE_NAME" );
-	precacheString( &"MP_SECONDPLACE_NAME" );
-	precacheString( &"MP_THIRDPLACE_NAME" );
-	precacheString( &"MP_MATCH_BONUS_IS" );
+	precacheString(&"MP_FIRSTPLACE_NAME");
+	precacheString(&"MP_SECONDPLACE_NAME");
+	precacheString(&"MP_THIRDPLACE_NAME");
+	precacheString(&"MP_MATCH_BONUS_IS");
 
-    precachemenu( "perk_display" );
-    precachemenu( "perk_hide" );
-    precachemenu( "killedby_card_hide" );
+    precachemenu("perk_display");
+    precachemenu("perk_hide");
+    precachemenu("killedby_card_hide");
 
 	game["menu_endgameupdate"] = "endgameupdate";
 	precacheMenu(game["menu_endgameupdate"]);
@@ -317,8 +317,8 @@ _crouch()
 	if (self isusingremote() || self is_dog())
 		return;
 	
-	self BotBuiltinBotAction( "+gocrouch" );
-	self BotBuiltinBotAction( "-goprone" );
+	self BotBuiltinBotAction("+gocrouch");
+	self BotBuiltinBotAction("-goprone");
 }
 
 _prone()
@@ -326,8 +326,8 @@ _prone()
 	if (self isusingremote() || self is_dog())
 		return;
 	
-	self BotBuiltinBotAction( "-gocrouch" );
-	self BotBuiltinBotAction( "+goprone" );
+	self BotBuiltinBotAction("-gocrouch");
+	self BotBuiltinBotAction("+goprone");
 }
 
 _jump(surfaceInFront) //dog jump anim move the origin, real jump if has surface in front
@@ -536,29 +536,28 @@ _iskillstreakweapon(weapon) //return true for grenades, killstreak weapon alllow
     return 0;
 }
 
-_equipmentWatchUse(owner) //on pickup grenades updated self var & action slot
+_equipmentWatchUse(owner) // on pickup grenades updated self var & action slot
 {
 	self endon("spawned_player");
 	self endon("disconnect");
 	
-	self.trigger delete();
+	self.trigger setCursorHint("HINT_NOICON");
 	
-	hintString = "";	
-	if (self.weaponname == "c4_mp") hintString = &"MP_PICKUP_C4";
-	else if (self.weaponname == "claymore_mp") hintString = &"MP_PICKUP_CLAYMORE";
-	else if (self.weaponname == "bouncingbetty_mp") hintString = &"MP_PICKUP_BOUNCING_BETTY";
+	if (self.weaponname == "c4_mp")
+		self.trigger setHintString(&"MP_PICKUP_C4");
+	else if (self.weaponname == "claymore_mp")
+		self.trigger setHintString(&"MP_PICKUP_CLAYMORE");
+	else if (self.weaponname == "bouncingbetty_mp")
+		self.trigger setHintString(&"MP_PICKUP_BOUNCING_BETTY");
 	
-	trigger = maps\mp\lethalbeats\_trigger::createTrigger("equipment", self.origin, 0, 32, 32, hintString, owner);
-	self thread equipmentPickupHandle(trigger);
-	self thread onEquipmentDeath(trigger);
-}
+	self.trigger setSelfUsable(owner);
+	self.trigger thread notUsableForJoiningPlayers(self);
 
-equipmentPickupHandle(trigger)
-{
 	for (;;)
 	{
-		trigger waittill("trigger_use", owner);
+		self.trigger waittill ("trigger", owner);
 		
+		owner playLocalSound("scavenger_pack_pickup");
 		if(owner isTestClient()) owner SetWeaponAmmoStock(self.weaponname, owner GetWeaponAmmoStock(self.weaponname) + 1);
 		else
 		{
@@ -570,8 +569,8 @@ equipmentPickupHandle(trigger)
 				else owner _setActionSlot(5, "weapon", self.weaponname);
 			}
 		}
-		
-		owner playLocalSound("scavenger_pack_pickup");
+
+		self.trigger delete();
 		self delete();
 		self notify("death");
 	}

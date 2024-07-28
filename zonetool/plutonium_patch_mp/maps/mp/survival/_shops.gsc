@@ -56,7 +56,7 @@ spawnShop(origin, yrot, type)
 		for(;;)
 		{
 			level waittill("wave_end");		
-			if (level.wave_num + 1 == waveTarget) break;
+			if (level.wave_num + 1 >= waveTarget) break;
 		}
 	}
 	
