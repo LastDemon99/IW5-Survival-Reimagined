@@ -6,22 +6,18 @@
 main()
 {
 	precachemenu("ui_display");
-	precacheMenu("client_cmd");
 	precacheMenu("scoreboard");
 	precacheMenu("muteplayer");
 	precacheMenu("popup_leavegame");
-	precacheMenu("shop_menu");
-
+	precacheMenu("custom_options");
 	setModeDvars();
 }
 
 init()
-{	
-	maps\mp\lethalbeats\_dynamic_menu::loadMenuData("custom_options", "main_options");
-	maps\mp\lethalbeats\_dynamic_menu::loadMenuData("shop_menu", "weapon_shop");
-	maps\mp\lethalbeats\_dynamic_menu::loadMenuData("shop_menu", "equipment_shop");
-	maps\mp\lethalbeats\_dynamic_menu::loadMenuData("shop_menu", "support_shop");
+{
+	level thread maps\lethalbeats\DynamicMenus\dynamic_shop::init();
 
+	maps\mp\survival\_armory::init();
 	maps\mp\survival\_dev::init();
 	maps\mp\survival\_shops::init();
 	maps\mp\survival\_survivors::init();
@@ -90,6 +86,7 @@ onWaveEnd()
 {
 	level endon("game_ended");
 	
+	return; //ontest
 	for(;;)
 	{
 		level waittill("wave_end");

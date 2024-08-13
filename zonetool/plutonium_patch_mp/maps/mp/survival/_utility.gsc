@@ -1,77 +1,6 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\mp\lethalbeats\_dynamic_menu;
 #include maps\mp\gametypes\_hud_util;
-
-//////////////////////////////////////////
-//	Menu		 				        //
-//////////////////////////////////////////
-
-_pushPage(page, response)
-{
-	self pushPage(page, response);
-	self loadItemCost();
-}
-
-_popPage()
-{
-	self popPage();
-	if(self.pers["menu_pages"].size > 1) self loadItemCost();
-}
-
-loadItemCost()
-{
-	page_data = self getPageData();
-	table = "mp/" + self.currMenu + ".csv";
-	
-	for(i = 0; i < 20; i++)
-	{
-		offset = i + 10;
-		self setClientDvar("optionType" + offset, 4);
-		self setClientDvar("menu_option" + offset, tableLookupByRow(table, i + page_data[1], 3));
-	}
-}
-
-hasMoney(cost, option)
-{
-	if (isString(cost)) return 1;
-	if(cost > self.score)
-	{
-		self setClientDvar("optionType" + option, 0);
-		self setClientDvar("optionType" + (option + 10), 2);
-		return 0;
-	}
-	return 1;
-}
-
-setUpgrade(option)
-{
-	self setClientDvar("optionType" + option, 4);
-	self setClientDvar("optionType" + (option + 10), 7);
-}
-
-setOwned(option)
-{
-	self setClientDvar("optionType" + option, 0);
-	self setClientDvar("optionType" + (option + 10), 6);
-}
-
-setDisabled(option)
-{
-	self setClientDvar("optionType" + option, 0);
-	self setClientDvar("optionType" + (option + 10), 0);
-}
-
-clearBuy(option)
-{
-	self setClientDvar("optionType" + option, 4);
-	self setClientDvar("optionType" + (option + 10), 4);
-}
-
-waitmenu()
-{
-	wait 0.025;
-}
 
 //////////////////////////////////////////
 //	Hud								    //
@@ -342,23 +271,6 @@ getNadeMaxAmmmo(nade)
 		case "claymore_mp":
 		case "c4_mp": return 10;
 	}
-}
-
-clientCmd(cmd)
-{
-	self setClientDvar("client_cmd", cmd);
-	self openMenu("client_cmd");
-	if(isDefined(self)) self closeMenu("client_cmd");
-}
-
-_openMenu(menu)
-{
-	self clientCmd("openmenu " + menu);
-}
-
-_closeMenu(menu)
-{
-	self clientCmd("closemenu " + menu);
 }
 
 is_survivor()

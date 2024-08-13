@@ -18,8 +18,6 @@ onPlayerConnecting()
 		
 		if(player isTestClient()) continue;
 		
-		player thread maps\mp\survival\_menu_options::onMenuResponse();
-		
 		player maps\mp\gametypes\_menus::addToTeam("allies", 1);
 		player waittill("begin");
 		player.pers["score"] = 0;
@@ -69,16 +67,13 @@ onPlayerSpawn()
 
 		self.prevWeapon = self getCurrentWeapon();		
 		self givePerk("specialty_finalstand", false);
-		
-		self thread triggerUseHandle();
+				
 		self thread watchTotalShots();
 		self thread summaryMonitor();		
 		self thread onStartGame();
 		self thread refillNades();
-		
-		self thread maps\mp\survival\_menu_armory::onMenuResponse();
-		self thread maps\mp\survival\_menu_equipment::onMenuResponse();
-		self thread maps\mp\survival\_menu_support::onMenuResponse();
+
+		self thread maps\mp\survival\_menus::shopTrigger();
 	}
 }
 
@@ -158,7 +153,7 @@ onPlayerBotDamage(bot, damage, meansOfDeath, weapon)
 onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration)
 {
 	self clearLastStand();
-	if (isDefined(self.currMenu)) self maps\mp\lethalbeats\_dynamic_menu::closeDynamicMenu();
+	if (isDefined(self.currMenu)) self closeMenu("dynamic_shop");
 	self setClientDvar("ui_body_armor", 0);
 	
 	self [[level.prevCallbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
@@ -196,7 +191,7 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 {
 	self.lastStand = 1;	
 	
-	if (isDefined(self.currMenu)) self maps\mp\lethalbeats\_dynamic_menu::closeDynamicMenu();
+	if (isDefined(self.currMenu)) self closeMenu("dynamic_shop");
 	self setClientDvar("ui_body_armor", 0);
 	
 	lastStandParams = spawnstruct();
@@ -375,27 +370,6 @@ watchSkipResponse()
 	}
 }
 
-triggerUseHandle()
-{
-	self endon("disconnect");
-	level endon("game_ended");
-	self endon("death");
-	
-	for (;;)
-	{
-		self waittill("trigger_use", trigger);
-
-		if (!isDefined(self.currMenu) && (trigger.tag == "weapon_shop" || trigger.tag == "equipment_shop" || trigger.tag == "support_shop"))
-		{			
-			self maps\mp\lethalbeats\_dynamic_menu::openDynamicMenu(trigger.tag);
-			self loadItemCost();
-			
-			if (trigger.tag == "equipment_shop") self maps\mp\survival\_menu_equipment::checkOwnedEquipment();
-			else if (trigger.tag == "support_shop") self maps\mp\survival\_menu_support::checkAllowedSupport();
-		}
-	}
-}
-
 onChangeWeapons()
 {
 	self endon("disconnect");
@@ -475,7 +449,7 @@ watchTotalShots()
 hudInit()
 {
 	self waveChallengesHudInit();
-	self maps\mp\lethalbeats\_trigger::clearCustomHintString();
+	self maps\lethalbeats\_trigger::clearCustomHintString();
 }
 
 waveChallengesHudInit()

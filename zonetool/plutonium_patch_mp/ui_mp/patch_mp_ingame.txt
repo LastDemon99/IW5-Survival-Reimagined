@@ -9,11 +9,11 @@
         {
             if (dvarstring("ui_display") == "animate_money")
             {
-                setLocalVarInt animate_money_start (milliseconds());
+                setLocalVarInt animate_money_start (milliseconds() );
             }
             if (dvarstring("ui_display") == "wave_summary")
             {
-                setLocalVarInt wave_summary_start (milliseconds());
+                setLocalVarInt wave_summary_start (milliseconds() );
             }
             if (dvarstring("ui_display") == "bind_skip_intermission")
             {
@@ -22,9 +22,1347 @@
             }
             if (dvarstring("ui_display") == "armor_damage")
             {
-                setLocalVarInt armor_damage_start (milliseconds());
+                setLocalVarInt armor_damage_start (milliseconds() );
             }
             close self;
+        }
+    }
+    menuDef
+    {
+        name "ui_shop_display"
+        rect 0 0 640 480 0 0
+        decoration 
+        
+        onOpen
+        {
+            if ( dvarstring("ui_shop_display") == "weapon_armory" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "weapon_armory", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "ammo" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "ammo", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_pistol" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_pistol", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_shotgun" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_shotgun", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_machine_pistol" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_machine_pistol", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_smg" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_smg", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_assault" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_assault", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_lmg" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_lmg", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_sniper" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_sniper", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_projectile" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_projectile", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "select_riot" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "select_riot", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "assault_buff" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "assault_buff", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "smg_buff" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "smg_buff", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "lmg_buff" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "lmg_buff", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "sniper_buff" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "sniper_buff", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "shotgun_buff" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "shotgun_buff", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "riot_buff" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "riot_buff", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "pistol_semiauto_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "pistol_semiauto_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "pistol_revolver_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "pistol_revolver_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "shotgun_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "shotgun_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "machine_pistol_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "machine_pistol_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "smg_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "smg_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "assault_auto_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "assault_auto_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "assault_threeround_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "assault_threeround_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "assault_semi_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "assault_semi_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "lmg_0_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "lmg_0_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "lmg_1_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "lmg_1_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "sniper_attach" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "sniper_attach", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "weapon_camo" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "weapon_camo", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "equipment_armory" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "equipment_armory", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "air_support_armory" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "air_support_armory", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "perks_care_package" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "perks_care_package", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( dvarstring("ui_shop_display") == "remove_perk" )
+            {
+                setLocalVarInt ui_table_index (int(tablelookup("mp/dynamic_shop.csv", 1, "remove_perk", 0)) + 1);
+                setLocalVarInt ui_table_end_index 0;
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 1, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 0);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 2, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 1);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 3, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 2);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 4, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 3);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 5, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 4);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 6, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 5);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 7, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 6);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 8, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 7);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 9, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 8);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 10, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 9);
+            }
+            if ( !localvarint("ui_table_end_index") && tablelookupbyrow("mp/dynamic_shop.csv", localvarint("ui_table_index") + 11, 2) == "" )
+            {
+                setLocalVarInt ui_table_end_index (localvarint("ui_table_index") + 10);
+            }
+            close self;
+        }
+    }
+    menuDef
+    {
+        name "dynamic_shop"
+        rect 0 0 640 480 0 0
+        popup 
+        outOfBoundsClick 
+        forecolor 1 1 1 1
+        
+        onOpen
+        {
+            setLocalVarInt ui_index (0 - 1);
+        }
+        
+        onEsc
+        {
+            if ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 6) == "close_self" )
+            {
+                play "mouse_click";
+                close self;
+            }
+            if ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 6) == "prev_menu" )
+            {
+                scriptmenuresponse prev_menu;
+                play "mouse_click";
+            }
+        }
+        
+        itemDef
+        {
+            rect -1280 -480 2560 960 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0 0 0 0.8
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 -170 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.1569 0.1725 0.1608 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 -150 350 65 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.3098 0.349 0.2745 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 -150 350 3 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 1 1 1 1
+            background "black"
+        }
+        
+        itemDef
+        {
+            rect -170 -170 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 9
+            textalign 8
+            textscale 0.4
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 2) )
+        }
+        
+        itemDef
+        {
+            rect -175 -85 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.1569 0.1725 0.1608 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 -65 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.2118 0.2314 0.22 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 -45 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.1569 0.1725 0.1608 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 -25 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.2118 0.2314 0.22 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 -5 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.1569 0.1725 0.1608 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 15 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.2118 0.2314 0.22 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 35 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.1569 0.1725 0.1608 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 55 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.2118 0.2314 0.22 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 75 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.1569 0.1725 0.1608 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 95 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.2118 0.2314 0.22 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect 60 -145 110 60 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 1 1 1 1
+            exp material ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_index") + localVarInt("ui_table_index")), 4) )
+            visible when ( localVarInt("ui_index") >= 0 && tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_index") + localVarInt("ui_table_index")), 4) != "" )
+        }
+        
+        itemDef
+        {
+            rect 100 -145 60 60 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 1 1 1 1
+            exp material ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_index") + localVarInt("ui_table_index")), 5) )
+            visible when ( localVarInt("ui_index") >= 0 && tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_index") + localVarInt("ui_table_index")), 5) != "" )
+        }
+        
+        itemDef
+        {
+            rect -170 -145 260 60 2 2
+            decoration 
+            autowrapped 
+            visible 1
+            style 1
+            type 21
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + select(localVarInt("ui_index") >= 0, tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_index") + localVarInt("ui_table_index")), 3), tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 3)) )
+        }
+        
+        itemDef
+        {
+            rect -175 0 350 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.55 0.55 0.55 1
+            background "gradient_fadein"
+            visible when ( localVarInt("ui_index") >= 0 )
+            exp rect y ( 20 * localvarint("ui_index") - 85 )
+        }
+        
+        itemDef
+        {
+            rect -175 -85 350 2 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 1 1 1 1
+            background "black"
+            exp rect y ( 20 * localvarint("ui_index") - 65 )
+        }
+        
+        itemDef
+        {
+            rect -165 -85 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (0 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (0 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_0") == (0 - 1)) && !(dvarint("ui_price_0") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_0") == (0 - 1)) && !(dvarint("ui_price_0") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_0") == (0 - 1)) && !(dvarint("ui_price_0") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 0 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 -85 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (0 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 0;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_0")) || (dvarint("ui_price_0") == (0 - 1)) || (dvarint("ui_price_0") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_0") == (0 - 4)) || (dvarint("ui_price_0") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (0 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_0") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_0")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (0 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 -85 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_0") == (0 - 1)) || (dvarint("ui_price_0") == (0 - 4)), "", select((dvarint("ui_price_0") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_0") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_0")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (0 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_0") == (0 - 2)) || (dvarint("ui_price_0") == (0 - 3)), 1 - (int((dvarint("ui_price_0") == (0 - 2)) || (dvarint("ui_price_0") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_0")) && !(dvarint("ui_price_0") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_0") == (0 - 2)) && !(dvarint("ui_price_0") == (0 - 3)) && !(dvarint("ui_price_0") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_0"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 0 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 -65 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (1 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (1 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_1") == (0 - 1)) && !(dvarint("ui_price_1") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_1") == (0 - 1)) && !(dvarint("ui_price_1") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_1") == (0 - 1)) && !(dvarint("ui_price_1") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 1 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 -65 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (1 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 1;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_1")) || (dvarint("ui_price_1") == (0 - 1)) || (dvarint("ui_price_1") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_1") == (0 - 4)) || (dvarint("ui_price_1") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (1 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_1") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_1")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (1 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 -65 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_1") == (0 - 1)) || (dvarint("ui_price_1") == (0 - 4)), "", select((dvarint("ui_price_1") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_1") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_1")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (1 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_1") == (0 - 2)) || (dvarint("ui_price_1") == (0 - 3)), 1 - (int((dvarint("ui_price_1") == (0 - 2)) || (dvarint("ui_price_1") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_1")) && !(dvarint("ui_price_1") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_1") == (0 - 2)) && !(dvarint("ui_price_1") == (0 - 3)) && !(dvarint("ui_price_1") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_1"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 1 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 -45 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (2 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (2 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_2") == (0 - 1)) && !(dvarint("ui_price_2") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_2") == (0 - 1)) && !(dvarint("ui_price_2") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_2") == (0 - 1)) && !(dvarint("ui_price_2") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 2 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 -45 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (2 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 2;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_2")) || (dvarint("ui_price_2") == (0 - 1)) || (dvarint("ui_price_2") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_2") == (0 - 4)) || (dvarint("ui_price_2") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (2 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_2") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_2")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (2 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 -45 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_2") == (0 - 1)) || (dvarint("ui_price_2") == (0 - 4)), "", select((dvarint("ui_price_2") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_2") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_2")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (2 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_2") == (0 - 2)) || (dvarint("ui_price_2") == (0 - 3)), 1 - (int((dvarint("ui_price_2") == (0 - 2)) || (dvarint("ui_price_2") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_2")) && !(dvarint("ui_price_2") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_2") == (0 - 2)) && !(dvarint("ui_price_2") == (0 - 3)) && !(dvarint("ui_price_2") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_2"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 2 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 -25 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (3 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (3 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_3") == (0 - 1)) && !(dvarint("ui_price_3") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_3") == (0 - 1)) && !(dvarint("ui_price_3") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_3") == (0 - 1)) && !(dvarint("ui_price_3") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 3 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 -25 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (3 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 3;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_3")) || (dvarint("ui_price_3") == (0 - 1)) || (dvarint("ui_price_3") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_3") == (0 - 4)) || (dvarint("ui_price_3") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (3 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_3") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_3")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (3 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 -25 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_3") == (0 - 1)) || (dvarint("ui_price_3") == (0 - 4)), "", select((dvarint("ui_price_3") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_3") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_3")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (3 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_3") == (0 - 2)) || (dvarint("ui_price_3") == (0 - 3)), 1 - (int((dvarint("ui_price_3") == (0 - 2)) || (dvarint("ui_price_3") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_3")) && !(dvarint("ui_price_3") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_3") == (0 - 2)) && !(dvarint("ui_price_3") == (0 - 3)) && !(dvarint("ui_price_3") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_3"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 3 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 -5 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (4 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (4 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_4") == (0 - 1)) && !(dvarint("ui_price_4") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_4") == (0 - 1)) && !(dvarint("ui_price_4") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_4") == (0 - 1)) && !(dvarint("ui_price_4") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 4 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 -5 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (4 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 4;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_4")) || (dvarint("ui_price_4") == (0 - 1)) || (dvarint("ui_price_4") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_4") == (0 - 4)) || (dvarint("ui_price_4") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (4 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_4") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_4")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (4 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 -5 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_4") == (0 - 1)) || (dvarint("ui_price_4") == (0 - 4)), "", select((dvarint("ui_price_4") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_4") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_4")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (4 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_4") == (0 - 2)) || (dvarint("ui_price_4") == (0 - 3)), 1 - (int((dvarint("ui_price_4") == (0 - 2)) || (dvarint("ui_price_4") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_4")) && !(dvarint("ui_price_4") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_4") == (0 - 2)) && !(dvarint("ui_price_4") == (0 - 3)) && !(dvarint("ui_price_4") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_4"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 4 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 15 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (5 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (5 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_5") == (0 - 1)) && !(dvarint("ui_price_5") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_5") == (0 - 1)) && !(dvarint("ui_price_5") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_5") == (0 - 1)) && !(dvarint("ui_price_5") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 5 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 15 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (5 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 5;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_5")) || (dvarint("ui_price_5") == (0 - 1)) || (dvarint("ui_price_5") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_5") == (0 - 4)) || (dvarint("ui_price_5") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (5 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_5") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_5")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (5 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 15 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_5") == (0 - 1)) || (dvarint("ui_price_5") == (0 - 4)), "", select((dvarint("ui_price_5") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_5") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_5")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (5 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_5") == (0 - 2)) || (dvarint("ui_price_5") == (0 - 3)), 1 - (int((dvarint("ui_price_5") == (0 - 2)) || (dvarint("ui_price_5") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_5")) && !(dvarint("ui_price_5") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_5") == (0 - 2)) && !(dvarint("ui_price_5") == (0 - 3)) && !(dvarint("ui_price_5") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_5"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 5 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 35 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (6 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (6 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_6") == (0 - 1)) && !(dvarint("ui_price_6") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_6") == (0 - 1)) && !(dvarint("ui_price_6") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_6") == (0 - 1)) && !(dvarint("ui_price_6") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 6 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 35 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (6 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 6;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_6")) || (dvarint("ui_price_6") == (0 - 1)) || (dvarint("ui_price_6") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_6") == (0 - 4)) || (dvarint("ui_price_6") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (6 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_6") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_6")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (6 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 35 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_6") == (0 - 1)) || (dvarint("ui_price_6") == (0 - 4)), "", select((dvarint("ui_price_6") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_6") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_6")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (6 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_6") == (0 - 2)) || (dvarint("ui_price_6") == (0 - 3)), 1 - (int((dvarint("ui_price_6") == (0 - 2)) || (dvarint("ui_price_6") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_6")) && !(dvarint("ui_price_6") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_6") == (0 - 2)) && !(dvarint("ui_price_6") == (0 - 3)) && !(dvarint("ui_price_6") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_6"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 6 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 55 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (7 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (7 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_7") == (0 - 1)) && !(dvarint("ui_price_7") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_7") == (0 - 1)) && !(dvarint("ui_price_7") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_7") == (0 - 1)) && !(dvarint("ui_price_7") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 7 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 55 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (7 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 7;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_7")) || (dvarint("ui_price_7") == (0 - 1)) || (dvarint("ui_price_7") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_7") == (0 - 4)) || (dvarint("ui_price_7") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (7 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_7") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_7")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (7 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 55 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_7") == (0 - 1)) || (dvarint("ui_price_7") == (0 - 4)), "", select((dvarint("ui_price_7") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_7") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_7")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (7 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_7") == (0 - 2)) || (dvarint("ui_price_7") == (0 - 3)), 1 - (int((dvarint("ui_price_7") == (0 - 2)) || (dvarint("ui_price_7") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_7")) && !(dvarint("ui_price_7") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_7") == (0 - 2)) && !(dvarint("ui_price_7") == (0 - 3)) && !(dvarint("ui_price_7") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_7"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 7 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 75 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (8 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (8 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_8") == (0 - 1)) && !(dvarint("ui_price_8") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_8") == (0 - 1)) && !(dvarint("ui_price_8") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_8") == (0 - 1)) && !(dvarint("ui_price_8") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 8 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 75 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (8 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 8;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_8")) || (dvarint("ui_price_8") == (0 - 1)) || (dvarint("ui_price_8") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_8") == (0 - 4)) || (dvarint("ui_price_8") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (8 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_8") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_8")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (8 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 75 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_8") == (0 - 1)) || (dvarint("ui_price_8") == (0 - 4)), "", select((dvarint("ui_price_8") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_8") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_8")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (8 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_8") == (0 - 2)) || (dvarint("ui_price_8") == (0 - 3)), 1 - (int((dvarint("ui_price_8") == (0 - 2)) || (dvarint("ui_price_8") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_8")) && !(dvarint("ui_price_8") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_8") == (0 - 2)) && !(dvarint("ui_price_8") == (0 - 3)) && !(dvarint("ui_price_8") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_8"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 8 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -165 95 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 4
+            textscale 0.375
+            exp text ( "@" + tablelookupbyrow("mp/dynamic_shop.csv", (9 + localVarInt("ui_table_index")), 2) )
+            visible when ( localVarInt("ui_table_end_index") >= (9 + localVarInt("ui_table_index")) )
+            exp forecolor r ( int(!(dvarint("ui_price_9") == (0 - 1)) && !(dvarint("ui_price_9") == (0 - 2))) )
+            exp forecolor g ( int(!(dvarint("ui_price_9") == (0 - 1)) && !(dvarint("ui_price_9") == (0 - 2))) )
+            exp forecolor b ( int(!(dvarint("ui_price_9") == (0 - 1)) && !(dvarint("ui_price_9") == (0 - 2))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 9 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 95 350 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            visible when ( localVarInt("ui_table_end_index") >= (9 + localVarInt("ui_table_index")) )
+            
+            onFocus
+            {
+                setLocalVarInt ui_index 9;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt ui_index (0 - 1);
+            }
+            
+            action
+            {
+                if ( !(dvarint("ui_money") >= dvarint("ui_price_9")) || (dvarint("ui_price_9") == (0 - 1)) || (dvarint("ui_price_9") == (0 - 2)) )
+                {
+                    play "nav_negative";
+                }
+                if ( (dvarint("ui_price_9") == (0 - 4)) || (dvarint("ui_price_9") == (0 - 3)) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (9 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "mouse_click";
+                }
+                if ( dvarint("ui_price_9") >= 0 && (dvarint("ui_money") >= dvarint("ui_price_9")) )
+                {
+                    setLocalVarString selected_ref tablelookupbyrow("mp/dynamic_shop.csv", (9 + localVarInt("ui_table_index")), 6);
+                    scriptmenuresponse localVarString( "selected_ref" );
+                    play "arcademode_checkpoint";
+                }
+            }
+        }
+        
+        itemDef
+        {
+            rect 0 95 160 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 6
+            textscale 0.375
+            exp text ( select((dvarint("ui_price_9") == (0 - 1)) || (dvarint("ui_price_9") == (0 - 4)), "", select((dvarint("ui_price_9") == (0 - 2)), "@SO_SURVIVAL_ARMORY_OWNED", select((dvarint("ui_price_9") == (0 - 3)), "@SO_SURVIVAL_ARMORY_UPGRADE", "$ " + dvarint("ui_price_9")))) )
+            visible when ( localVarInt("ui_table_end_index") >= (9 + localVarInt("ui_table_index")) )
+            exp forecolor g ( select((dvarint("ui_price_9") == (0 - 2)) || (dvarint("ui_price_9") == (0 - 3)), 1 - (int((dvarint("ui_price_9") == (0 - 2)) || (dvarint("ui_price_9") == (0 - 3))) * 0.5), int((dvarint("ui_money") >= dvarint("ui_price_9")) && !(dvarint("ui_price_9") == (0 - 1)))) )
+            exp forecolor b ( int(!(dvarint("ui_price_9") == (0 - 2)) && !(dvarint("ui_price_9") == (0 - 3)) && !(dvarint("ui_price_9") == (0 - 1)) && (dvarint("ui_money") >= dvarint("ui_price_9"))) )
+            exp forecolor a ( 1 - ( ( localVarInt("ui_index") == 9 ) * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect -175 115 350 2 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 1 1 1 1
+            background "black"
+        }
+        
+        itemDef
+        {
+            rect -175 117 350 22 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.1569 0.1725 0.1608 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -175 137 350 3 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 0.3098 0.349 0.2745 1
+            background "white"
+        }
+        
+        itemDef
+        {
+            rect -160 117 350 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 0.55 0.71 0 1
+            textfont 3
+            textalign 8
+            textscale 0.375
+            exp text ( "$ " + dvarInt("ui_money") )
+        }
+        
+        itemDef
+        {
+            rect 105 117 67 20 2 2
+            decoration 
+            visible 1
+            style 3
+            forecolor 1 1 1 1
+            background "white"
+            exp rect x ( 155 - getTextWidth("Back ^2" + select(keybinding( "togglemenu" ) == "Escape", "Esc", keybinding( "togglemenu" )), 3, 0.375) )
+            exp rect w ( getTextWidth("Back ^2" + select(keybinding( "togglemenu" ) == "Escape", "Esc", keybinding( "togglemenu" )), 3, 0.375) + 20 )
+            exp forecolor a ( localvarint("onBack") * 0.65 )
+        }
+        
+        itemDef
+        {
+            rect 0 117 165 20 2 2
+            decoration 
+            visible 1
+            style 1
+            forecolor 1 1 1 1
+            textfont 3
+            textalign 10
+            textscale 0.375
+            exp text ( "Back ^2" + select(keybinding( "togglemenu" ) == "Escape", "Esc", keybinding( "togglemenu" )) )
+            exp rect x ( 165 - getTextWidth("Back ^2" + select(keybinding( "togglemenu" ) == "Escape", "Esc", keybinding( "togglemenu" )), 3, 0.375) )
+            exp rect w ( getTextWidth("Back ^2" + select(keybinding( "togglemenu" ) == "Escape", "Esc", keybinding( "togglemenu" )), 3, 0.375) )
+            exp forecolor a ( 1 - ( localvarint("onBack") * ( ( sin( localclientuimilliseconds( ) / 90 ) ) * 0.65 ) ) )
+        }
+        
+        itemDef
+        {
+            rect 105 117 67 20 2 2
+            visible 1
+            style 3
+            type 1
+            forecolor 0 0 0 0
+            background "white"
+            
+            onFocus
+            {
+                setLocalVarInt onBack 1;
+                play "ui_over_v2";
+            }
+            
+            leaveFocus
+            {
+                setLocalVarInt onBack 0;
+                play "ui_over_v2";
+            }
+            
+            action
+            {
+                if ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 6) == "close_self" )
+                {
+                    play "mouse_click";
+                    close self;
+                }
+                if ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 6) == "prev_menu" )
+                {
+                    scriptmenuresponse prev_menu;
+                    play "mouse_click";
+                }
+            }
         }
     }
 }

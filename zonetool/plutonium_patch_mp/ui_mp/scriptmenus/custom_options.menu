@@ -18,6 +18,7 @@
         onEsc
         {
             scriptmenuresponse "back";
+            close self;
         }
         
         itemDef

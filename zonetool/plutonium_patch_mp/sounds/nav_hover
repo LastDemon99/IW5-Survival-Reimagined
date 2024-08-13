@@ -1,9 +1,9 @@
 {
-    "aliasName": "mp_ingame_summary",
+    "aliasName": "nav_hover",
     "count": 1,
     "head": [
         {
-            "aliasName": "mp_ingame_summary",
+            "aliasName": "nav_hover",
             "centerPercentage": 0.0,
             "chainAliasName": null,
             "distMax": 600.0,
@@ -11,7 +11,7 @@
             "envelopMax": 0.0,
             "envelopMin": 0.0,
             "envelopPercentage": 0.0,
-            "flags": 3352,
+            "flags": 17560,
             "lfePercentage": 0.0,
             "masterPercentage": 0.0,
             "masterPriority": 50,
@@ -22,7 +22,7 @@
             "secondaryAliasName": null,
             "sequence": 0,
             "slavePercentage": 1.0,
-            "soundfile": "mp/mp_ingame_summary.wav",
+            "soundfile": "user_interface/nav_hover.wav",
             "speakerMap": {
                 "channelMaps": [
                     {
@@ -46,37 +46,37 @@
                         "entryCount": 6,
                         "speakers": [
                             {
-                                "levels0": 0.30000001192092896,
+                                "levels0": 0.5,
                                 "levels1": 0.0,
                                 "numLevels": 1,
                                 "speaker": 0
                             },
                             {
-                                "levels0": 0.30000001192092896,
+                                "levels0": 0.5,
                                 "levels1": 0.0,
                                 "numLevels": 1,
                                 "speaker": 1
                             },
                             {
-                                "levels0": 0.10000000149011612,
+                                "levels0": 0.0,
                                 "levels1": 0.0,
                                 "numLevels": 1,
                                 "speaker": 2
                             },
                             {
-                                "levels0": 0.10000000149011612,
+                                "levels0": 0.0,
                                 "levels1": 0.0,
                                 "numLevels": 1,
                                 "speaker": 3
                             },
                             {
-                                "levels0": 0.15000000596046448,
+                                "levels0": 0.0,
                                 "levels1": 0.0,
                                 "numLevels": 1,
                                 "speaker": 4
                             },
                             {
-                                "levels0": 0.15000000596046448,
+                                "levels0": 0.0,
                                 "levels1": 0.0,
                                 "numLevels": 1,
                                 "speaker": 5
@@ -104,14 +104,14 @@
                         "entryCount": 6,
                         "speakers": [
                             {
-                                "levels0": 0.699999988079071,
+                                "levels0": 1.0,
                                 "levels1": 0.0,
                                 "numLevels": 2,
                                 "speaker": 0
                             },
                             {
                                 "levels0": 0.0,
-                                "levels1": 0.699999988079071,
+                                "levels1": 1.0,
                                 "numLevels": 2,
                                 "speaker": 1
                             },
@@ -122,36 +122,36 @@
                                 "speaker": 2
                             },
                             {
-                                "levels0": 0.10000000149011612,
-                                "levels1": 0.10000000149011612,
+                                "levels0": 0.0,
+                                "levels1": 0.0,
                                 "numLevels": 2,
                                 "speaker": 3
                             },
                             {
-                                "levels0": 0.30000001192092896,
+                                "levels0": 0.0,
                                 "levels1": 0.0,
                                 "numLevels": 2,
                                 "speaker": 4
                             },
                             {
                                 "levels0": 0.0,
-                                "levels1": 0.30000001192092896,
+                                "levels1": 0.0,
                                 "numLevels": 2,
                                 "speaker": 5
                             }
                         ]
                     }
                 ],
-                "isDefault": false,
-                "name": "music"
+                "isDefault": true,
+                "name": ""
             },
-            "startDelay": 0,
+            "startDelay": 35,
             "subtitle": null,
-            "type": 2,
+            "type": 1,
             "velocityMin": 0.0,
             "volMax": 1.0,
             "volMin": 1.0,
-            "volModIndex": 6,
+            "volModIndex": 64,
             "volumeFalloffCurve": "$default"
         }
     ]

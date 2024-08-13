@@ -3,24 +3,15 @@
 ##################################
 
 # RAWFILES
-rawfile,maps/mp/lethalbeats/_dynamic_menu.gsc
-rawfile,maps/mp/lethalbeats/_trigger.gsc
-
 rawfile,maps/mp/gametypes/_gametypes.txt
 rawfile,maps/mp/gametypes/survival.txt
 rawfile,maps/mp/gametypes/survival.gsc
-
-rawfile,maps/mp/dynamic_menu_utility.gsc
 
 rawfile,maps/mp/survival/_air_drop.gsc
 rawfile,maps/mp/survival/_bots.gsc
 rawfile,maps/mp/survival/_chopper.gsc
 rawfile,maps/mp/survival/_dev.gsc
 rawfile,maps/mp/survival/_main.gsc
-rawfile,maps/mp/survival/_menu_armory.gsc
-rawfile,maps/mp/survival/_menu_equipment.gsc
-rawfile,maps/mp/survival/_menu_options.gsc
-rawfile,maps/mp/survival/_menu_support.gsc
 rawfile,maps/mp/survival/_patch.gsc
 rawfile,maps/mp/survival/_sentry.gsc
 rawfile,maps/mp/survival/_shops.gsc
@@ -29,21 +20,18 @@ rawfile,maps/mp/survival/_uav.gsc
 rawfile,maps/mp/survival/_utility.gsc
 rawfile,maps/mp/survival/_damage.gsc
 rawfile,maps/mp/survival/_menus.gsc
+rawfile,maps/mp/survival/_armory.gsc
 
 # STRINGTABLES
+stringtable,mp/dynamic_shop.csv
 stringtable,mp/main_options.csv
 stringtable,mp/survival_waves.csv
 stringtable,mp/survival_bots.csv
-stringtable,mp/weapon_shop.csv
-stringtable,mp/equipment_shop.csv
-stringtable,mp/support_shop.csv
 stringtable,mp/killstreakTable.csv
 
 # MENUS
 menufile,ui_mp/patch_mp_ingame.txt
 menufile,ui_mp/scriptmenus/custom_options.menu
-menufile,ui_mp/scriptmenus/shop_menu.menu
-menufile,ui_mp/scriptmenus/client_cmd.menu
 menufile,ui_mp/connect.menu
 menufile,ui_mp/democontrols_hd.menu
 menufile,ui_mp/demo_playercard_hd.menu
@@ -164,6 +152,11 @@ sound,SO_HQ_sentry_down
 sound,SO_HQ_sentry_underattack
 sound,SO_HQ_uav_busy
 sound,SO_HQ_wave_over_flavor
+sound,ui_over_v2
+sound,nav_negative
+sound,nav_hover
+sound,arcademode_checkpoint
+loaded_sound,user_interface/ui_arcade_checkpoint1.wav
 
 # XANIM
 xanim,german_shepherd_run
@@ -198,17 +191,34 @@ material,loadscreen_mp_dome
 
 # LOCALIZEDSTRINGS
 localize,SENTRY_MOVE
+localize,SO_SURVIVAL_AIRSUPPORT_AIRSTRIKE_DESC
+localize,SO_SURVIVAL_AIRSUPPORT_PREDATOR_DESC
+localize,SO_SURVIVAL_ARMORY_UPGRADE
+localize,SO_SURVIVAL_ARMORY_OWNED
+localize,SO_SURVIVAL_ARMORY_WEAPON
+localize,SO_SURVIVAL_ARMORY_WEAPON_DESC
+localize,SO_SURVIVAL_AMMO_REFILL
+localize,SO_SURVIVAL_AMMO_REFILL_DESC
+localize,SO_SURVIVAL_ARMORY_EQUIPMENT
+localize,SO_SURVIVAL_ARMORY_EQUIPMENT_DESC
+localize,SO_SURVIVAL_EQUIPMENT_FRAG_REFILL
 localize,SO_SURVIVAL_EQUIPMENT_FRAG_REFILL_DESC
+localize,SO_SURVIVAL_EQUIPMENT_KNIFETHROW_REFILL
 localize,SO_SURVIVAL_EQUIPMENT_KNIFE_REFILL_DESC
+localize,SO_SURVIVAL_EQUIPMENT_FLASH_REFILL
 localize,SO_SURVIVAL_EQUIPMENT_FLASH_REFILL_DESC
-localize,SO_SURVIVAL_EQUIPMENT_CONC_REFILL_DESC
+localize,SO_SURVIVAL_EQUIPMENT_CONCUSSION_REFILL
+localize,SO_SURVIVAL_EQUIPMENT_CONCUSSION_REFILL_DESC
+localize,SO_SURVIVAL_EQUIPMENT_CLAYMORE
+localize,SO_SURVIVAL_EQUIPMENT_C4
+localize,SO_SURVIVAL_EQUIPMENT_BODYARMOR
 localize,SO_SURVIVAL_EQUIPMENT_BODYARMOR_DESC
+localize,SO_SURVIVAL_EQUIPMENT_LASTSTAND
 localize,SO_SURVIVAL_EQUIPMENT_LASTSTAND_DESC
 localize,SO_SURVIVAL_EQUIPMENT_SENTRY_DESC
 localize,SO_SURVIVAL_EQUIPMENT_SENTRY_GL_DESC
-localize,SO_SURVIVAL_AIRSUPPORT_AIRSTRIKE_DESC
-localize,SO_SURVIVAL_AIRSUPPORT_PREDATOR_DESC
-localize,WEAPON_ARMORY_INFO
+localize,SO_SURVIVAL_ARMORY_AIRSUPPORT
+localize,SO_SURVIVAL_ARMORY_PERKS
 
 ##################################
 ##       PLUTONIUM REGION       ##

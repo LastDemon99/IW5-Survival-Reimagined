@@ -1,10 +1,27 @@
 #include maps\mp\_utility;
+#include maps\mp\survival\_utility;
 
 init()
 {
-    game["menu_team"] = "class";
-    game["menu_class_axis"] = "class";
-    game["menu_class_allies"] = "class";
+    game["menu_team"] = "custom_options";
+    game["menu_class_axis"] = "custom_options";
+    game["menu_class_allies"] = "custom_options";
+}
+
+shopTrigger()
+{
+	self endon("disconnect");
+	level endon("game_ended");
+	self endon("death");
+	
+	for (;;)
+	{
+		self waittill("trigger_use", trigger);
+		if (isDefined(self.currMenu)) continue;
+		if (trigger.tag == "weapon_shop") self maps\lethalbeats\DynamicMenus\dynamic_shop::openShop("weapon_armory");
+		else if (trigger.tag == "equipment_shop") self maps\lethalbeats\DynamicMenus\dynamic_shop::openShop("equipment_armory");
+		else if (trigger.tag == "support_shop") self maps\lethalbeats\DynamicMenus\dynamic_shop::openShop("air_support_armory");
+	}
 }
 
 getTeamAssignment()
@@ -58,11 +75,6 @@ bypassClassChoice()
 	self.selectedClass = true;
 	self [[level.class]]("class0");	
 }
-
-beginTeamChoice() {}
-showMainMenuForTeam() {}
-menuAllies() {}
-menuAxis() {}
 
 menuSpectator()
 {
@@ -220,3 +232,8 @@ addToTeam(team, firstConnect)
 		level notify("joined_team");
 	}
 }
+
+beginTeamChoice() {}
+showMainMenuForTeam() {}
+menuAllies() {}
+menuAxis() {}
