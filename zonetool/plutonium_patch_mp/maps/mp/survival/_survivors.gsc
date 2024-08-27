@@ -377,6 +377,28 @@ onChangeWeapons()
 	for(;;)
 	{
 		self waittill ("weapon_change", newWeapon);
+
+		if (isDefined(self.primaryBuffs))
+		{
+			is_primary = newWeapon == self getWeaponsListPrimaries()[0];
+			if(is_primary)
+			{
+				foreach(buff in self.secondaryBuffs)
+					if (_hasperk(buff)) self _unsetPerk(buff);
+
+				foreach(buff in self.primaryBuffs)
+					self givePerk(buff, true);
+			}
+			else
+			{
+				foreach(buff in self.primaryBuffs)
+					if (_hasperk(buff)) self _unsetPerk(buff);
+
+				foreach(buff in self.secondaryBuffs)
+					self givePerk(buff, true);
+			}
+			continue;
+		}
 		
 		if (newWeapon == "killstreak_predator_missile_mp") self setClientDvar("ui_streak", "");
 		self.isCarrySentry = newWeapon == "trophy_mp" ? 1 : undefined;

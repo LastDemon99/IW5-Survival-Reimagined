@@ -1,99 +1,120 @@
 
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\lethalbeats\utility;
-#include maps\lethalbeats\weapons;
 #include maps\lethalbeats\DynamicMenus\dynamic_shop;
 
-#define TABLE "mp/survival_armories.csv"
-#define WEAPON_PAGES ["pistols", "shotguns", "machine_pistols", "smgs", "assaults", "lmgs", "snipers", "projectiles", "riots"]
+#define OPTION_BUY -5
+#define OPTION_DISABLE -4
+#define OPTION_OWNED -3
+#define OPTION_UPGRADE -2
+#define OPTION_SCRIPTRESPONSE -1
 
-#define NULL_PAGE 0
-#define WEAPON_ARMORY 1
-#define WEAPON_SELECT 2
-#define WEAPON_PISTOLS 3
-#define WEAPON_ATTACHS 4
+#define PAGE_NULL -1
+#define WEAPON_ARMORY 0
+#define WEAPON_EQUIPMENT 1
+#define WEAPON_AIR_SUPPORT 2
+
+#define WEAPON_REMOVE_ATTACHS 7
+#define WEAPON_REMOVE_BUFFS 8
 
 init()
 {
-    level.onOpenShop = ::onOpenShop;
-    level.getShopStock = ::getShopStock;
-    level.isUpgradeAvailable = ::isUpgradeAvailable;
-    level.getUpgradeMenu = ::getUpgradeMenu;
-    level.isOwnedItem = ::isOwnedItem;
-    level.isDisabledItem = ::isDisabledItem;
-    level.onBuy = ::onBuy;
+    level.onOpenPage = ::onOpenPage;
+    level.onSelectOption = ::onSelectOption;
+    level.isUpgradeOption = ::isUpgradeOption;
+    level.isOwnedOption = ::isOwnedOption;
+    level.isDisabledOption = ::isDisabledOption;
+    level.updateLabels = ::updateLabels;
 
     maps\lethalbeats\weapons::init();
 }
 
-onOpenShop(menu)
+onOpenPage(menu)
 {
     self maps\mp\survival\_utility::setScore(100000);
 
     if (menu == "weapon_armory")
     {
-        self maps\mp\survival\_weapon_armory::init(menu);
+        self shopInit(WEAPON_ARMORY);
         return;
     }
 
-    if (!isDefined(self.shop)) self.shop = spawnstruct();
+    if (!isDefined(self.shop.menu)) return;
 
-    if (array_contain(WEAPON_PAGES, menu)) self.shop.page = WEAPON_SELECT;
-    else if (string_end_with(menu, "attach")) self.shop.page = WEAPON_ATTACHS;
+    if (self.shop.menu == WEAPON_ARMORY)
+    {
+        self.shop maps\mp\survival\_armory_weapons::onOpenPage(menu);
+        return;
+    }
 }
 
-onBuy(page, item, price)
+onSelectOption(page, item, price, option_type)
 {
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            self.shop maps\mp\survival\_weapon_armory::onBuy(item);
+            if (option_type == OPTION_BUY)
+                self.shop maps\mp\survival\_armory_weapons::onBuyItem(item, price);            
+            else if (option_type == OPTION_UPGRADE)
+                self.shop maps\mp\survival\_armory_weapons::onUpgradeItem();
+            else if (option_type == OPTION_SCRIPTRESPONSE)
+                self.shop maps\mp\survival\_armory_weapons::onResponseItem(page, item);
             break;
-    }    
-    buyItem(price);
+    }
 }
 
-isDisabledItem(page, item)
-{
-    return false;
-}
-
-isOwnedItem(page, item)
-{
-    return false;
-}
-
-isUpgradeAvailable(page, item)
+updateLabels(index, item, option_label, price_label)
 {
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            return self.shop maps\mp\survival\_weapon_armory::isUpgradeAvailable(item);
+            self.shop maps\mp\survival\_armory_weapons::updateLabels(index, item, option_label, price_label);
+            break;
+    }
+}
+
+isDisabledOption(page, item)
+{
+    switch(self.shop.menu)
+    {
+        case WEAPON_ARMORY:
+            return self.shop maps\mp\survival\_armory_weapons::isDisabledOption(item);
         default:
             return false;
     }
 }
 
-getShopStock(page)
+isOwnedOption(page, item)
 {
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            return self.shop maps\mp\survival\_weapon_armory::getShopStock();
+            return self.shop maps\mp\survival\_armory_weapons::isOwnedOption(item);
         default:
-            return 0;
+            return false;
     }
 }
 
-getUpgradeMenu(page, item)
+isUpgradeOption(page, item)
 {
-    if (self.shop.menu == WEAPON_ARMORY)
-        return self.shop maps\mp\survival\_weapon_armory::getUpgradeMenu(item);
-    return "";
+    switch(self.shop.menu)
+    {
+        case WEAPON_ARMORY:
+            return self.shop maps\mp\survival\_armory_weapons::isUpgradeOption(item);
+        default:
+            return false;
+    }
 }
 
 buyItem(price)
 {
-	self maps\mp\survival\_utility::setScore(self.score - price);
+	self maps\mp\survival\_utility::setScore(self.score - int(price));
+}
+
+shopInit(menu)
+{
+    self.shop = spawnstruct();
+    self.shop.menu = menu;
+    self.shop.page = PAGE_NULL;
+    self.shop.owner = self;
 }
