@@ -28,6 +28,12 @@ init()
     maps\lethalbeats\weapons::init();
 }
 
+/*
+=========================
+	HANDLERS
+=========================
+*/
+
 onOpenPage(menu)
 {
     self maps\mp\survival\_utility::setScore(100000);
@@ -39,12 +45,19 @@ onOpenPage(menu)
         return;
     }
 
+    if (menu == "equipment_armory")
+    {
+        self shopInit(WEAPON_EQUIPMENT);
+        return;
+    }
+
     if (!isDefined(self.shop.menu)) return;
 
-    if (self.shop.menu == WEAPON_ARMORY)
+    switch(self.shop.menu)
     {
-        self.shop maps\mp\survival\_armory_weapons::onOpenPage(menu);
-        return;
+        case WEAPON_ARMORY:
+            self.shop maps\mp\survival\_armory_weapons::onOpenPage(menu);
+            break;
     }
 }
 
@@ -54,6 +67,9 @@ onSelectOption(page, item, price, option_type)
     {
         case WEAPON_ARMORY:
             self.shop maps\mp\survival\_armory_weapons::onSelectOption(page, item, price, option_type);
+            break;
+        case WEAPON_EQUIPMENT:
+            self maps\mp\survival\_armory_equipment::onBuy(item, price);
             break;
     }
 }
@@ -65,6 +81,28 @@ onUpdateOption(index, item, option_label, price_label)
         case WEAPON_ARMORY:
             self.shop maps\mp\survival\_armory_weapons::onUpdateOption(index, item, option_label, price_label);
             break;
+        case WEAPON_EQUIPMENT:
+            self updateOption(index, item, option_label, price_label);
+            break;
+    }
+}
+
+/*
+=========================
+	OPTION STATES
+=========================
+*/
+
+isOwnedOption(page, item)
+{
+    switch(self.shop.menu)
+    {
+        case WEAPON_ARMORY:
+            return self.shop maps\mp\survival\_armory_weapons::isOwnedOption(item);
+        case WEAPON_EQUIPMENT:
+            return self maps\mp\survival\_armory_equipment::isOwnedOption(item);
+        default:
+            return false;
     }
 }
 
@@ -74,17 +112,8 @@ isDisabledOption(page, item)
     {
         case WEAPON_ARMORY:
             return self.shop maps\mp\survival\_armory_weapons::isDisabledOption(item);
-        default:
-            return false;
-    }
-}
-
-isOwnedOption(page, item)
-{
-    switch(self.shop.menu)
-    {
-        case WEAPON_ARMORY:
-            return self.shop maps\mp\survival\_armory_weapons::isOwnedOption(item);
+        case WEAPON_EQUIPMENT:
+            return self maps\mp\survival\_armory_equipment::isDisabledOption(item);
         default:
             return false;
     }

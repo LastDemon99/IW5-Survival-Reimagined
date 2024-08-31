@@ -224,6 +224,7 @@ setNades(nade, value)
 
 addNades(nade, value)
 {
+	if(!(self hasWeapon(nade))) self giveweapon(nade);
 	self setNades(nade, self.grenades[nade] + value);
 }
 
