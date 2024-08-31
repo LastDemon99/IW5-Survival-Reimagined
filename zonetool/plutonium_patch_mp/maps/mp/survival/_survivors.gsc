@@ -397,7 +397,6 @@ onChangeWeapons()
 				foreach(buff in self.secondaryBuffs)
 					self givePerk(buff, true);
 			}
-			continue;
 		}
 		
 		if (newWeapon == "killstreak_predator_missile_mp") self setClientDvar("ui_streak", "");

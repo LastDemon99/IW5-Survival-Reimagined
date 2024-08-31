@@ -7,7 +7,6 @@
 #include maps\lethalbeats\DynamicMenus\dynamic_shop;
 
 #define NULL ""
-
 #define WEAPON_MENUS ["select_pistol", "select_shotgun", "select_machine_pistol", "select_smg", "select_assault", "select_lmg", "select_sniper", "select_projectile", "select_riot"]
 
 // OPTION TYPE
@@ -17,57 +16,82 @@
 #define OPTION_UPGRADE -2
 #define OPTION_SCRIPTRESPONSE -1
 
-// ARMORY MENUS
+// WEAPON ARMORY PAGE
 #define PAGE_NULL -1
-#define WEAPON_ARMORY 0
-#define WEAPON_EQUIPMENT 1
-#define WEAPON_AIR_SUPPORT 2
-
-// WEAPON ARMORY PAGE TYPES
-#define WEAPON_SELECT 3
-#define WEAPON_ATTACHS 4
-#define WEAPON_BUFFS 5
-#define WEAPON_UPGRADES 6
-#define WEAPON_REMOVE_ATTACHS 7
-#define WEAPON_REMOVE_BUFFS 8
-#define WEAPON_CAMOS 9
-#define WEAPON_AMMO 10
+#define WEAPON_SELECT 0
+#define WEAPON_ATTACHS 1
+#define WEAPON_BUFFS 2
+#define WEAPON_UPGRADES 3
+#define WEAPON_REMOVE_ATTACHS 4
+#define WEAPON_REMOVE_BUFFS 5
+#define WEAPON_CAMOS 6
+#define WEAPON_AMMO 7
+#define WEAPON_LAUNCHERS 8
+#define WEAPON_RIOTS 9
 
 // self -> shop
 // self.owner -> player
 
-onOpenPage(menu)
-{
-    if (!isDefined(self.owner.primaryAttachSlots))
-    {
-        player = self.owner;
-        player.primaryAttachSlots = 1;
-        player.primaryBuffSlots = 1;
-        player.secondaryAttachSlots = 1;
-        player.secondaryBuffSlots = 1;
-        player.primaryBuffs = [];
-        player.secondaryBuffs = [];
-    }
+/*
+=========================
+	HANDLERS
+=========================
+*/
 
-    if (menu == "upgrade_weapon") 
-        self.page = WEAPON_UPGRADES;
-    else if (string_end_with(menu, "buff") && self.page != WEAPON_REMOVE_BUFFS)
-        self.page = WEAPON_BUFFS;
-    else if (string_end_with(menu, "attach") && self.page != WEAPON_REMOVE_ATTACHS)
-        self.page = WEAPON_ATTACHS;
-    else
+onInit()
+{
+    self.hasStock = 1;
+
+    if (isDefined(self.owner.primaryAttachSlots)) return;
+
+    player = self.owner;
+    player.primaryAttachSlots = 1;
+    player.primaryBuffSlots = 1;
+    player.secondaryAttachSlots = 1;
+    player.secondaryBuffSlots = 1;
+    player.primaryBuffs = [];
+    player.secondaryBuffs = [];
+}
+
+onOpenPage(page)
+{
+    removeItem = self.removeItem;
+    self.removeItem = false;
+    switch(page)
     {
-        foreach(wep_menu in WEAPON_MENUS)
-            if (menu == wep_menu)
+        case "ammo": self.page = WEAPON_AMMO; break;
+        case "weapon_camo": self.page = WEAPON_CAMOS; break;
+        case "select_riot": self.page = WEAPON_RIOTS; break;
+        case "select_projectile": self.page = WEAPON_LAUNCHERS; break;
+        case "upgrade_weapon": self.page = WEAPON_UPGRADES; break;
+        default:
+            if (string_end_with(page, "buff"))
             {
-                self.page = WEAPON_SELECT;                
-                break;
+                if (removeItem) self.page = WEAPON_REMOVE_BUFFS;
+                else self.page = WEAPON_BUFFS;
             }
+            else if (string_end_with(page, "attach")) 
+            {
+                if (removeItem) self.page = WEAPON_REMOVE_ATTACHS;
+                else self.page = WEAPON_ATTACHS;
+            }
+            else if (array_contains(WEAPON_MENUS, page)) self.page = WEAPON_SELECT;
+            break;
     }
     self checkStock();
 }
 
-onBuyItem(item, price)
+onSelectOption(page, item, price, option_type)
+{
+    if (option_type == OPTION_BUY) 
+        self onBuy(item, price);
+    else if (option_type == OPTION_UPGRADE)
+        self onUpgrade(item);
+    else if (option_type == OPTION_SCRIPTRESPONSE)
+        self onResponse(page, item);
+}
+
+onBuy(item, price)
 {
     player = self.owner;
     isReplaceWeapon = false;
@@ -75,6 +99,8 @@ onBuyItem(item, price)
     switch(self.page)
     {
         case WEAPON_SELECT:
+        case WEAPON_LAUNCHERS:
+        case WEAPON_RIOTS:
             if (!self.hasStock)
             {
                 player takeWeapon(player getCurrentWeapon());
@@ -91,7 +117,7 @@ onBuyItem(item, price)
             break;
         case WEAPON_BUFFS:
             self.selectedBuffs[self.selectedBuffs.size] = item;
-            if (self is_primary_selected()) player.primaryBuffs = self.selectedBuffs;
+            if (self isPrimarySelected()) player.primaryBuffs = self.selectedBuffs;
             else player.secondaryBuffs = self.selectedBuffs;
             break;
         case WEAPON_REMOVE_ATTACHS:
@@ -106,12 +132,12 @@ onBuyItem(item, price)
         case WEAPON_UPGRADES:
             if (item == "attach_slot")
             {
-                if (self is_primary_selected()) self.owner.primaryAttachSlots++;
+                if (self isPrimarySelected()) self.owner.primaryAttachSlots++;
                 else self.owner.secondaryAttachSlots++;
             }
             else if (item == "buff_slot")
             {
-                if (self is_primary_selected()) self.owner.primaryBuffSlots++;
+                if (self isPrimarySelected()) self.owner.primaryBuffSlots++;
                 else self.owner.secondaryBuffSlots++;
             }
             break;
@@ -122,154 +148,140 @@ onBuyItem(item, price)
 
     player takeWeapon(self.selectedBuildedWeapon);
     self.selectedBuildedWeapon = build_weapon(self.selectedWeapon, self.selectedAttachs, self.selectedCamo);
-
+    
     player _giveWeapon(self.selectedBuildedWeapon);
     player switchToWeaponImmediate(self.selectedBuildedWeapon);
-    player buyItem(price);
-    self checkStock();
-
-    if (isNewWeapon) player restoreAmmo(self.selectedBuildedWeapon, "selected");
-
-    if (!isReplaceWeapon) return;
-    if (self is_primary_selected())
-    {
-        player.primaryAttachSlots = 1;
-        player.primaryBuffSlots = 1;
-        player.primaryBuffs = clear_buffs(player.primaryBuffs);
-        return;
-    }
     
-    player.secondaryAttachSlots = 1;
-    player.secondaryBuffSlots = 1;
-    player.secondaryBuffs = clear_buffs(player.secondaryBuffs);
+    if (isNewWeapon) player restoreAmmo(self.selectedBuildedWeapon, "selected");
+    if (isReplaceWeapon) clearBuffs();
+
+    self checkStock();
+    player buyItem(price);
 }
 
-onUpgradeItem()
+onUpgrade(item)
 {
-    if (self.page == WEAPON_SELECT)
-        self.owner openShop("upgrade_weapon");
+    if (!isDefined(self.selectedWeapon))
+    {
+        ownedWeapon = self.owner get_player_weapon(item);
+        self.selectedWeapon = getBaseWeaponName(ownedWeapon);
+        self.selectedBuildedWeapon = ownedWeapon;
+        self.selectedAttachs = get_current_attachs(self.selectedBuildedWeapon);
+        self.selectedBuffs = self isPrimarySelected() ? self.owner.primaryBuffs : self.owner.secondaryBuffs;
+        self.selectedCamo = get_camo_index(get_current_camo(self.selectedBuildedWeapon));
+    }
+    self.owner openShop("upgrade_weapon");
 }
 
-onResponseItem(page, item)
+onResponse(page, item)
 {
     player = self.owner;
+
     if (self.page == WEAPON_AMMO)
     {
-        player buyItem(getPrice(item));
-        player playLocalSound("arcademode_checkpoint");
-
-        weapon = player getWeaponsListPrimaries()[int(item)];
-        player takeWeapon(weapon); // fill clip stop
-        player _giveWeapon(weapon);
+        weapon = player _getWeaponsListPrimaries()[int(item)];
+        player takeWeapon(weapon);
+        player _giveWeapon(weapon); // fill clip
         player giveMaxAmmo(weapon); // fill only stock
-        return;
-    }
-
-    if (self.page != WEAPON_UPGRADES)
-    {
-        if (item == "ammo") self.page = WEAPON_AMMO;
-        player openShop(item);
-        return;
-    }
-
-    if (item == "weapon_camo") 
-    {
-        self.page = WEAPON_CAMOS;
-        player openShop(item);
+        if (hasAltAttach(weapon))  player giveMaxAmmo("alt_" + weapon);
+        player buyItem(getPrice(item));
         return;
     }
     
-    weapon_class = get_weapon_class(self.selectedWeapon);
     switch(item)
     {
-        case "remove_attach":
-            self.page = WEAPON_REMOVE_ATTACHS;
-        case "add_attach":            
-            player openShop(weapon_class + "_attach");
+        case "remove_attach": self.removeItem = true;
+        case "add_attach":
+            item = get_weapon_class(self.selectedWeapon) + "_attach";
             break;
-        case "remove_buff":
-            self.page = WEAPON_REMOVE_BUFFS;
+        case "remove_buff": self.removeItem = true;
         case "add_buff":
-            player openShop(weapon_class + "_buff");
+            item = get_weapon_class(self.selectedWeapon) + "_buff";
             break;
     }
+
+    player openShop(item);
+    player playLocalSound("mouse_click");
 }
 
-updateLabels(index, item, option_label, price_label)
+onUpdateOption(index, item, option_label, price_label)
 {
+    if (price_label == OPTION_BUY) price_label = getPrice(item);
+    
     player = self.owner;
+    player setOption(index, option_label);
+    player setPrice(index, price_label);
 
     if (self.page == WEAPON_AMMO)
     {
-        wepList = player getWeaponsListPrimaries();
-        if (index == 0) weapon = getBaseWeaponName(wepList[0]);
-        else if (index == 1) 
+        if (index > 1) return;
+        wepList = player _getWeaponsListPrimaries();
+        if (index == wepList.size)
         {
-            if  (wepList.size < 2)
-            {
-                player setOption(index, NULL);
-                player setPrice(index, NULL);
-                return;
-            }
-            weapon = getBaseWeaponName(wepList[1]);
+            player setOption(index, NULL);
+            return;
         }
-        else return;
-
-        player setOption(index, tablelookup("mp/dynamic_shop.csv", 6, weapon, 2));
-        player setPrice(index, getPrice(getWeaponClass(weapon)));
-        return;
-    }
-
-    player setOption(index, option_label);
-
-    if (price_label != OPTION_BUY)
-    {
+        player setOption(index, tablelookup("mp/dynamic_shop.csv", 6, getBaseWeaponName(wepList[index]), 2));
+        if (price_label != OPTION_DISABLE)
+        {
+            weapon = wepList[index];
+            price_label = getPrice("ammo_" + get_weapon_class(weapon));
+            foreach(attach in get_current_attachs(weapon))
+            {
+                if (attach == "gl" || attach == "m320" || attach == "gp25") price_label += getPrice("ammo_gl");
+                else if (attach == "xmags") price_label += getPrice("ammo_xmags");
+                else if (attach == "shotgun") price_label += getPrice("ammo_shotgun_alt");
+            }
+        }
         player setPrice(index, price_label);
         return;
     }
 
-    price = getPrice(item);
+    if (price_label == OPTION_DISABLE) return;
+
     switch(self.page)
     {
         case WEAPON_UPGRADES:
             if (item == "attach_slot") 
             {
-                slotsCount = self is_primary_selected() ?  player.primaryAttachSlots : player.secondaryAttachSlots;
-                price *= (getPrice("attach_slot_multiplier") * slotsCount);
+                slotsCount = self isPrimarySelected() ?  player.primaryAttachSlots :  player.secondaryAttachSlots;
+                price_label *= (getPrice("attach_slot_multiplier") * slotsCount);
             }
             else if (item == "buff_slot") 
             {
-                slotsCount = self is_primary_selected() ?  player.primaryBuffSlots : player.secondaryBuffSlots;
-                price *= (getPrice("buff_slot_multiplier") * slotsCount);
+                slotsCount = self isPrimarySelected() ?   player.primaryBuffSlots :  player.secondaryBuffSlots;
+                price_label *= (getPrice("buff_slot_multiplier") * slotsCount);
             }
             break;
         case WEAPON_REMOVE_ATTACHS: 
-            price *= getPrice("remove_attach_multiplier");
+            price_label *= getPrice("remove_attach_multiplier");
             break;
         case WEAPON_REMOVE_BUFFS:
-            price *= getPrice("remove_buff_multiplier");
+            price_label *= getPrice("remove_buff_multiplier");
             break;
     }
-    player setPrice(index, price);
+    player setPrice(index, price_label);
 }
+
+/*
+=========================
+	OPTION STATES
+=========================
+*/
 
 isUpgradeOption(item)
 {
-    if (self.page != WEAPON_SELECT) return false;
-    ownedWeapon = self.owner get_player_weapon(item);
-    if (!isDefined(ownedWeapon)) return false;
-    self.selectedWeapon = getBaseWeaponName(ownedWeapon);
-    self.selectedBuildedWeapon = ownedWeapon;
-    self.selectedAttachs = get_current_attachs(self.selectedBuildedWeapon);
-    self.selectedBuffs = self is_primary_selected() ? self.owner.primaryBuffs : self.owner.secondaryBuffs;
-    self.selectedCamo = get_camo_index(get_current_camo(self.selectedBuildedWeapon));
-    return true;
+    if (self.page != WEAPON_SELECT && self.page != WEAPON_RIOTS) return false;
+    if (self.owner hasWeapon_ByBaseName(item)) return true;
+    return false;
 }
 
 isOwnedOption(item)
 {
     switch(self.page)
     {
+        case WEAPON_LAUNCHERS:
+            return self.owner hasWeapon_ByBaseName(item);
         case WEAPON_ATTACHS:
             return array_contains(self.selectedAttachs, item);
         case WEAPON_BUFFS:
@@ -284,25 +296,25 @@ isDisabledOption(item)
 {
     switch(self.page)
     {
-        //case WEAPON_AMMO:
-            //wepList = self.owner getWeaponsListPrimaries();
-            //wepIndex = int(item);
-            //if (wepIndex == 1 && wepList.size == 1) return false;
-            //return int(self.owner getFractionMaxAmmo(wepList[wepIndex])) == 0;
+        case WEAPON_AMMO:
+            index = int(item);
+            wepList = self.owner _getWeaponsListPrimaries();
+            if (index > 1 || index == wepList.size) return false;
+            return self.owner hasMaxAmmo(wepList[index]);
         case WEAPON_UPGRADES:
-            if (is_secondary_class(self.selectedWeapon) && (item != "add_attach" && item != "attach_slot")) return true;        
+            if (is_secondary_class(self.selectedWeapon) && (item != "add_attach" && item != "attach_slot" && item != "remove_attach")) return true;
             if (!self.selectedAttachs.size && item == "remove_attach") return true;
-            if (!self.selectedBuffs.size && item == "remove_buff") return true;            
+            if (!self.selectedBuffs.size && item == "remove_buff") return true;
             if (get_weapon_class(self.selectedWeapon) == "riot" && (item != "add_buff" && item != "buff_slot")) return true;
             if (item == "attach_slot")
             {
                 if (self.selectedWeapon == "iw5_mp412" || self.selectedWeapon == "iw5_44magnum") return true;
-                slotsCount = self is_primary_selected() ?  self.owner.primaryAttachSlots : self.owner.secondaryAttachSlots;
+                slotsCount = self isPrimarySelected() ?  self.owner.primaryAttachSlots : self.owner.secondaryAttachSlots;
                 return slotsCount == get_max_attachs_count(self.selectedWeapon);
             }
             if (item == "buff_slot")
             {
-                slotsCount = self is_primary_selected() ?  self.owner.primaryBuffSlots : self.owner.secondaryBuffSlots;
+                slotsCount = self isPrimarySelected() ?  self.owner.primaryBuffSlots : self.owner.secondaryBuffSlots;
                 return slotsCount == (get_weapon_class(self.selectedWeapon) == "riot" ? 2 : 3);
             }
             break;
@@ -322,36 +334,58 @@ isDisabledOption(item)
     return false;
 }
 
-checkStock()
-{
-    player = self.owner;
-    switch(self.page)
-    {
-        case WEAPON_SELECT:
-            weapons = self.owner getWeaponsListPrimaries();
-            self.hasStock = 2 - weapons.size > 0;
-            break;
-        case WEAPON_ATTACHS:
-            slots = self is_primary_selected() ? self.owner.primaryAttachSlots : self.owner.secondaryAttachSlots;
-            self.hasStock = slots - self.selectedAttachs.size > 0;
-            break;
-        case WEAPON_BUFFS:
-            slots = self is_primary_selected() ? self.owner.primaryBuffSlots : self.owner.secondaryBuffSlots;
-            self.hasStock = slots - self.selectedBuffs.size > 0;
-            break;
-    }
-}
+/*
+=========================
+	Utilities
+=========================
+*/
 
-is_primary_selected()
+isPrimarySelected()
 {
-    weapons = self.owner getWeaponsListPrimaries();
+    weapons = self.owner _getWeaponsListPrimaries();
     return self.selectedWeapon == getBaseWeaponName(weapons[0]);
 }
 
-clear_buffs(buffs) // self -> player
+clearBuffs()
 {
-    if (!isDefined(buffs)) return [];
+    player = self.owner;
+    buffs = [];    
+    if (self isPrimarySelected())
+    {
+        player.primaryAttachSlots = 1;
+        player.primaryBuffSlots = 1;
+        buffs = player.primaryBuffs;
+        player.primaryBuffs = [];
+    }        
+    else
+    {
+        player.secondaryAttachSlots = 1;
+        player.secondaryBuffSlots = 1;
+        buffs = player.secondaryBuffs;
+        player.secondaryBuffs = [];
+    }
+
     foreach(buff in buffs)
-        if (self _hasperk(buff)) self _unsetPerk(buff);
+        if (player _hasperk(buff)) player _unsetPerk(buff);
     return [];
+}
+
+checkStock()
+{
+    switch(self.page)
+    {
+        case WEAPON_SELECT:
+        case WEAPON_LAUNCHERS:
+            weapons = self.owner _getWeaponsListPrimaries();
+            self.hasStock = 2 - weapons.size > 0;
+            break;
+        case WEAPON_ATTACHS:
+            slots = self isPrimarySelected() ? self.owner.primaryAttachSlots : self.owner.secondaryAttachSlots;
+            self.hasStock = slots - self.selectedAttachs.size > 0;
+            break;
+        case WEAPON_BUFFS:
+            slots = self isPrimarySelected() ? self.owner.primaryBuffSlots : self.owner.secondaryBuffSlots;
+            self.hasStock = slots - self.selectedBuffs.size > 0;
+            break;
+    }
 }
