@@ -22,7 +22,7 @@ init()
 	maps\mp\survival\_shops::init();
 	maps\mp\survival\_survivors::init();
 	maps\mp\survival\_bots::init();
-	maps\mp\survival\_air_drop::init();
+	maps\mp\survival\_airdrop::init();
 	maps\mp\survival\_chopper::init();
 	maps\mp\survival\_sentry::init();
 	maps\mp\survival\_patch::init();
