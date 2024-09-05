@@ -21,7 +21,7 @@
 		//	     PERKS REGION	    //
 		//////////////////////////////
 
-        itemDef
+		itemDef
 		{
 			rect -17.5 170 35 35 2 2
 			decoration
@@ -123,7 +123,7 @@
 			exp material ( dvarstring("ui_perk3") )
 			visible when ( dvarstring("ui_perk3") != "" )
 		}
-
+		
 		itemDef
 		{
 			rect 111 209 20 20 2 2
@@ -131,10 +131,10 @@
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			exp material ( dvarstring("ui_streak") )
-			visible when ( dvarstring("ui_streak") != "" )
+			visible when ( ( getplayerdata( "killstreaksState" , "hasStreak" , 0 ) ) )
+			exp material ( tablelookup( "mp/killstreakTable.csv" , 0 , ( getplayerdata( "killstreaksState" , "icons" , 0 ) ) , 16 ) )
 		}
-		
+
 		itemDef
 		{
 			rect 117 237 7 14 2 2
@@ -144,8 +144,8 @@
 			textfont 6
 			textscale 0.25
 			textstyle 6
+			visible when ( ( getplayerdata( "killstreaksState" , "hasStreak" , 0 ) ) )
 			exp text ( "^3" + keybinding( "+actionslot 4" ) )
-			visible when ( dvarstring("ui_streak") != "" )
 		}
 
         //////////////////////////////

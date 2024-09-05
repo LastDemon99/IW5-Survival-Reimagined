@@ -1,35 +1,61 @@
 #include maps\mp\_utility;
 #include common_scripts\utility;
+#include maps\mp\killstreaks\_airdrop;
 
 init()
 {
-	replacefunc(maps\mp\killstreaks\_airdrop::getcratetypefordroptype, ::getcratetypefordroptype);
+	replacefunc(maps\mp\killstreaks\_airdrop::getcratetypefordroptype, ::_getcratetypefordroptype);
 	
-	level.killStreakFuncs["airdrop_minigun_turret"] = ::tryUseMinigunAirdrop;
-	level.killStreakFuncs["airdrop_gl_turret"] = ::tryUseGlAirdrop;
+    level.killStreakFuncs["airdrop_assault"] = ::_tryUseAssaultAirdrop;
 
-	maps\mp\killstreaks\_airdrop::addCrateType("airdrop_minigun_turret", "minigun_turret", 20, maps\mp\killstreaks\_airdrop::killstreakCrateThink);
-	maps\mp\killstreaks\_airdrop::addCrateType("airdrop_gl_turret", "gl_turret", 20, maps\mp\killstreaks\_airdrop::killstreakCrateThink);
+    game["strings"]["specialty_quickdraw_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+    game["strings"]["specialty_bulletaccuracy_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+    game["strings"]["specialty_stalker_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+    game["strings"]["specialty_longersprint_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+    game["strings"]["specialty_fastreload_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+    game["strings"]["_specialty_blastshield_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+
+	addCrateType("minigun_turret", "minigun_turret", 20, ::_killstreakCrateThink);
+	addCrateType("gl_turret", "gl_turret", 20, ::_killstreakCrateThink);
+    addCrateType("perk_quickdraw", "specialty_quickdraw_ks", 20, ::_killstreakCrateThink);
+    addCrateType("perk_bulletaccuracy", "specialty_bulletaccuracy_ks", 20, ::_killstreakCrateThink);
+    addCrateType("perk_stalker", "specialty_stalker_ks", 20, ::_killstreakCrateThink);
+    addCrateType("perk_longersprint", "specialty_longersprint_ks", 20, ::_killstreakCrateThink);
+    addCrateType("perk_fastreload", "specialty_fastreload_ks", 20, ::_killstreakCrateThink);
+    addCrateType("perk_blastshield", "_specialty_blastshield_ks", 20, ::_killstreakCrateThink);
 }
 
-tryUseMinigunAirdrop(lifeId, kID)
+giveAirDrop(type)
 {
-	return (self maps\mp\killstreaks\_airdrop::tryUseAirdrop(lifeId, kID, "airdrop_minigun_turret"));
+    self.airdropType = type;
+    self maps\mp\killstreaks\_killstreaks::giveKillstreak("airdrop_assault");
 }
 
-tryUseGlAirdrop(lifeId, kID)
+_tryUseAssaultAirdrop(lifeId, kID)
 {
-	return (self maps\mp\killstreaks\_airdrop::tryUseAirdrop(lifeId, kID, "airdrop_gl_turret"));
+	return (self tryUseAirdrop(lifeId, kID, self.airdropType));
 }
 
-getcratetypefordroptype(dropType)
+_getcratetypefordroptype(dropType)
 {
     switch (dropType)
     {
-		case "airdrop_minigun_turret":
+		case "minigun_turret":
 			return "minigun_turret";
-		case "airdrop_gl_turret":
+		case "gl_turret":
 			return "gl_turret";
+        case "perk_quickdraw":
+            return "specialty_quickdraw_ks";
+        case "perk_bulletaccuracy":
+            return "specialty_bulletaccuracy_ks";
+        case "perk_stalker":
+            return "specialty_stalker_ks";
+        case "perk_longersprint":
+            return "specialty_longersprint_ks";
+        case "perk_fastreload":
+            return "specialty_fastreload_ks";
+        case "perk_blastshield":
+            return "_specialty_blastshield_ks";
         case "airdrop_sentry_minigun":
             return "sentry";
         case "airdrop_predator_missile":
@@ -55,6 +81,69 @@ getcratetypefordroptype(dropType)
         case "airdrop_grnd":
         case "airdrop_grnd_mega":
         default:
-            return maps\mp\killstreaks\_airdrop::getrandomcratetype(dropType);
+            return getrandomcratetype(dropType);
     }
+}
+
+_killstreakCrateThink(dropType)
+{
+	self endon ("death");
+	
+	if (isDefined(game["strings"][self.crateType + "_hint"]))
+		crateHint = game["strings"][self.crateType + "_hint"];
+	else 
+		crateHint = &"PLATFORM_GET_KILLSTREAK";
+	
+	crateSetupForUse(crateHint, "all", maps\mp\killstreaks\_killstreaks::getKillstreakCrateIcon(self.crateType));
+
+	self thread crateOtherCaptureThink();
+	self thread crateOwnerCaptureThink();
+
+	for (;;)
+	{
+		self waittill ("captured", player);
+		
+		if (isDefined(self.owner) && player != self.owner)
+		{
+			if (!level.teamBased || player.team != self.team)
+			{
+				switch(dropType)
+				{
+				case "airdrop_assault":
+				case "airdrop_support":
+				case "airdrop_escort":
+				case "airdrop_osprey_gunner":
+					player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop");
+					player thread hijackNotify(self, "airdrop");
+					break;
+				case "airdrop_sentry_minigun":
+					player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop");
+					player thread hijackNotify(self, "sentry");
+					break;
+				case "airdrop_remote_tank":
+					player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop");
+					player thread hijackNotify(self, "remote_tank");
+					break;
+				case "airdrop_mega":
+					player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop_mega");
+					player thread hijackNotify(self, "emergency_airdrop");
+					break;
+				}
+			}
+			else
+			{
+				self.owner thread maps\mp\gametypes\_rank::giveRankXP("killstreak_giveaway", Int((maps\mp\killstreaks\_killstreaks::getStreakCost(self.crateType) / 10) * 50));
+				self.owner thread maps\mp\gametypes\_hud_message::SplashNotifyDelayed("sharepackage", Int((maps\mp\killstreaks\_killstreaks::getStreakCost(self.crateType) / 10) * 50));
+			}
+		}
+	
+        if (string_starts_with(dropType, "perk_")) 
+        {
+            perk = maps\mp\survival\_utility::getPerkFromKsPerk(self.crateType);	
+		    player maps\mp\survival\_utility::giveSurvivalPerk(perk);
+        }
+		else player thread maps\mp\killstreaks\_killstreaks::giveKillstreak(self.crateType, false, false, self.owner);
+        player playLocalSound("ammo_crate_use");
+		self deleteCrate();
+	}
 }

@@ -191,6 +191,7 @@ material,loadscreen_mp_dome
 material,icon_lock
 
 # LOCALIZEDSTRINGS
+localize,PERK_CAREPACKAGE_PICKUP
 localize,WEAPON_TROPHY
 localize,MENU_ATTACHMENT_CAPS
 localize,MPUI_ATTACHMENT
