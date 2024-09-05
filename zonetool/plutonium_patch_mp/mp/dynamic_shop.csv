@@ -218,19 +218,19 @@
 217,,SO_SURVIVAL_EQUIPMENT_BODYARMOR,SO_SURVIVAL_EQUIPMENT_BODYARMOR_DESC,,equipment_body_armor,body_armor,2000
 218,,SO_SURVIVAL_EQUIPMENT_LASTSTAND,SO_SURVIVAL_EQUIPMENT_LASTSTAND_DESC,,specialty_self_revive,self_revive,4000
 219,,,,,,,
-220,air_support_armory,SO_SURVIVAL_ARMORY_AIRSUPPORT,,,,close_self,
-221,,SO_SURVIVAL_ARMORY_PERKS,You have 3 slots for advantages.,,dpad_killstreak_carepackage_static_frontend,perks,
-222,,PREDATOR MISSILE,SO_SURVIVAL_AIRSUPPORT_PREDATOR_DESC,,dpad_killstreak_predator_missile_static_frontend,predator_missile,
-223,,AIR STRIKE,SO_SURVIVAL_AIRSUPPORT_AIRSTRIKE_DESC,,dpad_killstreak_precision_airstrike_static_frontend,precision_airstrike,
-224,,SENTRY GUN,SO_SURVIVAL_EQUIPMENT_SENTRY_DESC,,equipment_sentry_gun,minigun_turret,
-225,,SENTRY GRENADE LAUNCHER,SO_SURVIVAL_EQUIPMENT_SENTRY_GL_DESC,,equipment_grenade_launcher,gl_turret,
-226,,REMOVE PERK,Removes an unwanted perk.,,,remove_perks,
+220,air_support_armory,SO_SURVIVAL_ARMORY_AIRSUPPORT,SO_SURVIVAL_ARMORY_AIRSUPPORT_DESC,,,close_self,
+221,,SO_SURVIVAL_ARMORY_PERKS,SO_SURVIVAL_ARMORY_PERKS_DESC,,dpad_killstreak_carepackage_static_frontend,perks,
+222,,KILLSTREAKS_PREDATOR_MISSILE,SO_SURVIVAL_AIRSUPPORT_PREDATOR_DESC,,dpad_killstreak_predator_missile_static_frontend,predator_missile,
+223,,KILLSTREAKS_AIRSTRIKE,SO_SURVIVAL_AIRSUPPORT_AIRSTRIKE_DESC,,dpad_killstreak_precision_airstrike_static_frontend,precision_airstrike,
+224,,KILLSTREAKS_MINIGUN_TURRET,SO_SURVIVAL_EQUIPMENT_SENTRY_DESC,,equipment_sentry_gun,minigun_turret,
+225,,KILLSTREAKS_GL_TURRET,SO_SURVIVAL_EQUIPMENT_SENTRY_GL_DESC,,equipment_grenade_launcher,gl_turret,
+226,,SO_SURVIVAL_REMOVE_PERKS,SO_SURVIVAL_REMOVE_PERKS_DESC,,,remove_perks,
 227,,,,,,,
-228,perks_care_package,SO_SURVIVAL_ARMORY_PERKS,,,,prev_menu,
-229,,QUICKDRAW,PERKS_DESC_QUICKDRAW,,specialty_quickdraw,specialty_quickdraw_ks,3000
-230,,STEADY AIM,PERKS_DESC_STEADY_AIM,,specialty_steadyaim,specialty_bulletaccuracy_ks,3000
-231,,STALKER,PERKS_DESC_STALKER,,specialty_stalker,specialty_stalker_ks,3000
-232,,EXTREME CONDITIONING,PERKS_DESC_LONGERSPRINT,,specialty_longersprint,specialty_longersprint_ks,3000
-233,,SLEIGHT OF HAND,PERKS_DESC_SLEIGHT_OF_HAND,,specialty_fastreload,specialty_fastreload_ks,3000
-234,,BLAST SHIELD,PERKS_DESC_BLASTSHIELD,,specialty_blastshield,_specialty_blastshield_ks,3000
+228,perks_care_package,SO_SURVIVAL_ARMORY_PERKS,SO_SURVIVAL_ARMORY_AIRSUPPORT_DESC,,,prev_menu,
+229,,PERKS_QUICKDRAW,PERKS_DESC_QUICKDRAW,,specialty_quickdraw,specialty_quickdraw_ks,3000
+230,,PERKS_STEADY_AIM,PERKS_DESC_STEADY_AIM,,specialty_steadyaim,specialty_bulletaccuracy_ks,3000
+231,,PERKS_STALKER,PERKS_DESC_STALKER,,specialty_stalker,specialty_stalker_ks,3000
+232,,PERKS_LONGERSPRINT,PERKS_DESC_LONGERSPRINT,,specialty_longersprint,specialty_longersprint_ks,3000
+233,,PERKS_SLEIGHT_OF_HAND,PERKS_DESC_SLEIGHT_OF_HAND,,specialty_fastreload,specialty_fastreload_ks,3000
+234,,PERKS_BLASTSHIELD,PERKS_DESC_BLASTSHIELD,,specialty_blastshield,_specialty_blastshield_ks,3000
 235,,,,,,,
