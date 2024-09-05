@@ -77,7 +77,7 @@ onSelectOption(page, item, price, option_type, index)
             self.shop lethalbeats\survival\armory\weapons::onSelectOption(page, item, price, option_type, index);
             break;
         case WEAPON_EQUIPMENT:
-            self lethalbeats\survival\armory\equipment::onBuy(item, price);
+            self lethalbeats\survival\armory\equipment::onBuy(item, price, index);
             break;
         case WEAPON_AIR_SUPPORT:
             self.shop lethalbeats\survival\armory\air_support::onSelectOption(page, item, price, option_type, index);
@@ -112,7 +112,7 @@ isOwnedOption(page, item, index)
         case WEAPON_ARMORY:
             return self.shop lethalbeats\survival\armory\weapons::isOwnedOption(item);
         case WEAPON_EQUIPMENT:
-            return self lethalbeats\survival\armory\equipment::isOwnedOption(item);
+            return self lethalbeats\survival\armory\equipment::isOwnedOption(item, index);
         case WEAPON_AIR_SUPPORT:
             return self.shop lethalbeats\survival\armory\air_support::isOwnedOption(item);
         default:
