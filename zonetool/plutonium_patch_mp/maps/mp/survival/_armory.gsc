@@ -51,12 +51,22 @@ onOpenPage(menu)
         return;
     }
 
+    if (menu == "air_support_armory")
+    {
+        self shopInit(WEAPON_AIR_SUPPORT);
+        self.shop maps\mp\survival\_armory_air_support::onInit();
+        return;
+    }
+
     if (!isDefined(self.shop.menu)) return;
 
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
             self.shop maps\mp\survival\_armory_weapons::onOpenPage(menu);
+            break;
+        case WEAPON_AIR_SUPPORT:
+            self.shop maps\mp\survival\_armory_air_support::onOpenPage(menu);
             break;
     }
 }
@@ -71,6 +81,9 @@ onSelectOption(page, item, price, option_type)
         case WEAPON_EQUIPMENT:
             self maps\mp\survival\_armory_equipment::onBuy(item, price);
             break;
+        case WEAPON_AIR_SUPPORT:
+            self.shop maps\mp\survival\_armory_air_support::onSelectOption(page, item, price, option_type);
+            break;
     }
 }
 
@@ -83,6 +96,9 @@ onUpdateOption(index, item, option_label, price_label)
             break;
         case WEAPON_EQUIPMENT:
             self updateOption(index, item, option_label, price_label);
+            break;
+        case WEAPON_AIR_SUPPORT:
+            self.shop maps\mp\survival\_armory_air_support::onUpdateOption(index, item, option_label, price_label);
             break;
     }
 }
@@ -101,6 +117,8 @@ isOwnedOption(page, item)
             return self.shop maps\mp\survival\_armory_weapons::isOwnedOption(item);
         case WEAPON_EQUIPMENT:
             return self maps\mp\survival\_armory_equipment::isOwnedOption(item);
+        case WEAPON_AIR_SUPPORT:
+            return self.shop maps\mp\survival\_armory_air_support::isOwnedOption(item);
         default:
             return false;
     }
@@ -112,8 +130,8 @@ isDisabledOption(page, item)
     {
         case WEAPON_ARMORY:
             return self.shop maps\mp\survival\_armory_weapons::isDisabledOption(item);
-        case WEAPON_EQUIPMENT:
-            return self maps\mp\survival\_armory_equipment::isDisabledOption(item);
+        case WEAPON_AIR_SUPPORT:
+            return self.shop maps\mp\survival\_armory_air_support::isDisabledOption(item);
         default:
             return false;
     }
