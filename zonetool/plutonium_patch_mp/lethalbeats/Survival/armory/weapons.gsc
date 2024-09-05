@@ -27,6 +27,16 @@
 #define WEAPON_LAUNCHERS 8
 #define WEAPON_RIOTS 9
 
+// OPTIONS INDEX
+#define ADD_ATTACH 0
+#define ADD_BUFF 1
+#define ATTACH_SLOT 3
+#define BUFF_SLOT 4
+#define REMOVE_ATTACH 5
+#define REMOVE_BUFF 6
+
+#define GL 2
+
 // self -> shop
 // self.owner -> player
 
@@ -77,17 +87,17 @@ onOpenPage(page)
     self checkStock();
 }
 
-onSelectOption(page, item, price, option_type)
+onSelectOption(page, item, price, option_type, index)
 {
     if (option_type == OPTION_BUY) 
-        self onBuy(item, price);
+        self onBuy(item, price, index);
     else if (option_type == OPTION_UPGRADE)
         self onUpgrade(item);
     else if (option_type == OPTION_SCRIPTRESPONSE)
-        self onResponse(page, item);
+        self onResponse(page, item, index);
 }
 
-onBuy(item, price)
+onBuy(item, price, index)
 {
     player = self.owner;
     isReplaceWeapon = false;
@@ -126,12 +136,12 @@ onBuy(item, price)
             self.selectedCamo = get_camo_index(item);
             break;
         case WEAPON_UPGRADES:
-            if (item == "attach_slot")
+            if (index == ATTACH_SLOT)
             {
                 if (self isPrimarySelected()) self.owner.primaryAttachSlots++;
                 else self.owner.secondaryAttachSlots++;
             }
-            else if (item == "buff_slot")
+            else if (index == BUFF_SLOT)
             {
                 if (self isPrimarySelected()) self.owner.primaryBuffSlots++;
                 else self.owner.secondaryBuffSlots++;
@@ -169,7 +179,7 @@ onUpgrade(item)
     self.owner openShop("upgrade_weapon");
 }
 
-onResponse(page, item)
+onResponse(page, item, index)
 {
     player = self.owner;
 
@@ -184,16 +194,19 @@ onResponse(page, item)
         return;
     }
     
-    switch(item)
+    if (self.page == WEAPON_UPGRADES)
     {
-        case "remove_attach": self.removeItem = true;
-        case "add_attach":
-            item = get_weapon_class(self.selectedWeapon) + "_attach";
-            break;
-        case "remove_buff": self.removeItem = true;
-        case "add_buff":
-            item = get_weapon_class(self.selectedWeapon) + "_buff";
-            break;
+        switch(index)
+        {
+            case REMOVE_ATTACH: self.removeItem = true;
+            case ADD_ATTACH:
+                item = get_weapon_class(self.selectedWeapon) + "_attach";
+                break;
+            case REMOVE_BUFF: self.removeItem = true;
+            case ADD_BUFF:
+                item = get_weapon_class(self.selectedWeapon) + "_buff";
+                break;
+        }
     }
 
     player openShop(item);
@@ -238,12 +251,12 @@ onUpdateOption(index, item, option_label, price_label)
     switch(self.page)
     {
         case WEAPON_UPGRADES:
-            if (item == "attach_slot") 
+            if (index == ATTACH_SLOT) 
             {
                 slotsCount = self isPrimarySelected() ?  player.primaryAttachSlots :  player.secondaryAttachSlots;
                 price_label *= (getPrice("attach_slot_multiplier") * slotsCount);
             }
-            else if (item == "buff_slot") 
+            else if (index == BUFF_SLOT) 
             {
                 slotsCount = self isPrimarySelected() ?   player.primaryBuffSlots :  player.secondaryBuffSlots;
                 price_label *= (getPrice("buff_slot_multiplier") * slotsCount);
@@ -286,7 +299,7 @@ isOwnedOption(item)
     return false;
 }
 
-isDisabledOption(item)
+isDisabledOption(item, index)
 {
     switch(self.page)
     {
@@ -296,17 +309,17 @@ isDisabledOption(item)
             if (index > 1 || index == wepList.size) return false;
             return self.owner hasMaxAmmo(wepList[index]);
         case WEAPON_UPGRADES:
-            if (is_secondary_class(self.selectedWeapon) && (item != "add_attach" && item != "attach_slot" && item != "remove_attach")) return true;
-            if (!self.selectedAttachs.size && item == "remove_attach") return true;
-            if (!self.selectedBuffs.size && item == "remove_buff") return true;
-            if (get_weapon_class(self.selectedWeapon) == "riot" && (item != "add_buff" && item != "buff_slot")) return true;
-            if (item == "attach_slot")
+            if (is_secondary_class(self.selectedWeapon) && (index != ADD_ATTACH && index != ATTACH_SLOT && index != REMOVE_ATTACH)) return true;
+            if (!self.selectedAttachs.size && index == REMOVE_ATTACH) return true;
+            if (!self.selectedBuffs.size && index == REMOVE_BUFF) return true;
+            if (get_weapon_class(self.selectedWeapon) == "riot" && (index != ADD_BUFF && index != BUFF_SLOT)) return true;
+            if (index == ATTACH_SLOT)
             {
                 if (self.selectedWeapon == "iw5_mp412" || self.selectedWeapon == "iw5_44magnum") return true;
                 slotsCount = self isPrimarySelected() ?  self.owner.primaryAttachSlots : self.owner.secondaryAttachSlots;
                 return slotsCount == get_max_attachs_count(self.selectedWeapon);
             }
-            if (item == "buff_slot")
+            if (index == BUFF_SLOT)
             {
                 slotsCount = self isPrimarySelected() ?  self.owner.primaryBuffSlots : self.owner.secondaryBuffSlots;
                 return slotsCount == (get_weapon_class(self.selectedWeapon) == "riot" ? 2 : 3);
@@ -314,7 +327,7 @@ isDisabledOption(item)
             break;
         case WEAPON_ATTACHS:
             if (!self.hasStock) return true;
-            if (item == "gl") item = build_gl(self.selectedWeapon); // formats -> gl, gp25, 320
+            if (index == GL) item = build_gl(self.selectedWeapon); // formats -> gl, gp25, 320
             else if (item == "silencer") item = build_silencer(get_weapon_class(self.selectedWeapon)); // formats -> silencer, silencer02, silencer03
             if (!array_contains(get_weapon_attachs(self.selectedWeapon), item)) return true;
             return !is_combo_attach(self.selectedAttachs, item);

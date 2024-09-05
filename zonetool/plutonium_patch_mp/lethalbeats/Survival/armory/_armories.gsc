@@ -74,7 +74,7 @@ onSelectOption(page, item, price, option_type, index)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            self.shop lethalbeats\survival\armory\weapons::onSelectOption(page, item, price, option_type);
+            self.shop lethalbeats\survival\armory\weapons::onSelectOption(page, item, price, option_type, index);
             break;
         case WEAPON_EQUIPMENT:
             self lethalbeats\survival\armory\equipment::onBuy(item, price);
@@ -125,7 +125,7 @@ isDisabledOption(page, item, index)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            return self.shop lethalbeats\survival\armory\weapons::isDisabledOption(item);
+            return self.shop lethalbeats\survival\armory\weapons::isDisabledOption(item, index);
         case WEAPON_AIR_SUPPORT:
             return self.shop lethalbeats\survival\armory\air_support::isDisabledOption(item, index);
         default:
