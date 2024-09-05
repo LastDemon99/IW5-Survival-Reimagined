@@ -7,20 +7,26 @@ rawfile,maps/mp/gametypes/_gametypes.txt
 rawfile,maps/mp/gametypes/survival.txt
 rawfile,maps/mp/gametypes/survival.gsc
 
-rawfile,maps/mp/survival/_air_drop.gsc
-rawfile,maps/mp/survival/_bots.gsc
-rawfile,maps/mp/survival/_chopper.gsc
-rawfile,maps/mp/survival/_dev.gsc
-rawfile,maps/mp/survival/_main.gsc
-rawfile,maps/mp/survival/_patch.gsc
-rawfile,maps/mp/survival/_sentry.gsc
-rawfile,maps/mp/survival/_shops.gsc
-rawfile,maps/mp/survival/_survivors.gsc
-rawfile,maps/mp/survival/_uav.gsc
-rawfile,maps/mp/survival/_utility.gsc
-rawfile,maps/mp/survival/_damage.gsc
-rawfile,maps/mp/survival/_menus.gsc
-rawfile,maps/mp/survival/_armory.gsc
+rawfile,lethalbeats/survival/armory/_armories.gsc
+rawfile,lethalbeats/survival/armory/_spawn.gsc
+rawfile,lethalbeats/survival/armory/air_support.gsc
+rawfile,lethalbeats/survival/armory/equipment.gsc
+rawfile,lethalbeats/survival/armory/weapons.gsc
+
+rawfile,lethalbeats/survival/killstreaks/_airdrop.gsc
+rawfile,lethalbeats/survival/killstreaks/_chopper.gsc
+rawfile,lethalbeats/survival/killstreaks/_sentry.gsc
+rawfile,lethalbeats/survival/killstreaks/_uav.gsc
+
+rawfile,lethalbeats/survival/patch/_damage.gsc
+rawfile,lethalbeats/survival/patch/_menus.gsc
+rawfile,lethalbeats/survival/patch/_patch.gsc
+
+rawfile,lethalbeats/survival/_bots.gsc
+rawfile,lethalbeats/survival/_dev.gsc
+rawfile,lethalbeats/survival/_main.gsc
+rawfile,lethalbeats/survival/_survivors.gsc
+rawfile,lethalbeats/survival/_utility.gsc
 
 # STRINGTABLES
 stringtable,mp/dynamic_shop.csv
@@ -230,17 +236,3 @@ localize,SO_SURVIVAL_EQUIPMENT_SENTRY_DESC
 localize,SO_SURVIVAL_EQUIPMENT_SENTRY_GL_DESC
 localize,SO_SURVIVAL_ARMORY_AIRSUPPORT
 localize,SO_SURVIVAL_ARMORY_PERKS
-
-##################################
-##       PLUTONIUM REGION       ##
-##################################
-
-loaded_sound,weapons/cheytac/weap_cheytac_slmn_2d3mp.wav
-loaded_sound,weapons/cheytac/weap_cheytac_slst_2d3mp.wav
-sound,weap_cheytac_fire_aki
-sound,weap_cheytac_fire_npc
-sound,weap_cheytac_fire_plr
-material,mc/mtl_pumpkin
-xmodelsurfs,zonetool_fucking_pumpkin_0
-xmodel,fucking_pumpkin
-rawfile,plutonium_patch_mp

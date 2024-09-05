@@ -1,7 +1,7 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
 #include maps\mp\gametypes\_hud_util;
-#include maps\mp\survival\_utility;
+#include lethalbeats\survival\_utility;
 
 init()
 {
@@ -72,7 +72,7 @@ onPlayerSpawn()
 		self thread onStartGame();
 		self thread refillNades();
 
-		self thread maps\mp\survival\_menus::shopTrigger();
+		self thread lethalbeats\survival\patch\_menus::shopTrigger();
 	}
 }
 
@@ -466,7 +466,7 @@ watchTotalShots()
 hudInit()
 {
 	self waveChallengesHudInit();
-	self maps\lethalbeats\_trigger::clearCustomHintString();
+	self lethalbeats\_trigger::clearCustomHintString();
 }
 
 waveChallengesHudInit()

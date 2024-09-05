@@ -1,6 +1,6 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\mp\survival\_shops;
+#include lethalbeats\survival\armory\_spawn;
 
 //add forge mode
 
@@ -78,7 +78,7 @@ onCommand(player, msg)
 		case "!equipment": level thread spawnShopModel(player.origin, "equipment"); break;
 		case "!support": level thread spawnShopModel(player.origin, "support"); break;
 		case "!speed": setDvar("g_speed", int(args[1])); break;
-		case "!money": player maps\mp\survival\_utility::setScore(int(args[1])); break;
+		case "!money": player lethalbeats\survival\_utility::setScore(int(args[1])); break;
 		case "!armor": player.bodyArmor = int(args[1]); break;
 		case "!clear":
 			foreach(player in level.players)

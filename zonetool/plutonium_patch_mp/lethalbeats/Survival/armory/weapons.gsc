@@ -1,10 +1,8 @@
-
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\lethalbeats\utility;
-#include maps\lethalbeats\weapons;
-#include maps\mp\survival\_armory;
-#include maps\lethalbeats\DynamicMenus\dynamic_shop;
+#include lethalbeats\utility;
+#include lethalbeats\weapons;
+#include lethalbeats\DynamicMenus\dynamic_shop;
 
 #define NULL ""
 #define WEAPON_MENUS ["select_pistol", "select_shotgun", "select_machine_pistol", "select_smg", "select_assault", "select_lmg", "select_sniper", "select_projectile", "select_riot"]
@@ -32,11 +30,9 @@
 // self -> shop
 // self.owner -> player
 
-/*
-=========================
-	HANDLERS
-=========================
-*/
+//////////////////////////////////////////
+//	            HANDLERS   		        //
+//////////////////////////////////////////
 
 onInit()
 {
@@ -263,11 +259,9 @@ onUpdateOption(index, item, option_label, price_label)
     player setPrice(index, price_label);
 }
 
-/*
-=========================
-	OPTION STATES
-=========================
-*/
+//////////////////////////////////////////
+//	           OPTION STATES  		    //
+//////////////////////////////////////////
 
 isUpgradeOption(item)
 {
@@ -334,11 +328,9 @@ isDisabledOption(item)
     return false;
 }
 
-/*
-=========================
-	Utilities
-=========================
-*/
+//////////////////////////////////////////
+//	            UTILITIES  		        //
+//////////////////////////////////////////
 
 isPrimarySelected()
 {

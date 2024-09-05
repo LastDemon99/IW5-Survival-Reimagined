@@ -1950,7 +1950,7 @@ lastStandKill()
 
 _revive()
 {
-	self maps\mp\survival\_utility::clearLastStand();
+	self lethalbeats\survival\_utility::clearLastStand();
 	maps\mp\gametypes\_playerlogic::laststandrespawnplayer();
 	self notify("revive");
 }

@@ -196,7 +196,7 @@ lbSurvivalHandleDamage()
 				attacker thread maps\mp\gametypes\_rank::giveRankXP("kill", self.owner.botPrice, weapon, meansOfDeath);		
 				attacker thread maps\mp\gametypes\_rank::xpEventPopup(&"SPLASHES_DESTROYED_LITTLE_BIRD");
 				thread maps\mp\gametypes\_missions::vehicleKilled(self.owner, self, undefined, attacker, damage, meansOfDeath, weapon);				
-				attacker maps\mp\survival\_utility::giveScore(self.owner.botPrice);
+				attacker lethalbeats\survival\_utility::giveScore(self.owner.botPrice);
 			}
 
 			if(isDefined(self.owner)) self.owner thread leaderDialogOnPlayer("lbguard_destroyed");

@@ -1,6 +1,6 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\mp\survival\_utility;
+#include lethalbeats\survival\_utility;
 
 init()
 {

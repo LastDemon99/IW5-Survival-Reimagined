@@ -1,7 +1,7 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\mp\survival\_utility;
-#include maps\lethalbeats\DynamicMenus\dynamic_shop;
+#include lethalbeats\survival\_utility;
+#include lethalbeats\DynamicMenus\dynamic_shop;
 
 // OPTION TYPE
 #define OPTION_BUY -5
@@ -19,11 +19,9 @@
 // self -> shop
 // self.owner -> player
 
-/*
-=========================
-	HANDLERS
-=========================
-*/
+//////////////////////////////////////////
+//	            HANDLERS   		        //
+//////////////////////////////////////////
 
 onInit()
 {
@@ -65,26 +63,26 @@ onBuy(item, price)
     switch(item)
     {
         case "specialty_quickdraw_ks":
-            self.owner maps\mp\survival\_airdrop::giveAirDrop("perk_quickdraw");
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_quickdraw");
             break;
         case "specialty_bulletaccuracy_ks":
-            self.owner maps\mp\survival\_airdrop::giveAirDrop("perk_bulletaccuracy");
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_bulletaccuracy");
             break;
         case "specialty_stalker_ks":
-            self.owner maps\mp\survival\_airdrop::giveAirDrop("perk_stalker");
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_stalker");
             break;
         case "specialty_longersprint_ks":
-            self.owner maps\mp\survival\_airdrop::giveAirDrop("perk_longersprint");
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_longersprint");
             break;
         case "specialty_fastreload_ks":
-            self.owner maps\mp\survival\_airdrop::giveAirDrop("perk_fastreload");
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_fastreload");
             break;
         case "_specialty_blastshield_ks":
-            self.owner maps\mp\survival\_airdrop::giveAirDrop("perk_blastshield");
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_blastshield");
             break;
         case "minigun_turret":
         case "gl_turret":
-            self.owner maps\mp\survival\_airdrop::giveAirDrop(item);
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(item);
             level.sentry++;
             break;
         default:
@@ -113,11 +111,9 @@ onUpdateOption(index, item, option_label, price_label)
     self.owner setPrice(index, price_label);
 }
 
-/*
-=========================
-	OPTION STATES
-=========================
-*/
+//////////////////////////////////////////
+//	           OPTION STATES  		    //
+//////////////////////////////////////////
 
 isOwnedOption(item)
 {

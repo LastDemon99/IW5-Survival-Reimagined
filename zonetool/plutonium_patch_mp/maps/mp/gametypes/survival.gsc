@@ -1,6 +1,6 @@
 main()
 {
-    maps\mp\survival\_patch::purgeUnnecessaryMenus();
+    lethalbeats\survival\patch\_menus::purgeUnnecessaryMenus();
     maps\mp\gametypes\_globallogic::init();
     maps\mp\gametypes\_callbacksetup::setupcallbacks();
     maps\mp\gametypes\_globallogic::setupcallbacks();
@@ -19,7 +19,7 @@ main()
     level.getspawnpoint = ::getspawnpoint;
     level.onNormalDeath = ::onNormalDeath;
 
-    maps\mp\survival\_main::main();
+    lethalbeats\survival\_main::main();
 }
 
 onStartGametype()
@@ -52,7 +52,7 @@ onStartGametype()
     allowed[1] = "airdrop_pallet";
 	
     maps\mp\gametypes\_gameobjects::main(allowed);
-    maps\mp\survival\_main::init();
+    lethalbeats\survival\_main::init();
 }
 
 getSpawnPoint()

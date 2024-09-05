@@ -1,8 +1,8 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\mp\survival\_utility;
-#include maps\lethalbeats\utility;
-#include maps\lethalbeats\DynamicMenus\dynamic_shop;
+#include lethalbeats\survival\_utility;
+#include lethalbeats\utility;
+#include lethalbeats\DynamicMenus\dynamic_shop;
 
 // self -> player
 

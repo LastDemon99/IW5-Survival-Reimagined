@@ -139,8 +139,8 @@ _killstreakCrateThink(dropType)
 	
         if (string_starts_with(dropType, "perk_")) 
         {
-            perk = maps\mp\survival\_utility::getPerkFromKsPerk(self.crateType);	
-		    player maps\mp\survival\_utility::giveSurvivalPerk(perk);
+            perk = lethalbeats\survival\_utility::getPerkFromKsPerk(self.crateType);	
+		    player lethalbeats\survival\_utility::giveSurvivalPerk(perk);
         }
 		else player thread maps\mp\killstreaks\_killstreaks::giveKillstreak(self.crateType, false, false, self.owner);
         player playLocalSound("ammo_crate_use");

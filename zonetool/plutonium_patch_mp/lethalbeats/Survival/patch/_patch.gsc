@@ -1,6 +1,6 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include maps\mp\survival\_utility;
+#include lethalbeats\survival\_utility;
 #include maps\mp\bots\_bot_utility;
 #include maps\mp\bots\_bot_internal;
 #include maps\mp\bots\_bot_script;
@@ -45,47 +45,9 @@ patch_replacefun()
 	replacefunc(maps\mp\_events::multiKill, ::multiKill);
 	replacefunc(maps\mp\gametypes\_playerlogic::initClientDvars, ::initClientDvars);
 	replacefunc(maps\mp\killstreaks\_remotemissile::missileEyes, maps\mp\killstreaks\_aamissile::missileEyes);
-	replacefunc(maps\mp\gametypes\_damage::playerkilled_internal, maps\mp\survival\_damage::playerkilled_internal);
-	replacefunc(maps\mp\gametypes\_damage::handlenormaldeath, maps\mp\survival\_damage::handlenormaldeath);
-	replacefunc(maps\mp\gametypes\_damage::callback_playerlaststand, maps\mp\survival\_damage::callback_playerlaststand);
-}
-
-purgeUnnecessaryMenus()
-{
-    replacefunc(maps\mp\gametypes\_quickmessages::init, ::blank);
-	replacefunc(maps\mp\gametypes\_hud_message::init, ::initHudMessage);
-	replacefunc(maps\mp\gametypes\_menus::init, maps\mp\survival\_menus::init);
-	replacefunc(maps\mp\gametypes\_menus::addtoteam, maps\mp\survival\_menus::addtoteam);
-}
-
-initHudMessage() // removed unnecessary menus precache
-{
-	precacheString(&"MP_FIRSTPLACE_NAME");
-	precacheString(&"MP_SECONDPLACE_NAME");
-	precacheString(&"MP_THIRDPLACE_NAME");
-	precacheString(&"MP_MATCH_BONUS_IS");
-
-    precachemenu("perk_display");
-    precachemenu("perk_hide");
-    precachemenu("killedby_card_hide");
-
-	game["menu_endgameupdate"] = "endgameupdate";
-	precacheMenu(game["menu_endgameupdate"]);
-
-	game["strings"]["draw"] = &"MP_DRAW";
-	game["strings"]["round_draw"] = &"MP_ROUND_DRAW";
-	game["strings"]["round_win"] = &"MP_ROUND_WIN";
-	game["strings"]["round_loss"] = &"MP_ROUND_LOSS";
-	game["strings"]["victory"] = &"MP_VICTORY";
-	game["strings"]["defeat"] = &"MP_DEFEAT";
-	game["strings"]["halftime"] = &"MP_HALFTIME";
-	game["strings"]["overtime"] = &"MP_OVERTIME";
-	game["strings"]["roundend"] = &"MP_ROUNDEND";
-	game["strings"]["intermission"] = &"MP_INTERMISSION";
-	game["strings"]["side_switch"] = &"MP_SWITCHING_SIDES";
-	game["strings"]["match_bonus"] = &"MP_MATCH_BONUS_IS";
-	
-	level thread maps\mp\gametypes\_hud_message::onPlayerConnect();
+	replacefunc(maps\mp\gametypes\_damage::playerkilled_internal, lethalbeats\survival\patch\_damage::playerkilled_internal);
+	replacefunc(maps\mp\gametypes\_damage::handlenormaldeath, lethalbeats\survival\patch\_damage::handlenormaldeath);
+	replacefunc(maps\mp\gametypes\_damage::callback_playerlaststand, lethalbeats\survival\patch\_damage::callback_playerlaststand);
 }
 
 notifyMessage(notifyData) //disabled team splash msg on start
@@ -238,14 +200,14 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 		
 		if (self.headshotPatch) sMeansOfDeath = "MOD_HEAD_SHOT"; //simple fix head shoot return torso_upper hitloc, model port bug maybe... if i don't forget, i will check it... maybe
 			
-		if (isDefined(eAttacker) && eAttacker is_survivor()) eAttacker maps\mp\survival\_survivors::onPlayerBotDamage(self, iDamage, sMeansOfDeath, sWeapon);
-		self maps\mp\survival\_bots::onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
+		if (isDefined(eAttacker) && eAttacker is_survivor()) eAttacker lethalbeats\survival\_survivors::onPlayerBotDamage(self, iDamage, sMeansOfDeath, sWeapon);
+		self lethalbeats\survival\_bots::onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
 		return;
 	}
 	else if (isPlayer(self))
 	{
-		if (isDefined(eAttacker) && eAttacker is_bot()) eAttacker maps\mp\survival\_bots::onBotPlayerDamage(self, iDamage, sMeansOfDeath, sWeapon);
-		self maps\mp\survival\_survivors::onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
+		if (isDefined(eAttacker) && eAttacker is_bot()) eAttacker lethalbeats\survival\_bots::onBotPlayerDamage(self, iDamage, sMeansOfDeath, sWeapon);
+		self lethalbeats\survival\_survivors::onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
 		return;
 	}
 	
@@ -256,13 +218,13 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 {
 	if(self is_bot())
 	{
-		if(eAttacker is_survivor()) eAttacker maps\mp\survival\_survivors::onPlayerBotKilled(self, iDamage, sMeansOfDeath, sWeapon);		
-		self maps\mp\survival\_bots::onBotKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
+		if(eAttacker is_survivor()) eAttacker lethalbeats\survival\_survivors::onPlayerBotKilled(self, iDamage, sMeansOfDeath, sWeapon);		
+		self lethalbeats\survival\_bots::onBotKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 		return;
 	}
 	else if (isPlayer(self))
 	{
-		self maps\mp\survival\_survivors::onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
+		self lethalbeats\survival\_survivors::onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 		return;
 	}
 	
@@ -271,14 +233,14 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 
 onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration)
 {
-	if(self isTestClient()) self maps\mp\survival\_bots::onBotLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);
-	else self maps\mp\survival\_survivors::onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);
+	if(self isTestClient()) self lethalbeats\survival\_bots::onBotLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);
+	else self lethalbeats\survival\_survivors::onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);
 }
 
 _respawnDealy(time, notifyname)
 {
-	if(self.team == "allies") self maps\mp\survival\_survivors::onPlayerDeath();
-	else self maps\mp\survival\_bots::respawnDealy();
+	if(self.team == "allies") self lethalbeats\survival\_survivors::onPlayerDeath();
+	else self lethalbeats\survival\_bots::respawnDealy();
 }
 
 getRespawnDelay() { return 3; }
@@ -304,7 +266,7 @@ _playDeathSound()
 
 bots_patch_replacefunc()
 {
-	replacefunc(maps\mp\bots\_bot::add_bot, maps\mp\survival\_bots::addBot);	
+	replacefunc(maps\mp\bots\_bot::add_bot, lethalbeats\survival\_bots::addBot);	
 	replacefunc(maps\mp\bots\_bot_internal::crouch, ::_crouch);
 	replacefunc(maps\mp\bots\_bot_internal::prone, ::_prone);
 	replacefunc(maps\mp\bots\_bot_internal::jump, ::_jump);

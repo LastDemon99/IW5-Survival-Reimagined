@@ -1,7 +1,7 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
 #include maps\mp\gametypes\_hud_util;
-#include maps\mp\survival\_utility;
+#include lethalbeats\survival\_utility;
 
 main()
 {
@@ -15,18 +15,17 @@ main()
 
 init()
 {
-	level thread maps\lethalbeats\DynamicMenus\dynamic_shop::init();
+	level thread lethalbeats\DynamicMenus\dynamic_shop::init();
 
-	maps\mp\survival\_armory::init();
-	maps\mp\survival\_dev::init();
-	maps\mp\survival\_shops::init();
-	maps\mp\survival\_survivors::init();
-	maps\mp\survival\_bots::init();
-	maps\mp\survival\_airdrop::init();
-	maps\mp\survival\_chopper::init();
-	maps\mp\survival\_sentry::init();
-	maps\mp\survival\_patch::init();
-	thread maps\mp\survival\_uav::init();
+	lethalbeats\survival\armory\_armories::init();
+	lethalbeats\survival\_dev::init();	
+	lethalbeats\survival\_survivors::init();
+	lethalbeats\survival\_bots::init();
+	lethalbeats\survival\killstreaks\_airdrop::init();
+	lethalbeats\survival\killstreaks\_chopper::init();
+	lethalbeats\survival\killstreaks\_sentry::init();
+	lethalbeats\survival\patch\_patch::init();
+	thread lethalbeats\survival\killstreaks\_uav::init();
 	
 	setDefaultLoadout();
 	clearScoreInfo();	
@@ -161,8 +160,8 @@ onIntermission()
 
 	foreach(survivor in survivors)
 	{
-		survivor maps\mp\survival\_survivors::waveChallengesHudInit();
-		survivor thread maps\mp\survival\_survivors::watchSkipResponse();
+		survivor lethalbeats\survival\_survivors::waveChallengesHudInit();
+		survivor thread lethalbeats\survival\_survivors::watchSkipResponse();
 	}
 
 	countTime = 30;
