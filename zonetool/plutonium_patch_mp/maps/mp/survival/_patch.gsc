@@ -511,7 +511,7 @@ _iskillstreakweapon(weapon) //return true for grenades, killstreak weapon alllow
     if (!isdefined(weapon)) return 0;
     if (weapon == "none") return 0;
 	
-	if (weapon == "claymore_mp" || weapon == "c4_mp" || weapon == "throwingknife_mp" || weapon == "trophy_mp") return 1;
+	if (weapon == "claymore_mp" || weapon == "c4_mp" || weapon == "throwingknife_mp") return 1;
 
     tokens = strtok(weapon, "_");
     foundSuffix = 0;

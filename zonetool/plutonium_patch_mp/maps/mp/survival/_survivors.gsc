@@ -45,7 +45,6 @@ onPlayerSpawn()
 		self setNades("flash_grenade_mp", 2);
 		self setNades("frag_grenade_mp", 2);
 		
-		self setClientDvar("ui_streak", "");
 		self setClientDvar("ui_body_armor", 250);
 		self setClientDvar("ui_self_revive", 1);
 		self setClientDvar("ui_use_slot", "none");
@@ -398,9 +397,6 @@ onChangeWeapons()
 					self givePerk(buff, true);
 			}
 		}
-		
-		if (newWeapon == "killstreak_predator_missile_mp") self setClientDvar("ui_streak", "");
-		self.isCarrySentry = newWeapon == "trophy_mp" ? 1 : undefined;
 		
 		self setClientDvar("ui_use_slot", "none");
 		if (contains(newWeapon, getarraykeys(self.grenades))) self setClientDvar("ui_use_slot", strtok(newWeapon, "_")[0]);

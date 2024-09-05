@@ -4,10 +4,9 @@
 
 init()
 {
-	replacefunc(maps\mp\killstreaks\_autosentry::sentry_initSentry, ::sentryInitSentry);
-	replacefunc(maps\mp\killstreaks\_autosentry::sentry_burstFireStart, ::sentryBurstFireStart);
-	replacefunc(maps\mp\killstreaks\_autosentry::sentry_setplaced, ::sentrySetPlaced);
-	replacefunc(maps\mp\_equipment::trophyBreak, ::trophyBreak);
+	replacefunc(maps\mp\killstreaks\_autosentry::sentry_initSentry, ::sentryInitSentry); // fix sentry init funcs
+	replacefunc(maps\mp\killstreaks\_autosentry::sentry_burstFireStart, ::sentryBurstFireStart); // fix gl sound
+	replacefunc(maps\mp\killstreaks\_autosentry::sentry_setplaced, ::sentrySetPlaced); // fix undefined hintstring
 	
 	level.killStreakFuncs["minigun_turret"] = ::tryUseMinigun;
 	level.killStreakFuncs["gl_turret"] = ::tryUseGL;
@@ -193,10 +192,7 @@ sentrySetPlaced()
     self.carriedby = undefined;
 
     if (isdefined(self.owner))
-	{
 		self.owner.iscarrying = 0;
-		self.owner setClientDvar("ui_streak", "");
-	}
 
     sentry_setactive();
     self playsound("sentry_gun_plant");
@@ -208,22 +204,4 @@ onSentryDeath()
 	level endon("game_ended");	
 	self waittill_any("death", "deleting");
 	level.sentry--;
-}
-
-trophyBreak()
-{
-	playfxOnTag(getfx("sentry_explode_mp"), self, "tag_origin");
-	playfxOnTag(getfx("sentry_smoke_mp"), self, "tag_origin");
-	
-	self playsound("sentry_explode");	
-	self notify("death");
-	self.trigger makeunusable();
-	
-	if (self.owner maps\mp\survival\_utility::is_survivor())
-		level.sentry--;
-
-	wait 3;
-
-	if (IsDefined(self.trigger)) self.trigger delete();
-	if(IsDefined(self)) self delete();
 }

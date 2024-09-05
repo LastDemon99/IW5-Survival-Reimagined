@@ -110,7 +110,6 @@ destroySurvivalHuds()
 	self.currMenu = undefined;
 	self.onTrigger = undefined;
 	
-	self setClientDvar("ui_streak", "");
 	self setClientDvar("ui_body_armor", 0);
 	self setClientDvar("ui_self_revive", 0);
 	self setClientDvar("ui_use_slot", "none");
@@ -151,7 +150,7 @@ updatePerks()
 
 hasStreak()
 {
-	return self.pers["killstreaks"].size == 6 || self hasWeapon("trophy_mp") || self hasWeapon("airdrop_sentry_marker_mp");
+	return self.pers["killstreaks"].size == 6 || self hasWeapon("airdrop_sentry_marker_mp");
 }
 
 refillNades()
@@ -163,13 +162,7 @@ refillNades()
 	for (;;)
     {
 		self waittill("grenade_fire", grenade, weaponName);
-		
-		if (weaponName == "trophy_mp")
-		{
-			self setClientDvar("ui_streak", "");
-			continue;
-		}
-		
+				
 		if(!contains(weaponName, getarraykeys(self.grenades))) continue;
 		if(self.grenades[weaponName])
 		{
@@ -340,6 +333,13 @@ _revive()
 	self.revived = true;
 	
 	self notify ("revive");
+}
+
+getPerkFromKsPerk(killstreak_perk)
+{
+	perk = "";	
+	for (i = 0; i < killstreak_perk.size - 3; i++) perk += killstreak_perk[i];		
+	return perk;
 }
 
 clearLastStand()
