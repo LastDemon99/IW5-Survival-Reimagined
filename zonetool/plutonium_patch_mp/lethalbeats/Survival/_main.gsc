@@ -62,7 +62,6 @@ init()
 	level.maxPerPlayerExplosives = 10;
 	level.healthRegenDisabled = 0;
 	
-	level.chopperStartGoal = [(-660, 205, -355), (-280, 1645, -230), (540, 1085, -250), (1203, 780, -270), (1185, -25, -340), (775, -425, -333), (715, 235, -340), (-95, 640, -295), (115, 1050, -240), (14, 2085, -230)];
 	level.challenges = ["Headshot Kill", "Kill Streak", "Knife Kill", "Grenade Kill", "Pistol Kill", "Shotgun Kill", "Machine Pistol Kill", "Smg Kill", "Assault Kill", "Lmg Kill", "Sniper Kill", "Launcher Kill", "Double Kill", "Triple Kill", "Multi Kill"];
 	level.dialog = [1, 1, 1, 1, 1];
 	

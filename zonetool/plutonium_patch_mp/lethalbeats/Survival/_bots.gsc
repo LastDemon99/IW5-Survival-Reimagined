@@ -74,7 +74,9 @@ onBotSpawn()
 			case "jugg_regular":
 			case "jugg_riotshield":
 			case "jugg_explosive":
-			case "jugg_minigun": self juggAbility(); continue;
+			case "jugg_minigun":
+				self lethalbeats\survival\killstreaks\_juggernaut::giveJuggernautPassenger(); 
+				continue;
 			case "dog_reg":
 			case "dog_splode":	self dogAbility(); continue;
 		}
@@ -293,15 +295,6 @@ chopperAbility()
 {
 	self thread [[level.killStreakFuncs["littlebird_survival"]]]();
 	self suicide();
-}
-
-juggAbility()
-{
-	self thread maps\mp\killstreaks\_airdrop::doFlyBy(self, random(level.chopperStartGoal), randomFloat(360), "jugger", undefined, undefined, undefined, "pavelow_mp");
-	self.isJuggernaut = true;
-	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
-	self thread maps\mp\killstreaks\_juggernaut::juggernautSounds();
-	self setPerk("specialty_radarjuggernaut", true, false);
 }
 
 martyrdomAbility()
