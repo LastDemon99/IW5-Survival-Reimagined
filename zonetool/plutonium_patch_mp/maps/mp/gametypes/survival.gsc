@@ -1,6 +1,5 @@
 main()
 {
-    lethalbeats\survival\patch\_menus::purgeUnnecessaryMenus();
     maps\mp\gametypes\_globallogic::init();
     maps\mp\gametypes\_callbacksetup::setupcallbacks();
     maps\mp\gametypes\_globallogic::setupcallbacks();

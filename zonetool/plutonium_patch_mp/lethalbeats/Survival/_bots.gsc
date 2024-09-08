@@ -2,23 +2,6 @@
 #include maps\mp\_utility;
 #include lethalbeats\survival\_utility;
 
-init()
-{
-	preCacheMpAnim("german_shepherd_run");
-	preCacheMpAnim("german_shepherd_death_front");
-	preCacheMpAnim("german_shepherd_run_jump_40");
-	preCacheMpAnim("german_shepherd_attack_player");
-	preCacheMpAnim("german_shepherd_run_pain");
-	
-	precacheShellShock("radiation_low");
-	precacheShellShock("dog_bite");
-	
-	level._effect["chemical_tank_explosion"] = loadfx("smoke/so_chemical_explode_smoke");
-	level._effect["chemical_tank_smoke"] = loadfx("smoke/so_chemical_stream_smoke");
-	level._effect["chemical_mine_spew"] = loadfx("smoke/so_chemical_mine_spew");
-	level._effect["martyrdom_c4_explosion"] = loadfx("explosions/grenadeExp_metal");
-}
-
 addBot()
 {
 	bot = addTestClient();
@@ -68,17 +51,26 @@ onBotSpawn()
 		
 		switch(self.botType)
 		{
-			case "martyrdom": self martyrdomAbility(); continue;
-			case "chemical": self thread chemicalAbility(); continue;
-			case "chopper": self chopperAbility(); continue;
+			case "martyrdom": 
+				self lethalbeats\survival\abilities\_martyrdom::giveAbility();
+				continue;
+			case "chemical": 
+				self lethalbeats\survival\abilities\_chemical::giveAbility();
+				continue;
+			case "chopper":
+				self [[level.killStreakFuncs["littlebird_survival"]]]();
+				self suicide();
+				continue;
 			case "jugg_regular":
 			case "jugg_riotshield":
 			case "jugg_explosive":
 			case "jugg_minigun":
-				self lethalbeats\survival\killstreaks\_juggernaut::giveJuggernautPassenger(); 
+				self lethalbeats\survival\abilities\_juggernaut::giveAbility();
 				continue;
 			case "dog_reg":
-			case "dog_splode":	self dogAbility(); continue;
+			case "dog_splode":
+				self lethalbeats\survival\abilities\_dog::giveAbility();
+				continue;
 		}
 		
 		self checkBadSpawn();		
@@ -117,7 +109,7 @@ onBotPlayerDamage(player, damage, meansOfDeath, weapon)
 	if(isSubStr(self.botType, "dog_"))
 	{
 		player shellshock("dog_bite", 1.5);
-		self thread _setDogAnim("german_shepherd_attack_player", 1.5, 1);
+		self thread lethalbeats\survival\abilities\_dog::setDogAnim("german_shepherd_attack_player", 1.5, 1);
 	}
 }
 
@@ -289,306 +281,6 @@ setBotLoadout()
 	
 	if (isSubStr(body_model, " ")) self setmodel(random(strtok(body_model, " ")));
 	else self setmodel(body_model);
-}
-
-chopperAbility()
-{
-	self thread [[level.killStreakFuncs["littlebird_survival"]]]();
-	self suicide();
-}
-
-martyrdomAbility()
-{
-	self thread attachC4("j_spine4", (0,6,0), (0,0,-90));
-	self thread attachC4("tag_stowed_back", (0,1,5), (80,90,0));
-	self thread martyrdomDetonate();
-}
-
-martyrdomDetonate()
-{
-	self waittill("detonate");
-	
-	c4_array = self.c4_attachments;		
-	c4_array[0] playSound("semtex_warning");
-	
-	traceStart = c4_array[0].origin + (0,0,32);
-	traceEnd = c4_array[0].origin + (0,0,-32);
-	trace = bulletTrace(traceStart, traceEnd, false, undefined);
-	
-	upangles = vectorToAngles(trace["normal"]);
-	forward = anglesToForward(upangles);
-	right = anglesToRight(upangles);
-	
-	wait 0.25;
-	fxEnt = SpawnFx(level._effect["laserTarget"], getGroundPosition(c4_array[0].origin, 12, 0, 32), forward, right);
-	triggerFx(fxEnt);
-	wait 0.25;
-	fxEnt2 = SpawnFx(level._effect["laserTarget"], getGroundPosition(c4_array[0].origin, 12, 0, 32), forward, right);
-	triggerFx(fxEnt2);
-	
-	wait 1.5;
-	for (i = 0; i < c4_array.size; i++)
-	{
-		
-		playfx(level._effect["martyrdom_c4_explosion"], c4_array[i].origin);
-		playSoundAtPos(c4_array[i].origin, "detpack_explo_main");
-		earthquake(0.4, 0.8, c4_array[i].origin, 600);
-		
-		c4_array[i] radiusdamage(c4_array[i].origin, 192, 100, 50, undefined, "MOD_EXPLOSIVE");
-		c4_array[i] unlink();
-		c4_array[i] delete();		
-		wait 0.5;
-	}
-	
-	self.c4_attachments = [];
-	
-	wait 1.5;
-	fxEnt delete();
-	fxEnt2 delete();
-}
-
-attachC4(tag, origin_offset, angles_offset, isDog)
-{
-	c4_model = spawn("script_model", self gettagorigin(tag) + origin_offset);
-	c4_model setmodel("weapon_c4");
-	c4_model linkto(self, tag, origin_offset, angles_offset);
-	
-	wait 0.15;
-	playFXOnTag(level.mine_beacon["enemy"], c4_model, "tag_origin");
-	
-	if (!isdefined(self.c4_attachments)) self.c4_attachments = [];
-	self.c4_attachments[self.c4_attachments.size] = c4_model;
-}
-
-chemicalAbility()
-{
-	self thread attachChemicalTank();
-	self thread chemicalDetonate();
-}
-
-attachChemicalTank()
-{
-	level endon("game_ended");
-	self endon("death");
-	
-	tank = spawn("script_model", self gettagorigin("tag_shield_back"));
-	tank setmodel("gas_canisters_backpack");
-	tank.health = 99999;
-	tank setcandamage(true);
-	tank linkto(self, "tag_shield_back", (0,0,0), (0,0,0));
-	self.tankAttach = tank;
-	self.chemical = 1;
-	
-	for(;;)
-	{
-		wait 0.05;
-		playFXOnTag(level._effect["chemical_tank_smoke"], self, "tag_shield_back");
-	}
-}
-
-chemicalDetonate()
-{	
-	self waittill("detonate");
-	self notify("tank_detonated");
-	explode_origin = self.origin;
-	self.tankAttach playsound("detpack_explo_main");
-	earthquake(0.2, 0.4, explode_origin, 600);
-	playfx(level._effect["chemical_tank_explosion"], explode_origin);
-	self.tankAttach unlink();
-	wait 0.05;
-	self.tankAttach delete();
-	
-	trigger = spawn("trigger_radius", explode_origin, 0, 70, 70 * 2);
-	self thread onGasHandle(trigger);
-	
-	wait(7);
-	self notify("gas_done");
-}
-
-onGasHandle(trigger)
-{
-	level endon("game_ended");	
-	self endon("gas_done");
-	
-	for(;;)
-	{
-		foreach(player in level.players) 
-			if (player isTouching(trigger))
-			{
-				player shellshock("radiation_low", 0.45);
-				player viewKick(3, self.origin);
-			}
-			
-		radiusdamage(trigger.origin, 70, 10, 5, self, "MOD_EXPLOSIVE");
-		wait 0.5;
-	}
-}
-
-dogAbility()
-{
-	self.dogAnim = 0;
-	self.lastDroppableWeapon = "none";
-	weapon = "iw5_dog_mp";
-	
-	self takeAllWeapons();	
-	self _giveWeapon(weapon);
-	self setSpawnWeapon(weapon);
-	self disableweaponswitch();
-	self disableoffhandweapons();
-	
-	self.pers["primaryWeapon"] = weapon;
-
-	dogModel = spawn("script_model", self.origin);
-	dogModel.angles = (0, self.angles[1], 0);
-	dogModel setModel("german_sheperd_dog");
-	dogModel scriptModelPlayAnim("german_shepherd_run");
-	dogModel linkto(self);
-	
-	if(self.botType == "dog_splode")
-	{
-		dogModel thread attachC4("j_hip_base_ri", (6,6,-3), (0,0,0));
-		dogModel thread attachC4("j_hip_base_le", (-6,-6,3), (0,0,0));
-		dogModel thread martyrdomDetonate();
-	}	
-	
-	tail_pos = self.origin - (vectornormalize(anglestoforward(self getPlayerAngles())) * 20);	
-	hitBox = Spawn("script_model", tail_pos + (0, 0, 25));
-	hitBox.angles = (0, self.angles[1], 0);
-	hitBox SetModel("com_plasticcase_dummy");
-	hitBox hide();
-
-	hitBox setcandamage(1);
-	hitBox setCanRadiusDamage(1);
-	hitBox.health = self.health; 
-	hitBox.maxHealth = self.maxHealth;
-	hitBox.damageTaken = 0;
-	hitBox linkto(self);
-	
-	dogModel.hitBox = hitBox;	
-	self.dogModel = dogModel;
-	
-	self thread dogObjetive();
-	self thread onDogDeath();
-	self thread onDogDamage();
-	self thread dogSounds();
-	self thread dogTest();
-}
-
-dogObjetive()
-{
-	self endon("death");
-	self endon("disconnect");
-	level endon("game_ended");
-	
-	target = undefined;
-
-	for (;;)
-	{
-		for (i = 0; i < level.players.size; i++)
-		{
-			player = level.players[i];
-			
-			if (player == self || !isreallyalive(player) || player.team == "axis") 
-				continue;
-			
-			if (!isDefined(target) || distancesquared(self.origin, player.origin) < distancesquared(self.origin, target.origin))
-				target = player;
-		}
-		
-		if (isDefined(target))
-		{
-			self maps\mp\bots\_bot_utility::SetScriptGoal(target.origin, 32);
-			self thread maps\mp\bots\_bot_script::stop_go_target_on_death(target);
-			
-			if (self waittill_any_return("goal", "bad_path", "new_goal") != "new_goal")
-				self maps\mp\bots\_bot_utility::ClearScriptGoal();
-		}
-		wait 0.35;
-	}
-}
-
-onDogDamage()
-{
-	level endon("game_ended");
-	self endon("killed_player");
-	self endon("disconnect");
-	
-	hitBox = self.dogModel.hitBox;	
-	painFase = hitBox.maxHealth / 3;
-	currFase = 0;
-
-	for(;;)
-	{
-		hitBox waittill("damage", damage, attacker, direction_vec, point, type, modelName, tagName, partName, iDFlags, weapon);
-		
-		attacker maps\mp\gametypes\_damagefeedback::updateDamageFeedback("");	
-		if (isDefined(attacker.team) && attacker.team == "axis" && type != "MOD_EXPLOSIVE") continue;
-		
-		radiusDamage(hitBox.origin, 10, damage, damage, attacker, type);
-		hitBox.damageTaken += damage;
-		
-		if ((!currFase && hitBox.damageTaken >= painFase) || (currFase == 1 && hitBox.damageTaken >= painFase * 2))
-		{
-			self thread _setDogAnim("german_shepherd_run_pain", 1.5, 1);
-			self playSound("anml_dog_neckbreak_pain");
-			currFase++;
-		}
-	}
-}
-
-onDogDeath()
-{
-	self waittill("killed_player");	
-	self notify("end_anim");
-
-	self playSound("anml_dog_neckbreak_pain");
-	self freezeControls(0);
-	dog_model = self.dogModel;
-	dog_model.hitBox delete();
-	self.dogModel = undefined;
-
-	wait 0.25;
-	
-	dog_model scriptModelPlayAnim("german_shepherd_death_front");	
-	dog_model.origin = bulletTrace(self.origin, self.origin - (0, 0, 60), false, self)["position"];	
-	dog_model unLink();
-	
-	wait randomIntRange(2, 6);
-	
-	dog_model delete();
-}
-
-dogSounds()
-{
-	level endon("game_ended");
-	self endon("death");
-	self endon("disconnect");
-
-	interval = randomIntRange(3, 5);
-
-	for (;;)
-	{
-		wait interval;
-		playsoundatpos(self.origin, "anml_dog_bark");
-	}
-}
-
-dogTest()
-{
-	level endon("game_ended");
-	self endon("disconnect");
-	self endon("death");
-	
-	self.dogAnim = 0;
-	dirAngle = self getPlayerAngles();
-	
-	for(;;)
-	{
-		wait 0.35;
-		if (self.dogAnim) continue;
-		dirAngle = vectortoangles(vectornormalize(self getVelocity()));		
-		if(vectordot(anglestoforward(self getPlayerAngles()), dirAngle) < 0) self setPlayerAngles((dirAngle[0], dirAngle[1], self getPlayerAngles()[2]));
-	}
 }
 
 setDifficulty(difficulty)

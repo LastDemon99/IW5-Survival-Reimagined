@@ -9,12 +9,12 @@ init()
 	level.mi17_fx["light"]["cargo"] = loadfx("misc/aircraft_light_cockpit_red");
 	level.mi17_fx["light"]["cockpit"] = loadfx("misc/aircraft_light_cockpit_blue");
 
-	level.chopperStartGoal = [(-660, 205, -355), (-280, 1645, -230), (540, 1085, -250), (1203, 780, -270), (1185, -25, -340), (775, -425, -333), (715, 235, -340), (-95, 640, -295), (115, 1050, -240), (14, 2085, -230)];
+	level.juggDropGoals = [(-660, 205, -355), (-280, 1645, -230), (540, 1085, -250), (1203, 780, -270), (1185, -25, -340), (775, -425, -333), (715, 235, -340), (-95, 640, -295), (115, 1050, -240), (14, 2085, -230)];
 }
 
-giveJuggernautPassenger()
+giveAbility()
 {
-	self thread _doFlyBy(self, random(level.chopperStartGoal), randomFloat(360));
+	self thread _doFlyBy(self, random(level.juggDropGoals), randomFloat(360));
 	self.isJuggernaut = true;
 	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
 	self thread maps\mp\killstreaks\_juggernaut::juggernautSounds();

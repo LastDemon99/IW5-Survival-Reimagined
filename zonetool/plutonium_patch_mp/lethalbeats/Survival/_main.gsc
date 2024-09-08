@@ -11,21 +11,19 @@ main()
 	precacheMenu("popup_leavegame");
 	precacheMenu("custom_options");
 	setModeDvars();
+
+	lethalbeats\survival\patch::init();
 }
 
 init()
 {
 	level thread lethalbeats\DynamicMenus\dynamic_shop::init();
 
-	lethalbeats\survival\armory\_armories::init();
-	lethalbeats\survival\_dev::init();	
+	lethalbeats\survival\_dev::init();
+	lethalbeats\survival\abilities::init();
+	lethalbeats\survival\armories::init();
+	lethalbeats\survival\killstreaks::init();
 	lethalbeats\survival\_survivors::init();
-	lethalbeats\survival\_bots::init();
-	lethalbeats\survival\killstreaks\_airdrop::init();
-	lethalbeats\survival\killstreaks\_chopper::init();
-	lethalbeats\survival\killstreaks\_sentry::init();
-	lethalbeats\survival\patch\_patch::init();
-	thread lethalbeats\survival\killstreaks\_uav::init();
 	
 	setDefaultLoadout();
 	clearScoreInfo();	

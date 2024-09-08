@@ -1,54 +1,12 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
 #include lethalbeats\survival\_utility;
-#include maps\mp\bots\_bot_utility;
-#include maps\mp\bots\_bot_internal;
-#include maps\mp\bots\_bot_script;
 #include maps\mp\gametypes\_weapons;
 #include maps\mp\gametypes\_hud_util;
-
-init()
-{
-	setDvarIfUninitialized("survival_init", 0);
-	
-	if(!getDvarInt("survival_init"))
-	{
-		setDvar("survival_init", 1);
-		cmdexec("map mp_dome");
-	}
-	
-	if(!getDvarInt("survival_dev_mode") && getDvar("mapname") != "mp_dome")
-		cmdexec("map mp_dome");
-	
-	patch_replacefun();
-	player_patch_replacefunc();
-	bots_patch_replacefunc();
-	action_slots_replacefunc();
-	scorePopUpReplacefunc();
-	
-	level.onRespawnDelay = ::getRespawnDelay;
-	level thread hook_callbacks();
-}
 
 //////////////////////////////////////////
 //	Random Stuffs 				        //
 //////////////////////////////////////////
-
-patch_replacefun()
-{
-	replacefunc(maps\mp\gametypes\_hud_message::notifyMessage, ::notifyMessage);
-	replacefunc(maps\mp\gametypes\_weapons::watchweaponusage, ::_watchweaponusage);
-	replacefunc(maps\mp\gametypes\_missions::playerKilled, ::blank);
-	replacefunc(maps\mp\bots\_bot_chat::bot_chat_death_watch, ::blank);
-	replacefunc(maps\mp\bots\_bot_chat::doquickmessage, ::blank);
-	replacefunc(maps\mp\gametypes\_deathicons::adddeathicon, ::blank);
-	replacefunc(maps\mp\_events::multiKill, ::multiKill);
-	replacefunc(maps\mp\gametypes\_playerlogic::initClientDvars, ::initClientDvars);
-	replacefunc(maps\mp\killstreaks\_remotemissile::missileEyes, maps\mp\killstreaks\_aamissile::missileEyes);
-	replacefunc(maps\mp\gametypes\_damage::playerkilled_internal, lethalbeats\survival\patch\_damage::playerkilled_internal);
-	replacefunc(maps\mp\gametypes\_damage::handlenormaldeath, lethalbeats\survival\patch\_damage::handlenormaldeath);
-	replacefunc(maps\mp\gametypes\_damage::callback_playerlaststand, lethalbeats\survival\patch\_damage::callback_playerlaststand);
-}
 
 notifyMessage(notifyData) //disabled team splash msg on start
 {
@@ -164,14 +122,6 @@ blank(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {} //some func give errors
 //	Player 								//
 //////////////////////////////////////////
 
-player_patch_replacefunc()
-{
-	replacefunc(maps\mp\gametypes\_music_and_dialog::onPlayerSpawned, ::blank);
-	replacefunc(maps\mp\_utility::playDeathSound, ::_playDeathSound);
-	replacefunc(maps\mp\_utility::waitForTimeOrNotify, ::_respawnDealy);
-	replacefunc(maps\mp\gametypes\_spawnlogic::getallotherplayers, ::getSurvivorsAlive);
-}
-
 hook_callbacks()
 {
 	level endon("game_ended");
@@ -260,213 +210,9 @@ _playDeathSound()
 	self playSound((self.team == "axis" ? "generic_death_russian_" : "generic_death_american_") + randomIntRange(1, 8));
 }
 
-//////////////////////////////////////////
-//	Bots [ Death - Respawn - Dog Jump ] //
-//////////////////////////////////////////
-
-bots_patch_replacefunc()
-{
-	replacefunc(maps\mp\bots\_bot::add_bot, lethalbeats\survival\_bots::addBot);	
-	replacefunc(maps\mp\bots\_bot_internal::crouch, ::_crouch);
-	replacefunc(maps\mp\bots\_bot_internal::prone, ::_prone);
-	replacefunc(maps\mp\bots\_bot_internal::jump, ::_jump);
-	replacefunc(maps\mp\bots\_bot_internal::doBotMovement_loop, ::_doBotMovement_loop);
-	replacefunc(maps\mp\bots\_bot_script::start_bot_threads, ::_start_bot_threads);
-}
-
-_crouch()
-{
-	if (self isusingremote() || self is_dog())
-		return;
-	
-	self BotBuiltinBotAction("+gocrouch");
-	self BotBuiltinBotAction("-goprone");
-}
-
-_prone()
-{
-	if (self isusingremote() || self is_dog())
-		return;
-	
-	self BotBuiltinBotAction("-gocrouch");
-	self BotBuiltinBotAction("+goprone");
-}
-
-_jump(surfaceInFront) //dog jump anim move the origin, real jump if has surface in front
-{
-	self endon("death");
-	self endon("disconnect");
-	self notify("bot_jump");
-	self endon("bot_jump");
-
-	if (self IsUsingRemote())
-		return;
-
-	if (self getStance() != "stand")
-	{
-		self stand();
-		wait 1;
-	}
-	
-	if (self is_dog() && !isDefined(surfaceInFront))
-	{
-		self thread _setDogAnim("german_shepherd_run_jump_40", 0.65);
-		return;
-	}
-
-	self botAction("+gostand");
-	wait 0.05;
-	self botAction("-gostand");
-}
-
-_doBotMovement_loop(data) //define surfaceInFront to _jump()
-{
-	if (isDefined(self.remoteUAV))
-		self.bot.moveOrigin = self.remoteUAV.origin - (0, 0, 50);
-	else if (isDefined(self.remoteTank))
-		self.bot.moveOrigin = self.remoteTank.origin;
-	else
-		self.bot.moveOrigin = self.origin;
-
-	waittillframeend;
-	move_To = self.bot.moveTo;
-	angles = self GetPlayerAngles();
-	dir = (0, 0, 0);
-
-	if (DistanceSquared(self.bot.moveOrigin, move_To) >= 49)
-	{
-		cosa = cos(0 - angles[1]);
-		sina = sin(0 - angles[1]);
-
-		// get the direction
-		dir = move_To - self.bot.moveOrigin;
-
-		// rotate our direction according to our angles
-		dir = (dir[0] * cosa - dir[1] * sina,
-		        dir[0] * sina + dir[1] * cosa,
-		        0);
-
-		// make the length 127
-		dir = VectorNormalize(dir) * 127;
-
-		// invert the second component as the engine requires this
-		dir = (dir[0], 0 - dir[1], 0);
-	}
-
-	// climb through windows
-	if (self isMantling())
-	{
-		data.wasMantling = true;
-		self crouch();
-	}
-	else if (data.wasMantling)
-	{
-		data.wasMantling = false;
-		self stand();
-	}
-
-	startPos = self.origin + (0, 0, 50);
-	startPosForward = startPos + anglesToForward((0, angles[1], 0)) * 25;
-	bt = bulletTrace(startPos, startPosForward, false, self);
-
-	if (bt["fraction"] >= 1)
-	{
-		// check if need to jump
-		bt = bulletTrace(startPosForward, startPosForward - (0, 0, 40), false, self);
-
-		if (bt["fraction"] < 1 && bt["normal"][2] > 0.9 && data.i > 1.5 && !self isOnLadder())
-		{
-			data.i = 0;
-			self thread jump(1);
-		}
-	}
-	// check if need to knife glass
-	else if (bt["surfacetype"] == "glass")
-	{
-		if (data.i > 1.5)
-		{
-			data.i = 0;
-			self thread knife();
-		}
-	}
-	else
-	{
-		// check if need to crouch
-		if (bulletTracePassed(startPos - (0, 0, 25), startPosForward - (0, 0, 25), false, self) && !self.bot.climbing)
-			self crouch();
-	}
-
-	// move!
-	if (self.bot.wantsprint && self.bot.issprinting)
-		dir = (127, dir[1], 0);
-
-	self botMovement(int(dir[0]), int(dir[1]));
-
-	if (isDefined(self.remoteUAV))
-	{
-		if (abs(move_To[2] - self.bot.moveOrigin[2]) > 12)
-		{
-			if (move_To[2] > self.bot.moveOrigin[2])
-				self thread gostand();
-			else
-				self thread sprint();
-		}
-	}
-
-	if (self is_dog()) self.dogModel.angles = (0, dir[1], 0);
-}
-
-_start_bot_threads()
-{
-	self endon("disconnect");
-	level endon("game_ended");
-	self endon("death");
-	
-	gameflagwait("prematch_done");
-	
-	self thread bot_weapon_think();
-	self thread doReloadCancel();
-	
-	// script targeting
-	if (getdvarint("bots_play_target_other") && !(self is_dog()))
-	{
-		self thread bot_target_vehicle();
-		self thread bot_equipment_kill_think();
-	}
-	
-	// awareness
-	self thread bot_uav_think();
-	self thread bot_listen_to_steps();
-	self thread follow_target();
-	
-	// camp and follow
-	if (getdvarint("bots_play_camp") && !(self is_dog()))
-	{
-		self thread bot_think_follow();
-		self thread bot_think_camp();
-	}
-	
-	// nades
-	if (getdvarint("bots_play_nade") && !(self is_dog()))
-	{
-		self thread bot_jav_loc_think();
-		self thread bot_use_tube_think();
-		self thread bot_use_grenade_think();
-		self thread bot_use_equipment_think();
-		self thread bot_watch_riot_weapons();
-		self thread bot_watch_think_mw2(); // bots play mw2
-	}
-}
-
 //////////////////////////////////////////////////////
 //	Action slots [ claymore - c4 - throwingknife ]	//
 //////////////////////////////////////////////////////
-
-action_slots_replacefunc()
-{
-	replacefunc(maps\mp\_utility::iskillstreakweapon, ::_iskillstreakweapon);
-	replacefunc(maps\mp\gametypes\_weapons::equipmentWatchUse, ::_equipmentWatchUse);
-}
 
 _iskillstreakweapon(weapon) //return true for grenades, killstreak weapon alllows action slot
 {
@@ -538,22 +284,9 @@ _equipmentWatchUse(owner) // on pickup grenades updated self var & action slot
 	}
 }
 
-onEquipmentDeath(trigger)
-{
-	self waittill("death");
-	trigger notify("delete");
-}
-
 //////////////////////////////////////////////////////
 //	Money menu hud									//
 //////////////////////////////////////////////////////
-
-scorePopUpReplacefunc()
-{
-	replacefunc(maps\mp\gametypes\_gamescore::giveplayerscore, ::giveplayerscore); // giveplayerscore set cdvar old_money for money animation
-	replacefunc(maps\mp\gametypes\_rank::xpeventpopupfinalize, ::xpeventpopupfinalize); // money animation moveOverTime left_down
-	replacefunc(maps\mp\gametypes\_rank::xppointspopup, ::xppointspopup); // money animation moveOverTime left_down
-}
 
 giveplayerscore(type, player, victim, custom_amount, var_4)
 {

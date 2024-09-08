@@ -15,19 +15,6 @@
 #define WEAPON_EQUIPMENT 1
 #define WEAPON_AIR_SUPPORT 2
 
-init()
-{
-    level.onOpenPage = ::onOpenPage;
-    level.onSelectOption = ::onSelectOption;
-    level.onUpdateOption = ::onUpdateOption;
-    level.isUpgradeOption = ::isUpgradeOption;
-    level.isOwnedOption = ::isOwnedOption;
-    level.isDisabledOption = ::isDisabledOption;
-
-    lethalbeats\weapons::init();
-    lethalbeats\survival\armory\_spawn::init();
-}
-
 //////////////////////////////////////////
 //	            HANDLERS   		        //
 //////////////////////////////////////////
@@ -39,7 +26,7 @@ onOpenPage(menu)
     if (menu == "weapon_armory")
     {
         self shopInit(WEAPON_ARMORY);
-        self.shop lethalbeats\survival\armory\weapons::onInit();
+        self.shop lethalbeats\survival\armories\weapons::onInit();
         return;
     }
 
@@ -52,7 +39,7 @@ onOpenPage(menu)
     if (menu == "air_support_armory")
     {
         self shopInit(WEAPON_AIR_SUPPORT);
-        self.shop lethalbeats\survival\armory\air_support::onInit();
+        self.shop lethalbeats\survival\armories\air_support::onInit();
         return;
     }
 
@@ -61,10 +48,10 @@ onOpenPage(menu)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            self.shop lethalbeats\survival\armory\weapons::onOpenPage(menu);
+            self.shop lethalbeats\survival\armories\weapons::onOpenPage(menu);
             break;
         case WEAPON_AIR_SUPPORT:
-            self.shop lethalbeats\survival\armory\air_support::onOpenPage(menu);
+            self.shop lethalbeats\survival\armories\air_support::onOpenPage(menu);
             break;
     }
 }
@@ -74,13 +61,13 @@ onSelectOption(page, item, price, option_type, index)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            self.shop lethalbeats\survival\armory\weapons::onSelectOption(page, item, price, option_type, index);
+            self.shop lethalbeats\survival\armories\weapons::onSelectOption(page, item, price, option_type, index);
             break;
         case WEAPON_EQUIPMENT:
-            self lethalbeats\survival\armory\equipment::onBuy(item, price, index);
+            self lethalbeats\survival\armories\equipment::onBuy(item, price, index);
             break;
         case WEAPON_AIR_SUPPORT:
-            self.shop lethalbeats\survival\armory\air_support::onSelectOption(page, item, price, option_type, index);
+            self.shop lethalbeats\survival\armories\air_support::onSelectOption(page, item, price, option_type, index);
             break;
     }
 }
@@ -90,13 +77,13 @@ onUpdateOption(index, item, option_label, price_label)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            self.shop lethalbeats\survival\armory\weapons::onUpdateOption(index, item, option_label, price_label);
+            self.shop lethalbeats\survival\armories\weapons::onUpdateOption(index, item, option_label, price_label);
             break;
         case WEAPON_EQUIPMENT:
             self updateOption(index, item, option_label, price_label);
             break;
         case WEAPON_AIR_SUPPORT:
-            self.shop lethalbeats\survival\armory\air_support::onUpdateOption(index, item, option_label, price_label);
+            self.shop lethalbeats\survival\armories\air_support::onUpdateOption(index, item, option_label, price_label);
             break;
     }
 }
@@ -110,11 +97,11 @@ isOwnedOption(page, item, index)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            return self.shop lethalbeats\survival\armory\weapons::isOwnedOption(item);
+            return self.shop lethalbeats\survival\armories\weapons::isOwnedOption(item);
         case WEAPON_EQUIPMENT:
-            return self lethalbeats\survival\armory\equipment::isOwnedOption(item, index);
+            return self lethalbeats\survival\armories\equipment::isOwnedOption(item, index);
         case WEAPON_AIR_SUPPORT:
-            return self.shop lethalbeats\survival\armory\air_support::isOwnedOption(item);
+            return self.shop lethalbeats\survival\armories\air_support::isOwnedOption(item);
         default:
             return false;
     }
@@ -125,9 +112,9 @@ isDisabledOption(page, item, index)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            return self.shop lethalbeats\survival\armory\weapons::isDisabledOption(item, index);
+            return self.shop lethalbeats\survival\armories\weapons::isDisabledOption(item, index);
         case WEAPON_AIR_SUPPORT:
-            return self.shop lethalbeats\survival\armory\air_support::isDisabledOption(item, index);
+            return self.shop lethalbeats\survival\armories\air_support::isDisabledOption(item, index);
         default:
             return false;
     }
@@ -138,7 +125,7 @@ isUpgradeOption(page, item, index)
     switch(self.shop.menu)
     {
         case WEAPON_ARMORY:
-            return self.shop lethalbeats\survival\armory\weapons::isUpgradeOption(item);
+            return self.shop lethalbeats\survival\armories\weapons::isUpgradeOption(item);
         default:
             return false;
     }

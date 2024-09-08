@@ -412,25 +412,6 @@ removeSurvivalPerk(perk)
 	self updatePerks();
 }
 
-_setDogAnim(animation, time, freeze)
-{
-	self endon("end_anim");
-	self endon("killed_player");
-	
-	if (self.dogAnim) return;
-	if (isDefined(freeze)) self freezeControls(1);
-	
-	self.dogAnim = 1;
-	self.dogModel scriptModelPlayAnim(animation);
-	wait isDefined(time) ? time : 1;
-	
-	if (!isDefined(self.dogModel)) return;
-	self.dogModel scriptModelPlayAnim("german_shepherd_run");
-	
-	self freezeControls(0);
-	self.dogAnim = 0;
-}
-
 standard_deviation(array)
 {
 	mean = sum(array) / array.size;

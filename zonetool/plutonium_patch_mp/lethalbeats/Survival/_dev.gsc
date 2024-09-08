@@ -1,6 +1,6 @@
 #include common_scripts\utility;
 #include maps\mp\_utility;
-#include lethalbeats\survival\armory\_spawn;
+#include lethalbeats\survival\armories\_spawn;
 
 //add forge mode
 
@@ -64,6 +64,49 @@ test()
 	}
 }
 
+playAnim(animation, moveToGround)
+{
+	self scriptModelPlayAnim(animation);
+
+	if (isDefined(moveToGround) && moveToGround)
+	{
+		groundTrace = bulletTrace(self.origin, self.origin + (0, 0, -10000), false, self);
+		travelDistance = distance(self.origin, groundTrace["position"]);
+		travelTime = travelDistance / 800;
+
+		if (groundTrace["position"][2] < self.origin[2])
+			self moveTo(groundTrace["position"], travelTime);
+	}
+}
+
+#using_animtree("player_3rd_person");
+test2()
+{
+	body = spawn("script_model", self.origin);
+	body.angles = (0, self.angles[1], 0);
+	body setModel(self.model);
+
+	head = spawn("script_model", self.origin);
+	head setModel(self.headmodel);
+	head linkto(body, "j_spine4", (0, 0, 0), (0, 0, 0));
+
+	body playAnim("player_3rd_dog_knockdown", true);
+
+	forward = anglesToForward((0, self.angles[1], 0));
+	dog = spawn("script_model", self.origin + (forward * 20));
+	dog.angles = (0, -self.angles[1], 0);
+	dog setModel("german_sheperd_dog");
+	dog playAnim("german_shepherd_attack_player", true);
+
+	wait(0.35 * getAnimLength(%player_3rd_dog_knockdown));	
+	self iprintlnbold("ANIM END");
+	body startragdoll();
+
+	//self.body = self clonePlayer(1);
+	//self PlayerHide();
+	//self.model scriptModelPlayAnim("player_3rd_dog_knockdown");
+}
+
 onCommand(player, msg)
 {
 	args = [];
@@ -72,6 +115,7 @@ onCommand(player, msg)
 	
 	switch(args[0])
 	{
+		case "!test": player thread test2(); break;
 		case "!s": player suicide(); break;
 		case "!fly": player fly(); break;
 		case "!weapon": level thread spawnShopModel(player.origin, "weapon"); break;
