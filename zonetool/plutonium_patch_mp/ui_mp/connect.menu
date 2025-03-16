@@ -16,7 +16,7 @@
 			visible 1
 			style 3
 			forecolor 1 1 1 1
-			background "loadscreen_mp_dome"
+			background "$levelbriefing"
 		}
 		
 		itemDef
@@ -37,32 +37,6 @@
 			style 3
 			forecolor 1 1 1 1
 			background "gradient_bottom"
-		}
-		
-		itemDef
-		{
-			rect 32 29 280 14 1 1
-			decoration
-			visible 1
-			forecolor 1 1 1 1
-			textfont 9
-			textstyle 8
-			textalign 4
-			textscale 0.5833
-			text "IW5 SURVIVAL REIMAGINED"
-		}
-		
-		itemDef
-		{
-			rect 32 55 280 10 1 1
-			decoration
-			visible 1
-			forecolor 0.7843 0.7843 0.7843 1
-			textfont 9
-			textstyle 8
-			textalign 4
-			textscale 0.4583
-			text "By LastDemon99"
 		}
 		
 		itemDef
@@ -125,6 +99,34 @@
 			background "white"
 			textscale 0.55
 		}
+
+		itemDef
+		{
+			rect 32 29 280 14 1 1
+			decoration
+			visible 1
+			forecolor 1 1 1 1
+			textfont 9
+			textstyle 8
+			textalign 4
+			textscale 0.5833
+			text "IW5 SURVIVAL REIMAGINED"
+			visible when ( dvarstring( "g_gametype" ) == "survival" )
+		}
+		
+		itemDef
+		{
+			rect 32 55 280 10 1 1
+			decoration
+			visible 1
+			forecolor 0.7843 0.7843 0.7843 1
+			textfont 9
+			textstyle 8
+			textalign 4
+			textscale 0.4583
+			text "Sponsored by Master_64"
+			visible when ( dvarstring( "g_gametype" ) == "survival" )
+		}
 		
 		itemDef
 		{
@@ -136,7 +138,8 @@
 			textfont 3
 			textalign 4
 			textscale 0.375
-			text "Mod under development, pre-release"
+			text "By LastDemon99, mod under development, pre-release"
+			visible when ( dvarstring( "g_gametype" ) == "survival" )
 		}
 		
 		itemDef
@@ -150,6 +153,68 @@
 			textalign 4
 			textscale 0.4583
 			text "^4Lethal ^7Beats"
+			visible when ( dvarstring( "g_gametype" ) == "survival" )
+		}
+
+		itemDef
+        {
+            rect 32 29 280 14 1 1
+            decoration
+            visible 1
+			forecolor 1 1 1 1
+            textalign 4
+            textscale 0.5833
+            textstyle 8
+            textfont 9
+            exp rect x ( select( dvarbool( "widescreen" ) , 32 , 20 ) )
+			exp text ( gametypename( ) )
+			visible when ( dvarstring( "g_gametype" ) != "survival" )
+        }
+
+		itemDef
+        {
+            rect 32 55 280 10 1 1
+            decoration
+            visible 1
+			forecolor 0.7843 0.7843 0.7843 1
+            textalign 4
+            textscale 0.4583
+            textstyle 8
+            textfont 9
+            exp rect x ( select( dvarbool( "widescreen" ) , 32 , 20 ) )
+			exp text ( getmapname( ) )
+			visible when ( dvarstring( "g_gametype" ) != "survival" )
+        }
+
+		itemDef
+        {
+            rect 32 -92 410 2 1 3
+            decoration
+			visible 1
+			forecolor 1 1 1 1
+            textalign 4
+            textscale 0.4583
+            textstyle 8
+            textfont 9
+            text "@MENU_INTEL"
+			exp rect x ( select( dvarbool( "widescreen" ) , 32 , 20 ) )
+			visible when ( dvarstring( "g_gametype" ) != "survival" )
+        }
+
+		itemDef
+		{
+			rect 32 -64 504 2 1 3
+            decoration
+			visible 1
+			forecolor 1 1 1 1
+            autowrapped
+            textalign 4
+            textscale 0.375
+            textfont 3
+			dvar "didyouknow"
+			exp rect x ( select( dvarbool( "widescreen" ) , 32 , 20 ) )
+			exp rect w ( select( dvarbool( "widescreen" ) , 661 , 504 ) )
+			visible when ( dvarstring( "g_gametype" ) != "survival" )
 		}
 	}
 }

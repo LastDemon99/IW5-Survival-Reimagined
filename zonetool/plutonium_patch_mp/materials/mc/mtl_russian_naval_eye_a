@@ -1,14 +1,14 @@
 {
-    "animationX": 1,
-    "animationY": 1,
+    "animationX": 0,
+    "animationY": 0,
     "cameraRegion": 0,
     "constantTable": [
         {
             "literal": [
-                0.05000000074505806,
-                1.0,
-                5.0,
-                1.923076868057251
+                0.1,
+                0.2,
+                0.6,
+                0.6
             ],
             "name": "envMapParms",
             "nameHash": 1033475292
@@ -38,7 +38,7 @@
             "firstCharacter": 110,
             "image": "$identitynormalmap",
             "lastCharacter": 112,
-            "sampleState": 1,
+            "sampleState": 11,
             "semantic": 5,
             "typeHash": 1507003663
         },
@@ -51,7 +51,7 @@
             "typeHash": 2695565377
         }
     ],
-    "name": "mc/mtl_russian_naval_eye_a",
+    "name": "",
     "sortKey": 1,
     "stateFlags": 121,
     "stateMap": [
@@ -81,6 +81,6 @@
         ]
     ],
     "surfaceTypeBits": 0,
-    "techniqueSet->name": "mc_l_sm_skin_r0c0s0_sat",
-    "unknown": 64
+    "techniqueSet->name": "mc_l_sm_r0c0n0s0_sat",
+    "unknown": 4096
 }

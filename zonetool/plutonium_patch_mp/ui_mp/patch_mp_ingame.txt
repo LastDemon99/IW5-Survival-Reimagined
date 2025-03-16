@@ -20,9 +20,17 @@
                 execnow "bind F5 skip";
                 execnow "bind BUTTON_START skip";
             }
+            if (dvarstring("ui_display") == "bind_weapon_drop")
+            {
+                execnow "bind H pause";
+            }
             if (dvarstring("ui_display") == "armor_damage")
             {
                 setLocalVarInt armor_damage_start (milliseconds() );
+            }
+            if (dvarstring("ui_display") == "show_armor")
+            {
+                setLocalVarInt armor_show_start (milliseconds() );
             }
             close self;
         }
@@ -1373,5 +1381,19 @@
                 }
             }
         }
+    }
+	menuDef
+    {
+        name "client_cmd"
+        rect 0 0 1 1
+		visible 0
+		fullscreen 0
+		popup
+
+		onOpen
+		{
+			exec "vstr client_cmd";
+			close "client_cmd";
+		}
     }
 }

@@ -1,14 +1,14 @@
 {
-    "animationX": 1,
-    "animationY": 1,
+    "animationX": 0,
+    "animationY": 0,
     "cameraRegion": 0,
     "constantTable": [
         {
             "literal": [
-                0.20000000298023224,
-                1.0,
-                2.5,
-                2.0
+                0.1,
+                0.2,
+                0.6,
+                0.6
             ],
             "name": "envMapParms",
             "nameHash": 1033475292
@@ -51,7 +51,7 @@
             "typeHash": 2695565377
         }
     ],
-    "name": "mc/mtl_delta_woodland_upperbody_a",
+    "name": "",
     "sortKey": 1,
     "stateFlags": 121,
     "stateMap": [
@@ -82,5 +82,5 @@
     ],
     "surfaceTypeBits": 0,
     "techniqueSet->name": "mc_l_sm_r0c0n0s0_sat",
-    "unknown": 8
+    "unknown": 4096
 }

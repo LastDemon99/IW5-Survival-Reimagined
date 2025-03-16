@@ -152,7 +152,7 @@
             "volMax": 0.44999998807907104,
             "volMin": 0.3499999940395355,
             "volModIndex": 21,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "dogstep_run_default",
@@ -304,7 +304,7 @@
             "volMax": 0.44999998807907104,
             "volMin": 0.3499999940395355,
             "volModIndex": 21,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "dogstep_run_default",
@@ -456,7 +456,7 @@
             "volMax": 0.44999998807907104,
             "volMin": 0.3499999940395355,
             "volModIndex": 21,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "dogstep_run_default",
@@ -608,7 +608,7 @@
             "volMax": 0.44999998807907104,
             "volMin": 0.3499999940395355,
             "volModIndex": 21,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         }
     ]
 }

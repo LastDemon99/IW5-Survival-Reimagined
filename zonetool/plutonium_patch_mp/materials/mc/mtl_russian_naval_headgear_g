@@ -1,14 +1,14 @@
 {
-    "animationX": 1,
-    "animationY": 1,
+    "animationX": 0,
+    "animationY": 0,
     "cameraRegion": 0,
     "constantTable": [
         {
             "literal": [
-                0.019999999552965164,
-                3.5,
-                3.0,
-                0.07692307978868484
+                0.1,
+                0.2,
+                0.6,
+                0.6
             ],
             "name": "envMapParms",
             "nameHash": 1033475292
@@ -51,7 +51,7 @@
             "typeHash": 2695565377
         }
     ],
-    "name": "mc/mtl_russian_naval_headgear_g",
+    "name": "",
     "sortKey": 1,
     "stateFlags": 121,
     "stateMap": [
@@ -81,6 +81,6 @@
         ]
     ],
     "surfaceTypeBits": 0,
-    "techniqueSet->name": "mc_l_sm_r0c0n0s0p0_sat",
-    "unknown": 8
+    "techniqueSet->name": "mc_l_sm_r0c0n0s0_sat",
+    "unknown": 4096
 }

@@ -1,27 +1,17 @@
 {
-    "animationX": 1,
-    "animationY": 1,
+    "animationX": 0,
+    "animationY": 0,
     "cameraRegion": 0,
     "constantTable": [
         {
             "literal": [
-                0.07000000029802322,
-                1.2999999523162842,
-                4.0,
-                15.384614944458008
+                0.1,
+                0.2,
+                0.6,
+                0.6
             ],
             "name": "envMapParms",
             "nameHash": 1033475292
-        },
-        {
-            "literal": [
-                1.0,
-                0.0,
-                0.0,
-                0.0
-            ],
-            "name": "heatMapDetai",
-            "nameHash": 2264331605
         },
         {
             "literal": [
@@ -48,7 +38,7 @@
             "firstCharacter": 110,
             "image": "$identitynormalmap",
             "lastCharacter": 112,
-            "sampleState": 1,
+            "sampleState": 11,
             "semantic": 5,
             "typeHash": 1507003663
         },
@@ -61,7 +51,7 @@
             "typeHash": 2695565377
         }
     ],
-    "name": "mc/mtl_darkblue_eye_a",
+    "name": "",
     "sortKey": 1,
     "stateFlags": 121,
     "stateMap": [
@@ -91,6 +81,6 @@
         ]
     ],
     "surfaceTypeBits": 0,
-    "techniqueSet->name": "mc_l_sm_heat_r0c0s0p0_sat",
-    "unknown": 64
+    "techniqueSet->name": "mc_l_sm_r0c0n0s0_sat",
+    "unknown": 4096
 }

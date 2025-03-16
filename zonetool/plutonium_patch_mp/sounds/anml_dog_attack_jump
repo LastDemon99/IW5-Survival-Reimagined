@@ -152,7 +152,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "anml_dog_attack_jump",
@@ -304,7 +304,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "anml_dog_attack_jump",
@@ -456,7 +456,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "anml_dog_attack_jump",
@@ -608,7 +608,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "anml_dog_attack_jump",
@@ -760,7 +760,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "anml_dog_attack_jump",
@@ -912,7 +912,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "anml_dog_attack_jump",
@@ -1064,7 +1064,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         },
         {
             "aliasName": "anml_dog_attack_jump",
@@ -1216,7 +1216,7 @@
             "volMax": 1.0,
             "volMin": 0.949999988079071,
             "volModIndex": 64,
-            "volumeFalloffCurve": "helicopter1"
+            "volumeFalloffCurve": "$default"
         }
     ]
 }

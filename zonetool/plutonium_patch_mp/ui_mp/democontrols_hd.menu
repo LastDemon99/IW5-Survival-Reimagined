@@ -3,7 +3,7 @@
     {
         name "democontrols_hd"
         rect 0 0 640 480 4 4
-        visible when ( ( dvarstring( "g_gametype" ) == "survival" ) && ( ( ! ( ui_active( ) ) ) && ( ! ( dvarbool( "g_hardcore" ) ) ) && ( ! ( flashbanged( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_ac130_mp" ) || ( weaponname( ) == "killstreak_helicopter_minigun_mp" ) || ( weaponname( ) == "killstreak_predator_missile_mp" ) || ( ( weaponname( ) == "ac130_105mm_mp" ) || ( weaponname( ) == "ac130_40mm_mp" ) || ( weaponname( ) == "ac130_25mm_mp" ) ) || ( adsjavelin( ) ) || ( weaponname( ) == "heli_remote_mp" ) || missilecam( ) || ( weaponname( ) == "uav_remote_mp" ) || ( ( weaponname( ) == "mortar_remote_mp" ) || ( weaponname( ) == "mortar_remote_zoom_mp" ) ) || ( weaponname( ) == "killstreak_remote_tank_remote_mp" ) || ( weaponname( ) == "killstreak_remote_turret_remote_mp" ) ) ) && ( !isempjammed( ) ) && ( ! ( dvarint( "scr_gameended" ) ) ) && ( ( !isdemoplaying( ) ) || ( !isdemofreecamera( ) && !isdemofollowcamera( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_remote_tank_laptop_mp" ) || ( weaponname( ) == "killstreak_remote_turret_laptop_mp" ) ) ) ) && ! ( selecting_location( ) ) && ( ! ( spectatingclient( ) || spectatingfree( ) ) ) && ( ! ( inkillcam( ) ) ) && ( ! ( milliseconds( ) - localvarint( "ui_show_killedBy" ) < 4000 || ( inkillcam( ) ) ) ) )
+        visible when ( !( dvarbool("hide_hud") ) && ( dvarstring( "g_gametype" ) == "survival" ) && ( ( ! ( ui_active( ) ) ) && ( ! ( dvarbool( "g_hardcore" ) ) ) && ( ! ( flashbanged( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_ac130_mp" ) || ( weaponname( ) == "killstreak_helicopter_minigun_mp" ) || ( weaponname( ) == "killstreak_predator_missile_mp" ) || ( ( weaponname( ) == "ac130_105mm_mp" ) || ( weaponname( ) == "ac130_40mm_mp" ) || ( weaponname( ) == "ac130_25mm_mp" ) ) || ( adsjavelin( ) ) || ( weaponname( ) == "heli_remote_mp" ) || missilecam( ) || ( weaponname( ) == "uav_remote_mp" ) || ( ( weaponname( ) == "mortar_remote_mp" ) || ( weaponname( ) == "mortar_remote_zoom_mp" ) ) || ( weaponname( ) == "killstreak_remote_tank_remote_mp" ) || ( weaponname( ) == "killstreak_remote_turret_remote_mp" ) ) ) && ( !isempjammed( ) ) && ( ! ( dvarint( "scr_gameended" ) ) ) && ( ( !isdemoplaying( ) ) || ( !isdemofreecamera( ) && !isdemofollowcamera( ) ) ) && ( ! ( ( weaponname( ) == "killstreak_remote_tank_laptop_mp" ) || ( weaponname( ) == "killstreak_remote_turret_laptop_mp" ) ) ) ) && ! ( selecting_location( ) ) && ( ! ( spectatingclient( ) || spectatingfree( ) ) ) && ( ! ( inkillcam( ) ) ) && ( ! ( milliseconds( ) - localvarint( "ui_show_killedBy" ) < 4000 || ( inkillcam( ) ) ) ) )
 		
 		itemDef
 		{
@@ -77,7 +77,7 @@
 			textstyle 3
 			exp text ( dvarint("ui_body_armor") + "" )
 			visible when ( dvarint("ui_body_armor") )
-			exp forecolor a (1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1))
+			exp forecolor a ( max((1 - (max(min(((milliseconds() - localvarint("armor_damage_start") - 4000) / 500), 1), 0) * 1)), (1 - (max(min(((milliseconds() - localvarint("armor_show_start") - 4000) / 500), 1), 0) * 1))) )
 		}
 
 		itemDef

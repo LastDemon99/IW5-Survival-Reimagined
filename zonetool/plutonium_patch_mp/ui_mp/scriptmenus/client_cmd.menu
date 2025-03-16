@@ -1,0 +1,18 @@
+/* menu by quaK */
+
+{
+    menuDef
+    {
+        name "client_cmd"
+        rect 0 0 1 1
+		visible 0
+		fullscreen 0
+		popup
+
+		onOpen
+		{
+			exec "vstr client_cmd";
+			close "client_cmd";
+		}
+    }
+}
