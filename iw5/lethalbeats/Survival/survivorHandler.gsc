@@ -88,8 +88,11 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 {
 	if (lethalbeats\array::array_contains(MOD_MULTIPLIER, sMeansOfDeath)) iDamage *= 4;
 	if (lethalbeats\array::array_contains(self lethalbeats\player::player_get_perks(), BLAST_SHIELD) || (isDefined(eAttacker) && eAttacker == self)) iDamage /= 2;
-	if (isDefined(eAttacker) && eAttacker bot_is_dog()) eAttacker lethalbeats\Survival\abilities\_dog::onDogPlayerDamage(self);
-	if (isDefined(eAttacker.owner)) eAttacker = eAttacker.owner;
+	if (isDefined(eAttacker))
+	{
+		if (eAttacker bot_is_dog()) eAttacker lethalbeats\Survival\abilities\_dog::onDogPlayerDamage(self);
+		if (isDefined(eAttacker.owner)) eAttacker = eAttacker.owner;
+	}
 
 	iDamage /= 20;
 	self.summary["damagetaken"] += iDamage;
