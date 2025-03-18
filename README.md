@@ -18,6 +18,10 @@
 > This mod required: [LB Utility](https://github.com/LastDemon99/IW5-Sripts/tree/main/GSC/Utility)
 > 
 > Mod under development
+> 
+> The code consists of many files, so if you want to check it, I recommend you to use my vscode extension: [IW5 GSC](https://github.com/LastDemon99/IW5-GSC-Syntax)
+
+## **Video Preview:** [[IW5 - Plutonium] Survival Mod v2 Trailer](https://www.youtube.com/watch?v=dLZ6dSQqObk)
 
 # <a name="key-features"></a>Key Features
 - Compatible with all stock maps.
@@ -28,6 +32,7 @@
 - The buffs of the dropped weapons are preserved.
 - You can drop the weapon to an ally with the `H` key.
 - New enemy types were added including streaks.
+- The mod allows you to switch between servers and game types without any inconvenience other than changing the language to English.
 
 # <a name="how-to-use"></a>How To Use
 - Unzip the rar file at `%localappdata%/plutonium/storage/iw5/`
