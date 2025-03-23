@@ -20,6 +20,8 @@ onPlayerSpawn()
 	level endon("game_ended");
 	self endon("disconnect");
 	
+	self thread lethalbeats\trigger::trigger_player_monitor();
+	
 	for(;;)
 	{
 		self waittill("spawned_player");
@@ -31,7 +33,6 @@ onPlayerSpawn()
 		self.survivalPerks = [];
 		self.grenades = [];
 		self.onTrigger = undefined;
-		self.currMenu = undefined;
 		self.isCarryObject = 0;
 		
 		self setClientDvar(UI_USE_SLOT, "none");
@@ -122,7 +123,7 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 
 onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration)
 {
-	if (isDefined(self.currMenu)) self closeMenu("dynamic_shop");
+	if (self lethalbeats\dynamicmenus\dynamic_shop::isShopOpen()) self lethalbeats\dynamicmenus\dynamic_shop::closeShop();
 	self player_clear_last_stand();
 	self survivor_take_body_armor();
 	
@@ -151,7 +152,7 @@ onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 
 onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration)
 {
-	if (isDefined(self.currMenu)) self closeMenu("dynamic_shop");
+	if (self lethalbeats\dynamicmenus\dynamic_shop::isShopOpen()) self lethalbeats\dynamicmenus\dynamic_shop::closeShop();
 
 	self.removeLastStandWep = true;
 	self.inLastStand = true;
@@ -222,7 +223,7 @@ onUseShop()
 	for (;;)
 	{
 		self waittill("trigger_use", trigger);
-		if (isDefined(self.currMenu) || !isAlive(self)) continue;
+		if (self lethalbeats\dynamicmenus\dynamic_shop::isShopOpen() || !isAlive(self)) continue;
 		if (trigger.tag == "weapon_shop") self lethalbeats\DynamicMenus\dynamic_shop::openShop("weapon_armory");
 		else if (trigger.tag == "equipment_shop") self lethalbeats\DynamicMenus\dynamic_shop::openShop("equipment_armory");
 		else if (trigger.tag == "support_shop") self lethalbeats\DynamicMenus\dynamic_shop::openShop("air_support_armory");

@@ -91,8 +91,11 @@ spawnShop(origin, angles, type)
 	
 	shopModel[1] setModel("com_laptop_2_open");
 	
-	trigger = lethalbeats\_trigger::createTrigger(type + "_shop", origin, 0, 55, 55, "Hold ^3[{+activate}] ^7to use " + hintString, "allies");
-	trigger lethalbeats\_trigger::set3DIcon("allies", wayPoint, 12, 12, shopModel[0]);
+	trigger = lethalbeats\trigger::trigger_create(origin, 55, 55);
+	trigger lethalbeats\trigger::trigger_set_use("Press ^3[{+activate}] ^7to use " + hintString);
+	trigger lethalbeats\trigger::trigger_showTo("allies");
+	trigger lethalbeats\trigger::trigger_set_3d_icon("allies", wayPoint, 12, 12, shopModel[0]);
+	trigger.tag = type + "_shop";
 }
 
 spawnShopModel(origin, angles)

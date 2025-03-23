@@ -134,8 +134,8 @@
         {
             if ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 6) == "close_self" )
             {
+				scriptmenuresponse close_self;
                 play "mouse_click";
-                close self;
             }
             if ( tablelookupbyrow("mp/dynamic_shop.csv", (localVarInt("ui_table_index") - 1), 6) == "prev_menu" )
             {

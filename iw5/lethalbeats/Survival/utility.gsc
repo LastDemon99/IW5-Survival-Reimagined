@@ -807,7 +807,6 @@ survivor_destroy_hud()
 		self.hintString = undefined;
 	}
 	
-	self.currMenu = undefined;
 	self.onTrigger = undefined;
 	
 	self setClientDvar("ui_body_armor", 0);
