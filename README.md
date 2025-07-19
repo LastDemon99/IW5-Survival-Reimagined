@@ -17,13 +17,12 @@
 > Mod under development
 > 
 
-## **Video Preview:** [[IW5 - Plutonium] Survival Mod v2 Trailer](https://www.youtube.com/watch?v=dLZ6dSQqObk)
+## **Video Preview:** [Survival Mod Trailer](https://www.youtube.com/watch?v=dLZ6dSQqObk)
 
 # <a name="key-features"></a>Key Features
-- Compatible with all stock maps.
 - Unlimited waves.
-- Number of survivors defined by dvar, note that these occupy bot slots, a limit of 4 is recommended.
-- Difficulty adaptable to the number of waves and players.
+- Compatible with all maps.
+- Number of survivors defined by dvar `survival_survivors_limit`, note that these occupy bot slots, a limit of 5 is recommended.
 - The ammunition is collected independently of the weapon modifications.
 - The buffs of the dropped weapons are preserved.
 - You can drop the weapon to an ally with the `H` key.
@@ -31,11 +30,16 @@
 - The mod allows you to switch between servers and game types without any inconvenience other than changing the language to English.
 
 # <a name="how-to-use"></a>How To Use
-- Unzip the rar file at `%localappdata%/plutonium/storage/iw5/`. (You can press `windows + r` and paste the path)
-- In the console type `fs_game mods/survival` and then type `vid_restart_safe` to load the mod.
-- Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> Survival -> Ok -> ESC -> Start Game`.
-- If you enter a server that has the mod you will not have to do anything.
-- If you find it difficult to load the mod you can also directly download and use the Survival Loader.
+If you enter a server that has the mod you will not have to do anything.
+1. Unzip the rar file at `%localappdata%/plutonium/storage/iw5/`. (You can press `windows + r` and paste the path)
+2. In the console type `fs_game mods/survival` and then type `vid_restart_safe` to load the mod.
+3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> Survival -> Ok -> ESC -> Start Game`.
+
+The new version will have a new format to facilitate future updates. If you have already installed the previous version you should delete the following files:
+- %localappdata%/plutonium/storage/iw5/survival_config.cfg`.
+- %localappdata%/plutonium/storage/iw5/maps/mp/gametypes/survival.gsc
+- %localappdata%/plutonium/storage/iw5/lethalbeats
+- %localappdata%/plutonium/storage/iw5/mods
 
 # <a name="download"></a>Download
 - Mod files: [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.0/IW5-Survival-Reimagined.rar)
