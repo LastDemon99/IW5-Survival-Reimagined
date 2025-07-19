@@ -1,0 +1,467 @@
+{
+	map			"mp_seatown"
+	longname	"MPUI_SEATOWN"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+    description "MPUI_DESC_MAP_SEATOWN"
+    mapimage    "preview_mp_seatown"
+	mapoverlay  "compass_overlay_map_blank"
+    allieschar  "sas_urban"
+    axischar    "opforce_henchmen"
+    environment	"desert"
+	mappack		"0"
+}
+
+{
+	map			"mp_dome"
+	longname	"MPUI_DOME"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_DOME"
+	mapimage    "preview_mp_dome"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_urban"
+	environment "desert"
+	mappack		"0"
+}
+
+{
+	map			"mp_plaza2"
+	longname	"MPUI_ARKADEN"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_ARKADEN"
+	mapimage    "preview_mp_plaza2"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "sas_urban"
+	axischar    "opforce_urban"
+	environment "urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_mogadishu"
+	longname	"MPUI_BAKAARA"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_BAKAARA"
+	mapimage    "preview_mp_mogadishu"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "pmc_africa"
+	axischar    "opforce_africa"
+	environment "urban_militia"
+	mappack		"0"
+}
+
+{
+	map			"mp_paris"
+	longname	"MPUI_RESISTANCE"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_RESISTANCE"
+	mapimage    "preview_mp_paris"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "gign_paris"
+	axischar    "opforce_urban"
+	environment "urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_exchange"
+	longname	"MPUI_DOWNTURN"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_DOWNTURN"
+	mapimage    "preview_mp_exchange"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_air"
+	environment	"urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_bootleg"
+	longname	"MPUI_BOOTLEG"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_BOOTLEG"
+	mapimage    "preview_mp_bootleg"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "pmc_africa"
+	axischar    "opforce_urban"
+	environment "urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_carbon"
+	longname	"MPUI_CARBON"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_CARBON"
+	mapimage    "preview_mp_carbon"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "pmc_africa"
+	axischar    "opforce_africa"
+	environment	"forest_militia"
+	mappack		"0"
+}
+
+{
+	map			"mp_hardhat"
+	longname	"MPUI_HARDHAT"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_HARDHAT"
+	mapimage    "preview_mp_hardhat"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_air"
+	environment "urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_alpha"
+	longname	"MPUI_LOCKDOWN"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_LOCKDOWN"
+	mapimage    "preview_mp_alpha"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_urban"
+	environment "urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_village"
+	longname	"MPUI_VILLAGE"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_VILLAGE"
+	mapimage    "preview_mp_village"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "pmc_africa"
+	axischar    "opforce_africa"
+	environment "forest_militia"
+	mappack		"0"
+}
+
+{
+	map			"mp_lambeth"
+	longname	"MPUI_FALLEN"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_FALLEN"
+	mapimage    "preview_mp_lambeth"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_woodland"
+	environment "forest"
+	mappack		"0"
+}
+
+{
+	map			"mp_radar"
+	longname	"MPUI_OUTPOST"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_OUTPOST"
+	mapimage    "preview_mp_radar"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_snow"
+	environment "arctic"
+	mappack		"0"
+}
+
+{
+	map			"mp_interchange"
+	longname	"MPUI_INTERCHANGE"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_INTERCHANGE"
+	mapimage    "preview_mp_interchange"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_woodland"
+	environment "urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_underground"
+	longname	"MPUI_UNDERGROUND"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_UNDERGROUND"
+	mapimage    "preview_mp_underground"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "sas_urban"
+	axischar    "opforce_air"
+	environment	"urban"
+	mappack		"0"
+}
+
+{
+	map			"mp_bravo"
+	longname	"MPUI_MISSION"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_MISSION"
+	mapimage    "preview_mp_bravo"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "pmc_africa"
+	axischar    "opforce_africa"
+	environment "forest_militia"
+	mappack		"0"
+}
+
+{
+	map			"mp_italy"
+	longname	"MPUI_ITALY"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_ITALY"
+	mapimage    "preview_mp_italy"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "sas_urban"
+	axischar    "opforce_henchmen"
+	environment	"urban"
+	mappack	"1"
+}
+
+{
+	map			"mp_park"
+	longname	"MPUI_PARK"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_PARK"
+	mapimage    "preview_mp_park"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+  	axischar    "opforce_woodland"
+  	environment "forest"
+	mappack	"2"
+}
+
+{
+	map			"mp_overwatch"
+	longname	"MPUI_OVERWATCH"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_OVERWATCH"
+	mapimage    "preview_mp_overwatch"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_air"
+	environment "urban"
+	mappack	"3"
+}
+
+{
+	map			"mp_morningwood"
+	longname	"MPUI_MORNINGWOOD"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_MORNINGWOOD"
+	mapimage    "preview_mp_morningwood"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_henchmen"
+	environment "urban"
+	mappack	"4"
+}
+
+{
+	map			"mp_meteora"
+	longname	"MPUI_METEORA"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_METEORA"
+	mapimage    "preview_mp_meteora"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "sas_urban"
+	axischar    "opforce_henchmen"
+	environment	"urban"
+	mappack	"7"
+}
+
+{
+	map			"mp_cement"
+	longname	"MPUI_CEMENT"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_CEMENT"
+	mapimage    "preview_mp_cement"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_air"
+	environment	"urban"
+	mappack	"8"
+}
+
+{
+	map			"mp_qadeem"
+	longname	"MPUI_QADEEM"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_QADEEM"
+	mapimage    "preview_mp_qadeem"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_henchmen"
+	environment	"urban"
+	mappack	"9"
+}
+
+{
+	map			"mp_restrepo_ss"
+	longname	"MPUI_RESTREPO_SS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_RESTREPO_SS"
+	mapimage    "preview_mp_restrepo_ss"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_urban"
+	environment	"desert"
+	mappack	"12"
+}
+
+{
+	map			"mp_hillside_ss"
+	longname	"MPUI_HILLSIDE_SS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_HILLSIDE_SS"
+	mapimage    "preview_mp_hillside_ss"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_urban"
+	environment	"urban"
+	mappack	"12"
+}
+
+{
+	map			"mp_courtyard_ss"
+	longname	"MPUI_COURTYARD_SS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_COURTYARD_SS"
+	mapimage    "preview_mp_courtyard_ss"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "sas_urban"
+	axischar    "opforce_henchmen"
+	environment	"urban"
+	mappack	"13"
+}
+
+{
+	map			"mp_aground_ss"
+	longname	"MPUI_AGROUND_SS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_AGROUND_SS"
+	mapimage    "preview_mp_aground_ss"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "sas_urban"
+	axischar    "opforce_henchmen"
+	environment	"urban"
+	mappack	"13"
+}
+
+{
+	map			"mp_terminal_cls"
+	longname	"MPUI_TERMINAL_CLS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_TERMINAL_CLS"
+	mapimage    "preview_mp_terminal_cls"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_urban"
+	environment "urban"
+	mappack	"14"
+}
+
+{
+	map			"mp_six_ss"
+	longname	"MPUI_SIX_SS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_SIX_SS"
+	mapimage    "preview_mp_six_ss"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_woodland"
+	environment "forest"
+	mappack	"16"
+}
+
+{
+	map			"mp_burn_ss"
+	longname	"MPUI_BURN_SS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_BURN_SS"
+	mapimage    "preview_mp_burn_ss"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+	axischar    "opforce_henchmen"
+	environment	"desert"
+	mappack	"16"
+}
+
+{
+	map			"mp_crosswalk_ss"
+	longname	"MPUI_CROSSWALK_SS"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_CROSSWALK_SS"
+	mapimage    "preview_mp_crosswalk_ss"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+  	axischar    "opforce_air"
+	environment	"urban"
+	mappack	"17"
+}
+
+{
+	map			"mp_shipbreaker"
+	longname	"MPUI_SHIPBREAKER"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_SHIPBREAKER"
+	mapimage    "preview_mp_shipbreaker"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "pmc_africa"
+	axischar    "opforce_africa"
+	environment "desert"
+	mappack	"18"
+}
+
+{
+	map			"mp_roughneck"
+	longname	"MPUI_ROUGHNECK"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_ROUGHNECK"
+	mapimage    "preview_mp_roughneck"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+  	axischar    "opforce_air"
+	environment	"urban"
+	mappack	"19"
+}
+
+{
+	map			"mp_moab"
+	longname	"MPUI_MOAB"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_MOAB"
+	mapimage    "preview_mp_moab"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+  	axischar    "opforce_woodland"
+	environment	"desert"
+	mappack	"24"
+}
+
+{
+	map			"mp_boardwalk"
+	longname	"MPUI_BOARDWALK"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_BOARDWALK"
+	mapimage    "preview_mp_boardwalk"
+	mapoverlay  "compass_overlay_map_blank"
+ 	allieschar  "delta_multicam"
+	axischar    "opforce_air"
+	environment	"urban"
+	mappack	"25"
+}
+
+{
+	map			"mp_nola"
+	longname	"MPUI_NOLA"
+	gametype	"dm war sab sab2 dom sd sd2 hc thc ctf koth survival"
+	description "MPUI_DESC_MAP_NOLA"
+	mapimage    "preview_mp_nola"
+	mapoverlay  "compass_overlay_map_blank"
+	allieschar  "delta_multicam"
+  	axischar    "opforce_air"
+	environment	"urban"
+	mappack	"26"
+}

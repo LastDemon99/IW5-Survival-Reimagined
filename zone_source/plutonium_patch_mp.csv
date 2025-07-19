@@ -1,14 +1,16 @@
 # RAWFILES
 rawfile,animtrees/player_3rd_person.atr
+rawfile,mp/recipes/survival.recipe
+rawfile,mp/basemaps.arena
 rawfile,maps/mp/gametypes/_gametypes.txt
 rawfile,maps/mp/gametypes/survival.txt
 
 # STRINGTABLES
 stringtable,mp/dynamic_shop.csv
-stringtable,mp/main_options.csv
 stringtable,mp/survival_waves.csv
 stringtable,mp/survival_bots.csv
 stringtable,mp/killstreakTable.csv
+stringtable,mp/recipe.csv
 stringtable,mp/gametypestable.csv
 
 # MENUS

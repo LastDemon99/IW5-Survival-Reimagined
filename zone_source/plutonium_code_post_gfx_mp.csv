@@ -1,13 +1,11 @@
+rawfile,maps/mp/gametypes/_gametypes.txt
+stringtable,mp/statstable.csv
+stringtable,mp/cardicontable.csv
 structureddatadef,mp/recipes.def
-rawfile,mp/recipes/survival.recipe
-rawfile,mp/basemaps.arena
-stringtable,mp/recipe.csv
 structureddatadef,mp/playerdata.def
 structureddatadef,mp/resetdata.def
 structureddatadef,mp/prestigedata.def
 structureddatadef,mp/elitecreateaclass.def
 structureddatadef,mp/clientmatchdata.def
 structureddatadef,mp/matchdata.def
-stringtable,mp/statstable.csv
-stringtable,mp/cardicontable.csv
 rawfile,plutonium_code_post_gfx_mp
