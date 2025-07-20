@@ -12,6 +12,8 @@
 </p>
 
 > [!IMPORTANT]
+>
+> This mod required: [IW5 Bot Warfare](https://github.com/ineedbots/piw5_bot_warfare)
 > 
 > Mod under development
 > 
