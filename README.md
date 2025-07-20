@@ -18,7 +18,7 @@
 > Mod under development
 > 
 
-## **Mod Overview & Tutorials:**
+# **Mod Overview & Tutorials:**
 - [Survival Mod Trailer](https://www.youtube.com/watch?v=dLZ6dSQqObk)
 - [Survival Private Match Install](https://youtu.be/6RxgkRCW0f4)
 - [Survival Map Edit](https://youtu.be/VmC0uUfFp_c)
@@ -50,7 +50,9 @@ If you find it difficult to load the mod you can also directly download and use 
 Manual installation:
 1. Unzip the rar file at `%localappdata%/plutonium/storage/iw5/`. (You can press `windows + r` and paste the path)
 2. In the console type `fs_game mods/survival` and then type `vid_restart_safe` to load the mod.
-3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> Survival -> Ok -> ESC -> Start Game`.
+3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> Survival -> Ok -> ESC -> Start Game`.<br><br>
+
+To report bugs, make suggestions or need help, visit our discord: [LethalBeats](https://discord.gg/PrpYznV33s)
 
 # <a name="download"></a>Download
 - Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.0/IW5-Survival-Reimagined.rar)
