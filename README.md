@@ -18,7 +18,11 @@
 > Mod under development
 > 
 
-## **Video Preview:** [Survival Mod Trailer](https://www.youtube.com/watch?v=dLZ6dSQqObk)
+## **Mod Overview & Tutorials:**
+- [Survival Mod Trailer](https://www.youtube.com/watch?v=dLZ6dSQqObk)
+- [Survival Private Match Install](https://youtu.be/6RxgkRCW0f4)
+- [Survival Map Edit](https://youtu.be/VmC0uUfFp_c)
+
 
 # <a name="key-features"></a>Key Features
 - Unlimited waves.
