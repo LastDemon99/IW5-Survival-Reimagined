@@ -12,7 +12,6 @@
 </p>
 
 > [!IMPORTANT]
-> This mod required: [IW5 Bot Warfare](https://github.com/ineedbots/piw5_bot_warfare)
 > 
 > Mod under development
 > 
@@ -30,24 +29,32 @@
 - The mod allows you to switch between servers and game types without any inconvenience other than changing the language to English.
 
 # <a name="how-to-use"></a>How To Use
-If you enter a server that has the mod you will not have to do anything.
+> [!IMPORTANT]
+> 
+> The new version will have a new format to facilitate future updates.
+> If you have already installed the previous version you should delete the following files:<br><br>
+> `%localappdata%/plutonium/storage/iw5/survival_config.cfg`.<br>
+> `%localappdata%/plutonium/storage/iw5/maps/mp/gametypes/survival.gsc`<br>
+> `%localappdata%/plutonium/storage/iw5/lethalbeats`<br>
+> `%localappdata%/plutonium/storage/iw5/mods`
+>
+
+If you enter a server that has the mod you will not have to do anything.<br>
+If you find it difficult to load the mod you can also directly download and use the Survival Loader.<br><br>
+Manual installation:
 1. Unzip the rar file at `%localappdata%/plutonium/storage/iw5/`. (You can press `windows + r` and paste the path)
 2. In the console type `fs_game mods/survival` and then type `vid_restart_safe` to load the mod.
 3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> Survival -> Ok -> ESC -> Start Game`.
 
-The new version will have a new format to facilitate future updates. If you have already installed the previous version you should delete the following files:
-- %localappdata%/plutonium/storage/iw5/survival_config.cfg`.
-- %localappdata%/plutonium/storage/iw5/maps/mp/gametypes/survival.gsc
-- %localappdata%/plutonium/storage/iw5/lethalbeats
-- %localappdata%/plutonium/storage/iw5/mods
-
 # <a name="download"></a>Download
-- Mod files: [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.0/IW5-Survival-Reimagined.rar)
+- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.0/IW5-Survival-Reimagined.rar)
+- Survival Loader (Installer and loader): [IW5_SurvivalLoader.exe](https://github.com/LethalBeats/IW5-Survival-Loader/releases/download/iw5-survival-loader-v1.0/IW5_SurvivalLoader.exe)
 
 # <a name="credits"></a>Credits
-- [Master-64](https://github.com/Master-64) for Sponsor this project
-- [SadSlothXL](https://github.com/SadSlothXL) for helping with modding issues 
-- [Plutonium team](https://github.com/plutoniummod) for gsc & mod implementation
+- [Master-64](https://github.com/Master-64) for Sponsor this project.
+- [SadSlothXL](https://github.com/SadSlothXL) for helping with modding issues.
+- [Plutonium team](https://github.com/plutoniummod) for gsc & mod implementation.
+- [IW5 Bot Warfare](https://github.com/ineedbots/piw5_bot_warfare) for AI system.
 - LethalBeats team
   
 # <a name="sponsor"></a>Sponsor
