@@ -7,10 +7,10 @@ init()
 
 giveAbility()
 {
-	//tank = spawn("script_model", self gettagorigin("tag_shield_back"));
-	//tank setmodel("gas_canisters_backpack");
-	//tank linkto(self, "tag_shield_back", (0,0,0), (0,0,0));
-	self thread detonateMonitor();
+	tank = spawn("script_model", self gettagorigin("tag_shield_back"));
+	tank setmodel("gas_canisters_backpack");
+	tank linkto(self, "tag_shield_back", (0,0,0), (0,0,0));
+	self thread detonateMonitor(tank);
 	self thread smokeFx();
 }
 
@@ -32,12 +32,12 @@ detonateMonitor(tank)
 	self waittill("detonate", attacker);
 
 	explode_origin = self.origin;
-	//tank playsound("detpack_explo_main");
+	tank playsound("detpack_explo_main");
 	earthquake(0.2, 0.4, explode_origin, 600);
 	playfx(level._effect["chemical_tank_explosion"], explode_origin);
-	//tank unlink();
+	tank unlink();
 	wait 0.05;
-	//tank delete();
+	tank delete();
 	
 	trigger = spawn("trigger_radius", explode_origin, 0, 70, 70 * 2);	
 	for(i = 0; i < 10; i++)
@@ -50,8 +50,7 @@ detonateMonitor(tank)
 			}
 			
 		radiusdamage(trigger.origin, 70, 10, 5, self, "MOD_EXPLOSIVE");
-		wait 0.5;
+        wait 0.5;
 	}
-
 	trigger delete();
 }
