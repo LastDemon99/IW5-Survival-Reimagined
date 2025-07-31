@@ -55,7 +55,7 @@ Manual installation:
 To report bugs, make suggestions or need help, visit our discord: [LethalBeats](https://discord.gg/PrpYznV33s)
 
 # <a name="download"></a>Download
-- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.1/IW5-Survival-Reimagined.rar)
+- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.0.2/IW5-Survival-Reimagined.rar)
 - Survival Loader (Installer and loader): [IW5_SurvivalLoader.exe](https://github.com/LethalBeats/IW5-Survival-Loader/releases/download/iw5-survival-loader-v1.0/IW5_SurvivalLoader.exe)
 
 # <a name="credits"></a>Credits
