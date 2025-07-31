@@ -357,15 +357,17 @@ newWeaponData(weapon, buffs)
     data[BASENAME] = weapon_get_baseName(weapon);
     data[ATTACHS] = weapon_get_current_attachs(weapon);
     
+    isPlayer = isPlayer(self);
+
     if (isDefined(buffs)) data[BUFFS] = buffs;
-    else data[BUFFS] = self hasWeapon(weapon) ? self player_get_weapons_buffs() : [];
+    else data[BUFFS] = isPlayer && self hasWeapon(weapon) ? self player_get_weapons_buffs() : [];
     
     data[CAMO] = 0;
     data[ATTACH_SLOTS] = !data[ATTACHS].size ? 1 : data[ATTACHS].size;
     data[BUFF_SLOTS] = !data[BUFFS].size ? 1 : data[BUFFS].size;
     data[MAX_ATTACHS] = weapon_get_max_attachs(data[BASENAME]);
     data[ALLOWED_ATTACHS] = weapon_get_attachs(data[BASENAME]);
-    data[IS_PRIMARY] = self player_is_weapon_primary(weapon);
+    data[IS_PRIMARY] = isPlayer ? self player_is_weapon_primary(weapon) : true;
     data[IS_PRIMARY_CLASS] = weapon_is_primary_class(data[BASENAME]);
     data[CLASS] = weapon_get_class(data[BASENAME]);
     return data;
@@ -374,6 +376,7 @@ newWeaponData(weapon, buffs)
 setWeaponData(weapon, data)
 {
     self.weaponData[int(self player_is_weapon_secondary(weapon))] = data;
+    self.weaponData[IS_PRIMARY] = self player_is_weapon_primary(weapon);
 }
 
 getWeaponData(weapon)
