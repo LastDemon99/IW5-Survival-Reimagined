@@ -845,7 +845,9 @@ bot_delete_AfterAWhile()
 {
 	waittillframeend;
 	body = self.body;
-	wait randomIntRange(5, 10);
+	if (level.wave_num < 13) wait randomIntRange(5, 10);
+	else if (level.wave_num < 22) wait randomIntRange(3, 6);
+	else wait randomFloatRange(2, 3);
 	if (isDefined(body)) body delete();
 }
 
