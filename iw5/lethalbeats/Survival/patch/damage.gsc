@@ -555,3 +555,445 @@ handleSuicideDeath(sMeansOfDeath, sHitLoc)
     if (isdefined(self.friendlydamage))
         self iprintlnbold(&"MP_FRIENDLY_FIRE_WILL_NOT");
 }
+
+callback_playerDamage_internal( eInflictor, eAttacker, victim, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime )
+{
+    if ( !maps\mp\_utility::isReallyAlive( victim ) )
+        return;
+
+    if ( isdefined( eAttacker ) && eAttacker.classname == "script_origin" && isdefined( eAttacker.type ) && eAttacker.type == "soft_landing" )
+        return;
+
+    if ( sWeapon == "killstreak_emp_mp" )
+        return;
+
+    if ( sWeapon == "bouncingbetty_mp" && !maps\mp\gametypes\_weapons::mineDamageHeightPassed( eInflictor, victim ) )
+        return;
+
+    if ( sWeapon == "bouncingbetty_mp" && ( victim getstance() == "crouch" || victim getstance() == "prone" ) )
+        iDamage = int( iDamage / 2 );
+
+    if ( sWeapon == "xm25_mp" && sMeansOfDeath == "MOD_IMPACT" )
+        iDamage = 95;
+
+    if ( sWeapon == "emp_grenade_mp" && sMeansOfDeath != "MOD_IMPACT" )
+        victim notify( "emp_grenaded", eAttacker );
+
+    if ( isdefined( level.hostmigrationtimer ) )
+        return;
+
+    if ( sMeansOfDeath == "MOD_FALLING" )
+        victim thread emitFallDamage( iDamage );
+
+    if ( sMeansOfDeath == "MOD_EXPLOSIVE_BULLET" && iDamage != 1 )
+    {
+        iDamage = iDamage * getdvarfloat( "scr_explBulletMod" );
+        iDamage = int( iDamage );
+    }
+
+    if ( isdefined( eAttacker ) && eAttacker.classname == "worldspawn" )
+        eAttacker = undefined;
+
+    if ( isdefined( eAttacker ) && isdefined( eAttacker.gunner ) )
+        eAttacker = eAttacker.gunner;
+
+    attackerIsNPC = isdefined( eAttacker ) && !isdefined( eAttacker.gunner ) && ( eAttacker.classname == "script_vehicle" || eAttacker.classname == "misc_turret" || eAttacker.classname == "script_model" );
+    attackerIsHittingTeammate = level.teambased && isdefined( eAttacker ) && victim != eAttacker && isdefined( eAttacker.team ) && ( victim.pers["team"] == eAttacker.team || isdefined( eAttacker.teamchangedthisframe ) );
+    attackerIsInflictorVictim = isdefined( eAttacker ) && isdefined( eInflictor ) && isdefined( victim ) && isplayer( eAttacker ) && eAttacker == eInflictor && eAttacker == victim;
+
+    if ( attackerIsInflictorVictim )
+        return;
+
+    stunFraction = 0.0;
+
+    if ( iDFlags & level.idflags_stun )
+    {
+        stunFraction = 0.0;
+        iDamage = 0.0;
+    }
+    else if ( sHitLoc == "shield" )
+    {
+        if ( attackerIsHittingTeammate && level.friendlyfire == 0 )
+            return;
+
+        if ( sMeansOfDeath == "MOD_PISTOL_BULLET" || sMeansOfDeath == "MOD_RIFLE_BULLET" || sMeansOfDeath == "MOD_EXPLOSIVE_BULLET" && !attackerIsHittingTeammate )
+        {
+            if ( isplayer( eAttacker ) )
+            {
+                eAttacker.lastattackedshieldplayer = victim;
+                eAttacker.lastattackedshieldtime = gettime();
+            }
+
+            victim notify( "shield_blocked" );
+
+            if ( maps\mp\_utility::isEnvironmentWeapon( sWeapon ) )
+                shieldDamage = 25;
+            else
+                shieldDamage = maps\mp\perks\_perks::cac_modified_damage( victim, eAttacker, iDamage, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
+
+            victim.shielddamage = victim.shielddamage + shieldDamage;
+
+            if ( !maps\mp\_utility::isEnvironmentWeapon( sWeapon ) || common_scripts\utility::coinToss() )
+                victim.shieldbullethits++;
+
+            if ( victim.shieldbullethits >= level.riotshieldxpbullets )
+            {
+                if ( self.recentshieldxp > 4 )
+                    xpVal = int( 50 / self.recentshieldxp );
+                else
+                    xpVal = 50;
+
+                victim thread maps\mp\gametypes\_rank::giveRankXP( "shield_damage", xpVal );
+                victim thread giveRecentShieldXP();
+                victim thread maps\mp\gametypes\_missions::genericChallenge( "shield_damage", victim.shielddamage );
+                victim thread maps\mp\gametypes\_missions::genericChallenge( "shield_bullet_hits", victim.shieldbullethits );
+                victim.shielddamage = 0;
+                victim.shieldbullethits = 0;
+            }
+        }
+
+        if ( iDFlags & level.idflags_shield_explosive_impact )
+        {
+            if ( !attackerIsHittingTeammate )
+                victim thread maps\mp\gametypes\_missions::genericChallenge( "shield_explosive_hits", 1 );
+
+            sHitLoc = "none";
+
+            if ( !( iDFlags & level.idflags_shield_explosive_impact_huge ) )
+                iDamage = iDamage * 0.0;
+        }
+        else if ( iDFlags & level.idflags_shield_explosive_splash )
+        {
+            if ( isdefined( eInflictor ) && isdefined( eInflictor.stuckenemyentity ) && eInflictor.stuckenemyentity == victim )
+                iDamage = 151;
+
+            victim thread maps\mp\gametypes\_missions::genericChallenge( "shield_explosive_hits", 1 );
+            sHitLoc = "none";
+        }
+        else
+            return;
+    }
+    else if ( sMeansOfDeath == "MOD_MELEE" && issubstr( sWeapon, "riotshield" ) )
+    {
+        if ( !( attackerIsHittingTeammate && level.friendlyfire == 0 ) )
+        {
+            stunFraction = 0.0;
+            victim stunplayer( 0.0 );
+        }
+    }
+
+    if ( isdefined( eInflictor ) && isdefined( eInflictor.stuckenemyentity ) && eInflictor.stuckenemyentity == victim )
+        iDamage = 151;
+
+    if ( !attackerIsHittingTeammate )
+        iDamage = maps\mp\perks\_perks::cac_modified_damage( victim, eAttacker, iDamage, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
+
+    if ( isdefined( level.modifyplayerdamage ) )
+        iDamage = [[ level.modifyplayerdamage ]]( victim, eAttacker, iDamage, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
+
+    if ( !iDamage )
+        return 0;
+
+    victim.idflags = iDFlags;
+    victim.idflagstime = gettime();
+
+    if ( game["state"] == "postgame" )
+        return;
+
+    if ( victim.sessionteam == "spectator" )
+        return;
+
+    if ( isdefined( victim.candocombat ) && !victim.candocombat )
+        return;
+
+    if ( isdefined( eAttacker ) && isplayer( eAttacker ) && isdefined( eAttacker.candocombat ) && !eAttacker.candocombat )
+        return;
+
+    if ( attackerIsNPC && attackerIsHittingTeammate )
+    {
+        if ( sMeansOfDeath == "MOD_CRUSH" )
+        {
+            victim maps\mp\_utility::_suicide();
+            return;
+        }
+
+        if ( !level.friendlyfire )
+            return;
+    }
+
+    if ( !isdefined( vDir ) )
+        iDFlags = iDFlags | level.idflags_no_knockback;
+
+    friendly = 0;
+
+    if ( victim.health == victim.maxhealth && ( !isdefined( victim.laststand ) || !victim.laststand ) || !isdefined( victim.attackers ) && !isdefined( victim.laststand ) )
+    {
+        victim.attackers = [];
+        victim.attackerdata = [];
+    }
+
+    if ( isHeadShot( sWeapon, sHitLoc, sMeansOfDeath, eAttacker ) )
+        sMeansOfDeath = "MOD_HEAD_SHOT";
+
+    if ( maps\mp\gametypes\_tweakables::getTweakableValue( "game", "onlyheadshots" ) )
+    {
+        if ( sMeansOfDeath == "MOD_PISTOL_BULLET" || sMeansOfDeath == "MOD_RIFLE_BULLET" || sMeansOfDeath == "MOD_EXPLOSIVE_BULLET" )
+            return;
+        else if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
+        {
+            if ( victim maps\mp\_utility::isJuggernaut() )
+                iDamage = 75;
+            else
+                iDamage = 150;
+        }
+    }
+
+    if ( sWeapon == "none" && isdefined( eInflictor ) )
+    {
+        if ( isdefined( eInflictor.destructible_type ) && issubstr( eInflictor.destructible_type, "vehicle_" ) )
+            sWeapon = "destructible_car";
+    }
+
+    if ( gettime() < victim.spawntime + level.killstreakspawnshield )
+    {
+        damageLimit = int( max( victim.health / 4, 1 ) );
+
+        if ( iDamage >= damageLimit && maps\mp\_utility::isKillstreakWeapon( sWeapon ) )
+            iDamage = damageLimit;
+    }
+
+    if ( !( iDFlags & level.idflags_no_protection ) )
+    {
+        if ( !level.teambased && attackerIsNPC && isdefined( eAttacker.owner ) && eAttacker.owner == victim )
+        {
+            if ( sMeansOfDeath == "MOD_CRUSH" )
+                victim maps\mp\_utility::_suicide();
+
+            return;
+        }
+
+        if ( ( issubstr( sMeansOfDeath, "MOD_GRENADE" ) || issubstr( sMeansOfDeath, "MOD_EXPLOSIVE" ) || issubstr( sMeansOfDeath, "MOD_PROJECTILE" ) ) && isdefined( eInflictor ) && isdefined( eAttacker ) )
+        {
+            if ( victim != eAttacker && eInflictor.classname == "grenade" && victim.lastspawntime + 3500 > gettime() && isdefined( victim.lastspawnpoint ) && distance( eInflictor.origin, victim.lastspawnpoint.origin ) < 250 )
+                return;
+
+            victim.explosiveinfo = [];
+            victim.explosiveinfo["damageTime"] = gettime();
+            victim.explosiveinfo["damageId"] = eInflictor getentitynumber();
+            victim.explosiveinfo["returnToSender"] = 0;
+            victim.explosiveinfo["counterKill"] = 0;
+            victim.explosiveinfo["chainKill"] = 0;
+            victim.explosiveinfo["cookedKill"] = 0;
+            victim.explosiveinfo["throwbackKill"] = 0;
+            victim.explosiveinfo["suicideGrenadeKill"] = 0;
+            victim.explosiveinfo["weapon"] = sWeapon;
+            isFrag = issubstr( sWeapon, "frag_" );
+
+            if ( eAttacker != victim )
+            {
+                if ( ( issubstr( sWeapon, "c4_" ) || issubstr( sWeapon, "claymore_" ) ) && isdefined( eAttacker ) && isdefined( eInflictor.owner ) )
+                {
+                    victim.explosiveinfo["returnToSender"] = eInflictor.owner == victim;
+                    victim.explosiveinfo["counterKill"] = isdefined( eInflictor.wasdamaged );
+                    victim.explosiveinfo["chainKill"] = isdefined( eInflictor.waschained );
+                    victim.explosiveinfo["bulletPenetrationKill"] = isdefined( eInflictor.wasdamagedfrombulletpenetration );
+                    victim.explosiveinfo["cookedKill"] = 0;
+                }
+
+                if ( isdefined( eAttacker.lastgrenadesuicidetime ) && eAttacker.lastgrenadesuicidetime >= gettime() - 50 && isFrag )
+                    victim.explosiveinfo["suicideGrenadeKill"] = 1;
+            }
+
+            if ( isFrag )
+            {
+                victim.explosiveinfo["cookedKill"] = isdefined( eInflictor.iscooked );
+                victim.explosiveinfo["throwbackKill"] = isdefined( eInflictor.threwback );
+            }
+
+            victim.explosiveinfo["stickKill"] = isdefined( eInflictor.isstuck ) && eInflictor.isstuck == "enemy";
+            victim.explosiveinfo["stickFriendlyKill"] = isdefined( eInflictor.isstuck ) && eInflictor.isstuck == "friendly";
+
+            if ( isplayer( eAttacker ) && eAttacker != self )
+                maps\mp\gametypes\_gamelogic::setInflictorStat( eInflictor, eAttacker, sWeapon );
+        }
+
+        if ( issubstr( sMeansOfDeath, "MOD_IMPACT" ) && ( sWeapon == "m320_mp" || issubstr( sWeapon, "gl" ) || issubstr( sWeapon, "gp25" ) || sWeapon == "xm25_mp" ) )
+        {
+            if ( isplayer( eAttacker ) && eAttacker != self )
+                maps\mp\gametypes\_gamelogic::setInflictorStat( eInflictor, eAttacker, sWeapon );
+        }
+
+        if ( isplayer( eAttacker ) && isdefined( eAttacker.pers["participation"] ) )
+            eAttacker.pers["participation"]++;
+        else if ( isplayer( eAttacker ) )
+            eAttacker.pers["participation"] = 1;
+
+        prevHealthRatio = victim.health / victim.maxhealth;
+
+        if ( attackerIsHittingTeammate )
+        {
+            if ( !maps\mp\_utility::matchMakingGame() && isplayer( eAttacker ) )
+                eAttacker maps\mp\_utility::incPlayerStat( "mostff", 1 );
+
+            if ( level.friendlyfire == 0 || !isplayer( eAttacker ) && level.friendlyfire != 1 )
+            {
+                if ( sWeapon == "artillery_mp" || sWeapon == "stealth_bomb_mp" )
+                    victim damageShellshockAndRumble( eInflictor, sWeapon, sMeansOfDeath, iDamage, iDFlags, eAttacker );
+
+                return;
+            }
+            else if ( level.friendlyfire == 1 )
+            {
+                if ( iDamage < 1 )
+                    iDamage = 1;
+
+                if ( victim maps\mp\_utility::isJuggernaut() )
+                    iDamage = maps\mp\perks\_perks::cac_modified_damage( victim, eAttacker, iDamage, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
+
+                victim.lastdamagewasfromenemy = 0;
+                victim finishPlayerDamageWrapper( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime, stunFraction );
+            }
+            else if ( level.friendlyfire == 2 && maps\mp\_utility::isReallyAlive( eAttacker ) )
+            {
+                iDamage = int( iDamage * 0.5 );
+
+                if ( iDamage < 1 )
+                    iDamage = 1;
+
+                eAttacker.lastdamagewasfromenemy = 0;
+                eAttacker.friendlydamage = 1;
+                eAttacker finishPlayerDamageWrapper( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime, stunFraction );
+                eAttacker.friendlydamage = undefined;
+            }
+            else if ( level.friendlyfire == 3 && maps\mp\_utility::isReallyAlive( eAttacker ) )
+            {
+                iDamage = int( iDamage * 0.5 );
+
+                if ( iDamage < 1 )
+                    iDamage = 1;
+
+                victim.lastdamagewasfromenemy = 0;
+                eAttacker.lastdamagewasfromenemy = 0;
+                victim finishPlayerDamageWrapper( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime, stunFraction );
+
+                if ( maps\mp\_utility::isReallyAlive( eAttacker ) )
+                {
+                    eAttacker.friendlydamage = 1;
+                    eAttacker finishPlayerDamageWrapper( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime, stunFraction );
+                    eAttacker.friendlydamage = undefined;
+                }
+            }
+
+            friendly = 1;
+        }
+        else
+        {
+            if ( iDamage < 1 )
+                iDamage = 1;
+
+            if ( isdefined( eAttacker ) && isplayer( eAttacker ) )
+                addAttacker( victim, eAttacker, eInflictor, sWeapon, iDamage, vPoint, vDir, sHitLoc, psOffsetTime, sMeansOfDeath );
+
+            if ( sMeansOfDeath == "MOD_EXPLOSIVE" || sMeansOfDeath == "MOD_GRENADE_SPLASH" && iDamage < victim.health )
+                victim notify( "survived_explosion", eAttacker );
+
+            if ( isdefined( eAttacker ) )
+                level.lastlegitimateattacker = eAttacker;
+
+            if ( isdefined( eAttacker ) && isplayer( eAttacker ) && isdefined( sWeapon ) )
+                eAttacker thread maps\mp\gametypes\_weapons::checkHit( sWeapon, victim );
+
+            if ( isdefined( eAttacker ) && isplayer( eAttacker ) && isdefined( sWeapon ) && eAttacker != victim )
+            {
+                eAttacker thread maps\mp\_events::damagedPlayer( self, iDamage, sWeapon );
+                victim.attackerposition = eAttacker.origin;
+            }
+            else
+                victim.attackerposition = undefined;
+
+            if ( issubstr( sMeansOfDeath, "MOD_GRENADE" ) && isdefined( eInflictor.iscooked ) )
+                victim.wascooked = gettime();
+            else
+                victim.wascooked = undefined;
+
+            victim.lastdamagewasfromenemy = isdefined( eAttacker ) && eAttacker != victim;
+
+            if ( victim.lastdamagewasfromenemy )
+                eAttacker.damagedplayers[victim.guid] = gettime();
+
+            victim finishPlayerDamageWrapper( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime, stunFraction );
+
+            if ( isdefined( level.ac130player ) && isdefined( eAttacker ) && level.ac130player == eAttacker )
+                level notify( "ai_pain", victim );
+
+            victim thread maps\mp\gametypes\_missions::playerDamaged( eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, sHitLoc );
+        }
+
+        if ( attackerIsNPC && isdefined( eAttacker.gunner ) )
+            damager = eAttacker.gunner;
+        else
+            damager = eAttacker;
+
+        if ( isdefined( damager ) && damager != victim && iDamage > 0 && ( !isdefined( sHitLoc ) || sHitLoc != "shield" ) )
+        {
+            if ( iDFlags & level.idflags_stun )
+                typeHit = "stun";
+            else if ( isexplosivedamagemod( sMeansOfDeath ) && victim maps\mp\_utility::_hasPerk( "_specialty_blastshield" ) )
+                typeHit = "hitBodyArmor";
+            else if ( victim maps\mp\_utility::_hasPerk( "specialty_combathigh" ) )
+                typeHit = "hitEndGame";
+            else if ( isdefined( victim.haslightarmor ) )
+                typeHit = "hitLightArmor";
+            else if ( victim maps\mp\_utility::isJuggernaut() )
+                typeHit = "hitJuggernaut";
+            else if ( !shouldWeaponFeedback( sWeapon ) )
+                typeHit = "none";
+            else
+                typeHit = "standard";
+
+            damager thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( typeHit );
+        }
+
+        maps\mp\gametypes\_gamelogic::setHasDoneCombat( victim, 1 );
+    }
+
+    if ( isdefined( eAttacker ) && eAttacker != victim && !friendly )
+        level.usestartspawn = 0;
+
+    if ( iDamage > 0 && isdefined( eAttacker ) && !victim maps\mp\_utility::isUsingRemote() )
+        victim thread maps\mp\gametypes\_shellshock::bloodEffect( eAttacker.origin );
+
+    if ( victim.sessionstate != "dead" )
+    {
+        lpselfnum = victim getentitynumber();
+        lpselfname = victim.name;
+        lpselfteam = victim.pers["team"];
+        lpselfGuid = victim.guid;
+        lpattackerteam = "";
+
+        if ( isplayer( eAttacker ) )
+        {
+            lpattacknum = eAttacker getentitynumber();
+            lpattackGuid = eAttacker.guid;
+            lpattackname = eAttacker.name;
+            lpattackerteam = eAttacker.pers["team"];
+        }
+        else
+        {
+            lpattacknum = -1;
+            lpattackGuid = "";
+            lpattackname = "";
+            lpattackerteam = "world";
+        }
+    }
+
+    hitlocDebug( eAttacker, victim, iDamage, sHitLoc, iDFlags );
+
+    if ( isdefined( eAttacker ) && eAttacker != victim )
+    {
+        if ( isplayer( eAttacker ) )
+            eAttacker maps\mp\_utility::incPlayerStat( "damagedone", iDamage );
+
+        victim maps\mp\_utility::incPlayerStat( "damagetaken", iDamage );
+    }
+}

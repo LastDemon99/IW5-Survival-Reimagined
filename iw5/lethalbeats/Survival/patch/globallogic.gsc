@@ -84,6 +84,8 @@ init()
     replaceFunc(maps\mp\gametypes\_persistence::updateBufferedStats, ::blank);
     replaceFunc(maps\mp\gametypes\_missions::buildChallegeInfo, ::blank);
     
+    replaceFunc(maps\mp\gametypes\_damage::logPrintPlayerDeath, ::blank);
+    replaceFunc(maps\mp\gametypes\_damage::callback_playerDamage_internal, lethalbeats\survival\patch\damage::callback_playerDamage_internal);
     level.breakables_fx["barrel"]["explode"] = loadfx("props/barrelExp");
     level.breakables_fx["barrel"]["burn_start"] = loadfx("props/barrel_fire_top");
     level.breakables_fx["barrel"]["burn"] = loadfx("props/barrel_fire_top");
