@@ -201,7 +201,7 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 		return;
 	}
 	
-	if(self.bodyArmor > 0)
+	if(self.bodyArmor > 0 && sMeansOfDeath != "MOD_TRIGGER_HURT")
 	{
 		armor = int(self.bodyArmor - iDamage);
 		if (armor < 0) self survivor_take_body_armor();

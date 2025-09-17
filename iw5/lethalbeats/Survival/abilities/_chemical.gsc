@@ -10,6 +10,8 @@ giveAbility()
 	tank = spawn("script_model", self gettagorigin("tag_shield_back"));
 	tank setmodel("gas_canisters_backpack");
 	tank linkto(self, "tag_shield_back", (0,0,0), (0,0,0));
+	tank setCanDamage(false);
+	tank notSolid();
 	self thread detonateMonitor(tank);
 	self thread smokeFx();
 }
@@ -17,7 +19,7 @@ giveAbility()
 smokeFx()
 {
 	level endon("game_ended");
-	self endon("death");
+	self endon("detonate");
 
 	for(;;)
 	{
@@ -29,7 +31,7 @@ smokeFx()
 detonateMonitor(tank)
 {
 	level endon("game_ended");
-	self waittill("detonate", attacker);
+	self waittill("detonate");
 
 	explode_origin = self.origin;
 	tank playsound("detpack_explo_main");
@@ -38,19 +40,17 @@ detonateMonitor(tank)
 	tank unlink();
 	wait 0.05;
 	tank delete();
-	
-	trigger = spawn("trigger_radius", explode_origin, 0, 70, 70 * 2);	
+
 	for(i = 0; i < 10; i++)
 	{
-		foreach(player in level.players) 
-			if (player isTouching(trigger))
+		foreach(player in level.players)
+			if (lethalbeats\collider::pointInSphere(player.origin, explode_origin, 70))
 			{
 				player shellshock("radiation_low", 0.45);
 				player viewKick(3, self.origin);
 			}
-			
-		radiusdamage(trigger.origin, 70, 10, 5, self, "MOD_EXPLOSIVE");
+
+		radiusdamage(explode_origin, 70, 200, 20, self, "MOD_TRIGGER_HURT");
         wait 0.5;
 	}
-	trigger delete();
 }
