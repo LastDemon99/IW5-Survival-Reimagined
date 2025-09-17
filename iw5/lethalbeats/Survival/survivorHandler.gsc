@@ -430,9 +430,9 @@ onUseShop()
 	{
 		self waittill("trigger_use", trigger);
 		if (isDefined(self.currMenu)) continue;
-		if (trigger.tag == "weapon_shop") self lethalbeats\DynamicMenus\dynamic_shop::openShop("weapon_armory");
-		else if (trigger.tag == "equipment_shop") self lethalbeats\DynamicMenus\dynamic_shop::openShop("equipment_armory");
-		else if (trigger.tag == "support_shop") self lethalbeats\DynamicMenus\dynamic_shop::openShop("air_support_armory");
+		if (trigger.tag == "weapon") self lethalbeats\DynamicMenus\dynamic_shop::openShop("weapon_armory");
+		else if (trigger.tag == "equipment") self lethalbeats\DynamicMenus\dynamic_shop::openShop("equipment_armory");
+		else if (trigger.tag == "support") self lethalbeats\DynamicMenus\dynamic_shop::openShop("air_support_armory");
 	}
 }
 

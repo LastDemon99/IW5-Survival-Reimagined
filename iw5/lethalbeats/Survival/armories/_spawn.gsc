@@ -53,10 +53,10 @@ spawnShop(type, origin, angles)
 	
 	shopModel[0] lethalbeats\hud::hud_create_3d_objective("allies", wayPoint, 12, 12);
 	shopModel[1] setModel("com_laptop_2_open");
-	trigger = lethalbeats\trigger::trigger_create(origin, 55, 55);
+	trigger = lethalbeats\trigger::trigger_create(origin, 55);
 	trigger lethalbeats\trigger::trigger_set_use("Press ^3[{+activate}] ^7to use " + hintString);
-	trigger.showFilter = lethalbeats\survival\utility::survivor_trigger_filter;
-	trigger.tag = type + "_shop";
+	trigger lethalbeats\trigger::trigger_set_enable_condition(lethalbeats\survival\utility::survivor_trigger_filter);
+	trigger.tag = type;
 
 	return [shopModel[0], shopModel[1], trigger];
 }
