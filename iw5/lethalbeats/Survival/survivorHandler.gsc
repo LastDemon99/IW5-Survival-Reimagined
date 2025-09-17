@@ -17,9 +17,17 @@ onPlayerDisconnect()
 {
 	for (;;)
     {
-        level waittill("disconnected", player);
-		player survivor_delete_state();
-		if (!survivors().size) level_rotate_map();
+        self waittill("disconnect");
+
+		bleedoutObjects = level.survivors_bleedout[self.guid];
+		if (isDefined(bleedoutObjects))
+		{
+			bleedoutObjects[0] lethalbeats\trigger::trigger_delete();
+			bleedoutObjects[1] hud_destroy();
+			if (isDefined(bleedoutObjects[2])) bleedoutObjects[2] delete();
+		}
+
+		if (!survivors(true).size) kill_all_survivors();
     }
 }
 
@@ -54,8 +62,9 @@ onPlayerSpawn()
 			self player_set_nades(FLASH, 2);
 			self player_set_nades(FRAG, 2);
 
-			if (lethalbeats\array::array_contains(level.survivors_deaths, self.guid))
+			if (isDefined(level.survivors_deaths[self.guid]) || isDefined(level.survivors_bleedout[self.guid]))
 			{
+				self player_clear_last_stand();
 				self thread player_black_screen();
 				self suicide();
 				continue;
@@ -81,7 +90,8 @@ onPlayerSpawn()
 		self thread onHoldBreath();
 
 		self notify("weapon_change", self getCurrentWeapon());
-	}
+		if (self isTestClient()) self survivor_take_last_stand();
+ 	}
 }
 
 onPlayerRespawnDealy()
@@ -90,13 +100,15 @@ onPlayerRespawnDealy()
 	self endon("disconnect");
 
 	self survivor_destroy_hud();
+	if (!getDvarInt("survival_wait_respawn")) return;
 
-	if(!getDvarInt("survival_wait_respawn")) return;
-	if(!level.game_ended && !survivors(true).size)
+	// (つ◉益◉)つ previously, I iterated through level.players and checked with isAlive, but for some fcking reason, isAlive now returns true in this respawndelay section, wtf pluto r4906!!!
+	if (!survivors(true).size)
 	{
 		rotate_wait = 15;
-		foreach(player in survivors()) 
+		foreach(player in survivors())
 		{
+			player suicide();
 			player hud_clear_lower_message("spawn_info");
 			player hud_set_lower_message("spawn_info", "All survivors death waiting to rotate map", rotate_wait, 1, 1);
 		}
@@ -220,9 +232,9 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 
 onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration)
 {
-	if (!lethalbeats\array::array_contains(level.survivors_deaths, self.guid))
+	if (!isDefined(level.survivors_deaths[self.guid]))
 	{
-		if (getDvarInt("survival_wait_respawn")) level.survivors_deaths = lethalbeats\array::array_append(level.survivors_deaths, self.guid);
+		if (getDvarInt("survival_wait_respawn")) level.survivors_deaths[self.guid] = 1;
 		if (isDefined(self.currMenu)) self closeMenu("dynamic_shop");
 		self survivor_take_body_armor();
 	}
@@ -270,25 +282,6 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 	self.health = self.maxhealth;
 	self.prevWeapon = self getCurrentWeapon();
 
-	survivors = survivors(true);
-	any_really_alive = false;
-	foreach(survivor in survivors)
-		if (!survivor.inLastStand || self.hasRevive)
-		{
-			any_really_alive = true;
-			break;
-		}
-		
-	if (!any_really_alive)
-	{
-		foreach(survivor in survivors)
-		{
-			survivor player_clear_last_stand();
-    		survivor suicide();
-		}
-		return;
-	}
-
 	self playSound("generic_death_american_" + randomIntRange(1, 8));
 	self player_give_laststand_weapon("iw5_fnfiveseven_mp");
 
@@ -331,16 +324,24 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 		lastStandBar.type = "death";
 
 		trigger = lethalbeats\trigger::trigger_create(self.origin);
-		trigger lethalbeats\trigger::trigger_set_use_hold(6, "Hold ^3[{+activate}] ^7to revive the player", false);
-		trigger enableLinkTo();
-		trigger linkto(self, "tag_origin");
-		trigger.owner = self;
-		trigger.showFilter = ::survivor_trigger_filter;
-		trigger thread reviveMonitor(self);
+		trigger lethalbeats\trigger::trigger_set_use_hold(6, "Hold ^3[{+activate}] ^7to revive the player", true, false);
+		trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
+		trigger lethalbeats\trigger::trigger_link_to(self);
 
 		lastStandBar.trigger = trigger;
 		self.lastStandBar = lastStandBar;
+
+		if (!isDefined(level.survivors_bleedout[self.guid]) && getDvarInt("survival_wait_respawn"))
+			level.survivors_bleedout[self.guid] = [trigger, lastStandBar, undefined];
+
+		trigger thread reviveMonitor(self);
 		self thread deathMonitor(30);
+
+		if (!survivors(true).size)
+		{
+			kill_all_survivors();
+			return;
+		}
 	}
 
 	self survivor_take_last_stand();
@@ -402,6 +403,7 @@ reviveMonitor(player)
 		reviveSpot = spawn("script_origin", self.origin);
 		reviveSpot.angles = player.angles;
 		reviveSpot hide();
+		level.survivors_bleedout[player.guid][2] = reviveSpot;
 
 		player playerLinkTo(reviveSpot);
 		player playerLinkedOffsetEnable();
@@ -411,11 +413,12 @@ reviveMonitor(player)
 		
 		player unlink();
 		reviveSpot delete();
+		level.survivors_bleedout[player.guid][2] = undefined;
 
 		if (result == "trigger_hold_interrump") continue;
 
-		player survivor_revive();
 		savior playLocalSound("mp_killconfirm_tags_pickup");
+		player survivor_revive();
 		break;
 	}
 }

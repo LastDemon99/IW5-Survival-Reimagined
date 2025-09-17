@@ -275,9 +275,10 @@ summary: Clears the player's last stand state, restoring health, controls, weapo
 */
 player_clear_last_stand()
 {
+	level.survivors_bleedout = array_remove_key(level.survivors_bleedout, self.guid);
+
 	self player_give_perk("specialty_finalstand", false);
 
-	self.headicon = "";
 	self.health = self.maxhealth;
 	self.inFinalStand = false;
 	self.lastStand = undefined;
@@ -299,7 +300,7 @@ player_clear_last_stand()
 	{
 		trigger = self.lastStandBar.trigger; // delete trigger end this thread
 		self.lastStandBar hud_destroy();
-		if (isDefined(trigger)) trigger delete();
+		if (isDefined(trigger)) trigger lethalbeats\trigger::trigger_delete();
 	}
 }
 
@@ -887,8 +888,17 @@ summary: Returns an array of survivors optionally filtered by alive status.
 */
 survivors(alives)
 {
-	if (isDefined(alives)) return players_get_list("allies", alives);
-	return players_get_list("allies");
+	survivors = players_get_list("allies");
+	if (!isDefined(alives)) return survivors;
+
+	result = [];
+	foreach(player in survivors)
+	{
+		isDeath = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
+		if (alives == !isDeath) result[result.size] = player;
+	}
+
+	return result;
 }
 
 /*
@@ -1088,6 +1098,8 @@ survivor_destroy_hud()
 		ch["huds"][2] destroy();
 		self.ch2 = undefined;
 	}
+
+	self player_clear_last_stand();
 }
 
 /*
@@ -1511,6 +1523,12 @@ survivor_enable_weapons()
 //////////////////////////////////////////
 //	             LEVEL   		        //
 //////////////////////////////////////////
+
+kill_all_survivors()
+{
+	foreach(player in survivors())
+		player suicide();
+}
 
 level_vehicle_monitor()
 {

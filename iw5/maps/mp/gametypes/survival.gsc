@@ -175,6 +175,7 @@ onStartGametype()
 	level.bots_awaits = 0;
 	level.bots_weapons_data = [];
 	level.survivors_deaths = [];
+	level.survivors_bleedout = [];
 	level.sentry = 0;
 	level.score_base = 0;
 	level.game_ended = 0;
@@ -243,6 +244,7 @@ onWaveEnd()
 		level waittill("wave_end");
 
 		level.survivors_deaths = [];
+		level.survivors_bleedout = [];
 
 		survivors_call(::survivor_display_summary);
 		lethalbeats\player::players_play_sound("survival_wave_end_splash");	
