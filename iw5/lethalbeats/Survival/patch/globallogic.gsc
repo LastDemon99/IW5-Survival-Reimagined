@@ -868,30 +868,28 @@ dropModelFromPlayer(weaponName, weaponModel, weaponData, ammoData)
     result = obj waitDropWeapon();
     obj delete();
 
-    weaponModel = lethalbeats\utility::spawn_model(result[0], weaponModel);
+    origin = getGroundPosition(result[0], 32, 0, 32);
+
+    weaponModel = lethalbeats\utility::spawn_model(origin, weaponModel);
     weaponModel.angles = result[1];
     weaponModel.owner = self;
 
+    if (!isDefined(weaponModel)) return;
+    if (!self player_is_survivor()) 
+    {
+        droppedIndex = level.droppedWeapons.size;
+        level.droppedWeapons[droppedIndex] = weaponModel;
+        weaponModel.droppedIndex = droppedIndex;
+    }
+
     displayName = lethalbeats\weapon::weapon_get_display_name(weaponName);
-    trigger = lethalbeats\trigger::trigger_create(weaponModel.origin, 64, 64);
+
+    trigger = lethalbeats\trigger::trigger_create(origin, 45);
     trigger lethalbeats\trigger::trigger_set_use("Press ^3[{+activate}] ^7to pick up " + displayName);
-    trigger.showFilter = ::_weapon_trigger_filter;
-    trigger.hintStringAlpha = 0.8;
-
-    droppedIndex = level.droppedWeapons.size;
-    level.droppedWeapons[droppedIndex] = [trigger, weaponModel];
-
-    trigger thread _watchWeaponPickup(weaponName, weaponModel, weaponData, ammoData, droppedIndex);
-    trigger thread _watchAmmoPickup(weaponName, weaponModel, ammoData, droppedIndex);
-    trigger thread _deletePickupAfterAWhile(self player_is_survivor(), weaponModel, droppedIndex);
-}
-
-_weapon_trigger_filter(survivor)
-{
-    foreach(player in survivors())
-        if (player.inLastStand && 1600 < distanceSquared(self.origin, player.origin))
-            return false;
-    return self survivor_trigger_filter(survivor);
+    trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
+    trigger thread weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel);
+    trigger thread ammoPickupMonitor(weaponName, ammoData, weaponModel);    
+    trigger thread _deletePickupAfterAWhile(weaponModel);
 }
 
 waitDropWeapon()
@@ -906,73 +904,78 @@ waitDropWeapon()
             continue;
         }
 
-        angles = lethalbeats\angles::angles_orient_to_normal(trace["normal"], self.angles[1]);
+        angles = lethalbeats\vector::vector_angles_orient_to_normal(trace["normal"], self.angles[1]);
         return [trace["position"] + (0, 0, 0.5), angles + (0, 0, 90)];
     }
     return [self.origin, self.angles];
 }
 
-_watchWeaponPickup(weaponName, weaponModel, weaponData, ammoData, droppedIndex)
+weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
 {
     self endon("death");
 
-    for (;;)
+    for(;;)
     {
         self waittill("trigger_use", player);
 
-        if (!player.enableUse || isDefined(player.changingweapon)) continue;
-
-        weaponModel delete();
-
         if (player player_get_weapons().size >= 2) player player_drop_weapon();
-        waittillframeend;
         player player_give_weapon(weaponName);
         
         if (!isDefined(weaponData)) weaponData = level player_get_weapon_data(weaponName);
         player player_set_weapon_data(weaponName, weaponData);
 
         if (!isDefined(ammoData)) ammoData = lethalbeats\weapon::weapon_get_random_ammo_data(weaponName);
-        player player_set_ammo_from_data(weaponName, ammoData);
+        player player_set_ammo_data(weaponName, ammoData);
 
         player survivor_switch_to_weapon(weaponName);
         player playLocalSound("weap_ammo_pickup");
 
-        level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, droppedIndex);
-        self delete();
+        if (isDefined(weaponModel.droppedIndex)) level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, weaponModel.droppedIndex);
+
+        weaponModel delete();
+        self lethalbeats\trigger::trigger_delete();
     }
 }
 
-_watchAmmoPickup(weaponName, weaponModel, ammoData, droppedIndex)
+ammoPickupMonitor(weaponName, ammoData, weaponModel)
 {
+    level endon("game_ended");
     self endon("death");
 
-    for (;;)
+    for(;;)
     {
-        self waittill("trigger_radius", player);
+        self waittill("trigger_radius", player);        
 
-        if (weaponModel.owner player_is_survivor()) continue;
-        targetWeapon = player lethalbeats\player::player_get_build_weapon(weaponName);
-        if (!isDefined(targetWeapon) || player player_has_max_ammo(targetWeapon)) continue;
+        targetWeapon = player player_get_build_weapon(weaponName);
+        if (!isDefined(targetWeapon)) continue;
 
-        weaponModel delete();
+        if (targetWeapon == weaponName && player player_has_max_ammo(targetWeapon, true)) continue;
 
         if (!isDefined(ammoData)) ammoData = lethalbeats\weapon::weapon_get_random_ammo_data(weaponName);
         player player_add_ammo_from_data(targetWeapon, ammoData);
-	    player playLocalSound("weap_ammo_pickup");
-
-        level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, droppedIndex);
-        self delete();
+        player playLocalSound("weap_ammo_pickup");
+        if (isDefined(weaponModel.droppedIndex)) level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, weaponModel.droppedIndex);
+        
+        weaponModel delete();
+        self lethalbeats\trigger::trigger_delete();
     }
 }
 
-_deletePickupAfterAWhile(waitWaveStart, weaponModel, droppedIndex)
+_deletePickupAfterAWhile(weaponModel)
 {
+    level endon("game_ended");
     self endon("death");
-    wait randomIntRange(10, 20);
-    if (!isdefined(self)) return;
-    level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, droppedIndex);
+
+    isSurvivorWeapon = weaponModel.owner player_is_survivor();
+    
+    if (isSurvivorWeapon) wait 20;
+    else wait randomIntRange(10, 20);
+
+    if (!isDefined(weaponModel)) return;
+    if (!isSurvivorWeapon) level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, weaponModel.droppedIndex);
+    
     weaponModel delete();
-    self delete();
+    self lethalbeats\trigger::trigger_delete();
 }
 
 _teamPlayerCardSplash(splash, owner, team)

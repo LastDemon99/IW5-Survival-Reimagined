@@ -864,14 +864,10 @@ bot_clear_models()
 			bot.body delete();
 	}
 
-	foreach(weapons in level.droppedWeapons)
+	foreach(weapon in level.droppedWeapons)
 	{
-		if (isDefined(weapons[0]) && !array_any_ent(survivors, lethalbeats\player::player_can_see, weapons[0].origin))
-		{
-			if (isDefined(weapons[1]) && weapons[1].owner player_is_survivor()) continue;
-			if (isDefined(weapons[0])) weapons[0] delete();
-			if (isDefined(weapons[1])) weapons[1] delete();
-		}
+		if (isDefined(weapon) && !array_any_ent(survivors, lethalbeats\player::player_can_see, weapon.origin))
+		weapon delete();
 	}
 	level.droppedWeapons = [];
 }
