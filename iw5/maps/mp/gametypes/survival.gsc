@@ -89,6 +89,36 @@ main()
 
 	lethalbeats\survival\dev\test::init();
 	if (getDvarInt("survival_dev_mode") > 1) lethalbeats\survival\dev\mapedit::init();
+
+	entities = getentarray("trigger_multiple", "classname");
+	foreach(entity in entities) entity delete();
+
+	entities = getentarray("trigger_once", "classname");
+	foreach(entity in entities) entity delete();
+
+	entities = getentarray("trigger_use", "classname");
+	foreach(entity in entities) entity delete();
+
+    entities = getentarray("trigger_radius", "classname");
+    foreach(entity in entities) entity delete();
+
+	entities = getentarray("trigger_lookat", "classname");
+	foreach(entity in entities) entity delete();
+
+	entities = getentarray("trigger_damage", "classname");
+	foreach(entity in entities) entity delete();
+
+	entities = getentarray("trigger_multiple_softlanding", "targetname");
+	foreach(entity in entities) entity delete();
+
+	entities = getentarray("destructible_toy", "targetname");
+	foreach(entity in entities) entity delete();
+
+	entities = getentarray("light_destructible", "targetname");
+	foreach(entity in entities) entity delete();
+
+	entities = getentarray("destructable", "targetname");
+	foreach(entity in entities) entity delete();
 }
 
 initializematchrules()
