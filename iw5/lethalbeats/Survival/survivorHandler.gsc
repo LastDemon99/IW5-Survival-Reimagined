@@ -125,7 +125,6 @@ onPlayerMelee()
 	level endon("game_ended");
 	self endon("disconnect");
 	self endon("death");
-	self endon("cancel_dog_aim");
 
 	for(;;)
 	{
@@ -133,36 +132,30 @@ onPlayerMelee()
 
 		if (self meleeButtonPressed())
 		{
-			lastDistance = 90;
+			angleDeg = 95;
+			eyePos = self getEye();
+			angles = self.angles;
+			pos = self.origin;
+			lastDistance = undefined;
 			target = undefined;
+
 			foreach(dog in bots("dog", true))
 			{
-				distance = distance(dog.origin, self.origin);
-				if (distance < 80)
+				dogOrigin = dog.origin;
+				if (lethalbeats\collider::pointInCone(dogOrigin, eyePos, angles, angleDeg, 80))
 				{
-					if (distance < lastDistance)
+					dogDistance = distanceSquared(pos, dogOrigin);
+					if (!isDefined(lastDistance) || lastDistance > dogDistance)
 					{
+						lastDistance = dogDistance;
 						target = dog;
-						lastDistance = distance;
 					}
 				}
 			}
 
-			if (!isDefined(target))
+			if (isDefined(target))
 			{
-				while (self meleeButtonPressed())
-					wait 0.05;
-				continue;
-			}
-
-			eyePos = self getEye();
-			targetOrigin = target.dog.origin;
-			toTargetDir = vectorNormalize(targetOrigin - eyePos);
-			forward = anglesToForward(self.angles);
-			
-			if (vectorDot(toTargetDir, forward) > 0.18)
-			{
-				newAngle = vectorToAngles(targetOrigin - eyePos);
+				newAngle = vectorToAngles(target.origin - eyePos);
 				self setPlayerAngles(newAngle);
 				wait 0.05;
 				self setPlayerAngles(newAngle);
@@ -243,12 +236,6 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 
 onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 {
-	if (meansOfDeath == "MOD_MELEE")
-	{
-		self notify("cancel_dog_aim");
-		self thread onPlayerMelee();
-	}
-
 	if (self.inLastStand && isDefined(self.lastStandBar.type) && self.lastStandBar.type == "revive") 
 	{
 		self notify("auto_revive");
