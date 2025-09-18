@@ -1632,13 +1632,8 @@ summary: Rotates to a new random survival map from the available list after a sh
 level_rotate_map(delay)
 {
 	if (!isDefined(delay)) delay = 1;
-	maps = getArrayKeys(level.armories);
-	maps = lethalbeats\array::array_filter(maps, lethalbeats\array::filter_not_equal, getDvar("mapname"));
-	map = lethalbeats\array::array_random(maps);
-	print("NextMap:", map);
 	wait delay;
-	setDvar("sv_maprotation", "dsr survival map " + map);
-	cmdexec("load_dsr survival; wait; wait; start_map_rotate");
+	lethalbeats\servercontrol\commands::rotate("Level has been rotated.");
 }
 
 /*
