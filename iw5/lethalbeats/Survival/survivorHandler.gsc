@@ -43,7 +43,6 @@ onPlayerSpawn()
 		self survivor_init_summary();
 		self.survivalPerks = [];
 		self.grenades = [];
-		self.turrets = [];
 		self.inLastStand = false;
 		self.currMenu = undefined;
 		self.iscarrying = false;

@@ -16,18 +16,12 @@ main()
     maps\mp\gametypes\_callbacksetup::setupCallbacks();
     maps\mp\gametypes\_globallogic::setupCallbacks();
 
-    maps\mp\_utility::registerRoundSwitchDvar(level.gametype, 0, 0, 9);
-	maps\mp\_utility::registerTimeLimitDvar(level.gametype, 10);
-	maps\mp\_utility::registerScoreLimitDvar(level.gametype, 500);
-	maps\mp\_utility::registerRoundLimitDvar(level.gametype, 1);
-	maps\mp\_utility::registerWinLimitDvar(level.gametype, 1);
-	maps\mp\_utility::registerNumLivesDvar(level.gametype, 0);
-	maps\mp\_utility::registerHalfTimeDvar(level.gametype, 0);
+	level.initializeMatchRules = ::initializeMatchRules;
+	[[level.initializeMatchRules]]();
 
-    level.matchrules_damagemultiplier = 0;
-    level.matchrules_vampirism = 0;
+	level.teambalance = 0;
+	level.objectivebased = 1;
     level.teambased = 1;
-	level.rankedmatch = 0;
     level.onstartgametype = ::onstartgametype;
     level.getspawnpoint = ::getspawnpoint;
     level.onNormalDeath = ::onNormalDeath;
@@ -40,26 +34,13 @@ main()
 	setDvarIfUninitialized("survival_wait_respawn", 0);
 	setDvarIfUninitialized("survival_start_armor", 250);
 	setDvarIfUninitialized("survival_start_money", 500);
-	setDvarIfUninitialized("survival_save_state", 0);
 
+	setDvar("bots_manage_add", 18 - getDvarInt("survival_survivors_limit"));
 	setDvar("sv_cheats", 1);	
 	setDvar("cg_drawCrosshair", 1);
 	setDvar("cg_drawCrosshairNames", 0);
-	setDvar("bots_manage_add", 18 - getDvarInt("survival_survivors_limit"));
 	setDvar("bots_main_chat", 0);
 	setDvar("bots_main_menu", 0);
-	setDvar("scr_survival_timeLimit", 0);
-	setDvar("scr_survival_scorelimit", 0);	
-	setDvar("scr_survival_numLives", 0);	
-	setDvar("scr_player_maxhealth", 100);
-	setDvar("scr_player_healthregentime", 5);	
-	setDvar("scr_survival_winlimit", 0);	
-    setDvar("scr_survival_roundlimit", 0);	
-	setDvar("scr_survival_roundswitch", 0);	
-    setDvar("scr_survival_halftime", 0);	
-    setDvar("scr_survival_promode", 0);	
-	setDvar("scr_survival_playerrespawndelay", 0);
-	setDvar("scr_survival_waverespawndelay", 0);	
 	setDvar("scr_game_graceperiod", 0);
 	setDvar("scr_game_playerwaittime", 0);
 	setDvar("scr_game_matchstarttime", 0);
@@ -123,22 +104,60 @@ main()
 
 initializematchrules()
 {
-    maps\mp\_utility::setCommonRulesFromMatchRulesData();
-    setdynamicdvar("scr_war_roundswitch", 0);
-    maps\mp\_utility::registerRoundSwitchDvar("survival", 0, 0, 9);
-    setdynamicdvar("scr_war_roundlimit", 1);
-    maps\mp\_utility::registerRoundLimitDvar("survival", 1);
-    setdynamicdvar("scr_war_winlimit", 1);
-    maps\mp\_utility::registerWinLimitDvar("survival", 1);
-    setdynamicdvar("scr_war_halftime", 0);
-    maps\mp\_utility::registerHalfTimeDvar("survival", 0);
-    setdynamicdvar("scr_war_promode", 0);
+    dvarPrefix = "scr_" + level.gameType;
+
+    setDynamicDvar(dvarPrefix + "_timeLimit", 0);
+	maps\mp\_utility::registerTimeLimitDvar(level.gameType, 0);
+	
+	setDynamicDvar(dvarPrefix + "_scorelimit", 6);
+	maps\mp\_utility::registerScoreLimitDvar(level.gameType, 6);
+	
+	setDynamicDvar(dvarPrefix + "_numLives", 0);
+	maps\mp\_utility::registerNumLivesDvar(level.gameType,  0);
+	
+	setDynamicDvar("scr_player_maxhealth", 100);
+	setDynamicDvar("scr_player_healthregentime", 5);
+	
+	setDynamicDvar(dvarPrefix + "_winlimit", 6);
+    maps\mp\_utility::registerWinLimitDvar(level.gameType, 6);
+	
+    setDynamicDvar(dvarPrefix + "_roundlimit", 0);
+    maps\mp\_utility::registerRoundLimitDvar(level.gameType, 0);
+	
+	setDynamicDvar(dvarPrefix + "_roundswitch", 1);
+    maps\mp\_utility::registerRoundSwitchDvar(level.gameType, 1, 0, 9);
+	
+    setDynamicDvar(dvarPrefix + "_halftime", 0);
+    maps\mp\_utility::registerHalfTimeDvar(level.gameType, 0);
+	
+    setDynamicDvar(dvarPrefix + "_promode", 0);
+	maps\mp\_utility::registerNumLivesDvar(level.gameType, 0);	
+	
+	setDynamicDvar(dvarPrefix + "_playerrespawndelay", 0);
+	setDynamicDvar(dvarPrefix + "_waverespawndelay", 0);
+	
+	setDynamicDvar("scr_game_spectatetype", 1);
+	setDynamicDvar("scr_game_allowkillcam", 1);
+	setDynamicDvar("scr_game_forceuav", 0);
+	setDynamicDvar("scr_game_hardpoints",0);
+	setDynamicDvar("scr_game_perks", 0);
+	setDynamicDvar("scr_game_onlyheadshots",0);
+	setDynamicDvar("scr_teambalance", 0);
+	
+	setDynamicDvar("scr_thirdPerson", 0);
+	setDynamicDvar("scr_player_forcerespawn", 0);
+	setDynamicDvar("camera_thirdPerson", 0);
+	setDynamicDvar("g_hardcore", 0);
+
+	setDynamicDvar("disable_challenges", 1);
 }
 
 onStartGametype()
 {
+	level_load_state();
     setclientnamemode("auto_change");
 
+	/*
     maps\mp\_utility::setObjectiveText("allies", &"SURVIVAL_OBJECTIVE");
     maps\mp\_utility::setObjectiveText("axis", &"OBJECTIVES_WAR");
 
@@ -146,7 +165,7 @@ onStartGametype()
 	maps\mp\_utility::setObjectiveScoreText("axis", &"OBJECTIVES_WAR_SCORE");
 
     maps\mp\_utility::setObjectiveHintText("allies", &"SURVIVAL_OBJECTIVE");
-    maps\mp\_utility::setObjectiveHintText("axis", &"OBJECTIVES_WAR_HINT");
+    maps\mp\_utility::setObjectiveHintText("axis", &"OBJECTIVES_WAR_HINT");*/
 	
     level.spawnmins = (0, 0, 0);
     level.spawnmaxs = (0, 0, 0);
@@ -190,7 +209,6 @@ onStartGametype()
 
     lethalbeats\weapon::weapon_init();
 	lethalbeats\utility::clear_score_info();
-	level_load_state();
 	
 	level.startTime = gettime();
 	level.defaultLoadout = get_default_loadout();
@@ -237,7 +255,17 @@ onWaveStart()
 		level waittill("wave_start");
 
 		if(!level.wave_num) level.wave_num = level_get_wave();
-		else level.wave_num++;
+		else
+		{
+			level.wave_num++;
+			if ((level.wave_num - 1) % 4 == 0)
+			{
+				foreach(player in level.players) if (player isTestClient()) kick(player getEntityNumber());	
+				level_save_state();
+				map_restart(1);
+				return;
+			}
+		}
 
 		bot_clear_models();
 
@@ -273,6 +301,8 @@ onWaveEnd()
 	{
 		level waittill("wave_end");
 
+		level.bots_wave = [];
+		level.bots_total_count = 0;
 		level.survivors_deaths = [];
 		level.survivors_bleedout = [];
 
@@ -286,7 +316,7 @@ onWaveEnd()
 		notifyMessage(NOTIFY_DIALOG, "SO_HQ_wave_over_flavor");
 		wait 8;
 		
-		waitIntermission(30);
+		waitIntermission(1); // dev test 30
 		onIntermissionEnd();
 	}
 }
@@ -296,7 +326,7 @@ onIntermissionEnd()
 	level notify("intermission_end");
 	if (isDefined(level.timerHud)) level.timerHud destroy();
 	survivors_call(::survivor_skip_hud_clear);
-	hud_create_countdown_center("allies", 5);
+	hud_create_countdown_center("allies", 1); // dev test 5
 	level notify("wave_start");
 }
 
@@ -334,7 +364,6 @@ onSurvivorSkipIntermission()
 onEndLevel()
 {
 	level waittill("all_survivors_death", delay);
-	setDvar("survival_save_state", 0);
 	level_rotate_map(delay);
 }
 
@@ -350,6 +379,8 @@ onNormalDeath(victim, attacker, lifeId)
 onAddBot()
 {
 	bot = addTestClient();
+	if (!isDefined(bot)) return;
+
 	bot.pers["isBot"] = true;
 	bot.pers["isBotWarfare"] = true;
 	bot.pers["score"] = 0;
@@ -365,10 +396,10 @@ onAddBot()
 		if (level.bots_connected == level.bots_slots)
 		{
 			level notify("bots_connected");
-			//setDvar("bots_manage_add", 4); // add allies bots // dev test
+			setDvar("bots_manage_add", 4); // add allies bots // dev test
 		}
 	}
-	//else bot lethalbeats\survival\dev\test::onAddAllyBot(); // dev test
+	else bot lethalbeats\survival\dev\test::onAddAllyBot(); // dev test
 
 	bot thread maps\mp\bots\_bot::added();
 }
@@ -380,10 +411,11 @@ onAddSurvivor()
 	if (isDefined(level.waitingLabel)) self thread onSurvivorSkipWaitPlayers();
 	if (isDefined(level.timerHud)) self thread onSurvivorSkipIntermission();
 	self survivor_wave_init();
-		
+	
 	self setClientDvar("ui_start_time", level.startTime);
 	self maps\mp\gametypes\_menus::addToTeam("allies", 1);
-	self waittill("begin");
+	
+	if (!isDefined(game["saveState"])) self waittill("begin");
 	self.pers["score"] = 0;
 	
 	level notify("connecting", self);
@@ -412,7 +444,7 @@ waitPlayers()
 	level notify("callback_init");
 	notifyMessage(NOTIFY_DIALOG, get_intro_dialog());
 
-	if (!getDvarInt("survival_save_state"))
+	if (!isDefined(game["saveState"]))
 	{
 		level.skip_intermission = 0;
 		level.waitingLabel = hud_create_string("allies", "Press ^3[{skip}] ^7to skip waiting for players", "hudsmall", 0.8, "TOP RIGHT", "TOP RIGHT", -30, 150);
@@ -452,7 +484,7 @@ getSpawnPoint()
 		self.firstSpawn = 1;
 	}
 	
-	team = isDefined(self.pers["isBot"]) ? "axis" : "allies";	
+	team = self isTestClient() ? "axis" : "allies";
 	maps\mp\gametypes\_menus::addToTeam(team, 1);
 	
 	if (!level.wave_num && team == "allies")

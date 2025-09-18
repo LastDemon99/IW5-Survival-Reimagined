@@ -1240,7 +1240,7 @@ summary: Initializes wave settings, like clearing the skip HUD and resetting sum
 survivor_wave_init()
 {
 	self survivor_skip_hud_clear();
-	self setClientDvar("ui_wave", level_get_wave());
+	self setClientDvar("ui_wave", level.wave_num);
 	self survivor_init_summary();
 }
 
@@ -1414,8 +1414,8 @@ summary: Deletes a player's saved state data from the global save state array.
 */
 survivor_delete_state()
 {
-	if (isDefined(level.saveState[self.guid])) 
-		level.saveState = lethalbeats\array::array_remove_key(level.saveState, self.guid);
+	if (isDefined(game["saveState"][self.guid])) 
+		game["saveState"] = lethalbeats\array::array_remove_key(game["saveState"], self.guid);
 }
 
 survivor_wait_skip()
@@ -1437,11 +1437,10 @@ summary: Loads the player's saved state from a previous session, restoring score
 ///DocStringEnd
 */
 survivor_load_state()
-{
-	if (!getDvarInt("survival_save_state") || !array_contains_key(level.saveState, self.guid) || !isDefined(level.saveState[self.guid])) return false;
-	playerData = level.saveState[self.guid];
+{	
+	if (self isTestClient() || !isDefined(game["saveState"]) || !isDefined(game["saveState"][self.guid])) return false;
 
-	self player_black_screen();
+	playerData = game["saveState"][self.guid];
 
 	self setOrigin(playerData["origin"]);
 	self setPlayerAngles(playerData["angles"]);
@@ -1467,8 +1466,6 @@ survivor_load_state()
 		self player_give_perk("specialty_finalstand", false);
 	}
 
-	self.prevWeapon = playerData["prevWeapon"];
-
 	foreach(perk in playerData["perks"])
 		self survivor_give_perk(perk);
 
@@ -1480,31 +1477,26 @@ survivor_load_state()
 		else if (grenade == "c4_mp") self player_set_action_slot(5, "weapon", grenade);
 	}
 
-	foreach(sentryId, turret in playerData["turrets"])
-	{
-		sentry = lethalbeats\survival\killstreaks\_sentry::spawnSentryAtLocation(turret["type"], turret["origin"], turret["angles"], self);
-		level.sentry++;
-	}
-
-	if (string_starts_with(playerData["killstreak"], "airdrop_"))
-		self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(string_slice(playerData["killstreak"], 8));
+	if (lethalbeats\string::string_starts_with(playerData["killstreak"], "airdrop_"))
+		self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(lethalbeats\string::string_slice(playerData["killstreak"], 8));
 	else
 		self maps\mp\killstreaks\_killstreaks::giveKillstreak(playerData["killstreak"]);
 
-	self.restoreWeaponClipAmmo = playerData["ammo"]["clip"];
-	self.restoreWeaponStockAmmo = playerData["ammo"]["stock"];
-
 	self player_take_all_weapons();
-	foreach(weaponData in playerData["weaponData"])
+	for(i = 0; i < 2; i++)
 	{
-		weapon = weaponData[0];
-		self player_give_weapon(weapon);
-		self player_set_weapon_data(weapon, weaponData);
-		self player_restore_ammo(weapon, undefined, true);
-		if (self.prevweapon != weapon) self survivor_switch_to_weapon(weapon);
+		if (!isDefined(playerData["weaponData"][i])) continue;
+		weapon = playerData["weaponData"][i][0];
+		self player_give_weapon(weapon, false, false, true);
+		self player_set_weapon_data(weapon, playerData["weaponData"][i]);
+		self player_set_ammo_data(weapon, playerData["ammoData"][i]);
 	}
 
-	level.saveState[self.guid] = undefined;
+	self.prevWeapon = playerData["prevWeapon"];
+	if (maps\mp\_utility::isKillstreakWeapon(playerData["currentWeapon"])) self switchToWeaponImmediate(self.prevWeapon);
+	else self switchToWeaponImmediate(playerData["currentWeapon"]);
+
+	game["saveState"][self.guid] = undefined;
 
 	return true;
 }
@@ -1547,6 +1539,7 @@ level_vehicle_monitor()
 
 level_get_wave()
 {
+	if (isDefined(game["saveState"]) &&	isDefined(game["saveState"]["wave"])) return game["saveState"]["wave"];
 	return level.wave_num ? level.wave_num : getDvarInt("survival_wave_start");
 }
 
@@ -1558,18 +1551,16 @@ summary: Saves the game state for all players, including stats, inventory, and l
 */
 level_save_state()
 {
-	setDvar("survival_save_state", 1);
-
-	saveState = [];
-	saveState["map"] = getDvar("mapname");
-	saveState["wave"] = level.wave_num;
+	game["saveState"]["map"] = getDvar("mapname");
+	game["saveState"]["wave"] = level.wave_num;
 
 	for(i = 0; i < level.players.size; i++)
 	{
 		player = level.players[i];
 		if (player isTestClient()) continue;
+		
 		playerData["origin"] = lethalbeats\vector::vector_truncate(player.origin, 3);
-		playerData["angles"] = lethalbeats\vector::vector_truncate(player.angles, 3);
+		playerData["angles"] = lethalbeats\vector::vector_truncate(player getPlayerAngles(), 3);
 		playerData["stance"] = player getStance();
 		playerData["kills"] = player.pers["kills"];
 		playerData["deaths"] = player.pers["deaths"];
@@ -1577,50 +1568,43 @@ level_save_state()
 		playerData["score"] = player.pers["score"];
 		playerData["armor"] = player.bodyArmor;
 		playerData["hasRevive"] = player.hasRevive;
-		playerData["prevWeapon"] = player.prevWeapon;
 		playerData["perks"] = player.survivalPerks;
 		playerData["grenades"] = player.grenades;
-		playerData["turrets"] = player.turrets;
 		playerData["killstreak"] = "";
 
 		if (isDefined(player.pers["killstreaks"]) && isDefined(player.pers["killstreaks"][0]) && isDefined(player.pers["killstreaks"][0].streakname))
 			playerData["killstreak"] = player.pers["killstreaks"][0].streakname;
 
-		if (string_starts_with(playerData["killstreak"], "airdrop_"))
-			playerData["killstreak"] = "airdrop_" + self.airdropType;
+		if (lethalbeats\string::string_starts_with(playerData["killstreak"], "airdrop_"))
+			playerData["killstreak"] = "airdrop_" + player.airdropType;
 
-		playerData["weaponData"] = [];
+		playerData["currentWeapon"] = player getCurrentWeapon();
+		playerData["prevWeapon"] = player.prevWeapon;
 
 		primary = player player_get_primary();
 		if (isDefined(primary))
 		{
-			player player_save_ammo(primary);
-			playerData["weaponData"]["primary"] = player player_get_weapon_data(primary);
+			playerData["weaponData"][0] = player player_get_weapon_data(primary);
+        	playerData["ammoData"][0] = player player_get_ammo_data(primary);
 		}
 
 		secondary = player player_get_secondary();
 		if (isDefined(secondary))
 		{
-			player player_save_ammo(secondary);
-			playerData["weaponData"]["secondary"] = player player_get_weapon_data(secondary);
+			playerData["weaponData"][1] = player player_get_weapon_data(secondary);
+        	playerData["ammoData"][1] = player player_get_ammo_data(secondary);
 		}
 
-		ammoInfo = [];
-		ammoInfo["clip"] = player.restoreWeaponClipAmmo;
-		ammoInfo["stock"] = player.restoreWeaponStockAmmo;
-		playerData["ammo"] = ammoInfo;
-
-		saveState[player.guid] = playerData;
+		game["saveState"][player.guid] = playerData;
 	}
-	print("SAVE_STATE", lethalbeats\json::json_serialize(saveState));
 }
 
 level_load_state()
 {
-	if (!getDvarInt("survival_save_state")) return;
-	lethalbeats\survival\dev\savestate::init();
-	if (level.saveState["map"] != getDvar("mapname"))
-		cmdExec("map " + level.saveState["map"]);
+	if (!isDefined(game["saveState"])) return;
+	say("Entities has been reset!.");
+	if (game["saveState"]["map"] != getDvar("mapname"))
+		cmdExec("map " + game["saveState"]["map"]);
 }
 
 /*

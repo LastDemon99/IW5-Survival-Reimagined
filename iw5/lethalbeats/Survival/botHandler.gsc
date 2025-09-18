@@ -39,7 +39,7 @@ onBotSpawn()
 		self waittill("spawned_player");		
 		waittillframeend;
 
-		if(!level.wave_num)
+		if (!level.bots_total_count)
 		{
 			self.dropWeapon = false;
 			self suicide();

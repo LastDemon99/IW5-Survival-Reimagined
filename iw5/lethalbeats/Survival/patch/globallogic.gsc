@@ -71,6 +71,8 @@ init()
     replaceFunc(maps\mp\killstreaks\_airstrike::airstrikedamageentsthread, ::patch_airstrikedamageentsthread);
     replaceFunc(maps\mp\_utility::maxVehiclesAllowed, ::patch_maxVehiclesAllowed);
     replaceFunc(maps\mp\killstreaks\_killstreaks::enablekillstreakactionslots, ::patch_enablekillstreakactionslots);
+    replaceFunc(maps\mp\gametypes\_gamelogic::matchStartTimer, ::blank);
+    replaceFunc(maps\mp\gametypes\_gamelogic::waitForPlayers, ::blank);
 
     // CLEAN
     replaceFunc(maps\mp\_awards::onPlayerSpawned, ::blank);
@@ -83,15 +85,20 @@ init()
     replaceFunc(maps\mp\gametypes\_missions::vehicleKilled, ::blank);
     replaceFunc(maps\mp\gametypes\_persistence::updateBufferedStats, ::blank);
     replaceFunc(maps\mp\gametypes\_missions::buildChallegeInfo, ::blank);
-    
     replaceFunc(maps\mp\gametypes\_damage::logPrintPlayerDeath, ::blank);
     replaceFunc(maps\mp\gametypes\_damage::callback_playerDamage_internal, lethalbeats\survival\patch\damage::callback_playerDamage_internal);
+    replaceFunc(maps\mp\gametypes\_missions::updatechallenges, ::blank);
+    replaceFunc(maps\mp\_utility::updateobjectivetext, ::blank);
+    replaceFunc(maps\mp\_utility::getObjectiveHintText, ::_textBlank);
+
     level.breakables_fx["barrel"]["explode"] = loadfx("props/barrelExp");
     level.breakables_fx["barrel"]["burn_start"] = loadfx("props/barrel_fire_top");
     level.breakables_fx["barrel"]["burn"] = loadfx("props/barrel_fire_top");
 
     level.onRespawnDelay = ::patch_getRespawnDelay; // although it is not used, it is required to return a value to avoid errors
 }
+
+_textBlank(arg) { return ""; }
 
 _survivor_alives() { return survivors(true); }
 
