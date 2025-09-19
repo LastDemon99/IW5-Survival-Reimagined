@@ -1,5 +1,7 @@
 init()
 {
+	precacheShellShock("radiation_low");
+	
 	level._effect["chemical_tank_explosion"] = loadfx("smoke/so_chemical_explode_smoke");
 	level._effect["chemical_tank_smoke"] = loadfx("smoke/so_chemical_stream_smoke");
 	level._effect["chemical_mine_spew"] = loadfx("smoke/so_chemical_mine_spew");

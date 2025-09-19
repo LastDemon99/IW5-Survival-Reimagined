@@ -1427,7 +1427,7 @@ survivor_wait_skip()
 
 survivor_trigger_filter(survivor)
 {
-	return survivor player_is_survivor() && isAlive(survivor) && !survivor.inLastStand;
+	return survivor player_is_survivor() && isAlive(survivor) && !survivor.inLastStand && !survivor.disabledusability;
 }
 
 /*
@@ -1747,12 +1747,13 @@ summary: Checks if a given location is within a certain distance of any armory/s
 */
 is_shop_near(origin, min_distance)
 {
-	if (!isDefined(min_distance)) min_distance = 200;
-	if (!isDefined(level.armories[getDvar("mapname")])) return false;
-	armories = level.armories[getDvar("mapname")];
-	foreach(armory in armories)
-		if (distance(armory[1], origin) <= min_distance) return true;
-	return false;
+    if (!isDefined(min_distance)) min_distance = 150;
+    if (!isDefined(level.armories[getDvar("mapname")])) return false;
+    armories = level.armories[getDvar("mapname")];
+    min_distance_sq = min_distance * min_distance;
+    foreach(armory in armories)
+        if (distanceSquared(armory[1], origin) <= min_distance_sq) return true;
+    return false;
 }
 
 /*

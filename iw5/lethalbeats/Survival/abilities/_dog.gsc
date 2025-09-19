@@ -58,9 +58,7 @@ init()
 	preCacheMpAnim(DOG_PREFIX + DEATH);
 	preCacheMpAnim(DOG_PREFIX + DEATH_NECK_SNAP);
 	
-	precacheShellShock("radiation_low");
 	precacheShellShock("dog_bite");
-
 	precacheShader("compassping_enemyyelling");
 	precacheMiniMapIcon("compassping_enemyyelling");
 }

@@ -221,13 +221,13 @@ armoryTool()
 		newStart = position + (normal * 17);
 		newEnd = newStart + (lethalbeats\vector::vector_down() * endDistance);
 		trace = bullettrace(newStart, newEnd, false, self);
-		angles = lethalbeats\angles::angles_orient_to_normal(trace["normal"], angles[1]);
+		angles = lethalbeats\vector::vector_angles_orient_to_normal(trace["normal"], angles[1]);
         setEdit(armory, trace["position"] + upOffset, angles);
 	}
 	//else if (dot < -0.9) // ceiling
 	else //if (dot > 0.9) // floor
 	{
-		angles = lethalbeats\angles::angles_orient_to_normal(normal, self.angles[1] + 90);
+		angles = lethalbeats\vector::vector_angles_orient_to_normal(normal, self.angles[1] + 90);
         setEdit(armory, position + upOffset, angles);
 	}
 	// else // slope
@@ -256,7 +256,7 @@ spawnJugger(origin)
 	juggerModel.angles = (0, 90, 0);
 	juggerModel lethalbeats\hud::hud_create_2d_objective("allies", JUGG_ICON);
 
-	trigger = trigger_create(origin, 55, 55);
+	trigger = trigger_create(origin, 55);
 	trigger trigger_set_use("Press ^3[{+activate}] ^7to call jugger");
 	trigger.tag = "jugger";
 
@@ -297,13 +297,14 @@ deleteEdit()
 	newEdits = [];
 	foreach(edit in level.survivalEdits)
 	{
-		if (distance(position, edit[1]) < 200)
+		if (distanceSquared(position, edit[1]) < (200 * 200))
 		{
             editDisplays = edit[3];
 			foreach(display in editDisplays)
 			{
 				display lethalbeats\hud::hud_delete_objective();
-				display delete();
+				if (isDefined(display.type)) display trigger_delete();
+				else display delete();
 			}
 		}
 		else newEdits[newEdits.size] = edit;

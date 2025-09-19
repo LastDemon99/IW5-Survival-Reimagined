@@ -774,7 +774,7 @@ callback_playerDamage_internal( eInflictor, eAttacker, victim, iDamage, iDFlags,
 
         if ( ( issubstr( sMeansOfDeath, "MOD_GRENADE" ) || issubstr( sMeansOfDeath, "MOD_EXPLOSIVE" ) || issubstr( sMeansOfDeath, "MOD_PROJECTILE" ) ) && isdefined( eInflictor ) && isdefined( eAttacker ) )
         {
-            if ( victim != eAttacker && eInflictor.classname == "grenade" && victim.lastspawntime + 3500 > gettime() && isdefined( victim.lastspawnpoint ) && distance( eInflictor.origin, victim.lastspawnpoint.origin ) < 250 )
+            if ( victim != eAttacker && eInflictor.classname == "grenade" && victim.lastspawntime + 3500 > gettime() && isdefined( victim.lastspawnpoint ) && distanceSquared( eInflictor.origin, victim.lastspawnpoint.origin ) < (250 * 250) )
                 return;
 
             victim.explosiveinfo = [];

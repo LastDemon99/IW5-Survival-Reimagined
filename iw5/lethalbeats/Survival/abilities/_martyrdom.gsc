@@ -26,6 +26,9 @@ attachC4(c4_attach, body, tag, origin_offset, angles_offset)
 	c4_model = spawn("script_model", body gettagorigin(tag) + origin_offset);
 	c4_model setmodel("weapon_c4");
 	c4_model linkto(body, tag, origin_offset, angles_offset);
+	c4_model setCanDamage(false);
+	c4_model notSolid();
+	c4_model setcontents(0);
 	return c4_model;
 }
 

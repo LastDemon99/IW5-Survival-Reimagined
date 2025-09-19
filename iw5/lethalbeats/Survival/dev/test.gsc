@@ -44,14 +44,136 @@ init()
 	setCommand("sentry", ::giveSentry);
 	setCommand("botstatus", ::botStatus);
 	setCommand("music", ::bgMusic);
-	setCommand("save", ::saveMap);
+	setCommand("saveMap", ::saveMap);
+	setCommand("save", ::saveData);
+	setCommand("restore", ::restoreData);
 	setCommand("revive", ::spawnRevive);
-	setCommand("save", lethalbeats\survival\utility::level_save_state);
-	//setCommand("1", ::testDog, 0, 1);
-	//setCommand("test", lethalbeats\Survival\abilities\_reaper::giveAbility);
-	//game["music"]["suspense"] = array_combine(game["music"]["suspense"], ["so_survival_regular_music", "so_survival_easy_music"]);
+	setCommand("chem", lethalbeats\survival\abilities\_chemical::giveAbility);
+	setCommand("detonate", ::abilityDetonate);
+	setCommand("chemmine", ::chemMine);
+}
 
-	level.bloodFx = loadFx("impacts/deathfx_bloodpool_view");
+chemMine()
+{
+	playfx(level._effect["chemical_mine_spew"], self.origin);
+}
+
+abilityDetonate()
+{
+	self notify("detonate");
+}
+
+saveData()
+{
+	saveState = [];
+	saveState["map"] = getDvar("mapname");
+	saveState["wave"] = level.wave_num;
+
+	for(i = 0; i < level.players.size; i++)
+	{
+		player = level.players[i];
+		if (player isTestClient()) continue;
+		playerData["origin"] = lethalbeats\vector::vector_truncate(player.origin, 3);
+		playerData["angles"] = lethalbeats\vector::vector_truncate(player getPlayerAngles(), 3);
+		playerData["stance"] = player getStance();
+		playerData["kills"] = player.pers["kills"];
+		playerData["deaths"] = player.pers["deaths"];
+		playerData["assists"] = player.pers["assists"];
+		playerData["score"] = player.pers["score"];
+		playerData["armor"] = player.bodyArmor;
+		playerData["hasRevive"] = player.hasRevive;
+		playerData["perks"] = player.survivalPerks;
+		playerData["grenades"] = player.grenades;
+		playerData["killstreak"] = "";
+
+		if (isDefined(player.pers["killstreaks"]) && isDefined(player.pers["killstreaks"][0]) && isDefined(player.pers["killstreaks"][0].streakname))
+			playerData["killstreak"] = player.pers["killstreaks"][0].streakname;
+
+		if (lethalbeats\string::string_starts_with(playerData["killstreak"], "airdrop_"))
+			playerData["killstreak"] = "airdrop_" + player.airdropType;
+
+		playerData["currentWeapon"] = player getCurrentWeapon();
+		playerData["prevWeapon"] = player.prevWeapon;
+		
+		print(playerData["killstreak"], playerData["currentWeapon"]);
+
+		primary = player player_get_primary();
+		if (isDefined(primary))
+		{
+			playerData["weaponData"][0] = player player_get_weapon_data(primary);
+        	playerData["ammoData"][0] = player player_get_ammo_data(primary);
+		}
+
+		secondary = player player_get_secondary();
+		if (isDefined(secondary))
+		{
+			playerData["weaponData"][1] = player player_get_weapon_data(secondary);
+        	playerData["ammoData"][1] = player player_get_ammo_data(secondary);
+		}
+		
+		saveState[player.guid] = playerData;
+	}
+
+	game["saveState2"] = saveState;
+}
+
+restoreData()
+{
+	playerData = game["saveState2"][self.guid];
+
+	self setOrigin(playerData["origin"]);
+	self setPlayerAngles(playerData["angles"]);
+	self setStance(playerData["stance"]);
+
+	self.pers["kills"] = playerData["kills"];
+	self.score = self.pers["kills"];
+
+	self.pers["deaths"] = playerData["deaths"];
+	self.score = self.pers["deaths"];
+
+	self.pers["assists"] = playerData["assists"];
+	self.score = self.pers["assists"];
+
+	self survivor_set_score(playerData["score"]);
+	self survivor_set_body_armor(playerData["armor"]);
+
+	if (playerData["hasRevive"]) self survivor_give_last_stand();
+	else
+	{
+		self.hasRevive = false;
+		self setClientDvar("ui_self_revive", 0);
+		self player_give_perk("specialty_finalstand", false);
+	}
+
+	foreach(perk in playerData["perks"])
+		self survivor_give_perk(perk);
+
+	self player_clear_nades();
+	foreach(grenade, ammount in playerData["grenades"])
+	{
+		if (ammount) self player_set_nades(grenade, ammount);
+		if (grenade == "claymore_mp") self player_set_action_slot(1, "weapon", grenade);
+		else if (grenade == "c4_mp") self player_set_action_slot(5, "weapon", grenade);
+	}
+
+	if (lethalbeats\string::string_starts_with(playerData["killstreak"], "airdrop_"))
+		self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(lethalbeats\string::string_slice(playerData["killstreak"], 8));
+	else
+		self maps\mp\killstreaks\_killstreaks::giveKillstreak(playerData["killstreak"]);
+
+	self player_take_all_weapons();
+	for(i = 0; i < 2; i++)
+	{
+		if (!isDefined(playerData["weaponData"][i])) continue;
+		weapon = playerData["weaponData"][i][0];
+		self player_give_weapon(weapon, false, false, true);
+		self player_set_weapon_data(weapon, playerData["weaponData"][i]);
+		self player_set_ammo_data(weapon, playerData["ammoData"][i]);
+	}
+
+	self.prevWeapon = playerData["prevWeapon"];
+	if (maps\mp\_utility::isKillstreakWeapon(playerData["currentWeapon"])) self switchToWeaponImmediate(self.prevWeapon);
+	else self switchToWeaponImmediate(playerData["currentWeapon"]);
 }
 
 spawnRevive()
@@ -61,8 +183,8 @@ spawnRevive()
 	reviveEnt.objective.color = (0.33, 0.75, 0.24);
 
 	trigger = lethalbeats\trigger::trigger_create(self.origin);
-	trigger lethalbeats\trigger::trigger_set_use_hold(10, "Hold ^3[{+activate}] ^7to revive the player", false);
-	trigger.showFilter = ::survivor_trigger_filter;
+	trigger lethalbeats\trigger::trigger_set_use_hold(10, "Hold ^3[{+activate}] ^7to revive the player", true, false);
+	trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
 	trigger thread reviveMonitor();
 }
 
@@ -74,7 +196,7 @@ reviveMonitor()
 	for(;;)
 	{
 		self waittill("trigger_hold_complete", player);
-		self delete();
+		self lethalbeats\trigger::trigger_delete();
 	}
 }
 
@@ -160,7 +282,7 @@ watchPickup(item)
 	player playLocalSound("scavenger_pack_pickup");
 
 	item delete();
-	self delete();
+	self lethalbeats\trigger::trigger_delete();
 }
 
 selfDamage()

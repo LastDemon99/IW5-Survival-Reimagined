@@ -2,7 +2,7 @@
 #include common_scripts\utility;
 #include lethalbeats\array;
 
-#define MIN_HELI_SEPARATION_DISTANCE 1500
+#define MIN_HELI_SEPARATION 1500
 #define BLIND_SPOT_DOT_PRODUCT 0.95
 #define AGGRESSIVE_RADIUS_MIN 700
 #define AGGRESSIVE_RADIUS_MAX 1400
@@ -277,7 +277,7 @@ followPlayer_Dynamic()
 				isTooClose = false;
 				foreach (otherGoal in level.activeHeliGoals)
 				{
-					if (distance(candidatePos, otherGoal) < MIN_HELI_SEPARATION_DISTANCE)
+					if (distanceSquared(candidatePos, otherGoal) < (MIN_HELI_SEPARATION * MIN_HELI_SEPARATION))
 					{
 						isTooClose = true;
 						break;
