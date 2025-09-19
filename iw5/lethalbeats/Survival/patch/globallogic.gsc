@@ -9,10 +9,6 @@
 
 #define INSTAKILL ["MOD_HEAD_SHOT", "MOD_MELEE", "MOD_EXPLOSIVE", "MOD_GRENADE", "MOD_GRENADE_SPLASH"]
 
-#define CLAYMORE "claymore_mp"
-#define C4 "c4_mp"
-#define THROWING_KNIFE "throwingknife_mp"
-
 #define CH_DOUBLE 12
 #define CH_TRIPLE 13
 #define CH_MULTI 14
@@ -49,11 +45,7 @@ init()
     replacefunc(maps\mp\_utility::playDeathSound, ::patch_playDeathSound); // modifies deaths sound
     replacefunc(maps\mp\_utility::waitForTimeOrNotify, ::patch_respawnDealy); // set custom wait respawn
     replacefunc(maps\mp\_utility::isKillstreakWeapon, ::patch_iskillstreakweapon); // enable c4 & claymore action slot
-    replacefunc(maps\mp\gametypes\_weapons::equipmentWatchUse, ::patch_equipmentWatchUse); // wacth custom equipment stock
     replacefunc(maps\mp\gametypes\_weapons::watchWeaponUsage, ::patch_watchWeaponUsage); // fix last stand
-    replacefunc(maps\mp\gametypes\_weapons::watchC4, ::_watchc4); // fix explosive issues
-    replacefunc(maps\mp\gametypes\_weapons::watchClaymores, ::_watchclaymores); // fix explosive issues
-    replacefunc(maps\mp\gametypes\_weapons::spawnMine, ::_spawnMine);
 	replacefunc(maps\mp\gametypes\_spawnlogic::getAllOtherPlayers, ::_survivor_alives); // get spawnpoints dm will check getallotherplayers, now where the survivors are
     replacefunc(maps\mp\gametypes\_weapons::dropWeaponForDeath, ::patch_dropweaponfordeath); // allows pick up ammunition regardless of the weapon attachs
 	replacefunc(maps\mp\gametypes\_missions::playerKilled, ::blank); // disables challenge splash?... I don't remember
@@ -72,6 +64,9 @@ init()
     replaceFunc(maps\mp\killstreaks\_killstreaks::enablekillstreakactionslots, ::patch_enablekillstreakactionslots);
     replaceFunc(maps\mp\gametypes\_gamelogic::matchStartTimer, ::blank);
     replaceFunc(maps\mp\gametypes\_gamelogic::waitForPlayers, ::blank);
+    replaceFunc(maps\mp\gametypes\_weapons::watchGrenadeUsage, lethalbeats\survival\patch\mines::grenadeWatchUsage);
+    replaceFunc(maps\mp\gametypes\_weapons::watchMineUsage, ::blank);
+    replaceFunc(maps\mp\gametypes\_weapons::bombSquadWaiter, ::blank);
 
     // CLEAN
     replaceFunc(maps\mp\_awards::onPlayerSpawned, ::blank);
@@ -95,6 +90,8 @@ init()
     level.breakables_fx["barrel"]["burn"] = loadfx("props/barrel_fire_top");
 
     level.onRespawnDelay = ::patch_getRespawnDelay; // although it is not used, it is required to return a value to avoid errors
+
+    level thread lethalbeats\survival\patch\mines::mineBombSquadVisibilityUpdater();
 }
 
 _textBlank(arg) { return ""; }
@@ -562,7 +559,7 @@ patch_iskillstreakweapon(weapon)
     if (!isdefined(weapon)) return 0;
     if (weapon == "none") return 0;
 	
-	if (weapon == CLAYMORE || weapon == C4 || weapon == THROWING_KNIFE) return 1;
+	if (weapon == "claymore_mp" || weapon == "c4_mp" || weapon == "throwingknife_mp") return 1;
 
     tokens = strtok(weapon, "_");
     foundSuffix = 0;
@@ -585,52 +582,6 @@ patch_iskillstreakweapon(weapon)
     if (isdefined(level.killstreakweildweapons[weapon])) return 1;
     if (isdefined(weaponinventorytype(weapon)) && weaponinventorytype(weapon) == "exclusive" && (weapon != "destructible_car" && weapon != "barrel_mp")) return 1;
     return 0;
-}
-
-/*
-///DocStringBegin
-detail: patch_equipmentWatchUse(owner: <Player>)
-summary: Update `C4` & `Claymore` action slot and sotck on pickup for survival hud.
-///DocStringEnd
-*/
-patch_equipmentWatchUse(owner)
-{
-	self endon("spawned_player");
-	self endon("disconnect");
-	
-	self.trigger setCursorHint("HINT_NOICON");
-	
-	if (self.weaponname == C4)
-		self.trigger setHintString(&"MP_PICKUP_C4");
-	else if (self.weaponname == CLAYMORE)
-		self.trigger setHintString(&"MP_PICKUP_CLAYMORE");
-	else if (self.weaponname == "bouncingbetty_mp")
-		self.trigger setHintString(&"MP_PICKUP_BOUNCING_BETTY");
-	
-	self.trigger setSelfUsable(owner);
-	self.trigger thread notUsableForJoiningPlayers(self);
-
-	for (;;)
-	{
-		self.trigger waittill ("trigger", owner);
-		
-		owner playLocalSound("scavenger_pack_pickup");
-		if(owner isTestClient()) owner SetWeaponAmmoStock(self.weaponname, owner GetWeaponAmmoStock(self.weaponname) + 1);
-		else
-		{
-			owner player_add_nades(self.weaponname, 1);
-			if(!(owner hasWeapon(self.weaponname)))
-			{
-				owner giveweapon(self.weaponname);
-				if (self.weaponname == CLAYMORE) owner _setActionSlot(1, "weapon", self.weaponname);
-				else owner _setActionSlot(5, "weapon", self.weaponname);
-			}
-		}
-
-		self.trigger delete();
-		self delete();
-		self notify("death");
-	}
 }
 
 /*
@@ -668,153 +619,6 @@ patch_watchWeaponUsage(var_0)
         setweaponstat(weapon, self.hits, "hits");
         self.hits = 0;
     }
-}
-
-_watchc4()
-{
-    self endon("spawned_player");
-    self endon("disconnect");
-
-    for (;;)
-    {
-        self waittill("grenade_fire", item, weapname);
-        
-        if (weapname == "c4" || weapname == C4)
-        {
-            if (!isDefined(self.c4array)) self.c4array = [];
-            if (!self.c4array.size) self thread watchc4altdetonate();
-            if (self.c4array.size)
-            {
-                self.c4array = array_removeUndefined(self.c4array);
-                if (self.c4array.size >= level.maxperplayerexplosives) self.c4array[0] detonate();
-            }
-
-            self.c4array[self.c4array.size] = item;
-            level.c4s[level.c4s.size] = item;
-
-            item.owner = self;
-            item.team = self.team;
-            item.weaponname = weapname;
-
-            item thread maps\mp\gametypes\_shellshock::c4_earthquake();
-            item thread c4activate();
-            item thread c4damage();
-            item thread c4empdamage();
-            item thread c4empkillstreakwait();
-            item thread _c4OnStuck(self);
-        }
-    }
-}
-
-_c4OnStuck(owner)
-{
-    self waittill("missile_stuck");
-    self.trigger = spawn("script_origin", self.origin);
-    self equipmentwatchuse(owner);
-}
-
-_watchclaymores()
-{
-    self endon("spawned_player");
-    self endon("disconnect");
-
-    for (;;)
-    {
-        self waittill("grenade_fire", claymore, weapname);
-        if (weapname == "claymore" || weapname == "claymore_mp")
-        {
-            if (!isalive(self))
-            {
-                claymore delete();
-                return;
-            }
-
-            claymore hide();
-            claymore thread _claymoreOnStuck(self, weapname);
-        }
-    }
-}
-
-_claymoreOnStuck(owner, weapname)
-{
-    self waittill("missile_stuck");
-    distanceZ = 40;
-
-    if (distanceZ * distanceZ < distancesquared(self.origin, owner.origin))
-    {
-        secTrace = bullettrace(owner.origin, owner.origin - (0, 0, distanceZ), 0, owner);
-        if (!isDefined(secTrace["fraction"]) || secTrace["fraction"] == 1)
-        {
-            self delete();
-            owner setweaponammostock("claymore_mp", owner getweaponammostock("claymore_mp") + 1);
-            return;
-        }
-        self.origin = secTrace["position"];
-    }
-
-    self show();
-    
-    if (!isDefined(owner.claymorearray)) owner.claymorearray = [];
-    if (owner.claymorearray.size)
-    {
-        owner.claymorearray = array_removeUndefined(owner.claymorearray);
-        if (owner.claymorearray.size >= level.maxperplayerexplosives) owner.claymorearray[0] detonate();
-    }
-    owner.claymorearray[owner.claymorearray.size] = self;
-    level.claymores[level.claymores.size] = self;
-
-    self.owner = owner;
-    self.team = owner.team;
-    self.weaponname = weapname;
-    self.trigger = spawn("script_origin", self.origin);
-
-    self thread c4damage();
-    self thread c4empdamage();
-    self thread c4empkillstreakwait();
-    self thread claymoredetonation();
-    self thread equipmentwatchuse(owner);
-    self thread setclaymoreteamheadicon(owner.pers["team"]);
-    owner.changingweapon = undefined;
-}
-
-_spawnMine(origin, owner, type, angles)
-{
-    if (!isdefined(angles))
-        angles = (0, randomfloat(360), 0);
-
-    model = "projectile_bouncing_betty_grenade";
-    mine = spawn("script_model", origin);
-    mine.angles = angles;
-    mine setmodel(model);
-    mine.owner = owner;
-    mine.weaponname = "bouncingbetty_mp";
-    mine.killcamoffset = (0, 0, 4);
-    mine.killcament = spawn("script_model", mine.origin + mine.killcamoffset);
-    mine.killcament setscriptmoverkillcam("explosive");
-
-    if (!isdefined(type) || type == "equipment")
-    {
-        if (!isDefined(owner.equipmentmines)) owner.equipmentmines = [];
-        if (owner.equipmentmines.size)
-        {
-            owner.equipmentmines = array_removeUndefined(owner.equipmentmines);
-            if (owner.equipmentmines.size >= level.maxperplayerexplosives) owner.equipmentmines[0] detonate();
-        }
-        owner.equipmentmines[owner.equipmentmines.size] = mine;
-        level.mines[level.mines.size] = mine;
-    }
-    else
-    {
-        owner.killstreakmines[owner.killstreakmines.size] = mine;
-        level.mines[level.mines.size] = mine;
-    }
-
-    mine thread createBombSquadModel("projectile_bouncing_betty_grenade_bombsquad", "tag_origin", level.otherteam[owner.team], owner);
-    mine thread mineBeacon();
-    mine thread setClaymoreTeamHeadIcon(owner.pers["team"]);
-    mine thread mineDamageMonitor();
-    mine thread mineProximityTrigger();
-    return mine;
 }
 
 /*
@@ -913,6 +717,7 @@ waitDropWeapon()
         angles = lethalbeats\vector::vector_angles_orient_to_normal(trace["normal"], self.angles[1]);
         return [trace["position"] + (0, 0, 0.5), angles + (0, 0, 90)];
     }
+    waittillframeend;
     return [self.origin, self.angles];
 }
 

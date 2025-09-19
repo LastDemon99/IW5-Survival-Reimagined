@@ -130,7 +130,9 @@ onBotSpawn()
 		self thread player_refill_ammo(true);
 		self player_unset_Perk("specialty_finalstand");
 
-		if (level.mines.size + level.claymores.size >= 15) self player_clear_nades();
+		mines = 0;
+		foreach(player in level.players) mines += array_get_values(player.mines).size;
+		if (mines >= 30) self player_clear_nades();
 	}
 }
 

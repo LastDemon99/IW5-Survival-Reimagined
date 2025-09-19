@@ -144,6 +144,7 @@ _killstreakCrateThink(dropType)
         {
             perk = lethalbeats\survival\utility::getPerkFromKsPerk(self.crateType);
 		    player lethalbeats\survival\utility::survivor_give_perk(perk);
+            if (dropType == "perk_sitrep") level notify("update_bombsquad");
         }
 		else player thread maps\mp\killstreaks\_killstreaks::giveKillstreak(self.crateType, false, false, self.owner);
         player playLocalSound("ammo_crate_use");
