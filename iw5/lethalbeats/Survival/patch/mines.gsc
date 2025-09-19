@@ -190,6 +190,7 @@ claymoreWatchStuck(owner, weaponName)
     }
 
     self show();
+    owner notify("claymore_stuck", self);
     owner.changingweapon = undefined;
 
     if (!isDefined(owner.mines[CLAYMORE])) owner.mines[CLAYMORE] = [self];
