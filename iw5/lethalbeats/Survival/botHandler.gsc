@@ -220,7 +220,7 @@ onBotKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLo
 	if(level.wave_num)
 	{
 		if (self bot_is_jugger()) self unsetPerk("specialty_radarjuggernaut", true);
-		if (!self bot_is_killstreak()) self bot_kill(eAttacker);
+		if (!self bot_is_killstreak() && !(self bot_is_jugger() && !self.isDropped)) self bot_kill(eAttacker);
 		if (self bot_is_explosive()) self notify("detonate", eAttacker);
 	}
 
