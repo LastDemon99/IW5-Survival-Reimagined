@@ -288,7 +288,13 @@ sentrySetPlaced()
 	sentryID = self getentitynumber();
 	level.turrets[sentryID] = self;
 
-	if (!isDefined(self.owner) || self.owner isTestClient()) return;	
+	turretInfo = [];
+	turretInfo["type"] = self.sentrytype;
+	turretInfo["origin"] = lethalbeats\vector::vector_truncate(self.origin, 3);
+	turretInfo["angles"] = lethalbeats\vector::vector_truncate(self.owner.angles, 3);
+	self.owner.turrets[sentryID + ""] = turretInfo;
+	
+	if (!isDefined(self.owner) || self.owner isTestClient()) return;
 	if (isDefined(self.owner.pers["killstreaks"][0].streakname) && self.owner.pers["killstreaks"][0].streakname == self.sentrytype) 
 		self.owner.pers["killstreaks"][0].streakname = "";
 
@@ -300,6 +306,7 @@ onSentryDeath()
 	level endon("game_ended");
 	sentryID = self getentitynumber();
 	self waittill_any("death", "deleting");
+	self.owner.turrets = lethalbeats\array::array_remove_key(self.owner.turrets, sentryID + "");
 	level.sentry--;
 }
 

@@ -1477,10 +1477,35 @@ survivor_load_state()
 		else if (grenade == "c4_mp") self player_set_action_slot(5, "weapon", grenade);
 	}
 
-	if (lethalbeats\string::string_starts_with(playerData["killstreak"], "airdrop_"))
-		self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(lethalbeats\string::string_slice(playerData["killstreak"], 8));
-	else
-		self maps\mp\killstreaks\_killstreaks::giveKillstreak(playerData["killstreak"]);
+	foreach(sentryId, turret in playerData["turrets"])
+	{
+		sentry = lethalbeats\survival\killstreaks\_sentry::spawnSentryAtLocation(turret["type"], turret["origin"], turret["angles"], self);
+		level.sentry++;
+	}
+
+	self.earnedstreaklevel = 0;
+	self maps\mp\killstreaks\_killstreaks::clearKillstreaks();
+	if (playerData["killstreak"] != "")
+	{
+		if (string_starts_with(playerData["killstreak"], "airdrop_"))
+		{
+			playerData["killstreak"] = string_slice(playerData["killstreak"], 8);
+			if (string_ends_with(playerData["killstreak"], "turret")) level.sentry++;
+			self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(playerData["killstreak"]);
+		}
+		else self maps\mp\killstreaks\_killstreaks::giveKillstreak(playerData["killstreak"]);
+	}
+
+	foreach(airdrop in playerData["airdrops"])
+	{
+		dropType = airdrop[0];
+		dropImpulse = (randomInt(5), randomInt(5), randomInt(5));
+		crateType = maps\mp\killstreaks\_airdrop::getcratetypefordroptype(dropType);
+		dropCrate = maps\mp\killstreaks\_airdrop::createairdropcrate(self, dropType, crateType, airdrop[1] + (0, 0, 500));
+		dropCrate thread maps\mp\killstreaks\_airdrop::waitfordropcratemsg(dropCrate, dropImpulse, dropType, crateType);
+		dropCrate show();
+		dropCrate notify("drop_crate");
+	}
 
 	self player_take_all_weapons();
 	for(i = 0; i < 2; i++)
@@ -1570,12 +1595,14 @@ level_save_state()
 		playerData["hasRevive"] = player.hasRevive;
 		playerData["perks"] = player.survivalPerks;
 		playerData["grenades"] = player.grenades;
+		playerData["turrets"] = player.turrets;
+		playerData["airdrops"] = player.airdrops;
 		playerData["killstreak"] = "";
 
-		if (isDefined(player.pers["killstreaks"]) && isDefined(player.pers["killstreaks"][0]) && isDefined(player.pers["killstreaks"][0].streakname))
+		if (isDefined(player.pers["killstreaks"][0]) && isDefined(player.pers["killstreaks"][0].streakname))
 			playerData["killstreak"] = player.pers["killstreaks"][0].streakname;
 
-		if (lethalbeats\string::string_starts_with(playerData["killstreak"], "airdrop_"))
+		if (string_starts_with(playerData["killstreak"], "airdrop_"))
 			playerData["killstreak"] = "airdrop_" + player.airdropType;
 
 		playerData["currentWeapon"] = player getCurrentWeapon();

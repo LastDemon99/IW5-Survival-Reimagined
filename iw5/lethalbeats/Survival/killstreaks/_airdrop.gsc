@@ -139,6 +139,23 @@ _killstreakCrateThink(dropType)
 				self.owner thread maps\mp\gametypes\_hud_message::splashNotifyDelayed("sharepackage", Int((maps\mp\killstreaks\_killstreaks::getStreakCost(self.crateType) / 10) * 50));
 			}
 		}
+
+        lastDistance = undefined;
+        lastTarget = undefined;
+        airdrops = self.owner.airdrops;
+        for(i = 0; i < airdrops.size; i++)
+        {
+            if (_getcratetypefordroptype(airdrops[i][0]) == self.crateType)
+            {
+                targetDistance = distanceSquared(airdrops[i][1], self.origin);
+                if (!isDefined(lastDistance) || lastDistance > targetDistance)
+                {
+                    lastDistance = targetDistance;
+                    lastTarget = i;
+                }
+            }
+        }
+        if (isDefined(lastTarget)) self.owner.airdrops = lethalbeats\array::array_remove_index(self.owner.airdrops, lastTarget);
 	
         if (string_starts_with(dropType, "perk_")) 
         {
