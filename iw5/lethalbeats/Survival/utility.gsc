@@ -1240,7 +1240,7 @@ summary: Initializes wave settings, like clearing the skip HUD and resetting sum
 survivor_wave_init()
 {
 	self survivor_skip_hud_clear();
-	self setClientDvar("ui_wave", level.wave_num);
+	self setClientDvar("ui_wave", level_get_wave());
 	self survivor_init_summary();
 }
 
@@ -1522,6 +1522,8 @@ survivor_load_state()
 	else self switchToWeaponImmediate(playerData["currentWeapon"]);
 
 	game["saveState"][self.guid] = undefined;
+
+	self survivor_wave_init();
 
 	return true;
 }
