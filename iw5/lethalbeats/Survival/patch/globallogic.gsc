@@ -43,7 +43,7 @@ init()
     // GAME
     replacefunc(maps\mp\_events::multiKill, ::patch_multiKill); // update challenges, double, triple, multi
     replacefunc(maps\mp\_utility::playDeathSound, ::patch_playDeathSound); // modifies deaths sound
-    replacefunc(maps\mp\_utility::waitForTimeOrNotify, ::patch_respawnDealy); // set custom wait respawn
+    replacefunc(maps\mp\_utility::waitForTimeOrNotify, ::patch_waitRespawn); // set custom wait respawn
     replacefunc(maps\mp\_utility::isKillstreakWeapon, ::patch_iskillstreakweapon); // enable c4 & claymore action slot
     replacefunc(maps\mp\gametypes\_weapons::watchWeaponUsage, ::patch_watchWeaponUsage); // fix last stand
 	replacefunc(maps\mp\gametypes\_spawnlogic::getAllOtherPlayers, ::_survivor_alives); // get spawnpoints dm will check getallotherplayers, now where the survivors are
@@ -536,14 +536,14 @@ patch_playDeathSound()
 
 /*
 ///DocStringBegin
-detail: patch_respawnDealy()
+detail: patch_waitRespawn()
 summary: When a player dies, the spawn wait is redirected to a handler for bots and another for survivors.
 ///DocStringEnd
 */
-patch_respawnDealy(time, notifyname)
+patch_waitRespawn(time, notifyname)
 {
-	if(self.team == "allies") self lethalbeats\Survival\survivorHandler::onPlayerRespawnDealy();
-	else self lethalbeats\Survival\botHandler::onBotRespawnDealy();
+	if(self.team == "allies") self lethalbeats\Survival\survivorHandler::playerWaitRespawn();
+	else self lethalbeats\Survival\botHandler::botWaitRespawn();
 }
 
 patch_getRespawnDelay() { return 3; }

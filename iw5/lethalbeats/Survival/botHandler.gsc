@@ -136,7 +136,7 @@ onBotSpawn()
 	}
 }
 
-onBotRespawnDealy()
+botWaitRespawn()
 {
 	level endon("game_ended");
 	self endon("disconnect");

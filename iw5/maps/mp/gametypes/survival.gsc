@@ -258,7 +258,7 @@ onWaveStart()
 		else
 		{
 			level.wave_num++;
-			if ((level.wave_num - 1) % 4 == 0)
+			if (level.wave_num > 23 || (level.wave_num - 1) % 4 == 0)
 			{
 				foreach(player in level.players) if (player isTestClient()) kick(player getEntityNumber());	
 				level_save_state();
@@ -316,7 +316,7 @@ onWaveEnd()
 		notifyMessage(NOTIFY_DIALOG, "SO_HQ_wave_over_flavor");
 		wait 8;
 		
-		waitIntermission(1); // dev test 30
+		waitIntermission(30);
 		onIntermissionEnd();
 	}
 }
@@ -326,7 +326,7 @@ onIntermissionEnd()
 	level notify("intermission_end");
 	if (isDefined(level.timerHud)) level.timerHud destroy();
 	survivors_call(::survivor_skip_hud_clear);
-	hud_create_countdown_center("allies", 1); // dev test 5
+	hud_create_countdown_center("allies", 5);
 	level notify("wave_start");
 }
 
@@ -396,10 +396,10 @@ onAddBot()
 		if (level.bots_connected == level.bots_slots)
 		{
 			level notify("bots_connected");
-			setDvar("bots_manage_add", 4); // add allies bots // dev test
+			//setDvar("bots_manage_add", 4); // add allies bots // dev test
 		}
 	}
-	else bot lethalbeats\survival\dev\test::onAddAllyBot(); // dev test
+	//else bot lethalbeats\survival\dev\test::onAddAllyBot(); // dev test
 
 	bot thread maps\mp\bots\_bot::added();
 }

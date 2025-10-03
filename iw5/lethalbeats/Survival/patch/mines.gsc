@@ -306,8 +306,6 @@ bouncingbettyWatchProximity()
     self endon("mine_selfdestruct");
     self endon("death");
 
-    print("bouncingbettyWatchProximity");
-
     self.damageArea = trigger_create(self.origin, level.minedetectionradius);
 
     for (;;)
