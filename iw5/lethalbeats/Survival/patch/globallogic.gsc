@@ -81,7 +81,7 @@ init()
     replaceFunc(maps\mp\gametypes\_missions::buildChallegeInfo, ::blank);
     replaceFunc(maps\mp\gametypes\_damage::logPrintPlayerDeath, ::blank);
     replaceFunc(maps\mp\gametypes\_damage::callback_playerDamage_internal, lethalbeats\survival\patch\damage::callback_playerDamage_internal);
-    replaceFunc(maps\mp\gametypes\_missions::updatechallenges, ::blank);
+    replaceFunc(maps\mp\gametypes\_missions::updatechallenges, ::_updatechallenges);
     replaceFunc(maps\mp\_utility::updateobjectivetext, ::blank);
     replaceFunc(maps\mp\_utility::getObjectiveHintText, ::_textBlank);
 
@@ -93,6 +93,8 @@ init()
 
     level thread lethalbeats\survival\patch\mines::mineBombSquadVisibilityUpdater();
 }
+
+_updatechallenges() { self.challengedata = []; }
 
 _textBlank(arg) { return ""; }
 
