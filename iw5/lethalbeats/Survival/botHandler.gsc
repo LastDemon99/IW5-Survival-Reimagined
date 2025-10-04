@@ -128,6 +128,7 @@ onBotSpawn()
 		self takeWeapon(self.secondaryWeapon);
 		self thread onChangeWeapons();
 		self thread player_refill_ammo(true);
+		self thread onSprint();
 		self player_unset_Perk("specialty_finalstand");
 
 		mines = 0;
@@ -147,8 +148,11 @@ botWaitRespawn()
 		if (level.bots_awaits)
 		{
 			level.bots_awaits--;
-			delay = randomIntRange(1, 3);
-			wait randomFloatRange(delay - 0.5, delay + 0.5);
+			if (getDvarInt("survival_enemy_difficulty") != 3)
+			{
+				delay = randomIntRange(1, 3);
+				wait randomFloatRange(delay - 0.5, delay + 0.5);
+			}
 			break;
 		}
 	}
@@ -309,4 +313,24 @@ onRecover()
 			return;
 		}
 	}
+}
+
+onSprint()
+{
+	level endon("game_ended");
+	self endon("disconnect");
+	self endon("death");
+
+	moveSpeed = self.moveSpeedScaler;
+
+    for (;;)
+    {
+        self waittill("sprint_begin");
+		self.moveSpeedScaler = 1;
+		self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
+
+		self waittill("sprint_end");
+		self.moveSpeedScaler = moveSpeed;
+		self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
+    }
 }

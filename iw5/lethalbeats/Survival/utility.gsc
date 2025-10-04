@@ -634,9 +634,6 @@ bot_set_loadout()
 	if (isDefined(tactical) && tactical != NONE && tactical != SPECIALTY_NULL)
 		self player_set_nades(tactical, 4);
 	
-	self.moveSpeedScaler = float(self bot_get_loadout(SPEED));
-	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
-	
 	self maps\mp\bots\_bot_utility::botGiveLoadout(self.team, "gamemode", false, true);
 	self maps\mp\killstreaks\_killstreaks::clearKillstreaks();
 	
@@ -711,24 +708,25 @@ summary: Adjusts the bot's AI skill and behavior settings based on the current w
 */
 bot_set_difficulty()
 {
-	wave = sqrt(level.wave_num);
+	wave = level.wave_num;
+	difficulty = _bot_get_difficulty_settings();
 
 	self.pers["bots"]["skill"]["spawn_time"] = 0;
-    self.pers["bots"]["skill"]["aim_time"] = _bot_wave_scale(0.6, 0, 0.1, wave);
+    self.pers["bots"]["skill"]["aim_time"] = _bot_wave_scale_linear(difficulty["aim_time_init"], difficulty["aim_time_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["init_react_time"] = self.pers["bots"]["skill"]["aim_time"];
-    self.pers["bots"]["skill"]["reaction_time"] = _bot_wave_scale(2500, 0, 0.1, wave);
-    self.pers["bots"]["skill"]["remember_time"] = _bot_wave_scale(500, 7500, 1, wave);
-    self.pers["bots"]["skill"]["no_trace_ads_time"] = _bot_wave_scale(500, 2500, 0.2, wave);
+    self.pers["bots"]["skill"]["reaction_time"] = _bot_wave_scale_linear(difficulty["reaction_time_init"], difficulty["reaction_time_end"], difficulty["scale_rate"], wave);	
+	self.pers["bots"]["skill"]["remember_time"] = 25000; //_bot_wave_scale_linear(difficulty["remember_time_init"], difficulty["remember_time_end"], difficulty["scale_rate"], wave);
+    self.pers["bots"]["skill"]["no_trace_ads_time"] = _bot_wave_scale_linear(difficulty["no_trace_ads_init"], difficulty["no_trace_ads_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["no_trace_look_time"] = self.pers["bots"]["skill"]["no_trace_ads_time"];
-    self.pers["bots"]["skill"]["fov"] = wave > 15 ? -1 : _bot_wave_scale(0.7, 0, 0.2, wave);
-    self.pers["bots"]["skill"]["dist_start"] = _bot_wave_scale(1000, 10000, 0.5, wave);
-    self.pers["bots"]["skill"]["dist_max"] =_bot_wave_scale(1200, 15000, 0.8, wave);
+    self.pers["bots"]["skill"]["fov"] = wave > difficulty["fov_max_wave"] ? -1 : _bot_wave_scale_linear(difficulty["fov_init"], difficulty["fov_end"], difficulty["scale_rate"], wave);
+    self.pers["bots"]["skill"]["dist_start"] = _bot_wave_scale_linear(difficulty["dist_start_init"], difficulty["dist_start_end"], difficulty["scale_rate"], wave);
+    self.pers["bots"]["skill"]["dist_max"] = _bot_wave_scale_linear(difficulty["dist_max_init"], difficulty["dist_max_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["help_dist"] = 3000;
-    self.pers["bots"]["skill"]["semi_time"] = _bot_wave_scale(0.9, 0.05, 0.3, wave);
-    self.pers["bots"]["skill"]["shoot_after_time"] = _bot_wave_scale(1, 0, 0.25, wave);
-    self.pers["bots"]["skill"]["aim_offset_time"] = _bot_wave_scale(1.8, 0, 0.25, wave);
-    self.pers["bots"]["skill"]["aim_offset_amount"] = _bot_wave_scale(4, 0, 0.25, wave);
-    self.pers["bots"]["skill"]["bone_update_interval"] = _bot_wave_scale(2.5, 0.25, 0.25, wave);
+    self.pers["bots"]["skill"]["semi_time"] = _bot_wave_scale_linear(difficulty["semi_time_init"], difficulty["semi_time_end"], difficulty["scale_rate"], wave);
+    self.pers["bots"]["skill"]["shoot_after_time"] = _bot_wave_scale_linear(difficulty["shoot_after_init"], difficulty["shoot_after_end"], difficulty["scale_rate"], wave);
+    self.pers["bots"]["skill"]["aim_offset_time"] = _bot_wave_scale_linear(difficulty["aim_offset_time_init"], difficulty["aim_offset_time_end"], difficulty["scale_rate"], wave);
+    self.pers["bots"]["skill"]["aim_offset_amount"] = _bot_wave_scale_linear(difficulty["aim_offset_amount_init"], difficulty["aim_offset_amount_end"], difficulty["scale_rate"], wave);
+    self.pers["bots"]["skill"]["bone_update_interval"] = _bot_wave_scale_linear(difficulty["bone_update_init"], difficulty["bone_update_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["bones"] = "j_spineupper,j_ankle_le,j_ankle_ri,j_ankle_le,j_ankle_ri";
     self.pers["bots"]["skill"]["ads_fov_multi"] = 0.5;
     self.pers["bots"]["skill"]["ads_aimspeed_multi"] = 0.5;
@@ -745,10 +743,17 @@ bot_set_difficulty()
 	self.pers["bots"]["behavior"]["jump"] = 20;
 	self.pers["bots"]["behavior"]["quickscope"] = 0;
 
+	difficulty = getDvarInt("survival_enemy_difficulty");
+
 	health = int(self bot_get_loadout(HEALTH));
 	if (level.wave_num > WAVE_LOOP) health = int(health * lethalbeats\math::math_pow(1.05, level.wave_num - WAVE_LOOP));
+	if (difficulty == 3) health = int(health * 1.5);
 	self.maxhealth = health;
 	self.health = health;
+
+	self.moveSpeedScaler = float(self bot_get_loadout(SPEED));	
+	if (difficulty == 3) self.moveSpeedScaler *= 1.3;
+	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
 
     if (self bot_is_dog())
     {
@@ -776,13 +781,129 @@ bot_set_difficulty()
 /*
 ///DocStringBegin
 detail: _bot_wave_scale(init_value: <Float>, end_value: <Float>, scale: <Float>, wave: <Float>): <Float>
-summary: Calculates a scaled value based on the wave number, used for adjusting bot difficulty over time.
+summary: Calculates a scaled value based on the wave number, used for adjusting bot difficulty over time (legacy exponential scaling).
 ///DocStringEnd
 */
 _bot_wave_scale(init_value, end_value, scale, wave)
 {
 	scale_factor = 1 + scale * wave;
 	return init_value > end_value ? max(end_value, init_value / scale_factor) : min(end_value, init_value * scale_factor);
+}
+
+/*
+///DocStringBegin
+detail: _bot_wave_scale_linear(init_value: <Float>, end_value: <Float>, scale_rate: <Float>, wave: <Float>): <Float>
+summary: Calculates a scaled value based on the wave number using linear progression for smoother difficulty curve.
+///DocStringEnd
+*/
+_bot_wave_scale_linear(init_value, end_value, scale_rate, wave)
+{
+	progress = min(1.0, (wave - 1) * scale_rate);
+	current_value = init_value + (end_value - init_value) * progress;	
+	if (init_value > end_value) return max(end_value, current_value);
+	else return min(end_value, current_value);
+}
+
+/*
+///DocStringBegin
+detail: _bot_get_difficulty_settings(): <Array>
+summary: Returns bot skill parameters based on difficulty level (1=Easy, 2=Normal, 3=Hard).
+///DocStringEnd
+*/
+_bot_get_difficulty_settings()
+{
+	difficulty = getDvarInt("survival_enemy_difficulty");
+	settings = [];
+		
+	switch(difficulty)
+	{			
+		case 2:
+			settings["scale_rate"] = 0.04;
+			settings["aim_time_init"] = 0.7;
+			settings["aim_time_end"] = 0.15;
+			settings["reaction_time_init"] = 2500;
+			settings["reaction_time_end"] = 500;
+			settings["remember_time_init"] = 500;
+			settings["remember_time_end"] = 6000;
+			settings["no_trace_ads_init"] = 600;
+			settings["no_trace_ads_end"] = 2500;
+			settings["fov_init"] = 0.7;
+			settings["fov_end"] = 0.1;
+			settings["fov_max_wave"] = 20;
+			settings["dist_start_init"] = 1000;
+			settings["dist_start_end"] = 7000;
+			settings["dist_max_init"] = 1200;
+			settings["dist_max_end"] = 12000;
+			settings["semi_time_init"] = 0.9;
+			settings["semi_time_end"] = 0.08;
+			settings["shoot_after_init"] = 1.0;
+			settings["shoot_after_end"] = 0.15;
+			settings["aim_offset_time_init"] = 1.8;
+			settings["aim_offset_time_end"] = 0.3;
+			settings["aim_offset_amount_init"] = 4.0;
+			settings["aim_offset_amount_end"] = 0.5;
+			settings["bone_update_init"] = 2.5;
+			settings["bone_update_end"] = 0.5;
+			break;			
+		case 3:
+			settings["scale_rate"] = 0.06;
+			settings["aim_time_init"] = 0.5;
+			settings["aim_time_end"] = 0.05;
+			settings["reaction_time_init"] = 2000;
+			settings["reaction_time_end"] = 200;
+			settings["remember_time_init"] = 1000;
+			settings["remember_time_end"] = 7500;
+			settings["no_trace_ads_init"] = 400;
+			settings["no_trace_ads_end"] = 2000;
+			settings["fov_init"] = 0.6;
+			settings["fov_end"] = 0;
+			settings["fov_max_wave"] = 15;
+			settings["dist_start_init"] = 1500;
+			settings["dist_start_end"] = 10000;
+			settings["dist_max_init"] = 2000;
+			settings["dist_max_end"] = 15000;
+			settings["semi_time_init"] = 0.7;
+			settings["semi_time_end"] = 0.03;
+			settings["shoot_after_init"] = 0.8;
+			settings["shoot_after_end"] = 0.05;
+			settings["aim_offset_time_init"] = 1.5;
+			settings["aim_offset_time_end"] = 0.1;
+			settings["aim_offset_amount_init"] = 3.0;
+			settings["aim_offset_amount_end"] = 0.2;
+			settings["bone_update_init"] = 2.0;
+			settings["bone_update_end"] = 0.25;
+			break;
+		default:
+			settings["scale_rate"] = 0.025;
+			settings["aim_time_init"] = 0.8;
+			settings["aim_time_end"] = 0.3;
+			settings["reaction_time_init"] = 3000;
+			settings["reaction_time_end"] = 800;
+			settings["remember_time_init"] = 500;
+			settings["remember_time_end"] = 5000;
+			settings["no_trace_ads_init"] = 800;
+			settings["no_trace_ads_end"] = 3000;
+			settings["fov_init"] = 0.75;
+			settings["fov_end"] = 0.2;
+			settings["fov_max_wave"] = 25;
+			settings["dist_start_init"] = 800;
+			settings["dist_start_end"] = 5000;
+			settings["dist_max_init"] = 1000;
+			settings["dist_max_end"] = 8000;
+			settings["semi_time_init"] = 1.0;
+			settings["semi_time_end"] = 0.15;
+			settings["shoot_after_init"] = 1.2;
+			settings["shoot_after_end"] = 0.3;
+			settings["aim_offset_time_init"] = 2.0;
+			settings["aim_offset_time_end"] = 0.5;
+			settings["aim_offset_amount_init"] = 5.0;
+			settings["aim_offset_amount_end"] = 1.0;
+			settings["bone_update_init"] = 3.0;
+			settings["bone_update_end"] = 0.8;
+			break;
+	}
+	
+	return settings;
 }
 
 /*
@@ -1844,7 +1965,7 @@ get_botsTypes()
 	wave_num = min(level.wave_num, WAVE_LOOP);
 	scalePlayer = min(players_get_list("allies").size, 4);
 	scaleFactor = int(max(1, scalePlayer / 1.5));
-	scaleFactor = int(max(1, 4 / 1.5)); // dev test
+	scaleFactor *= getDvarFloat("survival_enemy_multiplier");
 	isWaveLoop = level.wave_num > WAVE_LOOP;
 
 	for (i = 1; true; i++)

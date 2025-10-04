@@ -1,0 +1,815 @@
+gameOpt commonOption.allowCustomClasses "0" // [ 0, 1 ]
+gameOpt commonOption.allowKillstreaks "0" // [ 0, 1 ]
+gameOpt commonOption.allowPerks "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.acog "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.akimbo "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.eotech "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.gl "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.gp25 "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.grip "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.hamrhybrid "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.heartbeat "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.hybrid "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.m320 "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.reflex "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.rof "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.shotgun "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.silencer "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.silencer02 "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.silencer03 "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.tactical "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.thermal "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.vzscope "0" // [ 0, 1 ]
+gameOpt commonOption.attachmentRestricted.xmags "0" // [ 0, 1 ]
+gameOpt commonOption.forceRespawn "1" // [ 0, 1 ]
+gameOpt commonOption.forceThirdPersonView "0" // [ 0, 1 ]
+gameOpt commonOption.friendlyFire "0" // [ 0, 1 ]
+gameOpt commonOption.hardcoreModeOn "0" // [ 0, 1 ]
+gameOpt commonOption.headshotsOnly "0" // [ 0, 1 ]
+gameOpt commonOption.healthRegen "5.0000" // [ 5, 0-10 ]
+gameOpt commonOption.killstreakClassRestricted.streaktype_assault "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakClassRestricted.streaktype_specialist "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakClassRestricted.streaktype_support "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted._specialty_blastshield_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.ac130 "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.airdrop_assault "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.airdrop_juggernaut "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.airdrop_juggernaut_recon "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.airdrop_remote_tank "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.airdrop_sentry_minigun "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.airdrop_trap "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.counter_uav "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.deployable_vest "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.emp "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.escort_airdrop "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.helicopter "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.helicopter_flares "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.ims "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.littlebird_flock "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.littlebird_support "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.osprey_gunner "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.precision_airstrike "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.predator_missile "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.remote_mg_turret "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.remote_mortar "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.remote_uav "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.sam_turret "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_autospot_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_blindeye_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_bulletaccuracy_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_coldblooded_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_detectexplosive_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_fastreload_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_hardline_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_longersprint_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_paint_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_quickdraw_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_quieter_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_scavenger_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.specialty_stalker_ks "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.stealth_airstrike "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.triple_uav "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.uav "0" // [ 0, 1 ]
+gameOpt commonOption.killstreakRestricted.uav_support "0" // [ 0, 1 ]
+gameOpt commonOption.maxHealth "100.0000" // [ 30, 50, 100, 200 ]
+gameOpt commonOption.numLives "0" // [ 0, 1, 2, 3, 5, 9 ]
+gameOpt commonOption.perkRestricted._specialty_blastshield "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.bouncingbetty_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.c4_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.claymore_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.concussion_grenade_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.emp_grenade_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.flash_grenade_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.frag_grenade_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.semtex_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.smoke_grenade_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_autospot "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_blindeye "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_bling "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_bulletaccuracy "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_c4death "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_coldblooded "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_detectexplosive "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_fastermelee "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_fastreload "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_finalstand "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_grenadepulldeath "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_hardline "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_holdbreathwhileads "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_juiced "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_lightweight "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_longerrange "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_longersprint "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_marksman "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_moredamage "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_paint "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_portable_radar "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_quickdraw "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_quieter "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_reducedsway "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_revenge "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_scavenger "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_scrambler "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_sharp_focus "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_stalker "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_stopping_power "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_tacticalinsertion "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.specialty_twoprimaries "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.throwingknife_mp "0" // [ 0, 1 ]
+gameOpt commonOption.perkRestricted.trophy_mp "0" // [ 0, 1 ]
+gameOpt commonOption.radarAlwaysOn "0" // [ 0, 1 ]
+gameOpt commonOption.respawnDelay "0.0000" // [ 0, 5, 7.5, 10, 15, 30 ]
+gameOpt commonOption.scoreLimit "0" // [ 0, 1, 3, 4, 5, 8, 10, 12, 15, 20, 24, 30, 50, 65, 80, 100, 200, 250, 500, 750, 1000, 1500, 2500, 3000, 5000, 7000, 7500, 10000, 15000, 20000, 30000 ]
+gameOpt commonOption.showKillcam "0" // [ 0, 1 ]
+gameOpt commonOption.spectateModeAllowed "1" // [ 0, 1, 2 ]
+gameOpt commonOption.timeLimit "0.0000" // [ 0-30 ]
+gameOpt commonOption.waveRespawnDelay "0" // [ 0, 5, 10, 15, 30 ]
+gameOpt commonOption.weaponRestricted.iw5_1887 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_44magnum "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_aa12 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_acr "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_ak47 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_ak74u "0"
+gameOpt commonOption.weaponRestricted.iw5_as50 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_barrett "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_cheytac "0"
+gameOpt commonOption.weaponRestricted.iw5_cm901 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_deserteagle "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_dragunov "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_fad "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_fmg9 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_fnfiveseven "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_g18 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_g36c "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_ksg "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_l96a1 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_m16 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_m4 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_m60 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_m9 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_mg36 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_mk14 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_mk46 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_mp412 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_mp5 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_mp7 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_mp9 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_msr "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_p90 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_p99 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_pecheneg "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_pp90m1 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_rsass "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_sa80 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_scar "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_skorpion "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_smaw "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_spas12 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_striker "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_type95 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_ump45 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_usas12 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.iw5_usp45 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.javelin "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.m320 "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.riotshield "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.rpg "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.stinger "0" // [ 0, 1 ]
+gameOpt commonOption.weaponRestricted.xm25 "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[0].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[0].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[0].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[0].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.allies.[0].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[0].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[0].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[0].class.inUse "1" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[0].class.name "class1"
+gameOpt defaultClasses.allies.[0].class.perks.[0] "frag_grenade_mp" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.allies.[0].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.allies.[0].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.allies.[0].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.allies.[0].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.allies.[0].class.perks.[6] "concussion_grenade_mp" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.allies.[0].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[0].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[0].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[0].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[0].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[0].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[0].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[1].attachment.[0] "xmags" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[0].class.weaponSetups.[1].weapon "iw5_fnfiveseven" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[0].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[1].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[1].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[1].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[1].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.allies.[1].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[1].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[1].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[1].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[1].class.name ""
+gameOpt defaultClasses.allies.[1].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.allies.[1].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.allies.[1].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.allies.[1].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.allies.[1].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.allies.[1].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.allies.[1].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[1].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[1].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[1].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[1].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[1].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[1].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[1].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[1].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[2].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[2].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[2].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[2].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.allies.[2].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[2].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[2].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[2].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[2].class.name ""
+gameOpt defaultClasses.allies.[2].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.allies.[2].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.allies.[2].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.allies.[2].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.allies.[2].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.allies.[2].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.allies.[2].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[2].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[2].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[2].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[2].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[2].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[2].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[2].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[2].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[3].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[3].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[3].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[3].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.allies.[3].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[3].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[3].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[3].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[3].class.name ""
+gameOpt defaultClasses.allies.[3].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.allies.[3].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.allies.[3].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.allies.[3].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.allies.[3].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.allies.[3].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.allies.[3].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[3].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[3].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[3].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[3].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[3].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[3].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[3].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[3].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[4].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[4].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[4].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[4].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.allies.[4].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[4].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[4].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[4].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[4].class.name ""
+gameOpt defaultClasses.allies.[4].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.allies.[4].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.allies.[4].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.allies.[4].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.allies.[4].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.allies.[4].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.allies.[4].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[4].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[4].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[4].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[4].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[4].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[4].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[4].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[4].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[5].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[5].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[5].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.allies.[5].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.allies.[5].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[5].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[5].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.allies.[5].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[5].class.name ""
+gameOpt defaultClasses.allies.[5].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.allies.[5].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.allies.[5].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.allies.[5].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.allies.[5].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.allies.[5].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.allies.[5].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[5].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[5].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.allies.[5].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[5].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[5].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.allies.[5].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.allies.[5].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.allies.[5].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[0].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[0].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[0].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[0].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.axis.[0].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[0].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[0].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[0].class.inUse "1" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[0].class.name "class1"
+gameOpt defaultClasses.axis.[0].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.axis.[0].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.axis.[0].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.axis.[0].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.axis.[0].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.axis.[0].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.axis.[0].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[0].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[0].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[0].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[0].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[0].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[0].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[0].weapon "iw5_1887" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[0].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[0].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[1].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[1].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[1].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[1].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.axis.[1].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[1].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[1].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[1].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[1].class.name ""
+gameOpt defaultClasses.axis.[1].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.axis.[1].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.axis.[1].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.axis.[1].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.axis.[1].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.axis.[1].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.axis.[1].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[1].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[1].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[1].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[1].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[1].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[1].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[1].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[1].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[2].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[2].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[2].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[2].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.axis.[2].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[2].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[2].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[2].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[2].class.name ""
+gameOpt defaultClasses.axis.[2].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.axis.[2].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.axis.[2].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.axis.[2].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.axis.[2].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.axis.[2].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.axis.[2].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[2].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[2].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[2].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[2].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[2].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[2].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[2].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[2].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[3].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[3].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[3].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[3].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.axis.[3].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[3].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[3].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[3].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[3].class.name ""
+gameOpt defaultClasses.axis.[3].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.axis.[3].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.axis.[3].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.axis.[3].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.axis.[3].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.axis.[3].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.axis.[3].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[3].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[3].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[3].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[3].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[3].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[3].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[3].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[3].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[4].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[4].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[4].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[4].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.axis.[4].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[4].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[4].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[4].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[4].class.name ""
+gameOpt defaultClasses.axis.[4].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.axis.[4].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.axis.[4].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.axis.[4].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.axis.[4].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.axis.[4].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.axis.[4].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[4].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[4].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[4].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[4].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[4].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[4].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[4].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[4].juggernaut "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[5].class.assaultStreaks.[0] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[5].class.assaultStreaks.[1] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[5].class.assaultStreaks.[2] "none" // [ none, uav, airdrop_assault, ims, predator_missile, airdrop_sentry_minigun, precision_airstrike, helicopter, littlebird_flock, littlebird_support, remote_mortar, airdrop_remote_tank, ac130, helicopter_flares, airdrop_juggernaut, osprey_gunner ]
+gameOpt defaultClasses.axis.[5].class.deathstreak "specialty_null" // [ specialty_null, specialty_juiced, specialty_revenge, specialty_finalstand, specialty_grenadepulldeath, specialty_c4death, specialty_stopping_power ]
+gameOpt defaultClasses.axis.[5].class.defenseStreaks.[0] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[5].class.defenseStreaks.[1] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[5].class.defenseStreaks.[2] "none" // [ none, uav_support, counter_uav, deployable_vest, sam_turret, remote_uav, airdrop_trap, triple_uav, remote_mg_turret, emp, stealth_airstrike, airdrop_juggernaut_recon, escort_airdrop ]
+gameOpt defaultClasses.axis.[5].class.inUse "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[5].class.name ""
+gameOpt defaultClasses.axis.[5].class.perks.[0] "specialty_null" // [ specialty_null, bouncingbetty_mp, frag_grenade_mp, semtex_mp, throwingknife_mp, claymore_mp, c4_mp ]
+gameOpt defaultClasses.axis.[5].class.perks.[1] "specialty_null" // [ specialty_null, specialty_paint, specialty_fastreload, specialty_blindeye, specialty_longersprint, specialty_scavenger ]
+gameOpt defaultClasses.axis.[5].class.perks.[2] "specialty_null" // [ specialty_null, specialty_quickdraw, _specialty_blastshield, specialty_hardline, specialty_coldblooded, specialty_twoprimaries ]
+gameOpt defaultClasses.axis.[5].class.perks.[3] "specialty_null" // [ specialty_null, specialty_autospot, specialty_stalker, specialty_detectexplosive, specialty_bulletaccuracy, specialty_quieter ]
+gameOpt defaultClasses.axis.[5].class.perks.[5] "specialty_null" // [ specialty_null, streaktype_specialist, streaktype_support, streaktype_assault ]
+gameOpt defaultClasses.axis.[5].class.perks.[6] "specialty_null" // [ specialty_null, flash_grenade_mp, concussion_grenade_mp, specialty_scrambler, emp_grenade_mp, smoke_grenade_mp, trophy_mp, specialty_tacticalinsertion, specialty_portable_radar ]
+gameOpt defaultClasses.axis.[5].class.specialistStreakKills.[0] "2" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[5].class.specialistStreakKills.[1] "4" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[5].class.specialistStreakKills.[2] "6" // [ 2, 3, 4, 5, 6, 7, 8, 9 ]
+gameOpt defaultClasses.axis.[5].class.specialistStreaks.[0] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[5].class.specialistStreaks.[1] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[5].class.specialistStreaks.[2] "none" // [ none, specialty_longersprint_ks, specialty_fastreload_ks, specialty_scavenger_ks, specialty_blindeye_ks, specialty_paint_ks, specialty_hardline_ks, specialty_coldblooded_ks, specialty_quickdraw_ks, _specialty_blastshield_ks, specialty_detectexplosive_ks, specialty_autospot_ks, specialty_bulletaccuracy_ks, specialty_quieter_ks, specialty_stalker_ks ]
+gameOpt defaultClasses.axis.[5].class.specialistStreaksBeenPicked "0" // [ 0, 1 ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[0].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[0].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[0].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[0].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[0].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[0].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[1].attachment.[0] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[1].attachment.[1] "none" // [ none, reflex, acog, grip, akimbo, thermal, shotgun, heartbeat, xmags, rof, eotech, tactical, vzscope, gl, gp25, m320, silencer, silencer02, silencer03, hamrhybrid, hybrid ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[1].buff "specialty_null" // [ specialty_marksman, specialty_bulletpenetration, specialty_bling, specialty_sharp_focus, specialty_holdbreathwhileads, specialty_reducedsway, specialty_longerrange, specialty_fastermelee, specialty_lightweight, specialty_moredamage, specialty_null ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[1].camo "none" // [ none, classic, snow, multi, d_urban, hex, choco, marine, snake, winter, blue, red, autumn, gold ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[1].reticle "none" // [ none, ret1, ret2, ret3, ret4, ret5, ret6 ]
+gameOpt defaultClasses.axis.[5].class.weaponSetups.[1].weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, stinger, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt defaultClasses.axis.[5].juggernaut "0" // [ 0, 1 ]
+gameOpt demData.bombTimer "0" // [ 0-120 ]
+gameOpt demData.defuseTime "0.0000" // [ 0-10 ]
+gameOpt demData.extraTime "0.0000" // [ 0-5 ]
+gameOpt demData.plantTime "0.0000" // [ 0-10 ]
+gameOpt demData.roundSwitch "0" // [ 0, 1, 2, 3, 4 ]
+gameOpt gametype "survival" // [ war, dm, sd, sab, dom, koth, ctf, dd, tdef, conf, grnd, tjugg, jugg, gun, infect, oic, survival ]
+gameOpt grndData.dropTime "0.0000" // [ 0-120 ]
+gameOpt grndData.zoneSwitchTime "0.0000" // [ 0-5 ]
+gameOpt gunData.guns.[0] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[1] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[2] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[3] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[4] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, infectData.numInitialInfected, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[5] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[6] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[7] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[8] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[9] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[10] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[11] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[12] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[13] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[14] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[15] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[16] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[17] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[18] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.guns.[19] "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, riotshield, xm25 ]
+gameOpt gunData.numGuns "0" // [ 0-20 ]
+gameOpt gunData.randomize "0" // [ 0, 1 ]
+gameOpt hqData.HQActivateDelay "0" // [ 0-60 ]
+gameOpt hqData.HQLifetime "0" // [ 0-120 ]
+gameOpt infectData.numInitialInfected "20" // [ 0-9 ]
+gameOpt juggData.respawnNewJugg "0" // [ 0, 1 ]
+gameOpt juggData.showJuggRadarIcon "0" // [ 0, 1 ]
+gameOpt juggData.showJuggWorldIcon "0" // [ 0, 1 ]
+gameOpt juggData.useJuggTimeLimit "0"
+gameOpt oicData.initialAmmoCount "0" // [ 1, 0-15 ]
+gameOpt oicData.killRewardAmmoCount "0" // [ 1, 0-15 ]
+gameOpt oicData.oneShotKill "0" // [ 0, 1 ]
+gameOpt oicData.weapon "none" // [ none, iw5_usp45, iw5_mp412, iw5_44magnum, iw5_deserteagle, iw5_p99, iw5_fnfiveseven, iw5_acr, iw5_type95, iw5_m4, iw5_ak47, iw5_m16, iw5_mk14, iw5_g36c, iw5_scar, iw5_fad, iw5_cm901, iw5_mp5, iw5_m9, iw5_p90, iw5_pp90m1, iw5_ump45, iw5_mp7, iw5_fmg9, iw5_g18, iw5_mp9, iw5_skorpion, iw5_spas12, iw5_aa12, iw5_striker, iw5_1887, iw5_usas12, iw5_ksg, iw5_m60, iw5_mk46, iw5_pecheneg, iw5_sa80, iw5_mg36, iw5_barrett, iw5_msr, iw5_rsass, iw5_dragunov, iw5_as50, iw5_l96a1, rpg, javelin, iw5_smaw, m320, xm25 ]
+gameOpt sabData.bombTimer "0" // [ 5, 0-120 ]
+gameOpt sabData.defuseTime "0.0000" // [ 5, 0-10 ]
+gameOpt sabData.plantTime "0.0000" // [ 1, 0-10 ]
+gameOpt sabData.sharedBombTimer "0" // [ 0, 1 ]
+gameOpt sdData.bombTimer "0" // [ 0-60 ]
+gameOpt sdData.defuseTime "0.0000" // [ 0-10 ]
+gameOpt sdData.multiBomb "0" // [ 0, 1 ]
+gameOpt sdData.plantTime "0.0000" // [ 0-10 ]
+gameOpt sdData.roundLength "0.0000" // [ 0-10 ]
+gameOpt sdData.roundSwitch "0" // [ 0-4 ]
+gameOpt tdefData.enemyFlagRadar "0" // [ 0, 1 ]
+gameOpt tjuggData.juggSwitchTime "0.0000" // [ 0-120 ]
+
+//////////////////////////////////////////////////
+// INIT CONFIGS                                 //
+//////////////////////////////////////////////////
+
+set survival_dev_mode 0
+set survival_wait_shops 1
+set survival_wave_start 1
+set survival_wait_respawn 1
+set survival_survivors_limit 5
+set survival_start_armor 250
+set survival_start_money 500
+set survival_enemy_multiplier 1
+set survival_enemy_difficulty 2
+
+//////////////////////////////////////////////////
+// ARMORY PRICES                                //
+//////////////////////////////////////////////////
+
+// AMMO
+set price_ammo_pistol	    			600
+set price_ammo_shotgun      			850
+set price_ammo_machine_pistol			850
+set price_ammo_smg      				1000
+set price_ammo_assault      			1000
+set price_ammo_lmg     					1500
+set price_ammo_sniper      				1000
+set price_ammo_projectile      			2000
+set price_ammo_xmags					500  // price_ammo_weapon + price_ammo_xmag
+set price_ammo_gl	 					300  // price_ammo_weapon + price_ammo_gl_alt
+set price_ammo_shotgun_alt	 			300  // price_ammo_weapon + price_ammo_shotgun_alt
+
+// WEAPONS	
+set price_iw5_usp45	        			600
+set price_iw5_p99	        			600
+set price_iw5_mp412	        			600
+set price_iw5_44magnum	    			900
+set price_iw5_fnfiveseven				600
+set price_iw5_deserteagle				900
+set price_iw5_usas12	        		1000
+set price_iw5_ksg	        			1000
+set price_iw5_spas12	        		1000
+set price_iw5_aa12	        			1000
+set price_iw5_striker	    			1000
+set price_iw5_1887	        			1000
+set price_iw5_fmg9	        			1250
+set price_iw5_mp9	        			1250
+set price_iw5_skorpion	    			1250
+set price_iw5_g18	        			1250
+set price_iw5_mp5	        			1500
+set price_iw5_ump45	        			1500
+set price_iw5_pp90m1	        		1500
+set price_iw5_p90	        			1500
+set price_iw5_m9	            		1500
+set price_iw5_mp7	        			1500
+set price_iw5_ak74u	        			1500
+set price_iw5_m4	            		2000
+set price_iw5_m16	        			2000
+set price_iw5_scar	        			2000
+set price_iw5_cm901	        			2000
+set price_iw5_type95	        		2000
+set price_iw5_g36c	        			2000
+set price_iw5_acr	        			2000
+set price_iw5_mk14	        			2000
+set price_iw5_ak47	        			2000
+set price_iw5_fad	        			2000
+set price_iw5_sa80	        			3000
+set price_iw5_mg36	        			3000
+set price_iw5_pecheneg	    			4000
+set price_iw5_mk46	        			4000
+set price_iw5_m60	        			4000
+set price_iw5_barrett	    			2000
+set price_iw5_l96a1	        			1500
+set price_iw5_dragunov	    			2000
+set price_iw5_as50	        			2000
+set price_iw5_rsass	        			2000
+set price_iw5_msr	        			1500
+set price_iw5_cheytac	    			1500
+set price_iw5_smaw	        			2000
+set price_javelin	        			3000
+set price_stinger	        			3000
+set price_xm25	            			2000
+set price_m320	            			2000
+set price_rpg	            			2000
+set price_riotshield	        		2000
+
+// BUFFS
+set price_specialty_marksman			2000
+set price_specialty_bulletpenetration	2000
+set price_specialty_bling				3000
+set price_specialty_sharp_focus			2000
+set price_specialty_holdbreathwhileads	2000
+set price_specialty_reducedsway			2000
+set price_specialty_longerrange			2000
+set price_specialty_fastermelee			3000
+set price_specialty_lightweight			3000
+set price_specialty_moredamage			2000
+set price_remove_buff_multiplier		0.3 	// remove_buff -> price_buff * price_remove_buff_multiplier
+
+// ATTACHS
+set price_gl							2000
+set price_silencer						2000
+set price_akimbo						2000
+set price_tactical						1000
+set price_xmags							3000
+set price_grip							2000
+set price_reflex						1250
+set price_eotech						750
+set price_rof							3000
+set price_acog							1500
+set price_hamrhybrid					1700
+set price_thermal						2000
+set price_heartbeat						1500
+set price_shotgun						1000
+set price_hybrid						1700
+set price_vzscope						1000
+set price_remove_attach_multiplier		0.3 	// remove_attach -> price_attach * price_remove_attach_multiplier
+
+// CAMOS
+set price_classic  						500
+set price_snow     						500
+set price_multi    						500
+set price_d_urban  						500
+set price_hex      						500
+set price_choco    						500
+set price_snake    						500
+set price_blue     						500
+set price_red      						500
+set price_autumn   						500
+set price_gold     						1000
+set price_marine   						500
+set price_winter   						500
+
+// SLOTS
+set price_attach_slot					1000
+set price_attach_slot_multiplier		1.5		// price_slot -> price_attach_slot * (price_attach_slot_multiplier * slot_count)
+set price_buff_slot						1000
+set price_buff_slot_multiplier			2		// price_slot -> price_buff_slot * (price_buff_slot_multiplier * slot_count)
+
+// EQUIPMENT
+set price_frag_grenade_mp				750
+set price_flash_grenade_mp				750
+set price_throwingknife_mp				1000
+set price_concussion_grenade_mp			1000
+set price_claymore_mp					1500
+set price_c4_mp							1500
+set price_trophy_mp						750
+set price_body_armor					2000
+set price_self_revive					3000
+
+// AIR SUPPORT
+set price_predator_missile				2500
+set price_precision_airstrike			4000
+set price_minigun_turret				3000
+set price_gl_turret						4000
+set price_specialty_quickdraw_ks		3000
+set price_specialty_bulletaccuracy_ks	3000
+set price_specialty_stalker_ks			3000
+set price_specialty_longersprint_ks		3000
+set price_specialty_fastreload_ks		3000
+set price__specialty_blastshield_ks		3000
+set price_specialty_detectexplosive_ks  3000
+set price_remove_perk_multiplier		0.35	// remove_perk -> price_perk * price_remove_perk_multiplier
+

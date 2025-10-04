@@ -34,6 +34,8 @@ main()
 	setDvarIfUninitialized("survival_wait_respawn", 0);
 	setDvarIfUninitialized("survival_start_armor", 250);
 	setDvarIfUninitialized("survival_start_money", 500);
+	setDvarIfUninitialized("survival_enemy_multiplier", 1);
+	setDvarIfUninitialized("survival_enemy_difficulty", 1);
 
 	setDvar("bots_manage_add", 18 - getDvarInt("survival_survivors_limit"));
 	setDvar("sv_cheats", 1);	
