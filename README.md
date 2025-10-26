@@ -48,14 +48,14 @@
 If you enter a server that has the mod you will not have to do anything.<br>
 If you find it difficult to load the mod you can also directly download and use the Survival Loader.<br><br>
 Manual installation:
-1. Unzip the rar file at `%localappdata%/plutonium/storage/iw5/`. (You can press `windows + r` and paste the path)
-2. In the console type `fs_game mods/survival` and then type `vid_restart_safe` to load the mod.
-3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> Survival -> Ok -> ESC -> Start Game`.<br><br>
+1. Press `windows + r` and paste the path `%localappdata%/plutonium/storage/iw5/` unzip the `IW5-Survival-Reimagined` rar file in that directory.
+2. In the game console type `loadmod survival` to load the mod.
+3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> survival_normal -> Ok -> ESC -> Start Game`.<br><br>
 
 To report bugs, make suggestions or need help, visit our discord: [LethalBeats](https://discord.gg/PrpYznV33s)
 
 # <a name="download"></a>Download
-- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.0.2/IW5-Survival-Reimagined.rar)
+- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.1.0/IW5-Survival-Reimagined.rar)
 - Survival Loader (Installer and loader): [IW5_SurvivalLoader.exe](https://github.com/LethalBeats/IW5-Survival-Loader/releases/download/iw5-survival-loader-v1.0/IW5_SurvivalLoader.exe)
 
 # <a name="credits"></a>Credits
