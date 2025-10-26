@@ -443,6 +443,51 @@ player_give_random_ammo(weapon, minClips, maxClips)
 	}
 }
 
+player_hide() // `playerHide` func is only reversible after respawn... there is no playerShow func, what the hell? ⊂(´•﹏•`⊂)?
+{
+	hideData = [];
+	hideData["head"] = self.headmodel;
+	hideData["body"] = self.model;
+
+	primary = self player_get_primary();
+	if (isDefined(primary))
+	{
+		hideData["weaponData"][0] = self player_get_weapon_data(primary);
+		hideData["ammoData"][0] = self player_get_ammo_data(primary);
+	}
+
+	secondary = self player_get_secondary();
+	if (isDefined(secondary))
+	{
+		hideData["weaponData"][1] = self player_get_weapon_data(secondary);
+		hideData["ammoData"][1] = self player_get_ammo_data(secondary);
+	}
+	
+	self.hideData = hideData;
+
+	self detachall();
+	self attach("null_head", "", true);
+	self setmodel("null_body");	
+	self player_take_all_weapons(true); // do not show a linked world weapon model
+}
+
+player_show()
+{
+	hideData = self.hideData;
+
+	self attach(hideData["head"], "", true);
+	self setmodel(hideData["body"]);
+
+	for(i = 0; i < 2; i++)
+	{
+		if (!isDefined(hideData["weaponData"][i])) continue;
+		weapon = hideData["weaponData"][i][0];
+		self player_give_weapon(weapon, false, false, true);
+		self player_set_weapon_data(weapon, hideData["weaponData"][i]);
+		self player_set_ammo_data(weapon, hideData["ammoData"][i]);
+	}
+}
+
 //////////////////////////////////////////
 //	              BOT   		        //
 //////////////////////////////////////////

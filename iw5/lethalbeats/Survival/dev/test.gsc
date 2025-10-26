@@ -25,7 +25,8 @@ init()
 	setCommand("speed", ::setSpeed, 0, 1);
 	setCommand("money", ::setMoney, 0, 1);
 	setCommand("armor", ::setArmor, 0, 1);
-	setCommand("clear", ::clearWave);
+	//setCommand("clear", ::clearWave);
+	setCommand("clear", ::clearWave2);
 	setCommand("wave", ::setWave, 0, 1);
 	setCommand("shop", ::setShopsStatus, 0, 1);
 	setCommand("view", ::getView);
@@ -34,7 +35,6 @@ init()
 	setCommand("streak", ::giveKillstreak, 0, 1);
 	setCommand("drop", ::dropCurrentWeapon);
 	setCommand("damage", ::selfDamage);
-	setCommand("dog", ::dogKnockdown);
 	setCommand("give", ::give, 0, 1);
 	setCommand("test", ::dogHitbox);
 	setCommand("jugger", lethalbeats\survival\abilities\_juggernaut::giveAbility);
@@ -51,6 +51,224 @@ init()
 	setCommand("chem", lethalbeats\survival\abilities\_chemical::giveAbility);
 	setCommand("detonate", ::abilityDetonate);
 	setCommand("chemmine", ::chemMine);
+
+	setCommand("spawndog", ::spawnDog);
+	setCommand("dog", ::dogKnockdown);
+	setCommand("dogsave", ::dogSave);
+}
+
+spawnDog()
+{
+	dog = spawn("script_model", self.origin);
+	dog.angles = -self.angles;
+	dog setModel("german_sheperd_dog");
+
+	dummy = spawn("script_model", self.origin);
+	dummy setModel("tag_origin");
+
+	dog.owner = dummy;
+	level.dog = dog;
+}
+
+dogSave()
+{
+	level.dog.owner notify("death");
+}
+
+dogKnockdown()
+{
+	self player_disable_weapons();
+	self player_disable_usability();
+
+	dog = level.dog;
+
+	spot = spawn("script_model", self.origin);
+	spot setModel("tag_origin");
+	spot notSolid();
+	spot.angles = self getPlayerAngles();
+	self playerLinkToAbsolute(spot);
+
+	spot rotateTo(vectorToAngles(-(anglesToForward(dog.angles))), 0.1);
+	forward = anglesToForward((0, dog.angles[1], 0));
+	spot moveTo(dog.origin + (forward * 30), 0.1);
+
+	wait 0.15;
+	self thread blurEffect();
+	playSoundAtPos(dog.origin, "anml_dog_attack_jump");
+	dogForward = anglesToForward(dog.angles);
+	hands = spawn("script_model", spot.origin + (0, 0, 60));
+	hands setModel(self getViewModel());
+	hands.angles = spot.angles;	
+	hands hide();
+	hands showToPlayer(self);
+
+	body = spawn("script_model", spot.origin - (dogForward * 15));
+	body.angles = spot.angles;
+	body setModel(self.model);
+
+	head = spawn("script_model", self.origin);
+	head setModel(self.headmodel);
+	head linkto(body, "j_spine4", (0, 0, 0), (0, 0, 0));
+
+	body hide();
+	head hide();
+	foreach(player in level.players)
+	{
+		if (self.team == player.team) continue;
+		print(player.name);
+		body showToPlayer(player);
+		head showToPlayer(player);
+	}
+
+	body scriptModelPlayAnim("player_3rd_dog_knockdown");
+	hands scriptModelPlayAnim("player_view_dog_knockdown");
+	dog scriptModelPlayAnim("german_shepherd_attack_player");
+	
+	wait 0.3;
+	hands moveTo(hands.origin - (dogForward * 103), 0.5);
+	spot rotatePitch(-45, 0.2);
+	spot moveTo(spot.origin - (0, 0, 33) - (dogForward * 45), 0.2);
+
+	wait 0.5;
+	self thread dogAttackLate(hands, dog, spot, body, head);
+	self thread dogMeleeDeath(hands, dog, spot, body, head);
+	self thread dogDeath(hands, dog, spot, body, head);
+}
+
+dogAttackLate(hands, dog, spot, body, head)
+{
+	dog.owner endon("death");
+	self endon("dog_melee");
+
+	self thread wiggleEffect(spot);
+	self thread blurEffect();
+	playSoundAtPos(dog.origin, "anml_dog_bark");
+	hands scriptModelPlayAnim("player_view_dog_knockdown_late");
+	dog scriptModelPlayAnim("german_shepherd_attack_player_late");
+
+	wait 0.2;
+	playSoundAtPos(dog.origin, "anml_dog_bark");
+
+	wait 0.8;
+	self thread wiggleEffect(spot);
+	self thread blurEffect();
+	playSoundAtPos(dog.origin, "anml_dog_bark");
+	hands scriptModelPlayAnim("player_view_dog_knockdown_late");
+	dog scriptModelPlayAnim("german_shepherd_attack_player_late");
+
+	wait 0.2;
+	playSoundAtPos(dog.origin, "anml_dog_bark");
+
+	wait 0.8;
+	self thread wiggleEffect(spot);
+	self thread blurEffect();
+	playSoundAtPos(dog.origin, "anml_dog_bark");
+	hands scriptModelPlayAnim("player_view_dog_knockdown_late");
+	dog scriptModelPlayAnim("german_shepherd_attack_player_late");
+
+	wait 1;
+	self notify("dog_late");
+	playSoundAtPos(dog.origin, "anml_dog_attack_kill_player");
+
+	wait 5;
+	waittillframeend;
+	self suicide();
+	hands delete();
+	spot delete();
+
+	wait randomIntRange(3, 6);
+	body delete();
+	head delete();
+}
+
+dogMeleeDeath(hands, dog, spot, body, head)
+{
+	self endon("dog_late");
+	dog.owner endon("death");
+
+	self notifyOnPlayerCommand("dog_melee", "+melee_zoom");
+
+	self waittill("dog_melee");
+
+	dogForward = anglesToForward(dog.angles);
+	dog.origin -= (dogForward * 7);
+
+	body scriptModelPlayAnim("player_3rd_dog_knockdown_neck_snap");
+	hands scriptModelPlayAnim("player_view_dog_knockdown_neck_snap");
+	dog scriptModelPlayAnim("german_shepherd_player_neck_snap");
+
+	wait 0.5;
+	playSoundAtPos(dog.origin, "anml_dog_run_hurt");
+	playSoundAtPos(dog.origin, "anml_dog_neckbreak_pain");
+
+	wait 2.2;
+	hands delete();
+	forward = anglesToForward(spot.angles);
+	spot rotatePitch(45, 0.3);
+	spot moveTo(spot.origin + (0, 0, 60) - (forward * 45), 0.3);
+
+	wait 0.65;
+	head delete();
+	body delete();
+	self setOrigin((self.origin[0], self.origin[1], dog.origin[2]));
+	self setStance("stand");
+	self player_enable_weapons();
+	self player_enable_usability();
+	self unlink();
+	spot delete();
+}
+
+dogDeath(hands, dog, spot, body, head)
+{
+	dog.owner waittill("death");
+
+	body scriptModelPlayAnim("player_3rd_dog_knockdown_saved");
+	hands scriptModelPlayAnim("player_view_dog_knockdown_saved");
+	dog scriptModelPlayAnim("german_shepherd_death_front");
+
+	wait 0.5;
+	hands delete();
+
+	wait 1.7;
+	forward = anglesToForward(spot.angles);
+	spot rotatePitch(45, 0.3);
+	spot moveTo(spot.origin + (0, 0, 60) - (forward * 45), 0.3);
+
+	wait 0.65;
+	head delete();
+	body delete();
+	self setOrigin((self.origin[0], self.origin[1], dog.origin[2]));
+	self setStance("stand");
+	self player_enable_weapons();
+	self player_enable_usability();
+	self unlink();
+}
+
+blurEffect()
+{
+	self shellshock("frag_grenade_mp", 0.35);
+	self setBlurForPlayer(1, 0.25);
+	wait 0.4;
+	self setBlurForPlayer(0, 0.25);
+}
+
+wiggleEffect(spot)
+{
+	prevAngles = spot.angles;
+	duration = 0.8;
+	intensity1 = 0.5;
+	intensity2 = 15;
+	speed = 0.05;
+	elapsed = 0;
+	while(elapsed < duration)
+	{
+		spot rotateYaw(randomFloatRange(-intensity2, intensity2), speed);
+		spot rotatePitch(randomFloatRange(-intensity1, intensity1), speed);
+		spot rotateRoll(randomFloatRange(-intensity1, intensity1), speed);	
+		wait speed;
+		elapsed += speed;
+	}	
+	spot rotateTo(prevAngles, 0.3);
 }
 
 chemMine()
@@ -320,167 +538,6 @@ sprint()
 	self player_client_cmd("-breath_sprint");
 }
 
-testDog(time)
-{
-	forward = anglesToForward(self getPlayerAngles());
-	dog = spawn("script_model", self.origin + (forward * 50));
-	dog setModel("german_sheperd_dog");
-	dog scriptModelPlayAnim("german_shepherd_attack_player"); //german_shepherd_attack_player
-	wait 0.8;
-	dog scriptModelPlayAnim(DOG_ATTACK_LATE);
-	wait float(time);
-	dog scriptModelPlayAnim(DOG_ATTACK_LATE);
-}
-
-giveView()
-{
-	self _giveWeapon("iw5_dogviewkockdown_mp");
-}
-
-dogKnockdown()
-{
-	forward = anglesToForward(self getPlayerAngles());
-	prevOrigin = self.origin;
-	prevWeapon = self getCurrentWeapon();
-	
-	self _giveWeapon(KNOCKDOWN_VIEW);
-	self switchToWeaponImmediate(KNOCKDOWN_VIEW);
-
-	self setOrigin(self.origin + (forward * 100));
-	knockdownSpot = spawn("script_origin", self.origin);
-	knockdownSpot hide();
-	
-	self setPlayerAngles(vectorToAngles(forward));
-	self playerLinkTo(knockdownSpot);
-
-	body = spawn("script_model", prevOrigin);
-	body.angles = (0, self.angles[1], 90);
-	body setModel(self.model);
-
-	head = spawn("script_model", prevOrigin);
-	head setModel(self.headmodel);
-	head linkto(body, "j_spine4", (0, 0, 0), (0, 0, 0));
-
-	head hide();
-	body hide();
-	body playAnim("player_3rd_dog_knockdown", true);
-
-	foreach(player in level.players)
-	{
-		if (player == self) continue;
-		body showToPlayer(player);
-		head showToPlayer(player);
-	}
-
-	right = anglesToRight(self getplayerangles());
-
-	dog = spawn("script_model", prevOrigin + (forward * 28) - (0, 0, 3));
-	dog setModel("german_sheperd_dog");
-	dog scriptModelPlayAnim("german_shepherd_attack_player");
-	dog.angles = vectorToAngles(-forward);
-
-	//self thread count();
-	//self thread dogAttackSound(dog);
-	self thread dogSavedMonitor(dog, prevWeapon, knockdownSpot);
-	self endon("dog_saved");
-
-	self shellshock("frag_grenade_mp", 0.5);
-	self thread sprint();
-	wait 0.8;
-	dog scriptModelPlayAnim(DOG_ATTACK_LATE);
-	wait 1.1;
-	self shellshock("frag_grenade_mp", 0.5);
-	self thread sprint();
-	dog scriptModelPlayAnim(DOG_ATTACK_LATE);
-	wait 1.1;
-	self shellshock("frag_grenade_mp", 0.5);
-	self thread sprint();
-	dog scriptModelPlayAnim(DOG_ATTACK_LATE);
-	wait 0.25;
-	self notify("dog_late");
-	self freezeControls(true);
-	wait 1;
-	self thread maps\mp\gametypes\_shellshock::bloodEffect(self.origin);
-	self setBlurForPlayer(1, 0.25);
-	wait 3;
-	body startragdoll();
-	self setWeaponAmmoClip(KNOCKDOWN_VIEW);
-	wait 1;
-	self setBlurForPlayer(0);
-	self suicide();
-	wait 2;
-	self unlink();
-	knockdownSpot delete();
-}
-
-blurTest()
-{
-	wait 0.2;
-	self setBlurForPlayer(1, 0.25);
-	wait 0.4;
-	self setBlurForPlayer(0);
-}
-
-blur2()
-{
-	self setBlurForPlayer(1, 0.25);
-	wait 0.35;
-	self setBlurForPlayer(0);
-}
-
-dogAttackSound(dog)
-{
-	level endon("game_ended");
-	self endon("disconnect");
-	self endon("death");
-	self endon("dog_late");
-	self endon("dog_saved");
-
-	playSoundAtPos(dog.origin, "anml_dog_attack_jump");
-	wait 3.5;
-	playSoundAtPos(dog.origin, "anml_dog_bark");
-	wait 0.5;
-	playSoundAtPos(dog.origin, "anml_dog_bark");
-}
-
-dogSavedMonitor(dog, prevWeapon, knockdownSpot)
-{
-	level endon("game_ended");
-	self endon("disconnect");
-	self endon("death");
-	self endon("dog_late");
-
-	self notifyOnPlayerCommand("melee", "+melee_zoom");
-	
-	result = self lethalbeats\utility::waittill_any_return("dog_saved", "melee");
-
-	if (result == "melee") dog scriptModelPlayAnim("german_shepherd_player_neck_snap");
-	else dog scriptModelPlayAnim("german_shepherd_death_front");
-
-	self notify("dog_saved");
-	self iPrintlnBold("DOG SAVE");
-	self setBlurForPlayer(0);
-	wait 5;
-	
-	self iPrintlnBold("UNLINK");
-	knockdownSpot delete();
-	self unlink();
-	self takeWeapon(KNOCKDOWN_VIEW);
-	self switchToWeaponImmediate(prevWeapon);
-}
-
-count()
-{
-	self endon("dog_late");
-	self endon("dog_saved");
-
-	for(i = 0;; i++)
-	{
-		self iPrintlnBold(i);
-		wait 1;
-	}
-}
-
 crate()
 {
 	if (!isDefined(level.crateSpawned)) self spawnCrate();
@@ -617,6 +674,13 @@ clearWave()
 			vehicle notify("damage", 9999999, self, (0, 0, 0), vehicle.origin, "MOD_PROJECTILE_SPLASH", undefined, undefined, undefined, undefined, "artillery_mp");
 		wait 0.5;
 	}
+}
+
+clearWave2()
+{
+	bots = lethalbeats\survival\utility::bots();
+	foreach(bot in bots)
+		if (!bot bot_is_dog()) bot suicide();
 }
 
 setWave(wave)

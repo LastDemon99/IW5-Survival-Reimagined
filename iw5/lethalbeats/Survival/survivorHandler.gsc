@@ -50,6 +50,7 @@ onPlayerSpawn()
 		self.iscarrying = false;
 		self.dropWeapon = true;
 		self.enableUse = true;
+		self.dogKnockdown = false;
 
 		if (!self survivor_load_state())
 		{
@@ -169,6 +170,7 @@ onPlayerMelee()
 
 onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset)
 {
+	if (isDefined(self.dogKnockdown) && self.dogKnockdown) return;
 	if (isDefined(eAttacker) && isDefined(eAttacker.team) && eAttacker.team == "allies" && eAttacker != self) return;
 	if (lethalbeats\array::array_contains(MOD_MULTIPLIER, sMeansOfDeath))
 	{
