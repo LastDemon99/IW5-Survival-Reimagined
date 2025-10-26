@@ -80,21 +80,43 @@ createLBSurvival()
 	lb thread maps\mp\killstreaks\_helicopter::removeFromLittleBirdListOnDeath();
 	lb.health = 999999;
 	lb.maxhealth = 999999;
+	
+	difficulty = getDvarInt("survival_enemy_difficulty");
+	speedMultiplier = 1.0;
+	targetingMultiplier = 1.0;
+	
+	switch(difficulty)
+	{
+		case 1:
+			speedMultiplier = 0.8;
+			targetingMultiplier = 0.75;
+			break;
+		case 2:
+			speedMultiplier = 0.9;
+			targetingMultiplier = 0.875;
+			break;
+		default:
+			speedMultiplier = 1.0;
+			targetingMultiplier = 1.0;
+			break;
+	}
+	
 	lb.customHealth = self.maxHealth;
 	lb.damageTaken = 0;
-	lb.speed = 100;
-	lb.followSpeed = 40;
+	lb.speed = int(100 * speedMultiplier);
+	lb.followSpeed = int(40 * speedMultiplier);
 	lb.owner = self;
 	lb.team = self.team;
 	lb setMaxPitchRoll(45, 45);	
 	lb Vehicle_SetSpeed(lb.speed, 100, 40);
-	lb setYawSpeed(120, 60);
+	lb setYawSpeed(int(120 * speedMultiplier), int(60 * speedMultiplier));
 	lb setneargoalnotifydist(512);
 	lb.killCount = 0;
 	lb.heliType = "littlebird";
-	lb.targettingRadius = 2000;
+	lb.targettingRadius = int(2000 * targetingMultiplier);
 	lb.flyHeight = flyHeight;
-	lb.minFlyHeight = 500; 
+	lb.minFlyHeight = 500;
+	lb.difficulty = difficulty; 
 	lb.currentGoalPos = undefined;
 	lb.hasNodeSystem = hasNodeSystem;
 
@@ -366,11 +388,38 @@ lbBurstFireStart()
     self endon("stop_shooting");
     level endon("game_ended");
 
+    difficulty = self.vehicle.difficulty;
+    
     fireTime = 0.1;
     minShots = 40;
     maxShots = 80;
     minPause = 1.0;
     maxPause = 2.0;
+    
+    switch(difficulty)
+    {
+        case 1:
+            fireTime = 0.15;
+            minShots = 20;
+            maxShots = 40;
+            minPause = 1.5;
+            maxPause = 3.0;
+            break;
+        case 2:
+            fireTime = 0.12;
+            minShots = 30;
+            maxShots = 60;
+            minPause = 1.25;
+            maxPause = 2.5;
+            break;
+        default:
+            fireTime = 0.1;
+            minShots = 40;
+            maxShots = 80;
+            minPause = 1.0;
+            maxPause = 2.0;
+            break;
+    }
 
     for (;;)
     {

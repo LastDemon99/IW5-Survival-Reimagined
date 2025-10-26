@@ -148,9 +148,15 @@ botWaitRespawn()
 		if (level.bots_awaits)
 		{
 			level.bots_awaits--;
-			if (getDvarInt("survival_enemy_difficulty") != 3)
+			if (level.difficulty == 3) break;
+			else if (level.difficulty == 2)
 			{
 				delay = randomIntRange(1, 3);
+				wait randomFloatRange(delay - 0.5, delay + 0.5);
+			}
+			else
+			{
+				delay = randomIntRange(3, 6);
 				wait randomFloatRange(delay - 0.5, delay + 0.5);
 			}
 			break;

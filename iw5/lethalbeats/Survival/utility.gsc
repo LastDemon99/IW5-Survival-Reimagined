@@ -60,6 +60,9 @@
 #define GENERIC "generic"
 
 #define WAVES_TABLE "mp/survival_waves.csv"
+#define WAVES_TABLE_EASY "mp/survival_wave_easy.csv"
+#define WAVES_TABLE_NORMAL "mp/survival_wave_normal.csv"
+#define WAVES_TABLE_HARD "mp/survival_wave_hard.csv"
 #define INTEL_DIALOG ["boss_transport_many", "boss_transport", "chopper_many", "chopper", "chemical", "claymore", "dog_splode", "martyrdom", "dog_reg", "generic"]
 
 #define CHALLENGES ["Headshot Kill", "Kill Streak", "Knife Kill", "Grenade Kill", "Pistol Kill", "Shotgun Kill", "Machine Pistol Kill", "Smg Kill", "Assault Kill", "Lmg Kill", "Sniper Kill", "Launcher Kill", "Double Kill", "Triple Kill", "Multi Kill"]
@@ -757,21 +760,21 @@ bot_set_difficulty()
 	difficulty = _bot_get_difficulty_settings();
 
 	self.pers["bots"]["skill"]["spawn_time"] = 0;
-    self.pers["bots"]["skill"]["aim_time"] = _bot_wave_scale_linear(difficulty["aim_time_init"], difficulty["aim_time_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["aim_time"] = _bot_wave_scale_progress(difficulty["aim_time_init"], difficulty["aim_time_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["init_react_time"] = self.pers["bots"]["skill"]["aim_time"];
-    self.pers["bots"]["skill"]["reaction_time"] = _bot_wave_scale_linear(difficulty["reaction_time_init"], difficulty["reaction_time_end"], difficulty["scale_rate"], wave);	
-	self.pers["bots"]["skill"]["remember_time"] = 25000; //_bot_wave_scale_linear(difficulty["remember_time_init"], difficulty["remember_time_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["no_trace_ads_time"] = _bot_wave_scale_linear(difficulty["no_trace_ads_init"], difficulty["no_trace_ads_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["reaction_time"] = _bot_wave_scale_progress(difficulty["reaction_time_init"], difficulty["reaction_time_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["remember_time"] = 25000; //_bot_wave_scale_progress(difficulty["remember_time_init"], difficulty["remember_time_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["no_trace_ads_time"] = _bot_wave_scale_progress(difficulty["no_trace_ads_init"], difficulty["no_trace_ads_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["no_trace_look_time"] = self.pers["bots"]["skill"]["no_trace_ads_time"];
-    self.pers["bots"]["skill"]["fov"] = wave > difficulty["fov_max_wave"] ? -1 : _bot_wave_scale_linear(difficulty["fov_init"], difficulty["fov_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["dist_start"] = _bot_wave_scale_linear(difficulty["dist_start_init"], difficulty["dist_start_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["dist_max"] = _bot_wave_scale_linear(difficulty["dist_max_init"], difficulty["dist_max_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["fov"] = wave > difficulty["fov_max_wave"] ? -1 : _bot_wave_scale_progress(difficulty["fov_init"], difficulty["fov_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["dist_start"] = _bot_wave_scale_progress(difficulty["dist_start_init"], difficulty["dist_start_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["dist_max"] = _bot_wave_scale_progress(difficulty["dist_max_init"], difficulty["dist_max_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["help_dist"] = 3000;
-    self.pers["bots"]["skill"]["semi_time"] = _bot_wave_scale_linear(difficulty["semi_time_init"], difficulty["semi_time_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["shoot_after_time"] = _bot_wave_scale_linear(difficulty["shoot_after_init"], difficulty["shoot_after_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["aim_offset_time"] = _bot_wave_scale_linear(difficulty["aim_offset_time_init"], difficulty["aim_offset_time_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["aim_offset_amount"] = _bot_wave_scale_linear(difficulty["aim_offset_amount_init"], difficulty["aim_offset_amount_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["bone_update_interval"] = _bot_wave_scale_linear(difficulty["bone_update_init"], difficulty["bone_update_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["semi_time"] = _bot_wave_scale_progress(difficulty["semi_time_init"], difficulty["semi_time_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["shoot_after_time"] = _bot_wave_scale_progress(difficulty["shoot_after_init"], difficulty["shoot_after_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["aim_offset_time"] = _bot_wave_scale_progress(difficulty["aim_offset_time_init"], difficulty["aim_offset_time_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["aim_offset_amount"] = _bot_wave_scale_progress(difficulty["aim_offset_amount_init"], difficulty["aim_offset_amount_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["bone_update_interval"] = _bot_wave_scale_progress(difficulty["bone_update_init"], difficulty["bone_update_end"], difficulty["scale_rate"], wave);
     self.pers["bots"]["skill"]["bones"] = "j_spineupper,j_ankle_le,j_ankle_ri,j_ankle_le,j_ankle_ri";
     self.pers["bots"]["skill"]["ads_fov_multi"] = 0.5;
     self.pers["bots"]["skill"]["ads_aimspeed_multi"] = 0.5;
@@ -788,16 +791,19 @@ bot_set_difficulty()
 	self.pers["bots"]["behavior"]["jump"] = 20;
 	self.pers["bots"]["behavior"]["quickscope"] = 0;
 
-	difficulty = getDvarInt("survival_enemy_difficulty");
-
 	health = int(self bot_get_loadout(HEALTH));
-	if (level.wave_num > WAVE_LOOP) health = int(health * lethalbeats\math::math_pow(1.05, level.wave_num - WAVE_LOOP));
-	if (difficulty == 3) health = int(health * 1.5);
+	if (level.wave_num > WAVE_LOOP)
+	{
+		growth = get_wave_loop_growth();
+		health = int(health * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP));
+	}
+	if (level.difficulty == 3) health = int(health * 1.5);
 	self.maxhealth = health;
 	self.health = health;
 
-	self.moveSpeedScaler = float(self bot_get_loadout(SPEED));	
-	if (difficulty == 3) self.moveSpeedScaler *= 1.3;
+	self.moveSpeedScaler = float(self bot_get_loadout(SPEED)); 
+	if (level.difficulty == 1) self.moveSpeedScaler *= 0.85;
+	if (level.difficulty == 3) self.moveSpeedScaler *= 1.3;
 	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
 
     if (self bot_is_dog())
@@ -816,10 +822,53 @@ bot_set_difficulty()
 		self.pers["bots"]["behavior"]["strafe"] = 0;
 	}
 
-	if (self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY] == "rpg" || weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]) == "sniper")
+	if (level.difficulty == 1 && !self bot_is_dog() && !self bot_is_jugger())
+	{
+		self.pers["bots"]["behavior"]["nade"] = 40;
+		self.pers["bots"]["behavior"]["sprint"] = 40;
+		self.pers["bots"]["behavior"]["strafe"] = 35;
+		self.pers["bots"]["behavior"]["jump"] = 10;
+	}
+
+	// Extra nerf for automatic weapons on Easy: slower first shot, slightly longer aim and more offset
+	if (level.difficulty == 1)
+	{
+		primaryClass = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
+		if (array_contains(["assault", "smg", "lmg"], primaryClass))
+		{
+			self.pers["bots"]["skill"]["shoot_after_time"] *= 1.3; // delay before engaging
+			self.pers["bots"]["skill"]["aim_time"] += 0.05; // take a bit longer to settle aim
+			self.pers["bots"]["skill"]["aim_offset_amount"] *= 1.15; // slightly less accurate
+			self.pers["bots"]["skill"]["aim_offset_time"] *= 1.1; // offset lasts a bit more
+		}
+	}
+
+	weapon_class = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
+
+	if (level.difficulty == 3 && (weapon_class == "projectile" || weapon_class == "sniper"))
 	{
 		self.pers["bots"]["skill"]["dist_max"] = 15000;
 		self.pers["bots"]["skill"]["dist_start"] = 10000;
+		return;
+	}
+
+	switch(weapon_class)
+	{
+		case "projectile":
+		case "sniper":
+			self.pers["bots"]["skill"]["dist_max"] = 15000;
+			self.pers["bots"]["skill"]["dist_start"] = 10000;
+			break;
+		case "smg":
+			self.pers["bots"]["skill"]["dist_max"] *= 0.4;
+			self.pers["bots"]["skill"]["dist_start"] *= 0.4;
+			break;
+		case "shotgun":
+		case "machine_pistol":
+		case "pistol":
+			self.pers["bots"]["skill"]["dist_max"] *= 0.2;
+			self.pers["bots"]["skill"]["dist_start"] *= 0.2;
+			break;
 	}
 }
 
@@ -851,103 +900,135 @@ _bot_wave_scale_linear(init_value, end_value, scale_rate, wave)
 
 /*
 ///DocStringBegin
+detail: _bot_wave_scale_progress(init_value: <Float>, end_value: <Float>, scale_rate: <Float>, wave: <Float>): <Float>
+summary: Difficulty-aware scaler. Uses an eased-in curve for Easy to slow early aggression; keeps linear for Normal/Hard.
+///DocStringEnd
+*/
+_bot_wave_scale_progress(init_value, end_value, scale_rate, wave)
+{
+	progress = min(1.0, (wave - 1) * scale_rate);
+	if (level.difficulty == 1)
+	{
+		progress = progress * progress;
+		progress = int(progress * 5) / 5.0;
+	}
+	current_value = init_value + (end_value - init_value) * progress;
+	if (init_value > end_value) return max(end_value, current_value);
+	else return min(end_value, current_value);
+}
+
+/*
+///DocStringBegin
+detail: get_wave_loop_growth(): <Float>
+summary: Returns post-loop per-wave growth multiplier by difficulty (Easy 1.03, Normal 1.05, Hard 1.06).
+///DocStringEnd
+*/
+get_wave_loop_growth()
+{
+	switch(level.difficulty)
+	{
+		case 1: return 1.02;
+		case 3: return 1.06;
+		default: return 1.05;
+	}
+}
+
+/*
+///DocStringBegin
 detail: _bot_get_difficulty_settings(): <Array>
 summary: Returns bot skill parameters based on difficulty level (1=Easy, 2=Normal, 3=Hard).
 ///DocStringEnd
 */
 _bot_get_difficulty_settings()
 {
-	difficulty = getDvarInt("survival_enemy_difficulty");
-	settings = [];
-		
-	switch(difficulty)
+	settings = [];		
+	switch(level.difficulty)
 	{			
 		case 2:
 			settings["scale_rate"] = 0.04;
-			settings["aim_time_init"] = 0.7;
-			settings["aim_time_end"] = 0.15;
-			settings["reaction_time_init"] = 2500;
-			settings["reaction_time_end"] = 500;
-			settings["remember_time_init"] = 500;
-			settings["remember_time_end"] = 6000;
-			settings["no_trace_ads_init"] = 600;
+			settings["aim_time_init"] = 0.55;
+			settings["aim_time_end"] = 0.25;
+			settings["reaction_time_init"] = 1000;
+			settings["reaction_time_end"] = 300;
+			settings["remember_time_init"] = 1500;
+			settings["remember_time_end"] = 4000;
+			settings["no_trace_ads_init"] = 1000;
 			settings["no_trace_ads_end"] = 2500;
-			settings["fov_init"] = 0.7;
-			settings["fov_end"] = 0.1;
-			settings["fov_max_wave"] = 20;
-			settings["dist_start_init"] = 1000;
-			settings["dist_start_end"] = 7000;
-			settings["dist_max_init"] = 1200;
-			settings["dist_max_end"] = 12000;
-			settings["semi_time_init"] = 0.9;
-			settings["semi_time_end"] = 0.08;
-			settings["shoot_after_init"] = 1.0;
-			settings["shoot_after_end"] = 0.15;
-			settings["aim_offset_time_init"] = 1.8;
-			settings["aim_offset_time_end"] = 0.3;
-			settings["aim_offset_amount_init"] = 4.0;
-			settings["aim_offset_amount_end"] = 0.5;
-			settings["bone_update_init"] = 2.5;
+			settings["fov_init"] = 0.65;
+			settings["fov_end"] = 0.5;
+			settings["fov_max_wave"] = 25;
+			settings["dist_start_init"] = 1500;
+			settings["dist_start_end"] = 5000;
+			settings["dist_max_init"] = 3000;
+			settings["dist_max_end"] = 7500;
+			settings["semi_time_init"] = 0.75;
+			settings["semi_time_end"] = 0.4;
+			settings["shoot_after_init"] = 0.75;
+			settings["shoot_after_end"] = 0.35;
+			settings["aim_offset_time_init"] = 1.0;
+			settings["aim_offset_time_end"] = 0.35;
+			settings["aim_offset_amount_init"] = 3.0;
+			settings["aim_offset_amount_end"] = 1.5;
+			settings["bone_update_init"] = 1.5;
 			settings["bone_update_end"] = 0.5;
 			break;			
 		case 3:
-			settings["scale_rate"] = 0.06;
-			settings["aim_time_init"] = 0.5;
-			settings["aim_time_end"] = 0.05;
-			settings["reaction_time_init"] = 2000;
-			settings["reaction_time_end"] = 200;
-			settings["remember_time_init"] = 1000;
-			settings["remember_time_end"] = 7500;
-			settings["no_trace_ads_init"] = 400;
-			settings["no_trace_ads_end"] = 2000;
+			settings["scale_rate"] = 0.05;
+			settings["aim_time_init"] = 0.4;
+			settings["aim_time_end"] = 0.2;
+			settings["reaction_time_init"] = 750;
+			settings["reaction_time_end"] = 150;
+			settings["remember_time_init"] = 2000;
+			settings["remember_time_end"] = 5000;
+			settings["no_trace_ads_init"] = 1000;
+			settings["no_trace_ads_end"] = 2500;
 			settings["fov_init"] = 0.6;
-			settings["fov_end"] = 0;
-			settings["fov_max_wave"] = 15;
-			settings["dist_start_init"] = 1500;
-			settings["dist_start_end"] = 10000;
-			settings["dist_max_init"] = 2000;
-			settings["dist_max_end"] = 15000;
-			settings["semi_time_init"] = 0.7;
-			settings["semi_time_end"] = 0.03;
-			settings["shoot_after_init"] = 0.8;
-			settings["shoot_after_end"] = 0.05;
-			settings["aim_offset_time_init"] = 1.5;
-			settings["aim_offset_time_end"] = 0.1;
-			settings["aim_offset_amount_init"] = 3.0;
-			settings["aim_offset_amount_end"] = 0.2;
-			settings["bone_update_init"] = 2.0;
+			settings["fov_end"] = 0.45;
+			settings["fov_max_wave"] = 20;
+			settings["dist_start_init"] = 2250;
+			settings["dist_start_end"] = 7500;
+			settings["dist_max_init"] = 4000;
+			settings["dist_max_end"] = 10000;
+			settings["semi_time_init"] = 0.65;
+			settings["semi_time_end"] = 0.25;
+			settings["shoot_after_init"] = 0.65;
+			settings["shoot_after_end"] = 0.25;
+			settings["aim_offset_time_init"] = 0.75;
+			settings["aim_offset_time_end"] = 0.25;
+			settings["aim_offset_amount_init"] = 2.5;
+			settings["aim_offset_amount_end"] = 1.0;
+			settings["bone_update_init"] = 1.0;
 			settings["bone_update_end"] = 0.25;
 			break;
 		default:
 			settings["scale_rate"] = 0.025;
-			settings["aim_time_init"] = 0.8;
-			settings["aim_time_end"] = 0.3;
-			settings["reaction_time_init"] = 3000;
-			settings["reaction_time_end"] = 800;
-			settings["remember_time_init"] = 500;
-			settings["remember_time_end"] = 5000;
+			settings["aim_time_init"] = 0.75;
+			settings["aim_time_end"] = 0.45;
+			settings["reaction_time_init"] = 1800;
+			settings["reaction_time_end"] = 600;
+			settings["remember_time_init"] = 750;
+			settings["remember_time_end"] = 3000;
 			settings["no_trace_ads_init"] = 800;
-			settings["no_trace_ads_end"] = 3000;
+			settings["no_trace_ads_end"] = 1800;
 			settings["fov_init"] = 0.75;
-			settings["fov_end"] = 0.2;
-			settings["fov_max_wave"] = 25;
-			settings["dist_start_init"] = 800;
-			settings["dist_start_end"] = 5000;
-			settings["dist_max_init"] = 1000;
-			settings["dist_max_end"] = 8000;
+			settings["fov_end"] = 0.6;
+			settings["fov_max_wave"] = 30;
+			settings["dist_start_init"] = 900;
+			settings["dist_start_end"] = 3000;
+			settings["dist_max_init"] = 2200;
+			settings["dist_max_end"] = 4500;
 			settings["semi_time_init"] = 1.0;
-			settings["semi_time_end"] = 0.15;
-			settings["shoot_after_init"] = 1.2;
-			settings["shoot_after_end"] = 0.3;
-			settings["aim_offset_time_init"] = 2.0;
-			settings["aim_offset_time_end"] = 0.5;
-			settings["aim_offset_amount_init"] = 5.0;
-			settings["aim_offset_amount_end"] = 1.0;
-			settings["bone_update_init"] = 3.0;
-			settings["bone_update_end"] = 0.8;
+			settings["semi_time_end"] = 0.6;
+			settings["shoot_after_init"] = 1.25;
+			settings["shoot_after_end"] = 0.8;
+			settings["aim_offset_time_init"] = 1.75;
+			settings["aim_offset_time_end"] = 0.8;
+			settings["aim_offset_amount_init"] = 4.5;
+			settings["aim_offset_amount_end"] = 2.25;
+			settings["bone_update_init"] = 2.25;
+			settings["bone_update_end"] = 1.0;
 			break;
-	}
-	
+	}	
 	return settings;
 }
 
@@ -1546,9 +1627,6 @@ survivor_revive()
     self.revived = true;
 	self.inLastStand = false;
 	self.lastStand = undefined;
-
-    if (isdefined(self.standardmaxhealth))
-        self.maxhealth = self.standardmaxhealth;
     self.health = self.maxhealth;
 
 	if (game["state"] == "postgame")
@@ -1673,7 +1751,7 @@ survivor_load_state()
 		dropCrate notify("drop_crate");
 	}
 
-	self player_take_all_weapons();
+	self player_take_all_weapons(true);
 	for(i = 0; i < 2; i++)
 	{
 		if (!isDefined(playerData["weaponData"][i])) continue;
@@ -1767,7 +1845,7 @@ level_save_state()
 		playerData["airdrops"] = player.airdrops;
 		playerData["killstreak"] = "";
 
-		if (isDefined(player.pers["killstreaks"][0]) && isDefined(player.pers["killstreaks"][0].streakname))
+		if (isDefined(player.pers["killstreaks"][0]) && player.pers["killstreaks"][0].available)
 			playerData["killstreak"] = player.pers["killstreaks"][0].streakname;
 
 		if (string_starts_with(playerData["killstreak"], "airdrop_"))
@@ -1999,6 +2077,22 @@ get_default_loadout()
 
 /*
 ///DocStringBegin
+detail: get_waves_table(): <String>
+summary: Returns the CSV table path for the current difficulty: Easy/Normal/Hard.
+///DocStringEnd
+*/
+get_waves_table()
+{
+	switch(level.difficulty)
+	{
+		case 2: return WAVES_TABLE_NORMAL;
+		case 3: return WAVES_TABLE_HARD;
+		default: return WAVES_TABLE_EASY;
+	}
+}
+
+/*
+///DocStringBegin
 detail: get_botsTypes(): <String[]>
 summary: Return the types and amount of bots from the csv wave tables.
 ///DocStringEnd
@@ -2017,10 +2111,10 @@ get_botsTypes()
 	{
 		if (!(i % 2)) continue;
 
-		botCount = tableLookup(WAVES_TABLE, 0, wave_num, i + 1);
+		botCount = tableLookup(get_waves_table(), 0, wave_num, i + 1);
 		if (botCount == "") break;
 
-		bot = tableLookup(WAVES_TABLE, 0, wave_num, i);
+		bot = tableLookup(get_waves_table(), 0, wave_num, i);
 		bot = string_remove(bot, " ");
 		botCount = int(int(botCount) * scaleFactor);
 		totalCount += botCount;
@@ -2038,7 +2132,8 @@ get_botsTypes()
 	foreach (type, count in bots)
 		bots[type] = count / totalCount;
 
-	newTotalCount = totalCount * lethalbeats\math::math_pow(1.05, level.wave_num - WAVE_LOOP) * scaleFactor;
+	growth = get_wave_loop_growth();
+	newTotalCount = totalCount * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP) * scaleFactor;
 	newBots = [];
 
 	foreach (type, percent in bots)

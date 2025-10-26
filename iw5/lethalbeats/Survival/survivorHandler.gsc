@@ -205,6 +205,8 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 		}
 		return;
 	}
+
+	if (level.difficulty == 1) iDamage *= 0.8;
 	
 	if(self.bodyArmor > 0 && sMeansOfDeath != "MOD_TRIGGER_HURT")
 	{
@@ -544,8 +546,14 @@ onAirdropFire()
     {
         self waittill("grenade_fire", item, weaponName);
 		if (weaponName != "airdrop_marker_mp") continue;
-		item waittill("missile_stuck");		
-		self.airdrops[self.airdrops.size] = [self.airdropType, lethalbeats\vector::vector_truncate(item.origin, 3)];
+		item waittill("missile_stuck");
+		
+		if (self hasWeapon("airdrop_marker_mp"))
+		{
+			self takeWeapon("airdrop_marker_mp");
+			self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(self.airdropType);
+		}
+		else self.airdrops[self.airdrops.size] = [self.airdropType, lethalbeats\vector::vector_truncate(item.origin, 3)];
 	}
 }
 
