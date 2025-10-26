@@ -63,7 +63,7 @@ onPlayerSpawn()
 			self player_set_nades(FLASH, 2);
 			self player_set_nades(FRAG, 2);
 
-			if (isDefined(level.survivors_deaths[self.guid]) || isDefined(level.survivors_bleedout[self.guid]))
+			if (getDvarInt("survival_wait_respawn") && (isDefined(level.survivors_deaths[self.guid]) || isDefined(level.survivors_bleedout[self.guid])))
 			{
 				self player_clear_last_stand();
 				self thread player_black_screen();
@@ -128,45 +128,41 @@ onPlayerMelee()
 	level endon("game_ended");
 	self endon("disconnect");
 	self endon("death");
+	
+	self notifyOnPlayerCommand("melee", "+melee_zoom");
 
 	for(;;)
 	{
-		lethalbeats\utility::wait_frame();
+		self waittill("melee");
 
-		if (self meleeButtonPressed())
+		angleDeg = 95;
+		eyePos = self getEye();
+		angles = self.angles;
+		pos = self.origin;
+		lastDistance = undefined;
+		target = undefined;
+
+		foreach(dog in bots("dog", true))
 		{
-			angleDeg = 95;
-			eyePos = self getEye();
-			angles = self.angles;
-			pos = self.origin;
-			lastDistance = undefined;
-			target = undefined;
-
-			foreach(dog in bots("dog", true))
+			dogOrigin = dog.origin;
+			if (lethalbeats\collider::pointInCone(dogOrigin, eyePos, angles, angleDeg, 80))
 			{
-				dogOrigin = dog.origin;
-				if (lethalbeats\collider::pointInCone(dogOrigin, eyePos, angles, angleDeg, 80))
+				dogDistance = distanceSquared(pos, dogOrigin);
+				if (!isDefined(lastDistance) || lastDistance > dogDistance)
 				{
-					dogDistance = distanceSquared(pos, dogOrigin);
-					if (!isDefined(lastDistance) || lastDistance > dogDistance)
-					{
-						lastDistance = dogDistance;
-						target = dog;
-					}
+					lastDistance = dogDistance;
+					target = dog;
 				}
 			}
+		}
 
-			if (isDefined(target))
-			{
-				newAngle = vectorToAngles(target.origin - eyePos);
-				self setPlayerAngles(newAngle);
-				wait 0.05;
-				self setPlayerAngles(newAngle);
-				wait 0.05;
-			}
-
-			while (self meleeButtonPressed())
-				wait 0.05;
+		if (isDefined(target))
+		{
+			newAngle = vectorToAngles(target.origin - eyePos);
+			self setPlayerAngles(newAngle);
+			wait 0.05;
+			self setPlayerAngles(newAngle);
+			wait 0.05;
 		}
 	}
 }
@@ -312,7 +308,7 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 		lastStandBar.objective.color = (0.33, 0.75, 0.24);
 		lastStandBar.type = "death";
 
-		trigger = lethalbeats\trigger::trigger_create(self.origin);
+		trigger = lethalbeats\trigger::trigger_create(self.origin, 60);
 		trigger lethalbeats\trigger::trigger_set_use_hold(6, "Hold ^3[{+activate}] ^7to revive the player", true, false);
 		trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
 		trigger lethalbeats\trigger::trigger_link_to(self);
@@ -320,7 +316,7 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 		lastStandBar.trigger = trigger;
 		self.lastStandBar = lastStandBar;
 
-		if (!isDefined(level.survivors_bleedout[self.guid]) && getDvarInt("survival_wait_respawn"))
+		if (getDvarInt("survival_wait_respawn"))
 			level.survivors_bleedout[self.guid] = [trigger, lastStandBar, undefined];
 
 		trigger thread reviveMonitor(self);

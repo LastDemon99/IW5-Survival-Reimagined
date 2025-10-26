@@ -1548,7 +1548,7 @@ survivor_wait_skip()
 
 survivor_trigger_filter(survivor)
 {
-	return survivor player_is_survivor() && isAlive(survivor) && !survivor.inLastStand && !survivor.disabledusability;
+	return survivor player_is_survivor() && !survivor.inLastStand;
 }
 
 /*

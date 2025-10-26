@@ -76,7 +76,7 @@ watchMartyrdomDetonation(c4_attach)
 		playSoundAtPos(c4_attach[i].origin, "detpack_explo_main");
 		earthquake(0.4, 0.8, c4_attach[i].origin, 600);
 		
-		c4_attach[i] radiusdamage(c4_attach[i].origin, 192, 100, 50, attacker, "MOD_EXPLOSIVE");
+		radiusdamage(c4_attach[i].origin, 192, 100, 50, attacker, "MOD_EXPLOSIVE");
 		c4_attach[i] unlink();
 		c4_attach[i] delete();
 		wait 0.5;

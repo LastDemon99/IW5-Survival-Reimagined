@@ -1068,15 +1068,7 @@ summary: Disable for bots death sound on first death & chopper streak owners, pl
 patch_playDeathSound()
 {
 	if (!level.wave_num) return;
-	if (isDefined(self.botType))
-	{
-		if (self.botType == "chopper") return;
-		if (self.botType == "dog_splode" || self.botType == "dog_reg")
-		{
-			self PlaySound("anml_dog_neckbreak_pain");
-			return;
-		}
-	}
+	if (self bot_is_dog() || self bot_is_killstreak()) return;
 	self playSound((self.team == "axis" ? "generic_death_russian_" : "generic_death_american_") + randomIntRange(1, 8));
 }
 
@@ -1313,7 +1305,7 @@ ammoPickupMonitor(weaponName, ammoData, weaponModel)
         player playLocalSound("weap_ammo_pickup");
         if (isDefined(weaponModel.droppedIndex)) level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, weaponModel.droppedIndex);
         
-        weaponModel delete();
+        if (isDefined(weaponModel)) weaponModel delete();
         self lethalbeats\trigger::trigger_delete();
     }
 }
