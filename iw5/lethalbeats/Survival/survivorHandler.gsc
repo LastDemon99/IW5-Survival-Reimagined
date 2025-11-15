@@ -398,7 +398,7 @@ reviveMonitor(player)
 		player playerLinkedOffsetEnable();
 		player.reviveSpot = reviveSpot;
 
-		result = lethalbeats\utility::waittill_any_return("trigger_hold_interrump", "trigger_hold_complete");
+		result = savior lethalbeats\utility::waittill_any_return("trigger_hold_interrump", "trigger_hold_complete");
 		
 		player unlink();
 		reviveSpot delete();
