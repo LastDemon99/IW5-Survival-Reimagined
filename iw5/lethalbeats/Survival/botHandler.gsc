@@ -127,7 +127,6 @@ onBotSpawn()
 		self.damageData = [];
 		self takeWeapon(self.secondaryWeapon);
 		self thread onChangeWeapons();
-		self thread player_refill_ammo(true);
 		self thread onSprint();
 		self player_unset_Perk("specialty_finalstand");
 
