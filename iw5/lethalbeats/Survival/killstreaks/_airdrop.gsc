@@ -5,6 +5,8 @@
 init()
 {
 	replacefunc(maps\mp\killstreaks\_airdrop::getCrateTypeForDropType, ::_getcratetypefordroptype);
+    replacefunc(maps\mp\killstreaks\_airdrop::watchairdropmarker, ::_watchairdropmarker);
+    replacefunc(maps\mp\killstreaks\_airdrop::dropthecrate, ::_dropthecrate);
 	
     level.killStreakFuncs["airdrop_assault"] = ::_tryUseAssaultAirdrop;
 
@@ -88,6 +90,187 @@ _getcratetypefordroptype(dropType)
     }
 }
 
+_watchairdropmarker(lifeId, kID, dropType)
+{
+    level endon("game_ended");
+    self notify("watchAirDropMarker");
+    self endon("watchAirDropMarker");
+    self endon("disconnect");
+    self endon("markerDetermined");
+
+    for (;;)
+    {
+        self waittill("grenade_fire", airDropWeapon, weapname);
+
+        if (!isairdropmarker(weapname))
+            continue;
+
+        self.threwairdropmarker = 1;
+        self.threwairdropmarkerindex = self.killstreakindexweapon;
+
+        airDropWeapon thread _airdropdetonateonstuck();
+        airDropWeapon.owner = self;
+        airDropWeapon.weaponname = weapname;
+        airDropWeapon thread _airdropmarkeractivate(dropType, undefined, "" + airDropWeapon getEntityNumber() + getTime());
+    }
+}
+
+_airdropdetonateonstuck()
+{
+    self endon("explode");    
+    self waittill("missile_stuck");
+
+    for(;;)
+    {
+        wait 0.35;
+        self detonate(); // sometimes the airdrop marker doesn't activate. ¯\_(ᵕ—ᴗ—)_/¯
+    }
+}
+
+_airdropmarkeractivate(dropType, lifeId, airdropId)
+{
+    level endon("game_ended");
+    self notify("airDropMarkerActivate");
+    self endon("airDropMarkerActivate");
+    self waittill("explode", position);
+    owner = self.owner;
+
+    if (!isdefined(owner) || owner maps\mp\_utility::isEMPed() || owner maps\mp\_utility::isAirDenied() || (issubstr(tolower(dropType), "escort_airdrop") && isdefined(level.chopper)))
+        return;
+
+    wait 0.05;
+
+    owner.airdrops[owner.airdrops.size] = [owner.airdropType, lethalbeats\vector::vector_truncate(position, 3), airdropId]; // saves airdrop if the match is reset to clear entities.
+
+    if (issubstr(tolower(dropType), "juggernaut"))
+        level doc130flyby(owner, position, randomfloat(360), dropType);
+    else if (issubstr(tolower(dropType), "escort_airdrop"))
+        owner maps\mp\killstreaks\_escortairdrop::finishsupportescortusage(lifeId, position, randomfloat(360), "escort_airdrop");
+    else
+        level _doflyby(owner, position, randomfloat(360), dropType, undefined, undefined, airdropId);
+}
+
+_doflyby(owner, dropSite, dropYaw, dropType, heightAdjustment, crateOverride, airdropId)
+{
+    if (!isdefined(owner)) return;
+
+    flyHeight = getflyheightoffset(dropSite);
+    if (isdefined(heightAdjustment)) flyHeight = flyHeight + heightAdjustment;
+
+    foreach (littlebird in level.littlebirds)
+    {
+        if (isdefined(littlebird.droptype))
+            flyHeight = flyHeight + 128;
+    }
+
+    pathGoal = dropSite * (1, 1, 0) + (0, 0, flyHeight);
+    pathStart = getpathstart(pathGoal, dropYaw);
+    pathEnd = getpathend(pathGoal, dropYaw);
+    pathGoal = pathGoal + anglestoforward((0, dropYaw, 0)) * -50;
+    
+    chopper = helisetup(owner, pathStart, pathGoal);
+    chopper.airdropId = airdropId;
+    chopper endon("death");
+
+    if (!isdefined(crateOverride))
+        crateOverride = undefined;
+
+    chopper.droptype = dropType;
+    chopper setvehgoalpos(pathGoal, 1);
+    chopper thread dropthecrate(dropSite, dropType, flyHeight, 0, crateOverride, pathStart);
+    wait 2;
+    chopper vehicle_setspeed(75, 40);
+    chopper setyawspeed(180, 180, 180, 0.3);
+    chopper waittill("goal");
+    wait 0.1;
+    chopper notify("drop_crate");
+    chopper setvehgoalpos(pathEnd, 1);
+    chopper vehicle_setspeed(300, 75);
+    chopper.leaving = 1;
+    chopper waittill("goal");
+    chopper notify("leaving");
+    chopper notify("delete");
+    maps\mp\_utility::decrementFauxVehicleCount();
+    chopper delete();
+}
+
+_dropthecrate(dropPoint, dropType, lbHeight, dropImmediately, crateOverride, startPos, dropImpulse, previousCrateTypes, tagName)
+{
+    dropCrate = [];
+    self.owner endon("disconnect");
+
+    if (!isdefined(crateOverride))
+    {
+        if (isdefined(previousCrateTypes))
+        {
+            foundDupe = undefined;
+            crateType = undefined;
+
+            for (i = 0; i < 100; i++)
+            {
+                crateType = getcratetypefordroptype(dropType);
+                foundDupe = 0;
+
+                for (j = 0; j < previousCrateTypes.size; j++)
+                {
+                    if (crateType == previousCrateTypes[j])
+                    {
+                        foundDupe = 1;
+                        break;
+                    }
+                }
+
+                if (foundDupe == 0)
+                    break;
+            }
+
+            if (foundDupe == 1)
+                crateType = getcratetypefordroptype(dropType);
+        }
+        else
+            crateType = getcratetypefordroptype(dropType);
+    }
+    else
+        crateType = crateOverride;
+
+    if (!isdefined(dropImpulse))
+        dropImpulse = (randomint(5), randomint(5), randomint(5));
+
+    dropCrate = createairdropcrate(self.owner, dropType, crateType, startPos);
+    dropCrate.airdropId = self.airdropId;
+    dropCrate thread _airDropCrateDeath();
+
+    switch (dropType)
+    {
+        case "nuke_drop":
+        case "airdrop_mega":
+        case "airdrop_juggernaut_recon":
+        case "airdrop_juggernaut":
+            dropCrate linkto(self, "tag_ground", (64, 32, -128), (0, 0, 0));
+            break;
+        case "airdrop_escort":
+        case "airdrop_osprey_gunner":
+            dropCrate linkto(self, tagName, (0, 0, 0), (0, 0, 0));
+            break;
+        default:
+            dropCrate linkto(self, "tag_ground", (32, 0, 5), (0, 0, 0));
+            break;
+    }
+
+    dropCrate.angles = (0, 0, 0);
+    dropCrate show();
+    dropSpeed = self.veh_speed;
+    thread waitfordropcratemsg(dropCrate, dropImpulse, dropType, crateType);
+    return crateType;
+}
+
+_airDropCrateDeath()
+{
+    self endon("captured");
+    self waittill("death");
+    self _clearSurvivorAirdrop();
+}
+
 _killstreakCrateThink(dropType)
 {
 	self endon ("death");
@@ -104,7 +287,7 @@ _killstreakCrateThink(dropType)
 
 	for (;;)
 	{
-		self waittill ("captured", player);
+		self waittill("captured", player);
 		
 		if (isDefined(self.owner) && player != self.owner)
 		{
@@ -140,22 +323,7 @@ _killstreakCrateThink(dropType)
 			}
 		}
 
-        lastDistance = undefined;
-        lastTarget = undefined;
-        airdrops = self.owner.airdrops;
-        for(i = 0; i < airdrops.size; i++)
-        {
-            if (_getcratetypefordroptype(airdrops[i][0]) == self.crateType)
-            {
-                targetDistance = distanceSquared(airdrops[i][1], self.origin);
-                if (!isDefined(lastDistance) || lastDistance > targetDistance)
-                {
-                    lastDistance = targetDistance;
-                    lastTarget = i;
-                }
-            }
-        }
-        if (isDefined(lastTarget)) self.owner.airdrops = lethalbeats\array::array_remove_index(self.owner.airdrops, lastTarget);
+        self _clearSurvivorAirdrop();
 	
         if (string_starts_with(dropType, "perk_")) 
         {
@@ -170,4 +338,29 @@ _killstreakCrateThink(dropType)
 
         self deleteCrate();
 	}
+}
+
+/*
+///DocStringBegin
+detail: _clearSurvivorAirdrop(): <Void>
+summary: `onAirdropFire` in `survivorHandler` monitors when an airdrop is called, and if the match is reset to clear entities, it spawns it again. This func clears used airdrops.
+///DocStringEnd
+*/
+_clearSurvivorAirdrop()
+{
+    if (!isDefined(self.airdropId)) return;
+
+    airdrops = self.owner.airdrops;
+    airdropIndex = undefined;
+
+    for(i = 0; i < airdrops.size; i++)
+    {
+        if (self.airdropId == airdrops[i][2])
+        {
+            airdropIndex = i;
+            break;
+        }
+    }
+
+    if (isDefined(airdropIndex)) self.owner.airdrops = lethalbeats\array::array_remove_index(self.owner.airdrops, airdropIndex);
 }

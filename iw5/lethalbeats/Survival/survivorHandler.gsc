@@ -90,7 +90,6 @@ onPlayerSpawn()
 		self thread dropWeaponMonitor();
 		self thread onPlayerMelee();
 		self thread onHoldBreath();
-		self thread onAirdropFire();
 
 		self notify("weapon_change", self getCurrentWeapon());
 		if (self isTestClient()) self survivor_take_last_stand();
@@ -533,27 +532,6 @@ onWeaponFire()
 			}
 			self thread unsetBlindEye();
 		}
-	}
-}
-
-onAirdropFire()
-{
-	level endon("game_ended");
-	self endon("disconnect");
-	self endon("death");
-
-	for (;;)
-    {
-        self waittill("grenade_fire", item, weaponName);
-		if (weaponName != "airdrop_marker_mp") continue;
-		item waittill("missile_stuck");
-		
-		if (self hasWeapon("airdrop_marker_mp"))
-		{
-			self takeWeapon("airdrop_marker_mp");
-			self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(self.airdropType);
-		}
-		else self.airdrops[self.airdrops.size] = [self.airdropType, lethalbeats\vector::vector_truncate(item.origin, 3)];
 	}
 }
 
