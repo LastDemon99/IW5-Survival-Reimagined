@@ -330,6 +330,7 @@ player_refill_nades()
 		{
 			self player_add_nades(weaponName, -1);
 			if(weaponName == CLAYMORE && self.grenades[weaponName]) self switchToWeapon(weaponName);
+			else if (weaponName == THROWING_KNIFE && !self.grenades[weaponName]) self player_set_nades("frag_grenade_mp", 0);
 		}
 	}
 }
@@ -1201,9 +1202,9 @@ summary: Removes all custom survival perks from the player.
 */
 survivor_clear_perks()
 {
-	foreach(perk in self.survivalPerks) self player_unset_Perk(perk);
-	self.survivalPerks = [];
 	self _survivor_update_perks();
+	foreach(perk in self.survivalPerks) 
+		self survivor_remove_perk(perk);
 }
 
 /*
@@ -1669,9 +1670,40 @@ survivor_wait_skip()
 	self waittill("skip_intermission");
 }
 
+/*
+///DocStringBegin
+detail: <Trigger> survivor_trigger_filter(survivor <Player>): <Bool>
+summary: Returns true if a player can use the trigger.
+///DocStringEnd
+*/
 survivor_trigger_filter(survivor)
 {
-	return survivor player_is_survivor() && !survivor.inLastStand;
+	if (!isAlive(survivor) || survivor.disabledusability || survivor.inLastStand || !survivor player_is_survivor()) 
+		return false;
+
+	// triggers priority, disable other nearby triggers
+	if (self.tag != "revive")
+	{
+		radius = self.radius + 10;
+		min_distance_sq =  radius * radius;
+		
+		foreach(trigger in level.triggers)
+		{
+			if (trigger.tag == "revive" && distanceSquared(self.origin, trigger.origin) <= min_distance_sq)
+				return false;
+		}
+
+		if (self.tag != "throwingKnife")
+		{
+			foreach(trigger in level.triggers)
+			{
+				if (trigger.tag == "throwingKnife" && distanceSquared(self.origin, trigger.origin) <= min_distance_sq)
+					return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 /*
@@ -1681,10 +1713,12 @@ summary: Loads the player's saved state from a previous session, restoring score
 ///DocStringEnd
 */
 survivor_load_state()
-{	
+{
 	if (self isTestClient() || !isDefined(game["saveState"]) || !isDefined(game["saveState"][self.guid])) return false;
 
 	playerData = game["saveState"][self.guid];
+
+	self player_take_all_weapons();
 
 	self setOrigin(playerData["origin"]);
 	self setPlayerAngles(playerData["angles"]);
@@ -1710,6 +1744,7 @@ survivor_load_state()
 		self player_give_perk("specialty_finalstand", false);
 	}
 
+	self survivor_clear_perks();
 	foreach(perk in playerData["perks"])
 		self survivor_give_perk(perk);
 
@@ -1751,7 +1786,6 @@ survivor_load_state()
 		dropCrate notify("drop_crate");
 	}
 
-	self player_take_all_weapons(true);
 	for(i = 0; i < 2; i++)
 	{
 		if (!isDefined(playerData["weaponData"][i])) continue;

@@ -115,9 +115,10 @@ onBuy(page, item, price, index)
         case WEAPON_SELECT:
         case WEAPON_LAUNCHERS:
         case WEAPON_RIOTS:
-            if (!(2 - player player_get_weapons().size))
+            if (player player_get_weapons().size > 1)
             {
-                player takeWeapon(player getCurrentWeapon());
+                while (player player_get_weapons().size > 1)
+                    player takeWeapon(player getCurrentWeapon());
                 self.weaponData = player newWeaponData(weapon_build(item));
             }
             else
@@ -317,6 +318,7 @@ isDisabledOption(item, index)
             if (!(weapon[ATTACH_SLOTS] - weapon[ATTACHS].size)) return true;
             item = attach_build(item, weapon[BASENAME]);
             if (!array_contains(weapon[ALLOWED_ATTACHS], item)) return true;
+            if (isEndStr(item, "scopevz")) return !isSubStr(weapon[BUILD_NAME], "scope");
             return !attach_is_combo(item, weapon[ATTACHS]);
         case WEAPON_BUFFS:
             return !(weapon[BUFF_SLOTS] - weapon[BUFFS].size);

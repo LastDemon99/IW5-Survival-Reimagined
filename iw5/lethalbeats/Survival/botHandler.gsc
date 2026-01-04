@@ -123,11 +123,13 @@ onBotSpawn()
 			continue;
 		}
 
+		self.stuned = false;
 		self.dropWeapon = true;
 		self.damageData = [];
 		self takeWeapon(self.secondaryWeapon);
 		self thread onChangeWeapons();
 		self thread onSprint();
+		self thread maps\mp\bots\_bot_script::bot_target_vehicle();
 		self player_unset_Perk("specialty_finalstand");
 
 		mines = 0;
@@ -174,6 +176,8 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 	{
 		if (isDefined(sWeapon))
 		{
+			self thread onStun(sWeapon, sMeansOfDeath);
+
 			if (sWeapon == "artillery_mp" || array_contains(EXPLOSIVE_DAMAGE, sMeansOfDeath)) iDamage *= 4;
 			weaponClass = lethalbeats\weapon::weapon_get_class(sWeapon);
 			if (weaponClass == "sniper") iDamage *= 4;
@@ -338,4 +342,29 @@ onSprint()
 		self.moveSpeedScaler = moveSpeed;
 		self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
     }
+}
+
+onStun(weapon, meansOfDeath)
+{
+	stunTime = 0;
+
+	if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 1.5;
+	else
+	{
+		switch(weapon)
+		{
+			case "flash_grenade_mp": stunTime = 2; break;
+			case "concussion_grenade_mp": stunTime = 3; break;
+			case "artillery_mp": stunTime = 1.5; break;
+			default:
+				return;
+		}
+	}
+
+	self notify("stuned");
+	self endon("stuned");
+	self.stuned = true;
+	self shellShock("concussion_grenade_mp", stunTime);
+	wait stunTime;
+	self.stuned = false;
 }

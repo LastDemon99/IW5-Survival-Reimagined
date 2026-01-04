@@ -312,9 +312,10 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 		lastStandBar.type = "death";
 
 		trigger = lethalbeats\trigger::trigger_create(self.origin, 60);
-		trigger lethalbeats\trigger::trigger_set_use_hold(6, "Hold ^3[{+activate}] ^7to revive the player", true, false);
+		trigger lethalbeats\trigger::trigger_set_use_hold(10, "Hold ^3[{+activate}] ^7to revive the player", true, false);
 		trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
 		trigger lethalbeats\trigger::trigger_link_to(self);
+		trigger.tag = "revive";
 
 		lastStandBar.trigger = trigger;
 		self.lastStandBar = lastStandBar;
@@ -323,7 +324,7 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 			level.survivors_bleedout[self.guid] = [trigger, lastStandBar, undefined];
 
 		trigger thread reviveMonitor(self);
-		self thread deathMonitor(30);
+		self thread deathMonitor(30, trigger);
 
 		if (!survivors(true).size)
 		{
@@ -355,7 +356,7 @@ lastStandMonitor()
 	self survivor_revive();
 }
 
-deathMonitor(lifeTime)
+deathMonitor(lifeTime, trigger)
 {
     level endon("game_ended");
 	self endon("disconnect");
@@ -368,7 +369,9 @@ deathMonitor(lifeTime)
         barFrac = i / lifeTime;
         self.lastStandBar hud_update_bar(barFrac, 0);
         self.lastStandBar.bar.color = (1, barFrac, barFrac);
-        wait 1;
+
+		if (isString(trigger lethalbeats\utility::waittill_any_return(1, "trigger_use_hold"))) 
+			trigger waittill("trigger_hold_interrump");
     }
 	waittillframeend;
 
@@ -626,7 +629,7 @@ dropWeaponMonitor()
 	{
 		self waittill("drop_weapon");
 
-		if (self player_get_weapons().size < 2 || !survivor_trigger_filter(self)) continue;
+		if (self player_get_weapons().size < 2 || self.inLastStand) continue;
 		if (is_shop_near(self.origin))
 		{
 			self hud_set_lower_message("fail_drop_weapon", "You cannot drop a weapon while near the terminals.", 2, 1);

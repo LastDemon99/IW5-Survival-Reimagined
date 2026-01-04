@@ -4,6 +4,8 @@
 
 init()
 {
+    precacheString(&"PLATFORM_GET_KILLSTREAK");
+
 	replacefunc(maps\mp\killstreaks\_airdrop::getCrateTypeForDropType, ::_getcratetypefordroptype);
     replacefunc(maps\mp\killstreaks\_airdrop::watchairdropmarker, ::_watchairdropmarker);
     replacefunc(maps\mp\killstreaks\_airdrop::dropthecrate, ::_dropthecrate);
@@ -16,6 +18,7 @@ init()
     game["strings"]["specialty_longersprint_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
     game["strings"]["specialty_fastreload_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
     game["strings"]["_specialty_blastshield_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+    game["strings"]["specialty_detectexplosive_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
 
 	addCrateType("minigun_turret", "minigun_turret", 20, ::_killstreakCrateThink);
 	addCrateType("gl_turret", "gl_turret", 20, ::_killstreakCrateThink);

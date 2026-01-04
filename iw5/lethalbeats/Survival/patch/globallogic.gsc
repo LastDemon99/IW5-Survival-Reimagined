@@ -42,8 +42,6 @@ init()
     replacefunc(maps\mp\bots\_bot_internal::target_loop, ::patch_target_loop);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateTraced, ::patch_targetObjUpdateTraced);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateNoTrace, ::patch_targetObjUpdateNoTrace);
-    replacefunc(maps\mp\bots\_bot_internal::watchToLook, ::patch_watchToLook);
-
     // GAME
     replacefunc(maps\mp\_events::multiKill, ::patch_multiKill); // update challenges, double, triple, multi
     replacefunc(maps\mp\_utility::playDeathSound, ::patch_playDeathSound); // modifies deaths sound
@@ -481,54 +479,42 @@ patch_onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, v
 	else self lethalbeats\Survival\survivorHandler::onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);
 }
 
+/*
+///DocStringBegin
+detail: patch_target_loop(): <Void>
+summary: Bots Pursuit Improvement.
+///DocStringEnd
+*/
 patch_target_loop()
 {
-	myEye = self geteye();
-	
-	if (isdefined(self.remoteuav))
-	{
-		myEye = self.remoteuav gettagorigin("tag_origin");
-	}
+	myEye = self geteye();	
+	if (isdefined(self.remoteuav)) myEye = self.remoteuav gettagorigin("tag_origin");
 	
 	theTime = gettime();
 	myAngles = self getplayerangles();
-	myFov = self.pers[ "bots" ][ "skill" ][ "fov" ];
+	myFov = self.pers["bots"]["skill"]["fov"];
 	bestTargets = [];
 	bestTime = 2147483647;
-	rememberTime = self.pers[ "bots" ][ "skill" ][ "remember_time" ];
-	initReactTime = self.pers[ "bots" ][ "skill" ][ "init_react_time" ];
+	rememberTime = self.pers["bots"]["skill"]["remember_time"];
+	initReactTime = self.pers["bots"]["skill"]["init_react_time"];
 	hasTarget = isdefined(self.bot.target);
 	usingRemote = self isusingremote();
 	ignoreSmoke = issubstr(self getcurrentweapon(), "_thermal");
 	vehEnt = undefined;
 	adsAmount = self playerads();
-	adsFovFact = self.pers[ "bots" ][ "skill" ][ "ads_fov_multi" ];
-	
-	// SURVIVAL MODE: Aumentar tiempo de memoria y FOV
-	if (isdefined(level.bots_survival_mode) && level.bots_survival_mode)
-	{
-		rememberTime = level.bots_survival_remember_time;
-		myFov *= level.bots_survival_fov_multiplier;
-	}
+	adsFovFact = self.pers["bots"]["skill"]["ads_fov_multi"];
 	
 	if (usingRemote)
 	{
 		if (isdefined(level.ac130player) && level.ac130player == self)
-		{
 			vehEnt = level.ac130.planemodel;
-		}
 		
 		if (isdefined(level.chopper) && isdefined(level.chopper.gunner) && level.chopper.gunner == self)
-		{
 			vehEnt = level.chopper;
-		}
 	}
 	
 	// reduce fov if ads'ing
-	if (adsAmount > 0)
-	{
-		myFov *= 1 - adsFovFact * adsAmount;
-	}
+	if (adsAmount > 0) myFov *= 1 - adsFovFact * adsAmount;
 	
 	if (hasTarget && !isdefined(self.bot.target.entity))
 	{
@@ -536,26 +522,7 @@ patch_target_loop()
 		hasTarget = false;
 	}
 	
-	playercount = level.players.size;
-	humanPlayer = undefined;
-	
-	// SURVIVAL MODE: Encontrar al jugador humano
-	for (i = 0; i < playercount; i++)
-	{
-		player = level.players[ i ];
-		
-		if (player == self)
-		{
-			continue;
-		}
-		
-		if (!isdefined(player.pers[ "isBot" ]) || !player.pers[ "isBot" ])
-		{
-			humanPlayer = player;
-			break;
-		}
-	}
-	
+	playercount = level.players.size;	
 	for (i = -1; i < playercount; i++)
 	{
 		obj = undefined;
@@ -563,94 +530,73 @@ patch_target_loop()
 		if (i == -1)
 		{
 			if (!isdefined(self.bot.script_target))
-			{
 				continue;
-			}
 			
 			ent = self.bot.script_target;
 			key = ent getentitynumber() + "";
 			daDist = distancesquared(self.origin, ent.origin);
-			obj = self.bot.targets[ key ];
+			obj = self.bot.targets[key];
 			isObjDef = isdefined(obj);
 			entOrigin = ent.origin;
 			
 			if (isdefined(self.bot.script_target_offset))
-			{
 				entOrigin += self.bot.script_target_offset;
-			}
 			
 			if (ignoreSmoke || (SmokeTrace(myEye, entOrigin, level.smokeradius)) && bullettracepassed(myEye, entOrigin, false, ent))
 			{
 				if (!isObjDef)
 				{
 					obj = self createTargetObj(ent, theTime);
-					obj.offset = self.bot.script_target_offset;
-					
-					self.bot.targets[ key ] = obj;
+					obj.offset = self.bot.script_target_offset;					
+					self.bot.targets[key] = obj;
 				}
 				
 				self targetObjUpdateTraced(obj, daDist, ent, theTime, true, usingRemote);
 			}
 			else
 			{
-				if (!isObjDef)
-				{
-					continue;
-				}
+				if (!isObjDef) continue;
 				
 				self targetObjUpdateNoTrace(obj);
 				
 				if (obj.no_trace_time > rememberTime)
 				{
-					self.bot.targets[ key ] = undefined;
+					self.bot.targets[key] = undefined;
 					continue;
 				}
 			}
 		}
 		else
 		{
-			player = level.players[ i ];
+			player = level.players[i];
 			
-			if (player == self)
-			{
-				continue;
-			}
+			if (player == self) continue;
 			
 			key = player getentitynumber() + "";
-			obj = self.bot.targets[ key ];
-			
+			obj = self.bot.targets[key];			
 			daDist = distancesquared(self.origin, player.origin);
 			
-			if (usingRemote)
-			{
-				daDist = 0;
-			}
+			if (usingRemote) daDist = 0;
 			
 			isObjDef = isdefined(obj);
 			
-			// SURVIVAL MODE: No ignorar al jugador humano aunque sea del mismo equipo
-			isHumanPlayer = (isdefined(humanPlayer) && player == humanPlayer);
-			
-			if (!isHumanPlayer && ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || !isreallyalive(player)))
-			{
-				if (isObjDef)
-				{
-					self.bot.targets[ key ] = undefined;
-				}
-				
-				continue;
-			}
-			
-			// Skip bots del mismo equipo si no son el humano
-			if (!isHumanPlayer && player.sessionstate != "playing" || !isreallyalive(player))
-			{
-				if (isObjDef)
-				{
-					self.bot.targets[ key ] = undefined;
-				}
-				
-				continue;
-			}
+            if (self.team == "allies")
+            {
+                if ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || !isreallyalive(player))
+                {
+                    if (isObjDef) self.bot.targets[key] = undefined;				
+                    continue;
+                }
+            }
+            else
+            {
+                survivorIsDeath = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
+                if ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || survivorIsDeath || player.inLastStand || player.dogKnockdown || self.stuned)
+                {
+                    if (isObjDef) self.bot.targets[key] = undefined;				
+                    continue;
+                }
+            }
 			
 			canTargetPlayer = false;
 			
@@ -659,121 +605,85 @@ patch_target_loop()
 				canTargetPlayer = (bullettracepassed(myEye, player gettagorigin("j_head"), false, vehEnt)
 						&& !player _hasperk("specialty_blindeye"));
 			}
+			else if (self.team == "axis")
+			{
+				hasLineOfSight = (player checkTraceForBone(myEye, "j_head") ||
+						player checkTraceForBone(myEye, "j_spineupper") ||
+						player checkTraceForBone(myEye, "j_ankle_le") ||
+						player checkTraceForBone(myEye, "j_ankle_ri"));
+				
+				smokeCheck = (ignoreSmoke ||
+						SmokeTrace(myEye, player.origin, level.smokeradius) ||
+						daDist < level.bots_maxknifedistance * 8);
+				
+				fovCheck = (getConeDot(player.origin, self.origin, myAngles) >= (myFov * 0.5) ||
+						(isObjDef && isdefined(obj.trace_time)) ||
+						daDist < level.bots_maxknifedistance * 6);
+				
+				canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
+				
+				if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
+					canTargetPlayer = hasLineOfSight;
+			}
 			else
 			{
-				// SURVIVAL MODE: Criterios más flexibles para el jugador humano
-				if (isHumanPlayer)
-				{
-					// Verificar línea de visión básica
-					hasLineOfSight = (player checkTraceForBone(myEye, "j_head") ||
-							player checkTraceForBone(myEye, "j_spineupper") ||
+				canTargetPlayer = ((player checkTraceForBone(myEye, "j_head") ||
 							player checkTraceForBone(myEye, "j_ankle_le") ||
-							player checkTraceForBone(myEye, "j_ankle_ri"));
-					
-					// Verificar humo (ignorar si está cerca)
-					smokeCheck = (ignoreSmoke ||
+							player checkTraceForBone(myEye, "j_ankle_ri"))
+							
+						&& (ignoreSmoke ||
 							SmokeTrace(myEye, player.origin, level.smokeradius) ||
-							daDist < level.bots_maxknifedistance * 8);
-					
-					// FOV más permisivo o si ya lo tiene como objetivo
-					fovCheck = (getConeDot(player.origin, self.origin, myAngles) >= (myFov * 0.5) ||
-							(isObjDef && obj.trace_time) ||
-							daDist < level.bots_maxknifedistance * 6);
-					
-					canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
-					
-					// FORZAR targeting si el jugador está muy cerca
-					if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
-					{
-						canTargetPlayer = hasLineOfSight;
-					}
-				}
-				else
-				{
-					// Para otros bots, usar el sistema normal
-					canTargetPlayer = ((player checkTraceForBone(myEye, "j_head") ||
-								player checkTraceForBone(myEye, "j_ankle_le") ||
-								player checkTraceForBone(myEye, "j_ankle_ri"))
-								
-							&& (ignoreSmoke ||
-								SmokeTrace(myEye, player.origin, level.smokeradius) ||
-								daDist < level.bots_maxknifedistance * 4)
-								
-							&& (getConeDot(player.origin, self.origin, myAngles) >= myFov ||
-								(isObjDef && obj.trace_time)));
-				}
+							daDist < level.bots_maxknifedistance * 4)
+							
+						&& (getConeDot(player.origin, self.origin, myAngles) >= myFov ||
+							(isObjDef && obj.trace_time)));
 			}
 			
 			if (isdefined(self.bot.target_this_frame) && self.bot.target_this_frame == player)
 			{
-				self.bot.target_this_frame = undefined;
-				
+				self.bot.target_this_frame = undefined;				
 				canTargetPlayer = true;
 			}
 			
 			if (isdefined(self.remoteuav) && isdefined(player.uavremotemarkedby))
-			{
 				canTargetPlayer = false;
-			}
 			
 			if (canTargetPlayer)
 			{
 				if (!isObjDef)
 				{
-					obj = self createTargetObj(player, theTime);
-					
-					// SURVIVAL MODE: Marcar si es el jugador humano
-					if (isHumanPlayer)
-					{
-						obj.is_human_player = true;
-					}
-					
-					self.bot.targets[ key ] = obj;
+					obj = self createTargetObj(player, theTime);					
+					self.bot.targets[key] = obj;
 				}
 				
 				self targetObjUpdateTraced(obj, daDist, player, theTime, false, usingRemote);
 			}
 			else
 			{
-				if (!isObjDef)
-				{
-					continue;
-				}
+				if (!isObjDef) continue;
 				
 				self targetObjUpdateNoTrace(obj);
 				
-				// SURVIVAL MODE: Mayor tiempo de memoria para el jugador humano
 				currentRememberTime = rememberTime;
-				if (isdefined(obj.is_human_player) && obj.is_human_player)
-				{
-					currentRememberTime *= 3; // 3x tiempo de memoria para el humano
-				}
+				if (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity))
+					currentRememberTime *= 3; // increase remember time
 				
 				if (obj.no_trace_time > currentRememberTime)
 				{
-					self.bot.targets[ key ] = undefined;
+					self.bot.targets[key] = undefined;
 					continue;
 				}
 			}
 		}
 		
-		if (!isdefined(obj))
-		{
-			continue;
-		}
-		
-		if (theTime - obj.time < initReactTime)
-		{
-			continue;
-		}
+		if (!isdefined(obj)) continue;		
+		if (theTime - obj.time < initReactTime) continue;
 		
 		timeDiff = theTime - obj.trace_time_time;
 		
-		// SURVIVAL MODE: Priorizar al jugador humano
-		if (isdefined(obj.is_human_player) && obj.is_human_player)
-		{
-			timeDiff = int(timeDiff * 0.1); // Hacer que el humano sea 10x más prioritario
-		}
+		// survivor enemy priority
+		if (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity))
+			timeDiff = int(timeDiff * 0.1);
 		
 		if (timeDiff < bestTime)
 		{
@@ -781,29 +691,22 @@ patch_target_loop()
 			bestTime = timeDiff;
 		}
 		
-		if (timeDiff == bestTime)
-		{
-			bestTargets[ key ] = obj;
-		}
+		if (timeDiff == bestTime) bestTargets[key] = obj;
 	}
 	
-	if (hasTarget && isdefined(bestTargets[ self.bot.target.entity getentitynumber() + "" ]))
-	{
+	if (hasTarget && isdefined(bestTargets[self.bot.target.entity getentitynumber() + ""]))
 		return;
-	}
 	
 	closest = 2147483647;
-	toBeTarget = undefined;
-	
+	toBeTarget = undefined;	
 	bestKeys = getarraykeys(bestTargets);
 	
-	// SURVIVAL MODE: Priorizar al jugador humano sobre la distancia
 	for (i = bestKeys.size - 1; i >= 0; i--)
 	{
-		targetObj = bestTargets[ bestKeys[ i ] ];
+		targetObj = bestTargets[bestKeys[i]];
 		
-		// Si es el jugador humano, seleccionarlo inmediatamente
-		if (isdefined(targetObj.is_human_player) && targetObj.is_human_player)
+		// select the survivor as priority
+		if (self.team == "axis" && isDefined(targetObj.entity) && isPlayer(targetObj.entity))
 		{
 			toBeTarget = targetObj;
 			break;
@@ -811,10 +714,7 @@ patch_target_loop()
 		
 		theDist = targetObj.dist;
 		
-		if (theDist > closest)
-		{
-			continue;
-		}
+		if (theDist > closest) continue;
 		
 		closest = theDist;
 		toBeTarget = targetObj;
@@ -824,14 +724,10 @@ patch_target_loop()
 	newTargetID = -1;
 	
 	if (hasTarget && isdefined(self.bot.target.entity))
-	{
 		beforeTargetID = self.bot.target.entity getentitynumber();
-	}
 	
 	if (isdefined(toBeTarget) && isdefined(toBeTarget.entity))
-	{
 		newTargetID = toBeTarget.entity getentitynumber();
-	}
 	
 	if (beforeTargetID != newTargetID)
 	{
@@ -842,34 +738,25 @@ patch_target_loop()
 
 patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 {
-	distClose = self.pers[ "bots" ][ "skill" ][ "dist_start" ];
+	distClose = self.pers["bots"]["skill"]["dist_start"];
 	distClose *= self.bot.cur_weap_dist_multi;
 	distClose *= distClose;
 	
-	distMax = self.pers[ "bots" ][ "skill" ][ "dist_max" ];
+	distMax = self.pers["bots"]["skill"]["dist_max"];
 	distMax *= self.bot.cur_weap_dist_multi;
 	distMax *= distMax;
 	
 	timeMulti = 1;
 	
-	// SURVIVAL MODE: Ignorar distancia máxima si es el jugador humano
-	if (!usingRemote && !isScriptObj && !(isdefined(obj.is_human_player) && obj.is_human_player))
+    targetIsSurvivor = self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity);
+
+    // ignore max distance & increase track multiplier if target is survivor
+	if (!usingRemote && !isScriptObj && !targetIsSurvivor)
 	{
-		if (daDist > distMax)
-		{
-			timeMulti = 0;
-		}
-		else if (daDist > distClose)
-		{
-			timeMulti = 1 - ((daDist - distClose) / (distMax - distClose));
-		}
+		if (daDist > distMax) timeMulti = 0;
+		else if (daDist > distClose) timeMulti = 1 - ((daDist - distClose) / (distMax - distClose));
 	}
-	
-	// SURVIVAL MODE: Bonus de tiempo para el jugador humano
-	if (isdefined(obj.is_human_player) && obj.is_human_player)
-	{
-		timeMulti = 1.5; // 50% más de tiempo de tracking
-	}
+	if (targetIsSurvivor) timeMulti = 1.5;
 	
 	obj.no_trace_time = 0;
 	obj.trace_time += int(50 * timeMulti);
@@ -882,143 +769,17 @@ patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 
 patch_targetObjUpdateNoTrace(obj)
 {
-	incrementAmount = 50;
+	incrementAmount = 50;	
+    targetIsSurvivor = self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity);
 	
-	// SURVIVAL MODE: Más lento incremento de no_trace para el jugador humano
-	if (isdefined(obj.is_human_player) && obj.is_human_player)
-	{
-		incrementAmount = 25; // Mitad de velocidad de olvido
-	}
+    // increase no_trace if target is survivor
+    if (targetIsSurvivor) incrementAmount = 25;	
 	
-	obj.no_trace_time += incrementAmount;
+    obj.no_trace_time += incrementAmount;
 	obj.trace_time = 0;
-	
-	// SURVIVAL MODE: No resetear didlook para el jugador humano inmediatamente
-	if (!isdefined(obj.is_human_player) || !obj.is_human_player)
-	{
-		obj.didlook = false;
-	}
-}
 
-patch_watchToLook()
-{
-	self endon("disconnect");
-	self endon("death");
-	self endon("new_enemy");
-	
-	for (;;)
-	{
-		while (isdefined(self.bot.target) && self.bot.target.didlook)
-		{
-			wait 0.05;
-		}
-		
-		while (isdefined(self.bot.target) && self.bot.target.no_trace_time)
-		{
-			wait 0.05;
-		}
-		
-		if (!isdefined(self.bot.target))
-		{
-			break;
-		}
-		
-		self.bot.target.didlook = true;
-		
-		if (self.bot.isfrozen)
-		{
-			continue;
-		}
-		
-		// SURVIVAL MODE: Más agresivos contra el jugador humano
-		maxDistForAction = level.bots_maxshotgundistance * 2;
-		if (isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player)
-		{
-			maxDistForAction = level.bots_maxshotgundistance * 3; // Mayor distancia para el humano
-		}
-		
-		if (self.bot.target.dist > maxDistForAction)
-		{
-			continue;
-		}
-		
-		if (self.bot.target.dist <= level.bots_maxknifedistance)
-		{
-			continue;
-		}
-		
-		if (!self canFire(self getcurrentweapon()))
-		{
-			continue;
-		}
-		
-		if (!self isInRange(self.bot.target.dist, self getcurrentweapon()))
-		{
-			continue;
-		}
-		
-		if (self.bot.is_cur_sniper)
-		{
-			continue;
-		}
-		
-		// SURVIVAL MODE: Mayor probabilidad de salto/dropshot contra el humano
-		jumpChance = self.pers[ "bots" ][ "behavior" ][ "jump" ];
-		if (isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player)
-		{
-			jumpChance = int(jumpChance * 1.5); // 50% más de probabilidad
-			if (jumpChance > 100)
-			{
-				jumpChance = 100;
-			}
-		}
-		
-		if (randomint(100) > jumpChance)
-		{
-			continue;
-		}
-		
-		if (!getdvarint("bots_play_jumpdrop"))
-		{
-			continue;
-		}
-		
-		// SURVIVAL MODE: Reducir cooldown de jump contra el humano
-		jumpCooldown = 5000;
-		if (isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player)
-		{
-			jumpCooldown = 3000; // 3 segundos en vez de 5
-		}
-		
-		if (isdefined(self.bot.jump_time) && gettime() - self.bot.jump_time <= jumpCooldown)
-		{
-			continue;
-		}
-		
-		if (self.bot.target.rand <= self.pers[ "bots" ][ "behavior" ][ "strafe" ])
-		{
-			if (self getstance() != "stand")
-			{
-				continue;
-			}
-			
-			self.bot.jump_time = gettime();
-			self thread jump();
-		}
-		else
-		{
-			if (getConeDot(self.bot.target.last_seen_pos, self.origin, self getplayerangles()) < 0.8 || self.bot.target.dist <= level.bots_noadsdistance)
-			{
-				continue;
-			}
-			
-			self.bot.jump_time = gettime();
-			self prone();
-			self notify("kill_goal");
-			wait 2.5;
-			self crouch();
-		}
-	}
+    // do not reset didlook for survivor target
+	if (!targetIsSurvivor) obj.didlook = false;
 }
 
 //////////////////////////////////////////
@@ -1267,7 +1028,9 @@ weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
     {
         self waittill("trigger_use", player);
 
-        if (player player_get_weapons().size >= 2) player player_drop_weapon();
+		while (player player_get_weapons().size > 1)
+			player player_drop_weapon();
+		
         player player_give_weapon(weaponName);
         
         if (!isDefined(weaponData)) weaponData = level player_get_weapon_data(weaponName);
@@ -1453,7 +1216,7 @@ patch_playerTouchTriggerThink(trigger, enterFunc, exitFunc)
     trigger notify("trigger_enter", self);
     self notify("trigger_enter", trigger);
 
-    if (isdefined(enterFunc)) self thread [[ enterFunc ]](trigger);
+    if (isdefined(enterFunc)) self thread [[enterFunc]](trigger);
 
     self.touchtriggers[trigger.entnum] = trigger;
 
@@ -1471,7 +1234,7 @@ patch_playerTouchTriggerThink(trigger, enterFunc, exitFunc)
         }
 
         self notify("trigger_leave", trigger);
-        if (isdefined(exitFunc)) self thread [[ exitFunc ]](trigger);
+        if (isdefined(exitFunc)) self thread [[exitFunc]](trigger);
     }
 
     if (!common_scripts\utility::isSp() && level.gameended)

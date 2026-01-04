@@ -404,6 +404,8 @@ spawnRevive()
 	trigger lethalbeats\trigger::trigger_set_use_hold(10, "Hold ^3[{+activate}] ^7to revive the player", true, false);
 	trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
 	trigger thread reviveMonitor();
+	trigger.tag = "revive";
+	trigger.reviveEnt = reviveEnt;
 }
 
 reviveMonitor()
@@ -414,6 +416,7 @@ reviveMonitor()
 	for(;;)
 	{
 		self waittill("trigger_hold_complete", player);
+		self.reviveEnt delete();
 		self lethalbeats\trigger::trigger_delete();
 	}
 }
@@ -700,6 +703,9 @@ onAddAllyBot()
 	self thread onJoinAllyBot();
 	self thread lethalbeats\Survival\survivorHandler::onPlayerDisconnect();
 	self thread lethalbeats\Survival\survivorHandler::onPlayerSpawn();
+	self thread maps\mp\bots\_bot_script::bot_target_vehicle();
+	self thread maps\mp\bots\_bot_script::bot_equipment_kill_think();
+	self thread maps\mp\bots\_bot_script::bot_turret_think();
 }
 
 onJoinAllyBot()

@@ -64,6 +64,9 @@ grenadeWatchUsage()
 
         if (weaponName == "semtex_mp")
             item thread mineCreateBombSquadModel("projectile_semtex_grenade_bombsquad", self);
+
+        if (weaponName == "throwingknife_mp")
+            self throwingKnifeWatch(item, weaponName);
     }
 }
 
@@ -93,7 +96,7 @@ c4Watch(item, weaponName)
 {
     if (!isDefined(self.mines[C4]))
     {
-        self.mines[C4] = [item];
+        self.mines[C4] = [];
         self thread c4WatchAltDetonate();
     }
     else if (self.mines[C4].size > level.maxperplayerexplosives)
@@ -193,7 +196,7 @@ claymoreWatchStuck(owner, weaponName)
     owner notify("claymore_stuck", self);
     owner.changingweapon = undefined;
 
-    if (!isDefined(owner.mines[CLAYMORE])) owner.mines[CLAYMORE] = [self];
+    if (!isDefined(owner.mines[CLAYMORE])) owner.mines[CLAYMORE] = [];
     else if (owner.mines[CLAYMORE].size > level.maxperplayerexplosives)
     {
         result = array_pop(owner.mines[CLAYMORE]);
@@ -230,7 +233,7 @@ claymoreWatchProximity()
         
         if (isdefined(self.owner) && player == self.owner) continue;
         if (!friendlyFireCheck(self.owner, player, 0)) continue;
-        if (lengthsquared(player getEntityVelocity()) < 10) continue;
+        //if (lengthsquared(player getEntityVelocity()) < 10) continue; disable for bots
 
         zDistance = abs(player.origin[2] - self.origin[2]);
 
@@ -261,7 +264,7 @@ claymoreWatchProximity()
 
 bouncingbettyWatch(item, weaponName)
 {
-    if (!isDefined(self.mines[BOUNCINGBETTY])) self.mines[BOUNCINGBETTY] = [item];
+    if (!isDefined(self.mines[BOUNCINGBETTY])) self.mines[BOUNCINGBETTY] = [];
     else if (self.mines[BOUNCINGBETTY].size > level.maxperplayerexplosives)
     {
         result = array_pop(self.mines[BOUNCINGBETTY]);
@@ -360,6 +363,48 @@ bouncingbettyWatchProximity()
     self delete();
 }
 
+throwingKnifeWatch(item, weaponName)
+{
+    if (!isDefined(self.mines[weaponName])) self.mines[weaponName] = [];
+    
+    if (self.mines[weaponName].size >= 4)
+    {
+        oldest = self.mines[weaponName][0];
+        self.mines[weaponName] = array_remove_index(self.mines[weaponName], 0);
+        if (isDefined(oldest))
+        {
+            if (isDefined(oldest.trigger)) oldest.trigger trigger_delete();
+            oldest delete();
+        }
+    }
+
+    self.mines[weaponName][self.mines[weaponName].size] = item;
+
+    item.owner = self;
+    item.team = self.team;
+    item.weaponname = weaponName;
+    item thread throwingKnifeWatchStuck(self, weaponName);
+}
+
+throwingKnifeWatchStuck(owner, weaponName)
+{
+    owner endon("spawned_player");
+    owner endon("disconnect");
+    self endon("death");
+
+    self waittill("missile_stuck");
+    
+    trigger = trigger_create(self.origin, 90);
+    trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up ThrowingKnife");
+    trigger trigger_set_enable_condition(::minePickupCondition);
+    trigger.owner = owner;
+    trigger.tag = "throwingKnife";
+    self.trigger = trigger;
+
+    if (owner.team == "allies") self thread setClaymoreTeamHeadIcon(owner.team);
+    self mineWatchPickup(owner, trigger);
+}
+
 minePickupCondition(player)
 {
     return player == self.owner && isAlive(player) && !player.inLastStand && !player.disabledusability;
@@ -425,8 +470,10 @@ mineDamage()
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
         self.trigger trigger_delete();
-        self.bombSquad delete();
-        self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
+        if (isDefined(self.bombSquad)) self.bombSquad delete();
+        
+        if (isDefined(self.owner) && isDefined(self.owner.mines[self.weaponname]))
+            self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
     }
 
     self detonate(attacker);
@@ -464,16 +511,13 @@ mineWatchPickup(owner, trigger)
 		else if (isDefined(owner.grenades[self.weaponname]))
 		{
 			owner lethalbeats\survival\utility::player_add_nades(self.weaponname, 1);
-			if(!(owner hasWeapon(self.weaponname)))
-			{
-				owner giveweapon(self.weaponname);
-				if (self.weaponname == CLAYMORE) owner maps\mp\_utility::_setActionSlot(1, "weapon", self.weaponname);
-				else owner maps\mp\_utility::_setActionSlot(5, "weapon", self.weaponname);
-			}
+			if (self.weaponname == CLAYMORE) owner maps\mp\_utility::_setActionSlot(1, "weapon", self.weaponname);
+            else if (self.weaponname == C4) owner maps\mp\_utility::_setActionSlot(5, "weapon", self.weaponname);
 		}
 
         trigger trigger_delete();
-        owner.mines[self.weaponname] = array_remove(owner.mines[self.weaponname], self);
+        if (isDefined(owner.mines[self.weaponname]))
+            owner.mines[self.weaponname] = array_remove(owner.mines[self.weaponname], self);
 
         self delete();
         self notify("death");
@@ -502,8 +546,10 @@ mineCreateBombSquadModel(model, owner)
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
         self.trigger trigger_delete();
-        self.bombSquad delete();
-        owner.mines[self.weaponname] = array_remove(owner.mines[self.weaponname], self);
+        if (isDefined(self.bombSquad)) self.bombSquad delete();
+        
+        if (isDefined(owner) && isDefined(owner.mines[self.weaponname]))
+            owner.mines[self.weaponname] = array_remove(owner.mines[self.weaponname], self);
     }
 }
 
