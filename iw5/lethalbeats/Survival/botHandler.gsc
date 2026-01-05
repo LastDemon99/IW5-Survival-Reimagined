@@ -176,8 +176,6 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 	{
 		if (isDefined(sWeapon))
 		{
-			self thread onStun(sWeapon, sMeansOfDeath);
-
 			if (sWeapon == "artillery_mp" || array_contains(EXPLOSIVE_DAMAGE, sMeansOfDeath)) iDamage *= 4;
 			weaponClass = lethalbeats\weapon::weapon_get_class(sWeapon);
 			if (weaponClass == "sniper") iDamage *= 4;
@@ -214,6 +212,8 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 				}
 			}
 		}
+
+		self thread onStun(sWeapon, sMeansOfDeath);
 	}
 
 	if (self bot_is_explosive() && array_contains(EXPLOSIVE_DAMAGE, sMeansOfDeath)) self notify("detonate", eAttacker);
@@ -348,18 +348,37 @@ onStun(weapon, meansOfDeath)
 {
 	stunTime = 0;
 
-	if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 1.5;
-	else
+	if (isDefined(self.damageData) && self.damageData.size > 0)
 	{
-		switch(weapon)
+		totalDamage = 0;
+		currentTime = getTime();
+		for (i = self.damageData.size - 1; i >= 0; i--)
 		{
-			case "flash_grenade_mp": stunTime = 2; break;
-			case "concussion_grenade_mp": stunTime = 3; break;
-			case "artillery_mp": stunTime = 1.5; break;
-			default:
-				return;
+			if (currentTime - self.damageData[i][1] <= 500)
+				totalDamage += self.damageData[i][0];
+			else
+				break;
+		}
+
+		if (totalDamage >= self.maxHealth * 0.45)
+			stunTime = 1.5;
+	}
+
+	if (stunTime == 0)
+	{
+		if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 1.5;
+		else if (isDefined(weapon))
+		{
+			switch(weapon)
+			{
+				case "flash_grenade_mp": stunTime = 2; break;
+				case "concussion_grenade_mp": stunTime = 3; break;
+				case "artillery_mp": stunTime = 1.5; break;
+			}
 		}
 	}
+
+	if (stunTime == 0) return;
 
 	self notify("stuned");
 	self endon("stuned");
