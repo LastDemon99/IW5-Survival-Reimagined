@@ -1746,7 +1746,7 @@ survivor_load_state()
 
 	self survivor_clear_perks();
 	foreach(perk in playerData["perks"])
-		self survivor_give_perk(perk);
+		self survivor_give_perk(perk == "specialty_blastshield" ? "_" + perk : perk);
 
 	self player_clear_nades();
 	foreach(grenade, ammount in playerData["grenades"])
