@@ -1217,9 +1217,15 @@ survivor_give_perk(perk)
 {
 	if (self player_has_perk(perk)) return;	
 	if(self.survivalPerks.size == 3) return;
+
+	// ui_perks -> player_perks
+	if(perk == "specialty_steadyaim") perk = "specialty_bulletaccuracy";
+	else if(perk == "specialty_blastshield") perk = "_specialty_blastshield";
+	else if(perk == "specialty_bombsquad") perk = "specialty_detectexplosive";
 	
 	self player_give_perk(perk, false);
 	
+	// player_perks -> ui_perks
 	if(perk == "specialty_bulletaccuracy") perk = "specialty_steadyaim";
 	else if(perk == "_specialty_blastshield") perk = "specialty_blastshield";
 	else if(perk == "specialty_detectexplosive") perk = "specialty_bombsquad";
@@ -1746,7 +1752,7 @@ survivor_load_state()
 
 	self survivor_clear_perks();
 	foreach(perk in playerData["perks"])
-		self survivor_give_perk(perk == "specialty_blastshield" ? "_" + perk : perk);
+		self survivor_give_perk(perk);
 
 	self player_clear_nades();
 	foreach(grenade, ammount in playerData["grenades"])
