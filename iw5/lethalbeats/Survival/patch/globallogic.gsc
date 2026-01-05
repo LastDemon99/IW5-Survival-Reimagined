@@ -591,7 +591,7 @@ patch_target_loop()
             else
             {
                 survivorIsDeath = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
-                if ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || survivorIsDeath || player.inLastStand || player.dogKnockdown || self.stuned)
+                if ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || survivorIsDeath || (isDefined(player.inLastStand) && player.inLastStand) || (isDefined(player.dogKnockdown) && player.dogKnockdown) || (isDefined(self.stuned) && self.stuned))
                 {
                     if (isObjDef) self.bot.targets[key] = undefined;				
                     continue;
