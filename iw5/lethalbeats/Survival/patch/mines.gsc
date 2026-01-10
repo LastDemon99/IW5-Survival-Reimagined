@@ -130,7 +130,7 @@ c4WatchStuck()
     
     trigger = trigger_create(self.origin, 70);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up C4");
-    trigger trigger_set_enable_condition(::minePickupCondition);
+    trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = self.owner;
     self.trigger = trigger;
 
@@ -213,7 +213,7 @@ claymoreWatchStuck(owner, weaponName)
 
     trigger = trigger_create(self.origin, 70);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up Claymore");
-    trigger trigger_set_enable_condition(::minePickupCondition);
+    trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = owner;
     self.trigger = trigger;
 
@@ -295,7 +295,7 @@ bouncingbettyWatchStuck(owner)
 
     trigger = trigger_create(self.origin + (0, 0, 25), 70);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up Bouncing Betty");
-    trigger trigger_set_enable_condition(::minePickupCondition);
+    trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = owner;
     self.trigger = trigger;
 
@@ -396,7 +396,7 @@ throwingKnifeWatchStuck(owner, weaponName)
     
     trigger = trigger_create(self.origin, 90);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up ThrowingKnife");
-    trigger trigger_set_enable_condition(::minePickupCondition);
+    trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = owner;
     trigger.tag = "throwingKnife";
     self.trigger = trigger;
@@ -407,7 +407,9 @@ throwingKnifeWatchStuck(owner, weaponName)
 
 minePickupCondition(player)
 {
-    return player == self.owner && isAlive(player) && !player.inLastStand && !player.disabledusability;
+    if (player != self.owner) return false;
+    if (player.team == "allies") return self lethalbeats\survival\utility::survivor_trigger_filter(player);
+    return true;
 }
 
 mineDamage()
@@ -563,14 +565,24 @@ mineBombSquadVisibilityUpdater()
         
         mines = [];
 		foreach(player in level.players)
-            if (isDefined(player.mines))
+            if (isDefined(player) && isDefined(player.mines))
                 mines = array_combine(mines, array_get_values(player.mines));
 
         foreach(mine in mines)
         {
+            if (!isDefined(mine) || !isDefined(mine.bombSquad)) continue;
+
             foreach(player in level.players)
-                if (player.team != mine.team && player maps\mp\_utility::_hasPerk("specialty_detectexplosive"))
-                    mine.bombSquad showToPlayer(player);
+            {
+                if (!isDefined(player) || !isAlive(player) || !isDefined(player.team) || !isDefined(mine.team)) continue;
+
+                if (player.team != mine.team)
+                {
+                    hasPerk = player maps\mp\_utility::_hasPerk("specialty_detectexplosive");
+                    if (isDefined(hasPerk) && hasPerk)
+                        mine.bombSquad showToPlayer(player);
+                }
+            }
         }
     }
 }

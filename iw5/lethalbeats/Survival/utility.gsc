@@ -1684,8 +1684,7 @@ summary: Returns true if a player can use the trigger.
 */
 survivor_trigger_filter(survivor)
 {
-	if (!isAlive(survivor) || survivor.disabledusability || survivor.inLastStand || !survivor player_is_survivor()) 
-		return false;
+	if (survivor.team != "allies" || (isDefined(survivor.inLastStand) && survivor.inLastStand)) return false;
 
 	// triggers priority, disable other nearby triggers
 	if (self.tag != "revive")
@@ -1695,17 +1694,13 @@ survivor_trigger_filter(survivor)
 		
 		foreach(trigger in level.triggers)
 		{
+			if (!isDefined(trigger) || trigger.disabled) continue;
+
 			if (trigger.tag == "revive" && distanceSquared(self.origin, trigger.origin) <= min_distance_sq)
 				return false;
-		}
 
-		if (self.tag != "throwingKnife")
-		{
-			foreach(trigger in level.triggers)
-			{
-				if (trigger.tag == "throwingKnife" && distanceSquared(self.origin, trigger.origin) <= min_distance_sq)
-					return false;
-			}
+			if (self.tag != "throwingKnife" && trigger.tag == "throwingKnife" && distanceSquared(self.origin, trigger.origin) <= min_distance_sq)
+				return false;
 		}
 	}
 
