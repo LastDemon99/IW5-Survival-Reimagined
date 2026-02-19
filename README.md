@@ -7,6 +7,7 @@
     • <a href="#key-features">Key Features</a> •  
   <a href="#how-to-use">How To Use</a> •
   <a href="#download">Download</a> •
+  <a href="#contact">Contact</a> •
   <a href="#credits">Credits</a> •
   <a href="#sponsor">Sponsor</a> •
 </p>
@@ -35,24 +36,28 @@
 - The mod allows you to switch between servers and game types without any inconvenience other than changing the language to English.
 
 # <a name="how-to-use"></a>How To Use
-> [!IMPORTANT]
-> 
-> The new version will have a new format to facilitate future updates.
-> If you have already installed the previous version you should delete the following files:<br><br>
-> `%localappdata%/plutonium/storage/iw5/survival_config.cfg`.<br>
-> `%localappdata%/plutonium/storage/iw5/maps/mp/gametypes/survival.gsc`<br>
-> `%localappdata%/plutonium/storage/iw5/lethalbeats`<br>
-> `%localappdata%/plutonium/storage/iw5/mods`
->
+If you enter a dedicated server that has the mod you will not have to do anything.<br>
 
-If you enter a server that has the mod you will not have to do anything.<br>
-If you find it difficult to load the mod you can also directly download and use the Survival Loader.<br><br>
-Manual installation:
+### Private Match
 1. Press `windows + r` and paste the path `%localappdata%/plutonium/storage/iw5/` unzip the `IW5-Survival-Reimagined` rar file in that directory.
 2. In the game console type `loadmod survival` to load the mod.
 3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> survival_normal -> Ok -> ESC -> Start Game`.<br><br>
+4. To play with friends in a private game, you must use Radmin, create a private match and then your friends join with the console command connect yourIP (everyone needs the mod installed).
 
-To report bugs, make suggestions or need help, visit our discord: [LethalBeats](https://discord.gg/PrpYznV33s)
+**If you find it difficult to load the mod you can also directly download and use the Survival Loader**
+
+### Dedicated Server (Advanced)
+> [!IMPORTANT]
+>
+> You should already have your server configured, public IP address, ports open, FastDL created, etc.
+>
+
+1. Press `Windows + R` and paste the path `%localappdata%/plutonium/storage/iw5/`. Unzip the `IW5-Survival-Reimagined` RAR file into that directory.
+2. Go to `%localappdata%/plutonium/storage/iw5/mods/survival` and copy all the `.ff` files. Paste them into `%localappdata%/plutonium/storage/iw5/zone`, and also paste them into `serverFolder/zone/english`. Make sure to create a backup of `localized_code_post_gfx_mp.ff` located in `serverFolder/zone/english` beforehand.
+3. Set in your `server.cfg` the survival dsr `set sv_maprotation "dsr survival map mp_dome"` and the mod directory `seta fs_game "mods/survival"`.
+
+# <a name="contact"></a>Contact
+**To report bugs, make suggestions or need help, visit our discord: [LethalBeats](https://discord.gg/R7TXwSP9kq)**
 
 # <a name="download"></a>Download
 - Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.1.2/IW5-Survival-Reimagined.rar)
