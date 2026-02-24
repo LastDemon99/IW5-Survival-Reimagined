@@ -235,6 +235,8 @@ onStartGametype()
 	level.c4s = [];
 	level.claymores = [];
 	level.droppedWeapons = [];
+	
+	level.difficulty = getDvarInt("survival_enemy_difficulty");
 		
 	lethalbeats\survival\patch\globallogic::patch_callbacks();
 
