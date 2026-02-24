@@ -176,22 +176,9 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 	{
 		if (isDefined(sWeapon))
 		{
-			if (sWeapon == "artillery_mp" || array_contains(EXPLOSIVE_DAMAGE, sMeansOfDeath)) iDamage *= 4;
-			weaponClass = lethalbeats\weapon::weapon_get_class(sWeapon);
-			if (weaponClass == "sniper") iDamage *= 4;
-			if (weaponClass != "projectile" && weaponClass != "riot")
-			{
-				if (lethalbeats\string::string_starts_with(sWeapon, "alt_") && isSubStr(sWeapon, "shotgun")) iDamage *= 4;
-				else
-				{
-					weaponBase = lethalbeats\weapon::weapon_get_baseName(sWeapon);
-					if (weaponBase == "iw5_deserteagle" || weaponBase == "iw5_44magnum") iDamage *= 4;
-					else if (weaponBase == "iw5_mp412" || weaponBase == "iw5_ksg") iDamage *= 2.5;
-					else if (weaponBase == "iw5_mk14") iDamage *= 2;
-				}
-				eAttacker.summary["hits"]++;
-				if (eAttacker.summary["hits"] <= eAttacker.summary["totalshots"]) eAttacker.summary["accuracy"] = clamp(eAttacker.summary["hits"] / eAttacker.summary["totalshots"], 0.0, 1.0) * 100;
-			}
+			eAttacker.summary["hits"]++;
+			if (eAttacker.summary["hits"] <= eAttacker.summary["totalshots"]) eAttacker.summary["accuracy"] = clamp(eAttacker.summary["hits"] / eAttacker.summary["totalshots"], 0.0, 1.0) * 100;
+			iDamage = self weaponDamageModifier(sWeapon, iDamage, sMeansOfDeath);
 		}
 
 		if(isDefined(self.damageData) && !self.inLastStand && !array_contains(array_combine(INSTAKILL, EXPLOSIVE_DAMAGE), sMeansOfDeath))
@@ -386,4 +373,34 @@ onStun(weapon, meansOfDeath)
 	self shellShock("concussion_grenade_mp", stunTime);
 	wait stunTime;
 	self.stuned = false;
+}
+
+weaponDamageModifier(weapon, damage, meansOfDeath)
+{
+	if (weapon == "artillery_mp" || array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) return damage * 4;
+
+	if (meansOfDeath == "MOD_HEAD_SHOT") damage *= 2;
+	
+	weaponClass = lethalbeats\weapon::weapon_get_class(weapon);
+	if (weaponClass == "riot") return damage;
+	if (weaponClass == "sniper") return damage * 4;
+	
+	if (lethalbeats\string::string_starts_with(weapon, "alt_") && isSubStr(weapon, "shotgun"))
+		return damage * 4;
+	
+	switch(lethalbeats\weapon::weapon_get_baseName(weapon))
+	{
+		case "iw5_deserteagle":
+		case "iw5_44magnum":
+			return damage * 4;
+		case "iw5_mp412":
+		case "iw5_ksg":
+			return damage * 2.5;
+		case "iw5_mk14":
+			return damage * 2;
+		case "iw5_1887":
+			return damage * 1.5;
+		default:
+			return damage;
+	}
 }
