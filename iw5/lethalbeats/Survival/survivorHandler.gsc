@@ -169,6 +169,12 @@ onPlayerMelee()
 
 onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset)
 {
+	if (sMeansOfDeath == "MOD_FALLING")
+	{
+		self [[level.prevCallbackPlayerDamage]](eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
+		return;
+	}
+
 	if (isDefined(self.dogKnockdown) && self.dogKnockdown) return;
 	if (isDefined(eAttacker) && isDefined(eAttacker.team) && eAttacker.team == "allies" && eAttacker != self) return;
 	if (lethalbeats\array::array_contains(MOD_MULTIPLIER, sMeansOfDeath))
