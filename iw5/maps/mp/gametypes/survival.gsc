@@ -36,6 +36,7 @@ main()
 	setDvarIfUninitialized("survival_start_money", 500);
 	setDvarIfUninitialized("survival_enemy_multiplier", 1);
 	setDvarIfUninitialized("survival_enemy_difficulty", 1);
+	setDvarIfUninitialized("sv_mapRotation", "dsr survival map mp_dome map mp_mogadishu map mp_bootleg map mp_lambeth map mp_hardhat map mp_interchange map mp_alpha map mp_bravo map mp_plaza2 map mp_exchange map mp_carbon map mp_paris map mp_radar map mp_seatown map mp_underground map mp_village map mp_favela map mp_highrise map mp_nightshift map mp_nuked map mp_rust");
 
 	setDvar("bots_manage_add", 18 - getDvarInt("survival_survivors_limit"));
 	setDvar("sv_cheats", 1);	
