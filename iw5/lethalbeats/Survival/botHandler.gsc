@@ -360,25 +360,25 @@ onStun(weapon, meansOfDeath)
 				break;
 		}
 
-		if (totalDamage >= self.maxHealth * 0.45)
-			stunTime = 1.5;
+		if (totalDamage >= self.maxHealth * 0.35)
+			stunTime = 2;
 	}
 
-	if (stunTime == 0)
+	if (!stunTime)
 	{
-		if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 1.5;
+		if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 2;
 		else if (isDefined(weapon))
 		{
 			switch(weapon)
 			{
-				case "flash_grenade_mp": stunTime = 2; break;
-				case "concussion_grenade_mp": stunTime = 3; break;
-				case "artillery_mp": stunTime = 1.5; break;
+				case "artillery_mp":
+				case "flash_grenade_mp": stunTime = 4; break;
+				case "concussion_grenade_mp": stunTime = 5; break;
 			}
 		}
 	}
 
-	if (stunTime == 0) return;
+	if (!stunTime) return;
 
 	self notify("stuned");
 	self endon("stuned");
