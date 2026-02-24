@@ -1147,26 +1147,26 @@ survivors(alives)
 
 /*
 ///DocStringBegin
-detail: survivors_thread(function: <Function>, alives?: <Bool>): <Void>
+detail: survivors_thread(function: <Function>, alives?: <Bool>, arg1? <Any>, arg2? <Any>, arg3? <Any>, arg4? <Any>, arg5? <Any>): <Void>
 summary: A utility function to execute a function as a thread for each survivor.
 ///DocStringEnd
 */
-survivors_thread(function, alives)
+survivors_thread(function, alives, arg1, arg2, arg3, arg4, arg5)
 {
-	if (isDefined(alives)) array_thread_ent(survivors(alives), function);
-	else array_thread_ent(survivors(), function);
+	if (isDefined(alives)) array_thread_ent(survivors(alives), function, arg1, arg2, arg3, arg4, arg5);
+	else array_thread_ent(survivors(), function, arg1, arg2, arg3, arg4, arg5);
 }
 
 /*
 ///DocStringBegin
-detail: survivors_call(function: <Function>, alives?: <Bool>): <Void>
+detail: survivors_call(function: <Function>, alives?: <Bool>, arg1? <Any>, arg2? <Any>, arg3? <Any>, arg4? <Any>, arg5? <Any>): <Void>
 summary: A utility function to call a function for each survivor.
 ///DocStringEnd
 */
-survivors_call(function, alives)
+survivors_call(function, alives, arg1, arg2, arg3, arg4, arg5)
 {
-	if (isDefined(alives)) array_call_ent(survivors(alives), function);
-	else array_call_ent(survivors(), function);
+	if (isDefined(alives)) array_call_ent(survivors(alives), function, arg1, arg2, arg3, arg4, arg5);
+	else array_call_ent(survivors(), function, arg1, arg2, arg3, arg4, arg5);
 }
 
 /*

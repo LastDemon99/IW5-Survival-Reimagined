@@ -7,6 +7,7 @@
 #define NOTIFY_HOSTILES_2 1
 #define NOTIFY_DIALOG 2
 #define NOTIFY_WAVE_END 3
+#define NOTIFY_SKIP_CASH_BONUS 5
 
 #define INTERMISSION_TIME 25
 
@@ -356,7 +357,13 @@ onSurvivorSkipIntermission()
 	self survivor_wait_skip();
 
 	level.skip_intermission++;
-	if(level.skip_intermission == survivors(true).size) level notify("intermission_end");
+	if(level.skip_intermission == survivors(true).size) 
+	{
+		notifyMessage(NOTIFY_SKIP_CASH_BONUS);
+		survivors_call(::survivor_give_score, undefined, level.timerHud.value * 35);
+		level notify("intermission_end");
+	}
+	
 	level notify("skip_intermission");
 
 	for(;;)
@@ -528,6 +535,12 @@ notifyMessage(type, sound, titleText)
 			notifyData.glowColor = (0, 0, 1);
 			notifyData.duration = 2;
 			notifyData.sound = "survival_wave_end_splash";
+			break;
+		case NOTIFY_SKIP_CASH_BONUS:
+			notifyData.titleText = "Skip Intermission $ " + (level.timerHud.value * 35);
+			notifyData.glowColor = (1, 0.49, 0);
+			notifyData.duration = 1;
+			notifyData.sound = "survival_bonus_splash";
 			break;
 		default:
 			return;
