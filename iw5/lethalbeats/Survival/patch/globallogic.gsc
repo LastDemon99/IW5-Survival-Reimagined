@@ -994,7 +994,7 @@ dropModelFromPlayer(weaponName, weaponModel, weaponData, ammoData)
     displayName = lethalbeats\weapon::weapon_get_display_name(weaponName);
 
     trigger = lethalbeats\trigger::trigger_create(origin, 45);
-    trigger lethalbeats\trigger::trigger_set_use("Press ^3[{+activate}] ^7to pick up " + displayName);
+    trigger lethalbeats\trigger::trigger_set_use("Hold ^3[{+activate}] ^7to pick up " + displayName);
     trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
     trigger thread weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel);
     trigger thread ammoPickupMonitor(weaponName, ammoData, weaponModel);    
@@ -1026,7 +1026,13 @@ weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
 
     for(;;)
     {
-        self waittill("trigger_use", player);
+        self waittill("trigger_use", player, keyType);
+
+        if (keyType == "jkey_down")
+        {
+            result = player lethalbeats\utility::waittill_any_return("jkey_up", 0.45);
+            if (isString(result)) continue;
+        }
 
 		while (player player_get_weapons().size > 1)
 			player player_drop_weapon();

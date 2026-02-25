@@ -428,11 +428,23 @@ onUseShop()
 	
 	for (;;)
 	{
-		self waittill("trigger_use", trigger);
+		self waittill("trigger_use", trigger, keyType);
 		if (isDefined(self.currMenu)) continue;
-		if (trigger.tag == "weapon") self lethalbeats\DynamicMenus\dynamic_shop::openShop("weapon_armory");
-		else if (trigger.tag == "equipment") self lethalbeats\DynamicMenus\dynamic_shop::openShop("equipment_armory");
-		else if (trigger.tag == "support") self lethalbeats\DynamicMenus\dynamic_shop::openShop("air_support_armory");
+
+		menuName = undefined;
+		if (trigger.tag == "weapon") menuName = "weapon_armory";
+		else if (trigger.tag == "equipment") menuName = "equipment_armory";
+		else if (trigger.tag == "support") menuName = "air_support_armory";
+		else continue;
+
+		// just for controller, `+usereload` release event appears to be overridden by the menu input handler
+		if (keyType == "jkey_down") while (self useButtonPressed()) wait 0.05; // wait for button release before menu opens fix input stuck ¯\_(シ)_/¯
+
+		self.currMenu = "shop";
+		self lethalbeats\DynamicMenus\dynamic_shop::openShop(menuName);
+
+		self waittill("close_shop");
+		self.currMenu = undefined;
 	}
 }
 
