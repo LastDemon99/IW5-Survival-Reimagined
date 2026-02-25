@@ -155,7 +155,7 @@ onBuy(page, item, price, index)
                 self.weaponData[BUFF_SLOTS]++;
             }
 
-            player setWeaponData(self.weaponData[BASENAME], self.weaponData);
+            player setWeaponData(self.weaponData[BUILD_NAME], self.weaponData);
             player updateLabels(page);
             return;
     }
@@ -396,10 +396,20 @@ getWeaponData(weapon)
     weaponData = self.weaponData[weaponIndex];
     if (!isDefined(weaponData) || weaponData[BUILD_NAME] != weapon)
     {
+        oldSlots = undefined;
+        if (isDefined(weaponData))
+        {
+            if (weapon_get_baseName(weaponData[BUILD_NAME]) == weapon_get_baseName(weapon))
+                oldSlots = weaponData[ATTACH_SLOTS];
+        }
+
         if (array_contains_key(level.bots_weapons_data, weapon))
             weaponData = level.bots_weapons_data[weapon];
         else
             weaponData = self newWeaponData(weapon, []);
+
+        if (isDefined(oldSlots))
+            weaponData[ATTACH_SLOTS] = oldSlots;
 
         self setWeaponData(weapon, weaponData);
     }
