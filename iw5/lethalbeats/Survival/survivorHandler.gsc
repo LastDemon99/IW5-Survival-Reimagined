@@ -526,8 +526,6 @@ onWeaponFire()
 	self endon("disconnect");
 	self endon("death");
 
-	self.blindeyeActive = false;
-
 	for (;;)
 	{
 		self waittill("weapon_fired", weaponName);
@@ -567,30 +565,7 @@ onWeaponFire()
 				self.summary["totalshots"]++;
 				break;
 		}
-
-		if (lethalbeats\weapon::weapon_has_silencer(weaponName))
-		{
-			if (self.blindeyeActive) self notify("cancel_unset_blindeye");
-			else
-			{
-				self.blindeyeActive = true;
-				self player_give_perk("specialty_blindeye");
-			}
-			self thread unsetBlindEye();
-		}
 	}
-}
-
-unsetBlindEye()
-{
-	self endon("disconnect");
-	self endon("death");
-	self endon("cancel_unset_blindeye");
-
-	wait 2;
-
-	self player_unset_Perk("specialty_blindeye");
-	self.blindeyeActive = false;
 }
 
 onHoldBreath()
