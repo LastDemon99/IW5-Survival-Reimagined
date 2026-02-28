@@ -339,10 +339,10 @@ newWeaponData(weapon, weapon_buffs)
     if (!isDefined(weapon))
     {
         data = [];
-        data[BUILD_NAME] = weapon;
-        data[BASENAME] = weapon;
-        data[ATTACHS] = [];        
-        data[BUFFS] = [];        
+        data[BUILD_NAME] = "none";
+        data[BASENAME] = "none";
+        data[ATTACHS] = [];
+        data[BUFFS] = [];
         data[CAMO] = 0;
         data[ATTACH_SLOTS] = 1;
         data[BUFF_SLOTS] = 1;
@@ -350,7 +350,7 @@ newWeaponData(weapon, weapon_buffs)
         data[ALLOWED_ATTACHS] = [];
         data[IS_PRIMARY] = true;
         data[IS_PRIMARY_CLASS] = false;
-        data[CLASS] = weapon;
+        data[CLASS] = "none";
         return data;
     }
 
@@ -380,7 +380,7 @@ newWeaponData(weapon, weapon_buffs)
 
 setWeaponData(weapon, data)
 {
-    weaponIndex = int(self player_is_weapon_secondary(weapon));
+    weaponIndex = self player_get_weapon_index(weapon);
     self.weaponData[weaponIndex] = data;
     self.weaponData[weaponIndex][IS_PRIMARY] = self player_is_weapon_primary(weapon);
 }
@@ -388,38 +388,41 @@ setWeaponData(weapon, data)
 getWeaponData(weapon)
 {
     if (!isPlayer(self) || self lethalbeats\survival\utility::player_is_bot())
-    {
-        if (array_contains_key(level.bots_weapons_data, weapon))
-            weaponData = level.bots_weapons_data[weapon];
-        else
-            weaponData = self newWeaponData(weapon, []);
-        return;
-    }
+        return array_contains_key(level.bots_weapons_data, weapon) ? level.bots_weapons_data[weapon] : self newWeaponData(weapon, []);
 
     while(weapon == "none")
         wait 0.15;
 
-    weaponIndex = int(self player_is_weapon_secondary(weapon));
-    weaponData = self.weaponData[weaponIndex];
-    if (!isDefined(weaponData) || weaponData[BUILD_NAME] != weapon)
+    waittillframeend;
+
+    weaponData = self.weaponData[self player_get_weapon_index(weapon)];
+    purchasedAttachSlots = undefined;
+    purchasedBuffSlots = undefined;
+
+    if (isDefined(weaponData)) 
     {
-        oldSlots = undefined;
-        if (isDefined(weaponData))
-        {
-            if (weapon_get_baseName(weaponData[BUILD_NAME]) == weapon_get_baseName(weapon))
-                oldSlots = weaponData[ATTACH_SLOTS];
-        }
-
-        if (array_contains_key(level.bots_weapons_data, weapon))
-            weaponData = level.bots_weapons_data[weapon];
+        if (weaponData[BUILD_NAME] == weapon) return weaponData;
         else
-            weaponData = self newWeaponData(weapon, []);
-
-        if (isDefined(oldSlots))
-            weaponData[ATTACH_SLOTS] = oldSlots;
-
-        self setWeaponData(weapon, weaponData);
+        {
+            wepBase = weapon_get_baseName(weapon);
+            if (self.weaponData[0][BASENAME] == wepBase)
+            {
+                purchasedAttachslots = self.weaponData[0][ATTACH_SLOTS];
+                purchasedBuffSlots = self.weaponData[0][BUFF_SLOTS];
+            }
+            else if (self.weaponData[1][BASENAME] == wepBase)
+            {
+                purchasedAttachslots = self.weaponData[1][ATTACH_SLOTS];
+                purchasedBuffSlots = self.weaponData[1][BUFF_SLOTS];
+            }
+        }
     }
+
+    weaponData = array_contains_key(level.bots_weapons_data, weapon) ? level.bots_weapons_data[weapon] : self newWeaponData(weapon, []);
+    if (isDefined(purchasedAttachslots)) weaponData[ATTACH_SLOTS] = purchasedAttachslots;
+    if (isDefined(purchasedBuffSlots)) weaponData[BUFF_SLOTS] = purchasedBuffSlots;
+    self setWeaponData(weapon, weaponData);
+
     return weaponData;
 }
 

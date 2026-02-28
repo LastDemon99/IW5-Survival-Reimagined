@@ -1034,6 +1034,16 @@ weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
             if (isString(result)) continue;
         }
 
+        currWeapon = player getCurrentWeapon();
+        if (!isDefined(currWeapon) || currWeapon == "none") continue;
+        
+        prevWeaponData = player.weaponData[!player player_get_weapon_index(currWeapon)];
+        if (prevWeaponData[1] == lethalbeats\weapon::weapon_get_baseName(weaponName))
+        {
+            player switchToWeaponImmediate(prevWeaponData[0]);
+            wait 0.35;
+        }
+
 		while (player player_get_weapons().size > 1)
 			player player_drop_weapon();
 		
