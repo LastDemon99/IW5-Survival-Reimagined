@@ -307,6 +307,15 @@ onWaveEnd()
 	{
 		level waittill("wave_end");
 
+		foreach(uav in level.uavmodels["axis"])
+		{
+			if (uav.uavtype == "counter") 
+			{
+				playFx(level.uav_fx["explode"], uav.origin, anglesToRight(uav.angles) * 200);
+				uav notify("death");
+			}
+		}
+
 		level.bots_wave = [];
 		level.bots_total_count = 0;
 		level.survivors_deaths = [];

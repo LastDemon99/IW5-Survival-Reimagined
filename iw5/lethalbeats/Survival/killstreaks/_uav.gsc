@@ -22,21 +22,16 @@ init()
 	for(;;)
 	{
 		level waittill("wave_start");
-		wait 0.4;
+		wait 0.5;
 
-		if (level.radarStrength != -3) 
-        {
-            level.radarStrength = 2;
-		    maps\mp\killstreaks\_uav::updateTeamUAVStatus("allies");
-        }
+		level.radarStrength = 2;
+        maps\mp\killstreaks\_uav::updateTeamUAVStatus("allies");
 		
 		level waittill("wave_end");
 
-        if (level.radarStrength != -3) 
-        {
-            level.radarStrength = 0;
-		    maps\mp\killstreaks\_uav::updateTeamUAVStatus("allies");
-        }
+        wait 0.5;
+        level.radarStrength = 0;
+        maps\mp\killstreaks\_uav::updateTeamUAVStatus("allies");
 	}
 }
 
