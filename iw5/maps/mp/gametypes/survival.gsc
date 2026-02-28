@@ -273,7 +273,7 @@ onWaveStart()
 			}
 		}
 
-		bot_clear_models();
+		thread bot_clear_models();
 
 		print("Wave: " + level.wave_num);
 		survivors_call(::survivor_wave_init);

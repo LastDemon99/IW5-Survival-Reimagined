@@ -1038,7 +1038,7 @@ weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
         if (!isDefined(currWeapon) || currWeapon == "none") continue;
         
         prevWeaponData = player.weaponData[!player player_get_weapon_index(currWeapon)];
-        if (prevWeaponData[1] == lethalbeats\weapon::weapon_get_baseName(weaponName))
+        if (isDefined(prevWeaponData) && prevWeaponData[1] == lethalbeats\weapon::weapon_get_baseName(weaponName))
         {
             player switchToWeaponImmediate(prevWeaponData[0]);
             wait 0.35;

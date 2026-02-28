@@ -1108,15 +1108,21 @@ bot_clear_models()
 
 	foreach(bot in bots())
 	{
-		if (isDefined(bot.body) && !array_any_ent(survivors, lethalbeats\player::player_can_see, bot.body.origin))
+		if (isDefined(bot.body) && !array_any_ent(survivors, ::player_can_see, bot.body.origin))
 			bot.body delete();
 	}
 
+	maxDist = 500 * 500;
 	foreach(weapon in level.droppedWeapons)
 	{
-		if (isDefined(weapon) && !array_any_ent(survivors, lethalbeats\player::player_can_see, weapon.origin))
-		weapon delete();
+		if (isDefined(weapon))
+		{
+			foreach(survivor in survivors)
+				if (distanceSquared(survivor.origin, weapon.origin) > maxDist && !survivor player_can_see(weapon.origin))
+					weapon delete();
+		}
 	}
+
 	level.droppedWeapons = [];
 }
 
