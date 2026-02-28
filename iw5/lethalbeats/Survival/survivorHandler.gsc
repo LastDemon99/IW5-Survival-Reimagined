@@ -532,6 +532,31 @@ onWeaponFire()
 	{
 		self waittill("weapon_fired", weaponName);
 
+		if (self player_has_perk("specialty_bulletpenetration"))
+		{
+			eye = self getEye();
+			dir = vectorNormalize(anglesToForward(self getplayerangles()));
+
+			trace = bulletTrace(eye, eye + lethalbeats\vector::vector_scale(dir, 100000), true, self);
+			target = trace["entity"];
+
+			if (isDefined(target) && target player_is_bot())
+			{
+				primary = target lethalbeats\player::player_get_primary();
+				if (isDefined(primary) && primary == "riotshield_mp")
+				{
+					spine = target getTagOrigin("j_spine4");
+					if (vectorDot(dir, vectorNormalize(spine - eye)) > 0.6)
+					{
+						shieldHit = trace["position"];
+						dist = distance(shieldHit, spine) + 5;
+						newHitEnd = shieldHit + lethalbeats\vector::vector_scale(dir, dist);
+						magicbullet(weaponName, newHitEnd, shieldHit, self);
+					}
+				}
+			}
+		}
+
 		switch (weaponClass(weaponName))
 		{
 			case "rifle":
