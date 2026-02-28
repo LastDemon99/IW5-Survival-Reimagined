@@ -9,6 +9,10 @@
 #define AGGRESSIVE_DECISION_TIME_MIN 2
 #define AGGRESSIVE_DECISION_TIME_MAX 4
 
+#define EASY 1
+#define NORMAL 2
+#define HARD 3
+
 init()
 {
 	level.killStreakFuncs["littlebird_survival"] = ::tryUseLBSurvival;
@@ -87,17 +91,17 @@ createLBSurvival()
 	
 	switch(difficulty)
 	{
-		case 1:
-			speedMultiplier = 0.8;
-			targetingMultiplier = 0.75;
-			break;
-		case 2:
+		case NORMAL:
 			speedMultiplier = 0.9;
 			targetingMultiplier = 0.875;
 			break;
-		default:
+		case HARD:
 			speedMultiplier = 1.0;
 			targetingMultiplier = 1.0;
+			break;
+		default:
+			speedMultiplier = 0.8;
+			targetingMultiplier = 0.75;
 			break;
 	}
 	
@@ -116,7 +120,6 @@ createLBSurvival()
 	lb.targettingRadius = int(2000 * targetingMultiplier);
 	lb.flyHeight = flyHeight;
 	lb.minFlyHeight = 500;
-	lb.difficulty = difficulty; 
 	lb.currentGoalPos = undefined;
 	lb.hasNodeSystem = hasNodeSystem;
 
@@ -253,6 +256,14 @@ followPlayer_Dynamic()
 
 	for(;;)
 	{
+		if (isdefined(self.mgTurretLeft getturrettarget(false)) || isdefined(self.mgTurretRight getturrettarget(false)))
+        {
+            self Vehicle_SetSpeed(0, 20, 20); // If a turret has a target, force slow down to "stabilize"
+            self waittill_any_timeout(4.0, "chopper_done_shooting");  // waiting firing end
+            self Vehicle_SetSpeed(self.followSpeed, 20, 20);
+            self.timeForNextMove = gettime(); // force repositioning after shooting
+        }
+
 		survivors = lethalbeats\survival\utility::survivors(true);
 		if (!survivors.size)
 		{
@@ -387,52 +398,70 @@ lbBurstFireStart()
     self.vehicle endon("leaving");
     self endon("stop_shooting");
     level endon("game_ended");
-
-    difficulty = self.vehicle.difficulty;
-    
-    fireTime = 0.1;
-    minShots = 40;
-    maxShots = 80;
-    minPause = 1.0;
-    maxPause = 2.0;
-    
-    switch(difficulty)
+  
+    switch(level.difficulty)
     {
-        case 1:
-            fireTime = 0.15;
-            minShots = 20;
-            maxShots = 40;
-            minPause = 1.5;
-            maxPause = 3.0;
-            break;
-        case 2:
-            fireTime = 0.12;
+        case NORMAL:
+			fireTime = 0.12;
             minShots = 30;
             maxShots = 60;
-            minPause = 1.25;
-            maxPause = 2.5;
+            minPause = 1.5;
+            maxPause = 3.0;
+            windUpTime = 1.75;
             break;
-        default:
-            fireTime = 0.1;
+        case HARD:
+			fireTime = 0.1;
             minShots = 40;
             maxShots = 80;
             minPause = 1.0;
             maxPause = 2.0;
+            windUpTime = 0.8;
+            break;
+		default:
+			fireTime = 0.15;
+            minShots = 20;
+            maxShots = 40;
+            minPause = 2.0;
+            maxPause = 4.0;
+            windUpTime = 2.0;
             break;
     }
 
     for (;;)
     {
-        numShots = randomintrange(minShots, maxShots + 1);
-        for (i = 0; i < numShots; i++)
+        targetEnt = self getturrettarget(false);
+        if (isdefined(targetEnt) && (!isdefined(targetEnt.spawntime) || (gettime() - targetEnt.spawntime) / 1000 > 5) && (isdefined(targetEnt.team) && targetEnt.team != "spectator") && maps\mp\_utility::isReallyAlive(targetEnt) && !targetEnt.inLastStand)
         {
-            targetEnt = self getturrettarget(false);
-            if (isdefined(targetEnt) && (!isdefined(targetEnt.spawntime) || (gettime() - targetEnt.spawntime) / 1000 > 5) && (isdefined(targetEnt.team) && targetEnt.team != "spectator") && maps\mp\_utility::isReallyAlive(targetEnt) && !targetEnt.inLastStand)
+            self.vehicle setlookatent(targetEnt);
+            targetLost = false;
+            timer = windUpTime;
+            
+            while(timer > 0)
             {
-                self.vehicle setlookatent(targetEnt);
-                self shootturret();
+                wait 0.1;
+                timer -= 0.1;
+                currentTarget = self getturrettarget(false); // check if target cover
+                if(!isdefined(currentTarget) || currentTarget != targetEnt)
+                {
+                    targetLost = true;
+                    break;
+                }
             }
-            wait(fireTime);
+            
+            if(!targetLost)
+            {
+                numShots = randomintrange(minShots, maxShots + 1);
+
+                for (i = 0; i < numShots; i++)
+                {
+                    currentTarget = self getturrettarget(false);
+                    if(!isdefined(currentTarget)) break; // stop firing if lose target of it mid-burst
+                    
+                    self.vehicle setlookatent(currentTarget);
+                    self shootturret();
+                    wait(fireTime);
+                }
+            }
         }
 
         wait(randomfloatrange(minPause, maxPause));

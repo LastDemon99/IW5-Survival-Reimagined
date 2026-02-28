@@ -167,7 +167,6 @@ botWaitRespawn()
 
 onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset)
 {
-	if (isDefined(sHitLoc) && sHitLoc == "shield") return;
 	if (self bot_is_jugger() && (isDefined(self.isDropped) && !self.isDropped)) return;
 
 	self.bleedData = undefined;
@@ -178,7 +177,7 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 		{
 			eAttacker.summary["hits"]++;
 			if (eAttacker.summary["hits"] <= eAttacker.summary["totalshots"]) eAttacker.summary["accuracy"] = clamp(eAttacker.summary["hits"] / eAttacker.summary["totalshots"], 0.0, 1.0) * 100;
-			iDamage = self weaponDamageModifier(sWeapon, iDamage, sMeansOfDeath);
+			iDamage = self weaponDamageModifier(sWeapon, iDamage, sMeansOfDeath, eAttacker);
 		}
 
 		if(isDefined(self.damageData) && !self.inLastStand && !array_contains(array_combine(INSTAKILL, EXPLOSIVE_DAMAGE), sMeansOfDeath))
@@ -375,12 +374,13 @@ onStun(weapon, meansOfDeath)
 	self.stuned = false;
 }
 
-weaponDamageModifier(weapon, damage, meansOfDeath)
+weaponDamageModifier(weapon, damage, meansOfDeath, attacker)
 {
 	if (weapon == "artillery_mp" || array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) return damage * 4;
 
 	if (meansOfDeath == "MOD_HEAD_SHOT") damage *= 2;
-	
+	if (self bot_is_jugger() && attacker player_has_perk("specialty_bulletpenetration")) damage *= 1.25;
+
 	weaponClass = lethalbeats\weapon::weapon_get_class(weapon);
 	if (weaponClass == "riot") return damage;
 	if (weaponClass == "sniper") return damage * 4;

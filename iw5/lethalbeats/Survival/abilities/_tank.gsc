@@ -52,7 +52,7 @@ _handleDamage(inflictor, attacker, damage, iDFlags, meansOfDeath, weapon, point,
         attacker maps\mp\gametypes\_damagefeedback::updateDamageFeedback("remote_tank");
         if (meansOfDeath == "MOD_RIFLE_BULLET" || meansOfDeath == "MOD_PISTOL_BULLET")
         {
-            if (attacker maps\mp\_utility::_hasPerk("specialty_armorpiercing"))
+            if (attacker lethalbeats\player::player_has_perk("specialty_bulletpenetration"))
                 modifiedDamage += damage * level.armorpiercingmod;
         }
         if (isexplosivedamagemod(meansOfDeath)) modifiedDamage += damage;

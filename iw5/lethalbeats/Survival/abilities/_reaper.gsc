@@ -68,20 +68,34 @@ _remotefiring(remote)
     self endon("disconnect");
     remote endon("remote_done");
     remote endon("death");
-    
+
+    if (self.team == "axis")
+    {
+        ammo = undefined;
+        waitTime = 5000;
+    }
+    else
+    {
+        ammo = 14;
+        waitTime = 2200;
+    }
+
     curTime = gettime();
-    lastFireTime = curTime - 2200;
-    ammo = self.team == "axis" ? 999999 : 14;
+    lastFireTime = curTime - waitTime;
     self.firingreaper = 0;
 
     for (;;)
     {
         curTime = gettime();
 
-        if (self attackbuttonpressed() && curTime - lastFireTime > 3000)
+        if (self attackbuttonpressed() && curTime - lastFireTime >= waitTime)
         {
-            ammo--;
-            self setclientdvar("ui_reaper_ammoCount", ammo);
+            if (isDefined(ammo))
+            {
+                ammo--;
+                self setclientdvar("ui_reaper_ammoCount", ammo);
+            }
+
             lastFireTime = curTime;
             self.firingreaper = 1;
             self playlocalsound("reaper_fire");
@@ -99,7 +113,7 @@ _remotefiring(remote)
             missile waittill("death");
             self setclientdvar("ui_reaper_targetDistance", -1);
             self.firingreaper = 0;
-            if (ammo == 0) break;
+            if (isDefined(ammo) && ammo == 0) break;
         }
         else wait 0.05;
     }

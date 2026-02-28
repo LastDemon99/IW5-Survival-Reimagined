@@ -7,6 +7,7 @@ init()
     replacefunc(maps\mp\killstreaks\_helicopter::heli_think, ::_heli_think);
     replacefunc(maps\mp\killstreaks\_helicopter::heli_crash, ::_heli_crash);
     replacefunc(maps\mp\killstreaks\_helicopter::tryUseHelicopter, ::_tryusehelicopter);
+    replacefunc(maps\mp\killstreaks\_helicopter::sentry_burstFireStart, ::_sentry_burstFireStart);
 }
 
 giveAbility()
@@ -303,4 +304,77 @@ _tryusehelicopter( lifeId, heliType )
 
     starthelicopter( lifeId, heliType );
     return 1;
+}
+
+_sentry_burstFireStart()
+{
+    self endon("death");
+    self endon("stop_shooting");
+    self endon("leaving");
+    level endon("game_ended");
+
+    switch(level.difficulty)
+    {
+        case 2: // normal
+            fireTime = 0.12;
+            minShots = 30;
+            maxShots = 60;
+            minPause = 1.5;
+            maxPause = 3.0;
+            windUpTime = 1.75;
+            break;
+        case 3: // hard
+            fireTime = 0.1;
+            minShots = 40;
+            maxShots = 80;
+            minPause = 1.0;
+            maxPause = 2.0;
+            windUpTime = 0.8;
+            break;
+        default:
+            fireTime = 0.15;
+            minShots = 20;
+            maxShots = 40;
+            minPause = 2.0;
+            maxPause = 4.0;
+            windUpTime = 2.0;
+            break;
+    }
+
+    for (;;)
+    {
+        targetEnt = self getturrettarget(false);
+        if (isdefined(targetEnt) && (!isdefined(targetEnt.spawntime) || (gettime() - targetEnt.spawntime) / 1000 > 5) && (isdefined(targetEnt.team) && targetEnt.team != "spectator") && maps\mp\_utility::isReallyAlive(targetEnt) && !targetEnt.inLastStand)
+        {
+            targetLost = false;
+            timer = windUpTime;
+            
+            while(timer > 0)
+            {
+                wait 0.1;
+                timer -= 0.1;
+                currentTarget = self getturrettarget(false); // check if target cover
+                if(!isdefined(currentTarget) || currentTarget != targetEnt)
+                {
+                    targetLost = true;
+                    break;
+                }
+            }
+            
+            if(!targetLost)
+            {
+                numShots = randomintrange(minShots, maxShots + 1);
+
+                for (i = 0; i < numShots; i++)
+                {
+                    currentTarget = self getturrettarget(false);
+                    if(!isdefined(currentTarget)) break; // stop firing if lose target of it mid-burst
+                    self shootturret();
+                    wait(fireTime);
+                }
+            }
+        }
+
+        wait(randomfloatrange(minPause, maxPause));
+    }
 }

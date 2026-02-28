@@ -832,7 +832,7 @@ bot_set_difficulty()
 	}
 
 	// Extra nerf for automatic weapons on Easy: slower first shot, slightly longer aim and more offset
-	if (level.difficulty == 1)
+	if (level.difficulty == 1 || level.difficulty == 2)
 	{
 		primaryClass = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
 		if (array_contains(["assault", "smg", "lmg"], primaryClass))
@@ -942,15 +942,15 @@ summary: Returns bot skill parameters based on difficulty level (1=Easy, 2=Norma
 */
 _bot_get_difficulty_settings()
 {
-	settings = [];		
+	settings = [];	
 	switch(level.difficulty)
-	{			
-		case 2:
-			settings["scale_rate"] = 0.04;
+	{
+		case 2: // NORMAL
+			settings["scale_rate"] = 0.033;
 			settings["aim_time_init"] = 0.55;
-			settings["aim_time_end"] = 0.25;
+			settings["aim_time_end"] = 0.35;
 			settings["reaction_time_init"] = 1000;
-			settings["reaction_time_end"] = 300;
+			settings["reaction_time_end"] = 450;
 			settings["remember_time_init"] = 1500;
 			settings["remember_time_end"] = 4000;
 			settings["no_trace_ads_init"] = 1000;
@@ -965,15 +965,15 @@ _bot_get_difficulty_settings()
 			settings["semi_time_init"] = 0.75;
 			settings["semi_time_end"] = 0.4;
 			settings["shoot_after_init"] = 0.75;
-			settings["shoot_after_end"] = 0.35;
+			settings["shoot_after_end"] = 0.45; 
 			settings["aim_offset_time_init"] = 1.0;
-			settings["aim_offset_time_end"] = 0.35;
+			settings["aim_offset_time_end"] = 0.5;
 			settings["aim_offset_amount_init"] = 3.0;
-			settings["aim_offset_amount_end"] = 1.5;
+			settings["aim_offset_amount_end"] = 2.0;
 			settings["bone_update_init"] = 1.5;
-			settings["bone_update_end"] = 0.5;
-			break;			
-		case 3:
+			settings["bone_update_end"] = 0.8;
+			break;
+		case 3: // HARD
 			settings["scale_rate"] = 0.05;
 			settings["aim_time_init"] = 0.4;
 			settings["aim_time_end"] = 0.2;
@@ -1001,7 +1001,7 @@ _bot_get_difficulty_settings()
 			settings["bone_update_init"] = 1.0;
 			settings["bone_update_end"] = 0.25;
 			break;
-		default:
+		default: // EASY
 			settings["scale_rate"] = 0.025;
 			settings["aim_time_init"] = 0.75;
 			settings["aim_time_end"] = 0.45;
@@ -1029,7 +1029,7 @@ _bot_get_difficulty_settings()
 			settings["bone_update_init"] = 2.25;
 			settings["bone_update_end"] = 1.0;
 			break;
-	}	
+	}
 	return settings;
 }
 
@@ -1983,8 +1983,8 @@ heli_modified_damage(damage, attacker, weapon, meansOfDeath)
 		switch (weapon)
 		{
 			case "rpg_mp":
-			case "iw5_smaw_mp":
 				return littlebird ? self.customHealth : self.maxHealth / 4;
+			case "iw5_smaw_mp":
 			case "stinger_mp":
 				return littlebird ? self.customHealth : self.maxHealth / 2;
 			case "m320_mp":
@@ -2011,7 +2011,8 @@ heli_modified_damage(damage, attacker, weapon, meansOfDeath)
 
 	if (!isDefined(weapon) || !isDefined(attacker) || !isPlayer(attacker)) return damage;
 	if (weapon_has_attach_gl(weapon)) return damage * 2;
-	if (attacker maps\mp\_utility::_hasPerk("specialty_armorpiercing") || weapon_get_class(weapon) == "sniper") return damage * 2;
+	if (attacker player_has_perk("specialty_bulletpenetration") && weapon_get_class(weapon) == "sniper") return damage * 2;
+	if (attacker player_has_perk("specialty_bulletpenetration") || weapon_get_class(weapon) == "sniper") return damage * 1.5;
 	return damage;
 }
 
@@ -2029,7 +2030,8 @@ equipmen_modified_damage(damage, attacker, weapon, meansOfDeath)
 	{
 		weapon_class = weapon_get_class(weapon);
 		if (weapon_class == "projectile" || weapon_has_attach_gl(weapon)) return self.maxHealth;
-		if (attacker maps\mp\_utility::_hasPerk("specialty_armorpiercing") || weapon_class == "sniper") return damage * 2;
+		if (attacker player_has_perk("specialty_bulletpenetration") && weapon_get_class(weapon) == "sniper") return damage * 2;
+		if (attacker player_has_perk("specialty_bulletpenetration") || weapon_get_class(weapon) == "sniper") return damage * 1.5;
 
 		switch (weapon)
 		{
