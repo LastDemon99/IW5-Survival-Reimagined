@@ -334,9 +334,9 @@ isDisabledOption(item, index)
 //	            UTILITIES  		        //
 //////////////////////////////////////////
 
-newWeaponData(weapon, buffs)
+newWeaponData(weapon, weapon_buffs)
 {
-    if (weapon == "none")
+    if (!isDefined(weapon))
     {
         data = [];
         data[BUILD_NAME] = weapon;
@@ -354,6 +354,9 @@ newWeaponData(weapon, buffs)
         return data;
     }
 
+    while(weapon == "none")
+        wait 0.15;
+
     data = [];
     data[BUILD_NAME] = weapon;
     data[BASENAME] = weapon_get_baseName(weapon);
@@ -361,7 +364,7 @@ newWeaponData(weapon, buffs)
     
     isPlayer = isPlayer(self);
 
-    if (isDefined(buffs)) data[BUFFS] = buffs;
+    if (isDefined(weapon_buffs)) data[BUFFS] = weapon_buffs;
     else data[BUFFS] = isPlayer && self hasWeapon(weapon) ? self player_get_weapons_buffs() : [];
     
     data[CAMO] = 0;
@@ -377,8 +380,9 @@ newWeaponData(weapon, buffs)
 
 setWeaponData(weapon, data)
 {
-    self.weaponData[int(self player_is_weapon_secondary(weapon))] = data;
-    self.weaponData[IS_PRIMARY] = self player_is_weapon_primary(weapon);
+    weaponIndex = int(self player_is_weapon_secondary(weapon));
+    self.weaponData[weaponIndex] = data;
+    self.weaponData[weaponIndex][IS_PRIMARY] = self player_is_weapon_primary(weapon);
 }
 
 getWeaponData(weapon)
@@ -392,7 +396,10 @@ getWeaponData(weapon)
         return;
     }
 
-    weaponIndex = weapon == "none" ? 0 : int(self player_is_weapon_secondary(weapon));
+    while(weapon == "none")
+        wait 0.15;
+
+    weaponIndex = int(self player_is_weapon_secondary(weapon));
     weaponData = self.weaponData[weaponIndex];
     if (!isDefined(weaponData) || weaponData[BUILD_NAME] != weapon)
     {
