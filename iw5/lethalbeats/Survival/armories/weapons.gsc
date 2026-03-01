@@ -118,8 +118,9 @@ onBuy(page, item, price, index)
             weapons = player player_get_weapons();
             if (weapons.size > 1)
             {
-                for (i = weapons.size - 1; i > 0; i--)
-                    player takeWeapon(weapons[i]);
+                currentWeapon = player getCurrentWeapon();
+                if (isDefined(currentWeapon) && currentWeapon != "none")
+                    player takeWeapon(currentWeapon);
                 self.weaponData = player newWeaponData(weapon_build(item));
             }
             else
