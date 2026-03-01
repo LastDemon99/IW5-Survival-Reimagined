@@ -340,7 +340,38 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 	}
 
 	self survivor_take_last_stand();
+	self thread lastStandWaveEndFailsafe();
 	self thread maps\mp\gametypes\_damage::lastStandKeepOverlay();
+}
+
+lastStandWaveEndFailsafe()
+{
+	level endon("game_ended");
+	self endon("disconnect");
+	self endon("death");
+	self endon("revive");
+
+	for (;;)
+	{
+		level waittill("wave_end");
+		if (!isDefined(self.inLastStand) || !self.inLastStand) continue;
+		if (!isDefined(self.lastStandBar) || !isDefined(self.lastStandBar.type)) continue;
+
+		if (self.lastStandBar.type == "revive")
+		{
+			self notify("auto_revive");
+			self survivor_revive();
+			break;
+		}
+
+		if (self.lastStandBar.type == "death" && !survivors(true).size)
+		{
+			self maps\mp\_utility::playDeathSound();
+			self player_clear_last_stand();
+			self suicide();
+			break;
+		}
+	}
 }
 
 lastStandMonitor()
@@ -587,6 +618,8 @@ onHoldBreath()
         self waittill("release_breath");
 
 		weapClass = maps\mp\_utility::getWeaponClass(self getCurrentPrimaryWeapon());
+ 
+		if (!isDefined(self.stance)) continue;
 
         if (self.stance == "prone")
         {
