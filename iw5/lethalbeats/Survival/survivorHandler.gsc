@@ -235,7 +235,7 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 	if (!isDefined(level.survivors_deaths[self.guid]))
 	{
 		if (getDvarInt("survival_wait_respawn")) level.survivors_deaths[self.guid] = 1;
-		if (isDefined(self.currMenu)) self closeMenu("dynamic_shop");
+		if (isDefined(self.currMenu)) self lethalbeats\DynamicMenus\dynamic_shop::closeShop();
 		self survivor_take_body_armor();
 	}
 	
@@ -269,7 +269,7 @@ onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 
 onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration)
 {
-	if (isDefined(self.currMenu)) self closeMenu("dynamic_shop");
+	if (isDefined(self.currMenu)) self lethalbeats\DynamicMenus\dynamic_shop::closeShop();
 
 	self.inLastStand = true;
 	self.lastStand = true;
