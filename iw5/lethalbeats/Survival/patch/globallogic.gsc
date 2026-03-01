@@ -421,39 +421,6 @@ _isInRange(dist, curweap)
 	return true;
 }
 
-_bot_get_burst_fire_settings()
-{
-    settings = [];
-    switch(level.difficulty)
-    {
-        case 2:
-            settings["fireTime"] = 0.12;
-            settings["minShots"] = 30;
-            settings["maxShots"] = 60;
-            settings["minPause"] = 1.5;
-            settings["maxPause"] = 3.0;
-            settings["windUpTime"] = 1.75;
-            break;
-        case 3:
-            settings["fireTime"] = 0.1;
-            settings["minShots"] = 40;
-            settings["maxShots"] = 80;
-            settings["minPause"] = 1.0;
-            settings["maxPause"] = 2.0;
-            settings["windUpTime"] = 0.8;
-            break;
-        default:
-            settings["fireTime"] = 0.15;
-            settings["minShots"] = 20;
-            settings["maxShots"] = 40;
-            settings["minPause"] = 2.0;
-            settings["maxPause"] = 4.0;
-            settings["windUpTime"] = 2.0;
-            break;
-    }
-    return settings;
-}
-
 patch_botFire(curweap)
 {
     self.bot.last_fire_time = gettime();
@@ -496,7 +463,7 @@ patch_botFire(curweap)
     }
 
     now = gettime();
-    settings = _bot_get_burst_fire_settings();
+    settings = bot_get_difficulty_settings();
     if (!isdefined(self.bot.burstData))
     {
         self.bot.burstData = spawnstruct();
@@ -1108,6 +1075,7 @@ dropModelFromPlayer(weaponName, weaponModel, weaponData, ammoData)
     displayName = lethalbeats\weapon::weapon_get_display_name(weaponName);
 
     trigger = lethalbeats\trigger::trigger_create(origin, 45);
+    trigger.owner = self;
     trigger lethalbeats\trigger::trigger_set_use("Hold ^3[{+activate}] ^7to pick up " + displayName);
     trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
     trigger thread weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel);
@@ -1150,16 +1118,19 @@ weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
 
         currWeapon = player getCurrentWeapon();
         if (!isDefined(currWeapon) || currWeapon == "none") continue;
-        
-        prevWeaponData = player.weaponData[!player player_get_weapon_index(currWeapon)];
-        if (isDefined(prevWeaponData) && prevWeaponData[1] == lethalbeats\weapon::weapon_get_baseName(weaponName))
-        {
-            player switchToWeaponImmediate(prevWeaponData[0]);
-            wait 0.35;
-        }
 
-		while (player player_get_weapons().size > 1)
-			player player_drop_weapon();
+        weapons = player player_get_weapons();
+        if (weapons.size > 1)
+        {
+            player player_drop_weapon();
+            waittillframeend;
+
+            if (player hasWeapon(currWeapon))
+            {
+                player player_take_all_weapon_buffs();
+                player takeWeapon(currWeapon);
+            }
+        }
 		
         player player_give_weapon(weaponName);
         
@@ -1184,14 +1155,24 @@ ammoPickupMonitor(weaponName, ammoData, weaponModel)
     level endon("game_ended");
     self endon("death");
 
+    baseWeaponName = lethalbeats\weapon::weapon_get_baseName(weaponName);
+
+    dropOwner = undefined;
+    if (isDefined(self.owner)) dropOwner = self.owner;
+    else if (isDefined(weaponModel) && isDefined(weaponModel.owner)) dropOwner = weaponModel.owner;
+
+    isSurvivorWeapon = isDefined(dropOwner) && isPlayer(dropOwner) && dropOwner player_is_survivor();
+
     for(;;)
     {
         self waittill("trigger_radius", player);        
 
-        targetWeapon = player player_get_build_weapon(weaponName);
+        if (isSurvivorWeapon) continue;
+
+        targetWeapon = player player_get_build_weapon(baseWeaponName);
         if (!isDefined(targetWeapon)) continue;
 
-        if (targetWeapon == weaponName && player player_has_max_ammo(targetWeapon, true)) continue;
+        if (player player_has_max_ammo(targetWeapon, true)) continue;
 
         if (!isDefined(ammoData)) ammoData = lethalbeats\weapon::weapon_get_random_ammo_data(weaponName);
         player player_add_ammo_from_data(targetWeapon, ammoData);
@@ -1208,9 +1189,12 @@ _deletePickupAfterAWhile(weaponModel)
     level endon("game_ended");
     self endon("death");
 
-    isSurvivorWeapon = weaponModel.owner player_is_survivor();
+    isSurvivorWeapon = isDefined(weaponModel)
+        && isDefined(weaponModel.owner)
+        && isPlayer(weaponModel.owner)
+        && weaponModel.owner player_is_survivor();
     
-    if (isSurvivorWeapon) wait 20;
+    if (isSurvivorWeapon) wait 120;
     else wait randomIntRange(10, 20);
 
     if (!isDefined(weaponModel)) return;

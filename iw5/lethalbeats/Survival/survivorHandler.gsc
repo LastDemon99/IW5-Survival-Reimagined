@@ -474,7 +474,11 @@ onUseShop()
 		self.currMenu = "shop";
 		self lethalbeats\DynamicMenus\dynamic_shop::openShop(menuName);
 
-		self waittill("close_shop");
+		for (;;)
+		{
+			if (isString(self lethalbeats\utility::waittill_any_return(0.25, "close_shop"))) break;
+			if (!(self lethalbeats\DynamicMenus\dynamic_shop::isShopOpen())) break;
+		}
 		self.currMenu = undefined;
 	}
 }

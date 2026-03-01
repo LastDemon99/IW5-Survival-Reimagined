@@ -758,7 +758,8 @@ summary: Adjusts the bot's AI skill and behavior settings based on the current w
 bot_set_difficulty()
 {
 	wave = level.wave_num;
-	difficulty = _bot_get_difficulty_settings();
+	difficulty = bot_get_difficulty_settings();
+	wave_progress = min(1.0, max(0.0, (wave - 1) * difficulty["scale_rate"]));
 
 	self.pers["bots"]["skill"]["spawn_time"] = 0;
 	self.pers["bots"]["skill"]["aim_time"] = _bot_wave_scale_progress(difficulty["aim_time_init"], difficulty["aim_time_end"], difficulty["scale_rate"], wave);
@@ -831,16 +832,27 @@ bot_set_difficulty()
 		self.pers["bots"]["behavior"]["jump"] = 10;
 	}
 
-	// Extra nerf for automatic weapons on Easy: slower first shot, slightly longer aim and more offset
+	// Progressive nerf for automatic weapons on Easy/Normal: smoother early waves, less abrupt spikes
 	if (level.difficulty == 1 || level.difficulty == 2)
 	{
 		primaryClass = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
 		if (array_contains(["assault", "smg", "lmg"], primaryClass))
 		{
-			self.pers["bots"]["skill"]["shoot_after_time"] *= 1.3; // delay before engaging
-			self.pers["bots"]["skill"]["aim_time"] += 0.05; // take a bit longer to settle aim
-			self.pers["bots"]["skill"]["aim_offset_amount"] *= 1.15; // slightly less accurate
-			self.pers["bots"]["skill"]["aim_offset_time"] *= 1.1; // offset lasts a bit more
+			nerfScale = 1.0 - (wave_progress * 0.5);
+			if (primaryClass == "smg")
+			{
+				self.pers["bots"]["skill"]["shoot_after_time"] *= 1.45 - (0.2 * wave_progress);
+				self.pers["bots"]["skill"]["aim_time"] += 0.09 * nerfScale;
+				self.pers["bots"]["skill"]["aim_offset_amount"] *= 1.22 - (0.08 * wave_progress);
+				self.pers["bots"]["skill"]["aim_offset_time"] *= 1.16 - (0.06 * wave_progress);
+			}
+			else
+			{
+				self.pers["bots"]["skill"]["shoot_after_time"] *= 1.30 - (0.12 * wave_progress);
+				self.pers["bots"]["skill"]["aim_time"] += 0.06 * nerfScale;
+				self.pers["bots"]["skill"]["aim_offset_amount"] *= 1.15 - (0.06 * wave_progress);
+				self.pers["bots"]["skill"]["aim_offset_time"] *= 1.10 - (0.04 * wave_progress);
+			}
 		}
 	}
 
@@ -861,8 +873,10 @@ bot_set_difficulty()
 			self.pers["bots"]["skill"]["dist_start"] = 10000;
 			break;
 		case "smg":
-			self.pers["bots"]["skill"]["dist_max"] *= 0.4;
-			self.pers["bots"]["skill"]["dist_start"] *= 0.4;
+			smg_range_scale = 0.4;
+			if (level.difficulty != 3) smg_range_scale = 0.28 + (0.12 * wave_progress);
+			self.pers["bots"]["skill"]["dist_max"] *= smg_range_scale;
+			self.pers["bots"]["skill"]["dist_start"] *= smg_range_scale;
 			break;
 		case "shotgun":
 		case "machine_pistol":
@@ -907,13 +921,16 @@ summary: Difficulty-aware scaler. Uses an eased-in curve for Easy to slow early 
 */
 _bot_wave_scale_progress(init_value, end_value, scale_rate, wave)
 {
-	progress = min(1.0, (wave - 1) * scale_rate);
+	progress = min(1.0, max(0.0, (wave - 1) * scale_rate));
+
 	if (level.difficulty == 1)
-	{
-		progress = progress * progress;
-		progress = int(progress * 5) / 5.0;
-	}
-	current_value = init_value + (end_value - init_value) * progress;
+		ease = progress * progress * progress;
+	else if (level.difficulty == 2)
+		ease = progress * progress * (3 - (2 * progress));
+	else
+		ease = 1 - ((1 - progress) * (1 - progress));
+
+	current_value = init_value + (end_value - init_value) * ease;
 	if (init_value > end_value) return max(end_value, current_value);
 	else return min(end_value, current_value);
 }
@@ -936,42 +953,61 @@ get_wave_loop_growth()
 
 /*
 ///DocStringBegin
-detail: _bot_get_difficulty_settings(): <Array>
+detail: get_connected_survivor_multiplier(): <Float>
+summary: Returns a difficulty multiplier based on connected survivors (team allies). Baseline is 4 players = 1.0, fewer players reduce bot aggressiveness.
+///DocStringEnd
+*/
+get_connected_survivor_multiplier()
+{
+	connected = players_get_list("allies").size;
+	connected = int(max(1, min(4, connected)));
+	return 0.45 + (0.55 * (connected / 4.0));
+}
+
+/*
+///DocStringBegin
+detail: bot_get_difficulty_settings(): <Array>
 summary: Returns bot skill parameters based on difficulty level (1=Easy, 2=Normal, 3=Hard).
 ///DocStringEnd
 */
-_bot_get_difficulty_settings()
+bot_get_difficulty_settings()
 {
 	settings = [];	
 	switch(level.difficulty)
 	{
 		case 2: // NORMAL
-			settings["scale_rate"] = 0.033;
-			settings["aim_time_init"] = 0.55;
-			settings["aim_time_end"] = 0.35;
-			settings["reaction_time_init"] = 1000;
-			settings["reaction_time_end"] = 450;
-			settings["remember_time_init"] = 1500;
-			settings["remember_time_end"] = 4000;
-			settings["no_trace_ads_init"] = 1000;
-			settings["no_trace_ads_end"] = 2500;
-			settings["fov_init"] = 0.65;
-			settings["fov_end"] = 0.5;
-			settings["fov_max_wave"] = 25;
-			settings["dist_start_init"] = 1500;
-			settings["dist_start_end"] = 5000;
-			settings["dist_max_init"] = 3000;
-			settings["dist_max_end"] = 7500;
-			settings["semi_time_init"] = 0.75;
-			settings["semi_time_end"] = 0.4;
-			settings["shoot_after_init"] = 0.75;
-			settings["shoot_after_end"] = 0.45; 
-			settings["aim_offset_time_init"] = 1.0;
-			settings["aim_offset_time_end"] = 0.5;
-			settings["aim_offset_amount_init"] = 3.0;
-			settings["aim_offset_amount_end"] = 2.0;
-			settings["bone_update_init"] = 1.5;
-			settings["bone_update_end"] = 0.8;
+			settings["scale_rate"] = 0.025;
+			settings["aim_time_init"] = 0.75;
+			settings["aim_time_end"] = 0.45;
+			settings["reaction_time_init"] = 1800;
+			settings["reaction_time_end"] = 600;
+			settings["remember_time_init"] = 750;
+			settings["remember_time_end"] = 3000;
+			settings["no_trace_ads_init"] = 800;
+			settings["no_trace_ads_end"] = 1800;
+			settings["fov_init"] = 0.75;
+			settings["fov_end"] = 0.6;
+			settings["fov_max_wave"] = 30;
+			settings["dist_start_init"] = 900;
+			settings["dist_start_end"] = 3000;
+			settings["dist_max_init"] = 2200;
+			settings["dist_max_end"] = 4500;
+			settings["semi_time_init"] = 1.0;
+			settings["semi_time_end"] = 0.6;
+			settings["shoot_after_init"] = 1.25;
+			settings["shoot_after_end"] = 0.8; 
+			settings["aim_offset_time_init"] = 1.75;
+			settings["aim_offset_time_end"] = 0.8;
+			settings["aim_offset_amount_init"] = 4.5;
+			settings["aim_offset_amount_end"] = 2.25;
+			settings["bone_update_init"] = 2.25;
+			settings["bone_update_end"] = 1.0;
+			settings["fireTime"] = 0.12;
+            settings["minShots"] = 30;
+            settings["maxShots"] = 60;
+            settings["minPause"] = 1.5;
+            settings["maxPause"] = 3.0;
+            settings["windUpTime"] = 2;
 			break;
 		case 3: // HARD
 			settings["scale_rate"] = 0.05;
@@ -1000,36 +1036,90 @@ _bot_get_difficulty_settings()
 			settings["aim_offset_amount_end"] = 1.0;
 			settings["bone_update_init"] = 1.0;
 			settings["bone_update_end"] = 0.25;
+			settings["fireTime"] = 0.1;
+            settings["minShots"] = 40;
+            settings["maxShots"] = 80;
+            settings["minPause"] = 1.0;
+            settings["maxPause"] = 2.0;
+            settings["windUpTime"] = 0.8;
 			break;
 		default: // EASY
-			settings["scale_rate"] = 0.025;
-			settings["aim_time_init"] = 0.75;
-			settings["aim_time_end"] = 0.45;
-			settings["reaction_time_init"] = 1800;
-			settings["reaction_time_end"] = 600;
-			settings["remember_time_init"] = 750;
-			settings["remember_time_end"] = 3000;
-			settings["no_trace_ads_init"] = 800;
-			settings["no_trace_ads_end"] = 1800;
-			settings["fov_init"] = 0.75;
-			settings["fov_end"] = 0.6;
-			settings["fov_max_wave"] = 30;
-			settings["dist_start_init"] = 900;
-			settings["dist_start_end"] = 3000;
-			settings["dist_max_init"] = 2200;
-			settings["dist_max_end"] = 4500;
-			settings["semi_time_init"] = 1.0;
-			settings["semi_time_end"] = 0.6;
-			settings["shoot_after_init"] = 1.25;
-			settings["shoot_after_end"] = 0.8;
-			settings["aim_offset_time_init"] = 1.75;
-			settings["aim_offset_time_end"] = 0.8;
-			settings["aim_offset_amount_init"] = 4.5;
-			settings["aim_offset_amount_end"] = 2.25;
-			settings["bone_update_init"] = 2.25;
-			settings["bone_update_end"] = 1.0;
+			settings["scale_rate"] = 0.02;
+			settings["aim_time_init"] = 0.95;
+			settings["aim_time_end"] = 0.6;
+			settings["reaction_time_init"] = 2200;
+			settings["reaction_time_end"] = 850;
+			settings["remember_time_init"] = 500;
+			settings["remember_time_end"] = 2200;
+			settings["no_trace_ads_init"] = 700;
+			settings["no_trace_ads_end"] = 1500;
+			settings["fov_init"] = 0.82;
+			settings["fov_end"] = 0.68;
+			settings["fov_max_wave"] = 35;
+			settings["dist_start_init"] = 750;
+			settings["dist_start_end"] = 2400;
+			settings["dist_max_init"] = 1800;
+			settings["dist_max_end"] = 3800;
+			settings["semi_time_init"] = 1.15;
+			settings["semi_time_end"] = 0.75;
+			settings["shoot_after_init"] = 1.45;
+			settings["shoot_after_end"] = 1.0;
+			settings["aim_offset_time_init"] = 2.0;
+			settings["aim_offset_time_end"] = 1.1;
+			settings["aim_offset_amount_init"] = 5.25;
+			settings["aim_offset_amount_end"] = 3.0;
+			settings["bone_update_init"] = 2.6;
+			settings["bone_update_end"] = 1.25;
+			settings["fireTime"] = 0.15;
+            settings["minShots"] = 20;
+            settings["maxShots"] = 40;
+            settings["minPause"] = 2.0;
+            settings["maxPause"] = 4.0;
+            settings["windUpTime"] = 3.0;
 			break;
 	}
+
+	mult = get_connected_survivor_multiplier();
+	if (mult < 1.0)
+	{
+		inverse = 1.0 / mult;
+
+		settings["scale_rate"] *= mult;
+
+		settings["aim_time_init"] *= inverse;
+		settings["aim_time_end"] *= inverse;
+		settings["reaction_time_init"] *= inverse;
+		settings["reaction_time_end"] *= inverse;
+		settings["no_trace_ads_init"] *= inverse;
+		settings["no_trace_ads_end"] *= inverse;
+		settings["semi_time_init"] *= inverse;
+		settings["semi_time_end"] *= inverse;
+		settings["shoot_after_init"] *= inverse;
+		settings["shoot_after_end"] *= inverse;
+		settings["aim_offset_time_init"] *= inverse;
+		settings["aim_offset_time_end"] *= inverse;
+		settings["aim_offset_amount_init"] *= inverse;
+		settings["aim_offset_amount_end"] *= inverse;
+		settings["bone_update_init"] *= inverse;
+		settings["bone_update_end"] *= inverse;
+
+		settings["remember_time_init"] *= mult;
+		settings["remember_time_end"] *= mult;
+		settings["dist_start_init"] *= mult;
+		settings["dist_start_end"] *= mult;
+		settings["dist_max_init"] *= mult;
+		settings["dist_max_end"] *= mult;
+		settings["fov_init"] = min(0.95, settings["fov_init"] * inverse);
+		settings["fov_end"] = min(0.95, settings["fov_end"] * inverse);
+
+		settings["fireTime"] *= inverse;
+		settings["minShots"] = int(max(8, settings["minShots"] * mult));
+		settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * mult));
+		settings["minPause"] *= inverse;
+		settings["maxPause"] *= inverse;
+		settings["windUpTime"] *= inverse;
+	}
+
 	return settings;
 }
 

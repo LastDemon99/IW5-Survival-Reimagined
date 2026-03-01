@@ -115,10 +115,11 @@ onBuy(page, item, price, index)
         case WEAPON_SELECT:
         case WEAPON_LAUNCHERS:
         case WEAPON_RIOTS:
-            if (player player_get_weapons().size > 1)
+            weapons = player player_get_weapons();
+            if (weapons.size > 1)
             {
-                while (player player_get_weapons().size > 1)
-                    player takeWeapon(player getCurrentWeapon());
+                for (i = weapons.size - 1; i > 0; i--)
+                    player takeWeapon(weapons[i]);
                 self.weaponData = player newWeaponData(weapon_build(item));
             }
             else
