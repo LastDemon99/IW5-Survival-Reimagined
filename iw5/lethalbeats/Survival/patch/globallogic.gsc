@@ -43,6 +43,7 @@ init()
     replacefunc(maps\mp\bots\_bot_internal::target_loop, ::patch_target_loop);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateTraced, ::patch_targetObjUpdateTraced);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateNoTrace, ::patch_targetObjUpdateNoTrace);
+    
     // GAME
     replacefunc(maps\mp\_events::multiKill, ::patch_multiKill); // update challenges, double, triple, multi
     replacefunc(maps\mp\_utility::playDeathSound, ::patch_playDeathSound); // modifies deaths sound
@@ -70,6 +71,7 @@ init()
     replaceFunc(maps\mp\gametypes\_weapons::watchGrenadeUsage, lethalbeats\survival\patch\mines::grenadeWatchUsage);
     replaceFunc(maps\mp\gametypes\_weapons::watchMineUsage, ::blank);
     replaceFunc(maps\mp\gametypes\_weapons::bombSquadWaiter, ::blank);
+    replaceFunc(maps\mp\_load::hurtplayersthink, ::patch_hurtPlayersThink);
 
     // CLEAN
     replaceFunc(maps\mp\_awards::onPlayerSpawned, ::blank);
@@ -1577,5 +1579,21 @@ patch_enablekillstreakactionslots()
         }
         else self maps\mp\_utility::_setactionslot(slotID, "");
         self.actionslotenabled[i] = true;
+    }
+}
+
+patch_hurtPlayersThink()
+{
+    level endon("game_ended");
+    wait(randomfloat(1));
+
+    for (;;)
+    {
+        foreach (player in survivors())
+        {
+            if (player istouching(self) && maps\mp\_utility::isReallyAlive(player))
+                player maps\mp\_utility::_suicide();
+        }
+        wait 0.5;
     }
 }

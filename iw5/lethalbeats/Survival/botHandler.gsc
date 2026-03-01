@@ -167,6 +167,7 @@ botWaitRespawn()
 
 onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset)
 {
+	if (isDefined(eAttacker) && !isPlayer(eAttacker) && sMeansOfDeath == "MOD_TRIGGER_HURT") return;
 	if (self bot_is_jugger() && (isDefined(self.isDropped) && !self.isDropped)) return;
 
 	self.bleedData = undefined;
