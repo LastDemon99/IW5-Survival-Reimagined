@@ -34,6 +34,7 @@ init()
     replacefunc(maps\mp\bots\_bot_internal::canFire, ::_canFire); // disable for dogs
     replacefunc(maps\mp\bots\_bot_internal::canAds, ::_canAds); // disable for dogs
     replacefunc(maps\mp\bots\_bot_internal::isInRange, ::_isInRange); // false for dogs
+    replacefunc(maps\mp\bots\_bot_internal::botFire, ::patch_botFire); // add wind up + burst fire behavior by difficulty
 	replacefunc(maps\mp\bots\_bot_chat::doquickmessage, ::blank); // disable quickmessage
 	replacefunc(maps\mp\bots\_bot_chat::init, ::blank); // disable bot chat
     replacefunc(maps\mp\gametypes\_playerlogic::waitRespawnButton, ::blank); // disable use button pressed to spawn
@@ -418,6 +419,119 @@ _isInRange(dist, curweap)
 	if ((weapclass == "spread" || self.bot.is_cur_akimbo || curweap == "c4death_mp") && dist > level.bots_maxshotgundistance) return false;
 	if ((curweap == "riotshield_mp" || curweap == "iw5_dog_mp") && dist > level.bots_maxknifedistance) return false;
 	return true;
+}
+
+_bot_get_burst_fire_settings()
+{
+    settings = [];
+    switch(level.difficulty)
+    {
+        case 2:
+            settings["fireTime"] = 0.12;
+            settings["minShots"] = 30;
+            settings["maxShots"] = 60;
+            settings["minPause"] = 1.5;
+            settings["maxPause"] = 3.0;
+            settings["windUpTime"] = 1.75;
+            break;
+        case 3:
+            settings["fireTime"] = 0.1;
+            settings["minShots"] = 40;
+            settings["maxShots"] = 80;
+            settings["minPause"] = 1.0;
+            settings["maxPause"] = 2.0;
+            settings["windUpTime"] = 0.8;
+            break;
+        default:
+            settings["fireTime"] = 0.15;
+            settings["minShots"] = 20;
+            settings["maxShots"] = 40;
+            settings["minPause"] = 2.0;
+            settings["maxPause"] = 4.0;
+            settings["windUpTime"] = 2.0;
+            break;
+    }
+    return settings;
+}
+
+patch_botFire(curweap)
+{
+    self.bot.last_fire_time = gettime();
+
+    if (self bot_is_jugger() || self bot_is_dog() || lethalbeats\weapon::weapon_get_class(curweap) == "projectile")
+    {
+        if (!self.bot.is_cur_full_auto)
+        {
+            if (self.bot.semi_time) return;
+
+            self thread maps\mp\bots\_bot_internal::pressFire();
+            if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
+            self thread maps\mp\bots\_bot_internal::doSemiTime();
+            return;
+        }
+
+        self thread maps\mp\bots\_bot_internal::pressFire();
+        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
+        return;
+    }
+
+    if (!self.bot.is_cur_full_auto)
+    {
+        if (self.bot.semi_time) return;
+
+        self thread maps\mp\bots\_bot_internal::pressFire();
+        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
+        self thread maps\mp\bots\_bot_internal::doSemiTime();
+        return;
+    }
+
+    targetId = -1;
+    if (isdefined(self.bot.target) && isdefined(self.bot.target.entity)) targetId = self.bot.target.entity getentitynumber();
+
+    if (targetId < 0)
+    {
+        self thread maps\mp\bots\_bot_internal::pressFire();
+        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
+        return;
+    }
+
+    now = gettime();
+    settings = _bot_get_burst_fire_settings();
+    if (!isdefined(self.bot.burstData))
+    {
+        self.bot.burstData = spawnstruct();
+        self.bot.burstData.targetId = -1;
+        self.bot.burstData.shotsLeft = 0;
+        self.bot.burstData.nextShotTime = 0;
+        self.bot.burstData.pauseUntil = 0;
+        self.bot.burstData.windUpUntil = 0;
+    }
+
+    if (self.bot.burstData.targetId != targetId)
+    {
+        self.bot.burstData.targetId = targetId;
+        self.bot.burstData.shotsLeft = 0;
+        self.bot.burstData.nextShotTime = 0;
+        self.bot.burstData.pauseUntil = 0;
+        self.bot.burstData.windUpUntil = now + int(settings["windUpTime"] * 1000);
+    }
+
+    if (now < self.bot.burstData.pauseUntil || now < self.bot.burstData.windUpUntil || now < self.bot.burstData.nextShotTime) return;
+
+    if (self.bot.burstData.shotsLeft <= 0)
+        self.bot.burstData.shotsLeft = randomIntRange(settings["minShots"], settings["maxShots"] + 1);
+
+    self thread maps\mp\bots\_bot_internal::pressFire(settings["fireTime"]);
+    if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS(settings["fireTime"]);
+
+    self.bot.burstData.shotsLeft--;
+    if (self.bot.burstData.shotsLeft <= 0)
+    {
+        self.bot.burstData.pauseUntil = now + int(randomfloatrange(settings["minPause"], settings["maxPause"]) * 1000);
+        self.bot.burstData.windUpUntil = self.bot.burstData.pauseUntil + int(settings["windUpTime"] * 1000);
+        self.bot.burstData.nextShotTime = 0;
+    }
+    else self.bot.burstData.nextShotTime = now + int(settings["fireTime"] * 1000);
 }
 
 /*
