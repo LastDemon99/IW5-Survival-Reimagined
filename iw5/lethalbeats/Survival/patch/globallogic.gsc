@@ -43,6 +43,7 @@ init()
     replacefunc(maps\mp\bots\_bot_internal::target_loop, ::patch_target_loop);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateTraced, ::patch_targetObjUpdateTraced);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateNoTrace, ::patch_targetObjUpdateNoTrace);
+    replacefunc(maps\mp\bots\_bot_internal::watchToLook, ::patch_watchToLook);
     
     // GAME
     replacefunc(maps\mp\_events::multiKill, ::patch_multiKill); // update challenges, double, triple, multi
@@ -562,6 +563,17 @@ patch_onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, v
 	else self lethalbeats\Survival\survivorHandler::onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);
 }
 
+_isIgnoredBotTarget(ent)
+{
+    if (!isDefined(ent)) return false;
+    if (!isDefined(ent.classname)) return false;
+    if (ent.classname == "misc_turret") return true;
+    if (isSubStr(ent.classname, "grenade")) return true;
+    if (isDefined(ent.model) && isSubStr(ent.model, "sentry")) return true;
+    if (isDefined(ent.model) && (ent.model == "projectile_bouncing_betty_grenade" || ent.model == "ims_scorpion_body")) return true;
+    return false;
+}
+
 /*
 ///DocStringBegin
 detail: patch_target_loop(): <Void>
@@ -604,8 +616,31 @@ patch_target_loop()
 		self.bot.target = undefined;
 		hasTarget = false;
 	}
+
+    if (isDefined(self.stuned) && self.stuned)
+        return;
 	
-	playercount = level.players.size;	
+	playercount = level.players.size;
+	humanPlayer = undefined;
+	
+    // SURVIVAL MODE: Find the human player
+	for (i = 0; i < playercount; i++)
+	{
+		player = level.players[i];
+		
+		if (player == self) continue;
+		
+        if (player.sessionstate != "playing" || !isreallyalive(player)) continue;
+        survivorIsOut = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
+        if (survivorIsOut || (isDefined(player.inLastStand) && player.inLastStand) || (isDefined(player.dogKnockdown) && player.dogKnockdown)) continue;
+		
+        if (!isdefined(player.pers["isBot"]) || !player.pers["isBot"])
+		{
+			humanPlayer = player;
+			break;
+		}
+	}
+	
 	for (i = -1; i < playercount; i++)
 	{
 		obj = undefined;
@@ -616,10 +651,21 @@ patch_target_loop()
 				continue;
 			
 			ent = self.bot.script_target;
+            if (_isIgnoredBotTarget(ent))
+            {
+                key = ent getentitynumber() + "";
+                self.bot.targets[key] = undefined;
+                if (isDefined(self.bot.target) && isDefined(self.bot.target.entity) && self.bot.target.entity == ent)
+                    self.bot.target = undefined;
+                self.bot.script_target = undefined;
+                continue;
+            }
+
 			key = ent getentitynumber() + "";
 			daDist = distancesquared(self.origin, ent.origin);
 			obj = self.bot.targets[key];
 			isObjDef = isdefined(obj);
+            isHumanPlayer = false;
 			entOrigin = ent.origin;
 			
 			if (isdefined(self.bot.script_target_offset))
@@ -663,21 +709,26 @@ patch_target_loop()
 			
 			isObjDef = isdefined(obj);
 			
-            if (self.team == "allies")
+            // SURVIVAL MODE: Do not ignore the human player even if they share the same team
+			isHumanPlayer = (isdefined(humanPlayer) && player == humanPlayer);
+			
+            if (!isHumanPlayer && ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || !isreallyalive(player)))
             {
-                if ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || !isreallyalive(player))
-                {
-                    if (isObjDef) self.bot.targets[key] = undefined;				
-                    continue;
-                }
+                if (isObjDef) self.bot.targets[key] = undefined;				
+                continue;
             }
-            else
+            
+            // balance logic for other bots
+            if (!isHumanPlayer)
             {
-                survivorIsDeath = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
-                if ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || survivorIsDeath || (isDefined(player.inLastStand) && player.inLastStand) || (isDefined(player.dogKnockdown) && player.dogKnockdown) || (isDefined(self.stuned) && self.stuned))
+                if (self.team == "axis")
                 {
-                    if (isObjDef) self.bot.targets[key] = undefined;				
-                    continue;
+                    survivorIsDeath = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
+                    if (survivorIsDeath || (isDefined(player.inLastStand) && player.inLastStand) || (isDefined(player.dogKnockdown) && player.dogKnockdown) || (isDefined(self.stuned) && self.stuned))
+                    {
+                        if (isObjDef) self.bot.targets[key] = undefined;				
+                        continue;
+                    }
                 }
             }
 			
@@ -688,38 +739,63 @@ patch_target_loop()
 				canTargetPlayer = (bullettracepassed(myEye, player gettagorigin("j_head"), false, vehEnt)
 						&& !player _hasperk("specialty_blindeye"));
 			}
-			else if (self.team == "axis")
-			{
-				hasLineOfSight = (player checkTraceForBone(myEye, "j_head") ||
-						player checkTraceForBone(myEye, "j_spineupper") ||
-						player checkTraceForBone(myEye, "j_ankle_le") ||
-						player checkTraceForBone(myEye, "j_ankle_ri"));
-				
-				smokeCheck = (ignoreSmoke ||
-						SmokeTrace(myEye, player.origin, level.smokeradius) ||
-						daDist < level.bots_maxknifedistance * 8);
-				
-				fovCheck = (getConeDot(player.origin, self.origin, myAngles) >= (myFov * 0.5) ||
-						(isObjDef && isdefined(obj.trace_time)) ||
-						daDist < level.bots_maxknifedistance * 6);
-				
-				canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
-				
-				if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
-					canTargetPlayer = hasLineOfSight;
-			}
 			else
 			{
-				canTargetPlayer = ((player checkTraceForBone(myEye, "j_head") ||
+                // SURVIVAL MODE: Use more permissive checks for the human player
+				if (isHumanPlayer)
+				{
+					hasLineOfSight = (player checkTraceForBone(myEye, "j_head") ||
+							player checkTraceForBone(myEye, "j_spineupper") ||
 							player checkTraceForBone(myEye, "j_ankle_le") ||
-							player checkTraceForBone(myEye, "j_ankle_ri"))
-							
-						&& (ignoreSmoke ||
+							player checkTraceForBone(myEye, "j_ankle_ri"));
+					
+					smokeCheck = (ignoreSmoke ||
 							SmokeTrace(myEye, player.origin, level.smokeradius) ||
-							daDist < level.bots_maxknifedistance * 4)
-							
-						&& (getConeDot(player.origin, self.origin, myAngles) >= myFov ||
-							(isObjDef && obj.trace_time)));
+							daDist < level.bots_maxknifedistance * 8);
+					
+					fovCheck = (getConeDot(player.origin, self.origin, myAngles) >= (myFov * 0.5) ||
+							(isObjDef && isdefined(obj.trace_time)) ||
+							daDist < level.bots_maxknifedistance * 6);
+					
+					canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
+					
+					if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
+						canTargetPlayer = hasLineOfSight;
+				}
+				else if (self.team == "axis")
+				{
+                    // standard behavior for other axis bots
+					hasLineOfSight = (player checkTraceForBone(myEye, "j_head") ||
+							player checkTraceForBone(myEye, "j_spineupper") ||
+							player checkTraceForBone(myEye, "j_ankle_le") ||
+							player checkTraceForBone(myEye, "j_ankle_ri"));
+					
+					smokeCheck = (ignoreSmoke ||
+							SmokeTrace(myEye, player.origin, level.smokeradius) ||
+							daDist < level.bots_maxknifedistance * 8);
+					
+					fovCheck = (getConeDot(player.origin, self.origin, myAngles) >= (myFov * 0.5) ||
+							(isObjDef && isdefined(obj.trace_time)) ||
+							daDist < level.bots_maxknifedistance * 6);
+					
+					canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
+					
+					if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
+						canTargetPlayer = hasLineOfSight;
+				}
+				else
+				{
+					canTargetPlayer = ((player checkTraceForBone(myEye, "j_head") ||
+								player checkTraceForBone(myEye, "j_ankle_le") ||
+								player checkTraceForBone(myEye, "j_ankle_ri"))
+								
+							&& (ignoreSmoke ||
+								SmokeTrace(myEye, player.origin, level.smokeradius) ||
+								daDist < level.bots_maxknifedistance * 4)
+								
+							&& (getConeDot(player.origin, self.origin, myAngles) >= myFov ||
+								(isObjDef && obj.trace_time)));
+				}
 			}
 			
 			if (isdefined(self.bot.target_this_frame) && self.bot.target_this_frame == player)
@@ -735,7 +811,8 @@ patch_target_loop()
 			{
 				if (!isObjDef)
 				{
-					obj = self createTargetObj(player, theTime);					
+					obj = self createTargetObj(player, theTime);
+                    if (isHumanPlayer) obj.is_human_player = true;					
 					self.bot.targets[key] = obj;
 				}
 				
@@ -748,7 +825,7 @@ patch_target_loop()
 				self targetObjUpdateNoTrace(obj);
 				
 				currentRememberTime = rememberTime;
-				if (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity))
+				if (isHumanPlayer || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity)))
 					currentRememberTime *= 3; // increase remember time
 				
 				if (obj.no_trace_time > currentRememberTime)
@@ -764,8 +841,8 @@ patch_target_loop()
 		
 		timeDiff = theTime - obj.trace_time_time;
 		
-		// survivor enemy priority
-		if (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity))
+        // Survivor target priority
+        if ((isDefined(isHumanPlayer) && isHumanPlayer) || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity)))
 			timeDiff = int(timeDiff * 0.1);
 		
 		if (timeDiff < bestTime)
@@ -784,33 +861,86 @@ patch_target_loop()
 	toBeTarget = undefined;	
 	bestKeys = getarraykeys(bestTargets);
 	
-	for (i = bestKeys.size - 1; i >= 0; i--)
-	{
-		targetObj = bestTargets[bestKeys[i]];
-		
-		// select the survivor as priority
-		if (self.team == "axis" && isDefined(targetObj.entity) && isPlayer(targetObj.entity))
-		{
-			toBeTarget = targetObj;
-			break;
-		}
-		
-		theDist = targetObj.dist;
-		
-		if (theDist > closest) continue;
-		
-		closest = theDist;
-		toBeTarget = targetObj;
-	}
+	// MULTI-PLAYER DISTRIBUTION: Balance survivor targeting by current attacker count
+    if (bestKeys.size > 1)
+    {
+        // Keep only survivor candidates from the best target set
+        victimCandidates = [];
+        foreach (k in bestKeys)
+        {
+            candidateObj = bestTargets[k];
+            if (isDefined(candidateObj.is_human_player) || (self.team == "axis" && isDefined(candidateObj.entity) && isPlayer(candidateObj.entity)))
+                victimCandidates[victimCandidates.size] = candidateObj;
+        }
+
+        if (victimCandidates.size > 1)
+        {
+            // Prefer the survivor currently targeted by fewer bots
+            bestVictim = undefined;
+            minTargetCount = 2147483647;
+
+            foreach (v in victimCandidates)
+            {
+                victimEnt = v.entity;
+                if (!isDefined(victimEnt.survival_target_count)) victimEnt.survival_target_count = 0;
+
+                // Lower attacker count wins
+                if (victimEnt.survival_target_count < minTargetCount)
+                {
+                    minTargetCount = victimEnt.survival_target_count;
+                    bestVictim = v;
+                }
+            }
+            toBeTarget = bestVictim;
+        }
+    }
+
+    if (!isDefined(toBeTarget))
+    {
+        for (i = bestKeys.size - 1; i >= 0; i--)
+        {
+            targetObj = bestTargets[bestKeys[i]];
+            
+            // Prefer survivor targets first
+            if (isDefined(targetObj.is_human_player) || (self.team == "axis" && isDefined(targetObj.entity) && isPlayer(targetObj.entity)))
+            {
+                toBeTarget = targetObj;
+                break;
+            }
+            
+            theDist = targetObj.dist;
+            
+            if (theDist > closest) continue;
+            
+            closest = theDist;
+            toBeTarget = targetObj;
+        }
+    }
 	
 	beforeTargetID = -1;
 	newTargetID = -1;
 	
-	if (hasTarget && isdefined(self.bot.target.entity))
+	if (hasTarget && isDefined(self.bot.target) && isdefined(self.bot.target.entity))
+	{
 		beforeTargetID = self.bot.target.entity getentitynumber();
+        
+        // Release one attacker slot from the previous target
+        targetEnt = self.bot.target.entity;
+        targetCount = 0;
+        if (isDefined(targetEnt.survival_target_count)) targetCount = int(targetEnt.survival_target_count);
+        targetEnt.survival_target_count = max(0, targetCount - 1);
+	}
 	
 	if (isdefined(toBeTarget) && isdefined(toBeTarget.entity))
+	{
 		newTargetID = toBeTarget.entity getentitynumber();
+        
+        // Reserve one attacker slot on the new target
+        targetEnt = toBeTarget.entity;
+        targetCount = 0;
+        if (isDefined(targetEnt.survival_target_count)) targetCount = int(targetEnt.survival_target_count);
+        targetEnt.survival_target_count = targetCount + 1;
+	}
 	
 	if (beforeTargetID != newTargetID)
 	{
@@ -831,7 +961,7 @@ patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 	
 	timeMulti = 1;
 	
-    targetIsSurvivor = self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity);
+    targetIsSurvivor = (isDefined(obj.is_human_player) && obj.is_human_player) || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity));
 
     // ignore max distance & increase track multiplier if target is survivor
 	if (!usingRemote && !isScriptObj && !targetIsSurvivor)
@@ -853,7 +983,7 @@ patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 patch_targetObjUpdateNoTrace(obj)
 {
 	incrementAmount = 50;	
-    targetIsSurvivor = self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity);
+    targetIsSurvivor = (isDefined(obj.is_human_player) && obj.is_human_player) || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity));
 	
     // increase no_trace if target is survivor
     if (targetIsSurvivor) incrementAmount = 25;	
@@ -863,6 +993,140 @@ patch_targetObjUpdateNoTrace(obj)
 
     // do not reset didlook for survivor target
 	if (!targetIsSurvivor) obj.didlook = false;
+}
+
+/*
+///DocStringBegin
+detail: patch_watchToLook(): <Void>
+summary: Bots Aggression Strategy.
+///DocStringEnd
+*/
+patch_watchToLook()
+{
+	self endon("disconnect");
+	self endon("death");
+	self endon("new_enemy");
+	
+	for (;;)
+	{
+		while (isdefined(self.bot.target) && self.bot.target.didlook)
+		{
+			wait 0.05;
+		}
+		
+		while (isdefined(self.bot.target) && self.bot.target.no_trace_time)
+		{
+			wait 0.05;
+		}
+		
+		if (!isdefined(self.bot.target))
+		{
+			break;
+		}
+		
+		self.bot.target.didlook = true;
+		
+		if (self.bot.isfrozen)
+		{
+			continue;
+		}
+		
+        // SURVIVAL MODE: Extend tactical actions against the human player
+		maxDistForAction = level.bots_maxshotgundistance * 2;
+		if (isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player)
+		{
+            maxDistForAction = level.bots_maxshotgundistance * 3;
+		}
+		
+		if (self.bot.target.dist > maxDistForAction)
+		{
+			continue;
+		}
+		
+		if (self.bot.target.dist <= level.bots_maxknifedistance)
+		{
+			continue;
+		}
+		
+		if (!self canFire(self getcurrentweapon()))
+		{
+			continue;
+		}
+		
+		if (!self isInRange(self.bot.target.dist, self getcurrentweapon()))
+		{
+			continue;
+		}
+		
+		if (self.bot.is_cur_sniper)
+		{
+			continue;
+		}
+		
+        settings = bot_get_difficulty_settings();
+        jumpChance = self.pers["bots"]["behavior"]["jump"];
+        dropshotDuration = max(1.25, (settings["windUpTime"] * 0.75) + (settings["fireTime"] * 8));
+        jumpCooldown = int((settings["windUpTime"] + settings["minPause"]) * 1000);
+		
+        switch(level.difficulty)
+        {
+            case 1:
+                jumpChance = int(jumpChance * 0.85);
+                break;
+            case 3:
+                jumpChance = int(jumpChance * 1.25);
+                dropshotDuration *= 0.85;
+                break;
+        }
+
+		if (isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player)
+		{
+            jumpChance = int(jumpChance * 1.35);
+            jumpCooldown = int(jumpCooldown * 0.7);
+            dropshotDuration *= 0.9;
+		}
+
+        if (jumpChance > 100) jumpChance = 100;
+		
+		if (randomint(100) > jumpChance)
+		{
+			continue;
+		}
+		
+		if (!getdvarint("bots_play_jumpdrop"))
+		{
+			continue;
+		}
+		
+		if (isdefined(self.bot.jump_time) && gettime() - self.bot.jump_time <= jumpCooldown)
+		{
+			continue;
+		}
+		
+		if (self.bot.target.rand <= self.pers["bots"]["behavior"]["strafe"])
+		{
+			if (self getstance() != "stand")
+			{
+				continue;
+			}
+			
+			self.bot.jump_time = gettime();
+			self thread lethalbeats\Survival\patch\globallogic::_jump();
+		}
+		else
+		{
+			if (getConeDot(self.bot.target.last_seen_pos, self.origin, self getplayerangles()) < 0.8 || self.bot.target.dist <= level.bots_noadsdistance)
+			{
+				continue;
+			}
+			
+			self.bot.jump_time = gettime();
+			self lethalbeats\Survival\patch\globallogic::_prone();
+			self notify("kill_goal");
+            wait dropshotDuration;
+			self lethalbeats\Survival\patch\globallogic::_crouch();
+		}
+	}
 }
 
 //////////////////////////////////////////
