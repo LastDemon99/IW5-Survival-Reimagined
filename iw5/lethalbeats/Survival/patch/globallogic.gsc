@@ -1063,30 +1063,15 @@ patch_watchToLook()
 			continue;
 		}
 		
-        settings = bot_get_difficulty_settings();
-        jumpChance = self.pers["bots"]["behavior"]["jump"];
-        dropshotDuration = max(1.25, (settings["windUpTime"] * 0.75) + (settings["fireTime"] * 8));
-        jumpCooldown = int((settings["windUpTime"] + settings["minPause"]) * 1000);
-		
-        switch(level.difficulty)
-        {
-            case 1:
-                jumpChance = int(jumpChance * 0.85);
-                break;
-            case 3:
-                jumpChance = int(jumpChance * 1.25);
-                dropshotDuration *= 0.85;
-                break;
-        }
-
-		if (isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player)
-		{
-            jumpChance = int(jumpChance * 1.35);
-            jumpCooldown = int(jumpCooldown * 0.7);
-            dropshotDuration *= 0.9;
-		}
-
-        if (jumpChance > 100) jumpChance = 100;
+        settings = self bot_get_difficulty_settings();
+        tacticalSettings = lethalbeats\survival\difficulty::difficulty_get_tactical_action_settings(
+            self.pers["bots"]["behavior"]["jump"],
+            isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player,
+            settings
+        );
+        jumpChance = tacticalSettings["jumpChance"];
+        jumpCooldown = tacticalSettings["jumpCooldown"];
+        dropshotDuration = tacticalSettings["dropshotDuration"];
 		
 		if (randomint(100) > jumpChance)
 		{

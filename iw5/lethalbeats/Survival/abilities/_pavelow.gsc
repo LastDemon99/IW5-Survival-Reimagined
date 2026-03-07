@@ -313,33 +313,13 @@ _sentry_burstFireStart()
     self endon("leaving");
     level endon("game_ended");
 
-    switch(level.difficulty)
-    {
-        case 2: // normal
-            fireTime = 0.12;
-            minShots = 30;
-            maxShots = 60;
-            minPause = 1.5;
-            maxPause = 3.0;
-            windUpTime = 1.75;
-            break;
-        case 3: // hard
-            fireTime = 0.1;
-            minShots = 40;
-            maxShots = 80;
-            minPause = 1.0;
-            maxPause = 2.0;
-            windUpTime = 0.8;
-            break;
-        default:
-            fireTime = 0.15;
-            minShots = 20;
-            maxShots = 40;
-            minPause = 2.0;
-            maxPause = 4.0;
-            windUpTime = 2.0;
-            break;
-    }
+    settings = lethalbeats\survival\difficulty::difficulty_get_vehicle_burst_settings();
+    fireTime = settings["fireTime"];
+    minShots = settings["minShots"];
+    maxShots = settings["maxShots"];
+    minPause = settings["minPause"];
+    maxPause = settings["maxPause"];
+    windUpTime = settings["windUpTime"];
 
     for (;;)
     {

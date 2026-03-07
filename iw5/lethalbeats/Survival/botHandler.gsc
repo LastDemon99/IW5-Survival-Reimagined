@@ -149,15 +149,10 @@ botWaitRespawn()
 		if (level.bots_awaits)
 		{
 			level.bots_awaits--;
-			if (level.difficulty == 3) break;
-			else if (level.difficulty == 2)
+			range = lethalbeats\survival\difficulty::difficulty_get_bot_respawn_delay_range();
+			if (range[0] || range[1])
 			{
-				delay = randomIntRange(1, 3);
-				wait randomFloatRange(delay - 0.5, delay + 0.5);
-			}
-			else
-			{
-				delay = randomIntRange(3, 6);
+				delay = randomIntRange(range[0], range[1] + 1);
 				wait randomFloatRange(delay - 0.5, delay + 0.5);
 			}
 			break;

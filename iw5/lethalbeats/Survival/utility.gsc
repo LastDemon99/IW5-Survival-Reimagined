@@ -758,7 +758,8 @@ summary: Adjusts the bot's AI skill and behavior settings based on the current w
 bot_set_difficulty()
 {
 	wave = level.wave_num;
-	difficulty = bot_get_difficulty_settings();
+	self.botDifficultySettings = lethalbeats\survival\difficulty::difficulty_get_bot_settings();
+	difficulty = self.botDifficultySettings;
 	wave_progress = min(1.0, max(0.0, (wave - 1) * difficulty["scale_rate"]));
 
 	self.pers["bots"]["skill"]["spawn_time"] = 0;
@@ -799,13 +800,12 @@ bot_set_difficulty()
 		growth = get_wave_loop_growth();
 		health = int(health * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP));
 	}
-	if (level.difficulty == 3) health = int(health * 1.5);
+	health = int(health * lethalbeats\survival\difficulty::difficulty_get_bot_health_multiplier());
 	self.maxhealth = health;
 	self.health = health;
 
 	self.moveSpeedScaler = float(self bot_get_loadout(SPEED)); 
-	if (level.difficulty == 1) self.moveSpeedScaler *= 0.85;
-	if (level.difficulty == 3) self.moveSpeedScaler *= 1.3;
+	self.moveSpeedScaler *= lethalbeats\survival\difficulty::difficulty_get_bot_speed_multiplier();
 	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
 
     if (self bot_is_dog())
@@ -824,7 +824,7 @@ bot_set_difficulty()
 		self.pers["bots"]["behavior"]["strafe"] = 0;
 	}
 
-	if (level.difficulty == 1 && !self bot_is_dog() && !self bot_is_jugger())
+	if (lethalbeats\survival\difficulty::difficulty_is_easy() && !self bot_is_dog() && !self bot_is_jugger())
 	{
 		self.pers["bots"]["behavior"]["nade"] = 40;
 		self.pers["bots"]["behavior"]["sprint"] = 40;
@@ -833,7 +833,7 @@ bot_set_difficulty()
 	}
 
 	// Progressive nerf for automatic weapons on Easy/Normal: smoother early waves, less abrupt spikes
-	if (level.difficulty == 1 || level.difficulty == 2)
+	if (!lethalbeats\survival\difficulty::difficulty_is_hard())
 	{
 		primaryClass = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
 		if (array_contains(["assault", "smg", "lmg"], primaryClass))
@@ -858,7 +858,7 @@ bot_set_difficulty()
 
 	weapon_class = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
 
-	if (level.difficulty == 3 && (weapon_class == "projectile" || weapon_class == "sniper"))
+	if (lethalbeats\survival\difficulty::difficulty_is_hard() && (weapon_class == "projectile" || weapon_class == "sniper"))
 	{
 		self.pers["bots"]["skill"]["dist_max"] = 15000;
 		self.pers["bots"]["skill"]["dist_start"] = 10000;
@@ -873,8 +873,7 @@ bot_set_difficulty()
 			self.pers["bots"]["skill"]["dist_start"] = 10000;
 			break;
 		case "smg":
-			smg_range_scale = 0.4;
-			if (level.difficulty != 3) smg_range_scale = 0.28 + (0.12 * wave_progress);
+			smg_range_scale = lethalbeats\survival\difficulty::difficulty_get_smg_range_scale(wave_progress);
 			self.pers["bots"]["skill"]["dist_max"] *= smg_range_scale;
 			self.pers["bots"]["skill"]["dist_start"] *= smg_range_scale;
 			break;
@@ -921,18 +920,7 @@ summary: Difficulty-aware scaler. Uses an eased-in curve for Easy to slow early 
 */
 _bot_wave_scale_progress(init_value, end_value, scale_rate, wave)
 {
-	progress = min(1.0, max(0.0, (wave - 1) * scale_rate));
-
-	if (level.difficulty == 1)
-		ease = progress * progress * progress;
-	else if (level.difficulty == 2)
-		ease = progress * progress * (3 - (2 * progress));
-	else
-		ease = 1 - ((1 - progress) * (1 - progress));
-
-	current_value = init_value + (end_value - init_value) * ease;
-	if (init_value > end_value) return max(end_value, current_value);
-	else return min(end_value, current_value);
+	return lethalbeats\survival\difficulty::difficulty_scale_progress(init_value, end_value, scale_rate, wave);
 }
 
 /*
@@ -943,12 +931,7 @@ summary: Returns post-loop per-wave growth multiplier by difficulty (Easy 1.03, 
 */
 get_wave_loop_growth()
 {
-	switch(level.difficulty)
-	{
-		case 1: return 1.02;
-		case 3: return 1.06;
-		default: return 1.05;
-	}
+	return lethalbeats\survival\difficulty::difficulty_get_wave_loop_growth();
 }
 
 /*
@@ -959,9 +942,7 @@ summary: Returns a difficulty multiplier based on connected survivors (team alli
 */
 get_connected_survivor_multiplier()
 {
-	connected = players_get_list("allies").size;
-	connected = int(max(1, min(4, connected)));
-	return 0.45 + (0.55 * (connected / 4.0));
+	return lethalbeats\survival\difficulty::difficulty_get_connected_survivor_multiplier();
 }
 
 /*
@@ -972,155 +953,8 @@ summary: Returns bot skill parameters based on difficulty level (1=Easy, 2=Norma
 */
 bot_get_difficulty_settings()
 {
-	settings = [];	
-	switch(level.difficulty)
-	{
-		case 2: // NORMAL
-			settings["scale_rate"] = 0.025;
-			settings["aim_time_init"] = 0.75;
-			settings["aim_time_end"] = 0.45;
-			settings["reaction_time_init"] = 1800;
-			settings["reaction_time_end"] = 600;
-			settings["remember_time_init"] = 750;
-			settings["remember_time_end"] = 3000;
-			settings["no_trace_ads_init"] = 800;
-			settings["no_trace_ads_end"] = 1800;
-			settings["fov_init"] = 0.75;
-			settings["fov_end"] = 0.6;
-			settings["fov_max_wave"] = 30;
-			settings["dist_start_init"] = 900;
-			settings["dist_start_end"] = 3000;
-			settings["dist_max_init"] = 2200;
-			settings["dist_max_end"] = 4500;
-			settings["semi_time_init"] = 1.0;
-			settings["semi_time_end"] = 0.6;
-			settings["shoot_after_init"] = 1.25;
-			settings["shoot_after_end"] = 0.8; 
-			settings["aim_offset_time_init"] = 1.75;
-			settings["aim_offset_time_end"] = 0.8;
-			settings["aim_offset_amount_init"] = 4.5;
-			settings["aim_offset_amount_end"] = 2.25;
-			settings["bone_update_init"] = 2.25;
-			settings["bone_update_end"] = 1.0;
-			settings["fireTime"] = 0.12;
-            settings["minShots"] = 30;
-            settings["maxShots"] = 60;
-            settings["minPause"] = 1.5;
-            settings["maxPause"] = 3.0;
-            settings["windUpTime"] = 2;
-			break;
-		case 3: // HARD
-			settings["scale_rate"] = 0.05;
-			settings["aim_time_init"] = 0.4;
-			settings["aim_time_end"] = 0.2;
-			settings["reaction_time_init"] = 750;
-			settings["reaction_time_end"] = 150;
-			settings["remember_time_init"] = 2000;
-			settings["remember_time_end"] = 5000;
-			settings["no_trace_ads_init"] = 1000;
-			settings["no_trace_ads_end"] = 2500;
-			settings["fov_init"] = 0.6;
-			settings["fov_end"] = 0.45;
-			settings["fov_max_wave"] = 20;
-			settings["dist_start_init"] = 2250;
-			settings["dist_start_end"] = 7500;
-			settings["dist_max_init"] = 4000;
-			settings["dist_max_end"] = 10000;
-			settings["semi_time_init"] = 0.65;
-			settings["semi_time_end"] = 0.25;
-			settings["shoot_after_init"] = 0.65;
-			settings["shoot_after_end"] = 0.25;
-			settings["aim_offset_time_init"] = 0.75;
-			settings["aim_offset_time_end"] = 0.25;
-			settings["aim_offset_amount_init"] = 2.5;
-			settings["aim_offset_amount_end"] = 1.0;
-			settings["bone_update_init"] = 1.0;
-			settings["bone_update_end"] = 0.25;
-			settings["fireTime"] = 0.1;
-            settings["minShots"] = 40;
-            settings["maxShots"] = 80;
-            settings["minPause"] = 1.0;
-            settings["maxPause"] = 2.0;
-            settings["windUpTime"] = 0.8;
-			break;
-		default: // EASY
-			settings["scale_rate"] = 0.02;
-			settings["aim_time_init"] = 0.95;
-			settings["aim_time_end"] = 0.6;
-			settings["reaction_time_init"] = 2200;
-			settings["reaction_time_end"] = 850;
-			settings["remember_time_init"] = 500;
-			settings["remember_time_end"] = 2200;
-			settings["no_trace_ads_init"] = 700;
-			settings["no_trace_ads_end"] = 1500;
-			settings["fov_init"] = 0.82;
-			settings["fov_end"] = 0.68;
-			settings["fov_max_wave"] = 35;
-			settings["dist_start_init"] = 750;
-			settings["dist_start_end"] = 2400;
-			settings["dist_max_init"] = 1800;
-			settings["dist_max_end"] = 3800;
-			settings["semi_time_init"] = 1.15;
-			settings["semi_time_end"] = 0.75;
-			settings["shoot_after_init"] = 1.45;
-			settings["shoot_after_end"] = 1.0;
-			settings["aim_offset_time_init"] = 2.0;
-			settings["aim_offset_time_end"] = 1.1;
-			settings["aim_offset_amount_init"] = 5.25;
-			settings["aim_offset_amount_end"] = 3.0;
-			settings["bone_update_init"] = 2.6;
-			settings["bone_update_end"] = 1.25;
-			settings["fireTime"] = 0.15;
-            settings["minShots"] = 20;
-            settings["maxShots"] = 40;
-            settings["minPause"] = 2.0;
-            settings["maxPause"] = 4.0;
-            settings["windUpTime"] = 3.0;
-			break;
-	}
-
-	mult = get_connected_survivor_multiplier();
-	if (mult < 1.0)
-	{
-		inverse = 1.0 / mult;
-
-		settings["scale_rate"] *= mult;
-
-		settings["aim_time_init"] *= inverse;
-		settings["aim_time_end"] *= inverse;
-		settings["reaction_time_init"] *= inverse;
-		settings["reaction_time_end"] *= inverse;
-		settings["no_trace_ads_init"] *= inverse;
-		settings["no_trace_ads_end"] *= inverse;
-		settings["semi_time_init"] *= inverse;
-		settings["semi_time_end"] *= inverse;
-		settings["shoot_after_init"] *= inverse;
-		settings["shoot_after_end"] *= inverse;
-		settings["aim_offset_time_init"] *= inverse;
-		settings["aim_offset_time_end"] *= inverse;
-		settings["aim_offset_amount_init"] *= inverse;
-		settings["aim_offset_amount_end"] *= inverse;
-		settings["bone_update_init"] *= inverse;
-		settings["bone_update_end"] *= inverse;
-
-		settings["remember_time_init"] *= mult;
-		settings["remember_time_end"] *= mult;
-		settings["dist_start_init"] *= mult;
-		settings["dist_start_end"] *= mult;
-		settings["dist_max_init"] *= mult;
-		settings["dist_max_end"] *= mult;
-		settings["fov_init"] = min(0.95, settings["fov_init"] * inverse);
-		settings["fov_end"] = min(0.95, settings["fov_end"] * inverse);
-
-		settings["fireTime"] *= inverse;
-		settings["minShots"] = int(max(8, settings["minShots"] * mult));
-		settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * mult));
-		settings["minPause"] *= inverse;
-		settings["maxPause"] *= inverse;
-		settings["windUpTime"] *= inverse;
-	}
-
-	return settings;
+	if (isDefined(self) && isDefined(self.botDifficultySettings)) return self.botDifficultySettings;
+	return lethalbeats\survival\difficulty::difficulty_get_bot_settings();
 }
 
 /*
@@ -2210,12 +2044,7 @@ summary: Returns the CSV table path for the current difficulty: Easy/Normal/Hard
 */
 get_waves_table()
 {
-	switch(level.difficulty)
-	{
-		case 2: return WAVES_TABLE_NORMAL;
-		case 3: return WAVES_TABLE_HARD;
-		default: return WAVES_TABLE_EASY;
-	}
+	return lethalbeats\survival\difficulty::difficulty_get_waves_table();
 }
 
 /*

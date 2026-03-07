@@ -229,7 +229,7 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 		return;
 	}
 
-	if (level.difficulty == 1) iDamage *= 0.8;
+	iDamage *= lethalbeats\survival\difficulty::difficulty_get_survivor_damage_scale();
 	
 	if(self.bodyArmor > 0 && sMeansOfDeath != "MOD_TRIGGER_HURT")
 	{
