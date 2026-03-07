@@ -169,6 +169,24 @@ onPlayerMelee()
 
 onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset)
 {
+	if (iDamage >= self.health && isDefined(self.usingRemote))
+	{
+		switch(self.usingRemote)
+		{
+			case "remotemissile":
+				foreach (rocket in level.rockets)
+					if (isDefined(rocket) && isDefined(rocket.owner) && rocket.owner == self)
+					{
+						rocket notify("death");
+						while(isDefined(self.usingRemote))
+							wait 0.35;
+					}
+				break;
+		}
+
+		while(isDefined(self.usingRemote)) wait 0.35;
+	}
+
 	if (sMeansOfDeath == "MOD_FALLING")
 	{
 		self [[level.prevCallbackPlayerDamage]](eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
