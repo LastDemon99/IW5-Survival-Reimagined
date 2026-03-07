@@ -1711,14 +1711,11 @@ survivor_revive()
 	self notify("revive");
 	if (self.removeLastStandWeapon) self player_take_weapon(self.lastStandWeapon);
 	else self player_restore_ammo(self.lastStandWeapon, "onlaststand");
-	
+
 	self laststandrevive();
 	self player_enable_usability();
 	self player_enable_weapon_switch();
 	self player_enable_offhand_weapons();
-
-	waittillframeend;
-	self survivor_switch_to_weapon(self.prevWeapon);
 
     if (self player_has_perk("specialty_finalstand") && !level.diehardmode)
         self player_unset_Perk("specialty_finalstand");
@@ -1731,9 +1728,6 @@ survivor_revive()
 	self.inLastStand = false;
 	self.lastStand = undefined;
     self.health = self.maxhealth;
-
-	if (game["state"] == "postgame")
-        maps\mp\gametypes\_gamelogic::freezePlayerForRoundEnd();
 
 	self player_clear_last_stand();
 }

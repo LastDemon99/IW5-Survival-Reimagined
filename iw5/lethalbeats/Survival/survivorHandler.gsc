@@ -269,6 +269,8 @@ onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 
 onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration)
 {
+	self notify("last_stand");
+
 	if (isDefined(self.currMenu)) self lethalbeats\DynamicMenus\dynamic_shop::closeShop();
 
 	self.inLastStand = true;
@@ -390,6 +392,7 @@ lastStandMonitor()
         self.lastStandBar.bar.color = (1, self.lastStandBar.frac, 0);
         wait 1;
     }
+
 	self survivor_revive();
 }
 
@@ -437,14 +440,14 @@ reviveMonitor(player)
 		player playerLinkedOffsetEnable();
 		player.reviveSpot = reviveSpot;
 
-		result = savior lethalbeats\utility::waittill_any_return("trigger_hold_interrump", "trigger_hold_complete");
+		result = savior lethalbeats\utility::waittill_any_return("death", "disconnect", "last_stand", "trigger_hold_interrump", "trigger_hold_complete");
 		
 		player unlink();
 		reviveSpot delete();
 		level.survivors_bleedout[player.guid][2] = undefined;
 
-		if (result == "trigger_hold_interrump") continue;
-
+		if (result != "trigger_hold_complete") continue;
+		
 		savior playLocalSound("mp_killconfirm_tags_pickup");
 		player survivor_revive();
 		break;
