@@ -125,6 +125,7 @@ onBotSpawn()
 
 		self.stuned = false;
 		self.stunEndTime = 0;
+		if (isDefined(self.bot)) self.bot.burstData = undefined;
 		self.dropWeapon = true;
 		self.damageData = [];
 		self takeWeapon(self.secondaryWeapon);
@@ -371,6 +372,9 @@ onStun(weapon, meansOfDeath)
 	if (remainingStun < 0.05) remainingStun = 0.05;
 
 	self shellShock("concussion_grenade_mp", remainingStun);
+
+	// Force a fresh windup after stun; prevents carrying an in-progress burst.
+	if (isDefined(self.bot)) self.bot.burstData = undefined;
 
 	if (isDefined(self.stuned) && self.stuned)
 		return;

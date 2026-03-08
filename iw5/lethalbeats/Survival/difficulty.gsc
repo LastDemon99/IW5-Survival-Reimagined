@@ -295,6 +295,7 @@ difficulty_get_bot_settings()
 	settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"]));
 	settings["maxPause"] = max(settings["minPause"], settings["maxPause"]);
 	settings = _difficulty_apply_connected_survivor_multiplier(settings);
+	settings = _difficulty_enforce_bot_burst_guardrails(settings);
 	return settings;
 }
 
@@ -338,6 +339,35 @@ _difficulty_apply_connected_survivor_multiplier(settings)
 	settings["minPause"] *= inverse;
 	settings["maxPause"] *= inverse;
 	settings["windUpTime"] *= inverse;
+	return settings;
+}
+
+_difficulty_enforce_bot_burst_guardrails(settings)
+{
+	tier = difficulty_get_level();
+
+	minFireTime = 0.1;
+	minWindUp = 0.6;
+	minShotsFloor = 18;
+
+	if (tier == DIFFICULTY_EASY)
+	{
+		minFireTime = 0.17;
+		minWindUp = 1.35;
+		minShotsFloor = 12;
+	}
+	else if (tier == DIFFICULTY_NORMAL)
+	{
+		minFireTime = 0.13;
+		minWindUp = 0.95;
+		minShotsFloor = 16;
+	}
+
+	settings["fireTime"] = max(minFireTime, settings["fireTime"]);
+	settings["windUpTime"] = max(minWindUp, settings["windUpTime"]);
+	settings["minShots"] = int(max(minShotsFloor, settings["minShots"]));
+	settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"]));
+	settings["maxPause"] = max(settings["minPause"], settings["maxPause"]);
 	return settings;
 }
 

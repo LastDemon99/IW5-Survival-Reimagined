@@ -427,8 +427,9 @@ _isInRange(dist, curweap)
 patch_botFire(curweap)
 {
     self.bot.last_fire_time = gettime();
+    isProjectile = lethalbeats\weapon::weapon_get_class(curweap) == "projectile";
 
-    if (self bot_is_jugger() || self bot_is_dog() || lethalbeats\weapon::weapon_get_class(curweap) == "projectile")
+    if (self bot_is_jugger() || self bot_is_dog() || (isProjectile && lethalbeats\survival\difficulty::difficulty_is_hard()))
     {
         if (!self.bot.is_cur_full_auto)
         {
@@ -445,32 +446,57 @@ patch_botFire(curweap)
         return;
     }
 
-    if (!self.bot.is_cur_full_auto)
-    {
-        if (self.bot.semi_time) return;
-
-        self thread maps\mp\bots\_bot_internal::pressFire();
-        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
-        self thread maps\mp\bots\_bot_internal::doSemiTime();
-        return;
-    }
+    isSemiAuto = weaponIsSemiAuto(curweap);
 
     targetId = -1;
     if (isdefined(self.bot.target) && isdefined(self.bot.target.entity)) targetId = self.bot.target.entity getentitynumber();
 
     if (targetId < 0)
     {
-        self thread maps\mp\bots\_bot_internal::pressFire();
-        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
+        if (isdefined(self.bot.burstData))
+        {
+            self.bot.burstData.targetId = -1;
+            self.bot.burstData.hadVision = false;
+            self.bot.burstData.shotsLeft = 0;
+            self.bot.burstData.nextShotTime = 0;
+            self.bot.burstData.pauseUntil = 0;
+            self.bot.burstData.windUpUntil = 0;
+        }
         return;
     }
 
     now = gettime();
     settings = bot_get_difficulty_settings();
+    if (!isSemiAuto)
+    {
+        // Apply burst/fire-rate pacing to non-semi-auto weapons.
+        if (lethalbeats\survival\difficulty::difficulty_is_easy())
+        {
+            settings["fireTime"] *= 1.25;
+            settings["windUpTime"] *= 1.2;
+            settings["minShots"] = int(max(10, settings["minShots"] * 0.7));
+            settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * 0.75));
+        }
+        else if (lethalbeats\survival\difficulty::difficulty_is_normal())
+        {
+            settings["fireTime"] *= 1.15;
+            settings["windUpTime"] *= 1.12;
+            settings["minShots"] = int(max(12, settings["minShots"] * 0.8));
+            settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * 0.85));
+        }
+        else
+        {
+            settings["fireTime"] *= 1.08;
+            settings["windUpTime"] *= 1.08;
+            settings["minShots"] = int(max(14, settings["minShots"] * 0.9));
+            settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * 0.92));
+        }
+    }
     if (!isdefined(self.bot.burstData))
     {
         self.bot.burstData = spawnstruct();
         self.bot.burstData.targetId = -1;
+        self.bot.burstData.hadVision = false;
         self.bot.burstData.shotsLeft = 0;
         self.bot.burstData.nextShotTime = 0;
         self.bot.burstData.pauseUntil = 0;
@@ -480,13 +506,46 @@ patch_botFire(curweap)
     if (self.bot.burstData.targetId != targetId)
     {
         self.bot.burstData.targetId = targetId;
+        self.bot.burstData.hadVision = false;
         self.bot.burstData.shotsLeft = 0;
         self.bot.burstData.nextShotTime = 0;
         self.bot.burstData.pauseUntil = 0;
+        self.bot.burstData.windUpUntil = 0;
+    }
+
+    canShootTarget = false;
+    if (isdefined(self.bot.target) && isdefined(self.bot.target.trace_time) && isdefined(self.bot.target.no_trace_time))
+        canShootTarget = (self.bot.target.trace_time > 0 && self.bot.target.no_trace_time <= 0);
+
+    if (!canShootTarget)
+    {
+        self.bot.burstData.hadVision = false;
+        self.bot.burstData.shotsLeft = 0;
+        self.bot.burstData.nextShotTime = 0;
+        self.bot.burstData.pauseUntil = 0;
+        self.bot.burstData.windUpUntil = 0;
+        return;
+    }
+
+    if (!self.bot.burstData.hadVision)
+    {
+        self.bot.burstData.hadVision = true;
+        self.bot.burstData.shotsLeft = 0;
+        self.bot.burstData.nextShotTime = 0;
         self.bot.burstData.windUpUntil = now + int(settings["windUpTime"] * 1000);
     }
 
     if (now < self.bot.burstData.pauseUntil || now < self.bot.burstData.windUpUntil || now < self.bot.burstData.nextShotTime) return;
+
+    if (isSemiAuto)
+    {
+        if (self.bot.semi_time) return;
+
+        self thread maps\mp\bots\_bot_internal::pressFire();
+        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
+        self thread maps\mp\bots\_bot_internal::doSemiTime();
+        return;
+    }
 
     if (self.bot.burstData.shotsLeft <= 0)
         self.bot.burstData.shotsLeft = randomIntRange(settings["minShots"], settings["maxShots"] + 1);
@@ -991,6 +1050,16 @@ patch_targetObjUpdateNoTrace(obj)
     obj.no_trace_time += incrementAmount;
 	obj.trace_time = 0;
 
+    // If we lose LOS on the active target, require windup again on reacquisition.
+    if (isDefined(self.bot) && isDefined(self.bot.burstData) && isDefined(self.bot.target) && isDefined(self.bot.target.entity)
+        && isDefined(obj.entity) && self.bot.target.entity == obj.entity)
+    {
+        self.bot.burstData.shotsLeft = 0;
+        self.bot.burstData.nextShotTime = 0;
+        self.bot.burstData.pauseUntil = 0;
+        self.bot.burstData.windUpUntil = 0;
+    }
+
     // do not reset didlook for survivor target
 	if (!targetIsSurvivor) obj.didlook = false;
 }
@@ -1334,7 +1403,6 @@ dropModelFromPlayer(weaponName, weaponModel, weaponData, ammoData)
     trigger thread ammoPickupMonitor(weaponName, ammoData, weaponModel);    
     trigger thread _deletePickupAfterAWhile(weaponModel);
 }
-
 
 _weaponPickupFilter(player)
 {
