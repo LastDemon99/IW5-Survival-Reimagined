@@ -348,8 +348,9 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 		lastStandBar.objective.color = (0.33, 0.75, 0.24);
 		lastStandBar.type = "death";
 
+		reviveTime = survivors(true).size + 4;
 		trigger = lethalbeats\trigger::trigger_create(self.origin, 60);
-		trigger lethalbeats\trigger::trigger_set_use_hold(10, "Hold ^3[{+activate}] ^7to revive the player", true, false);
+		trigger lethalbeats\trigger::trigger_set_use_hold(reviveTime, "Hold ^3[{+activate}] ^7to revive the player", true, false);
 		trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
 		trigger lethalbeats\trigger::trigger_link_to(self);
 		trigger.tag = "revive";
