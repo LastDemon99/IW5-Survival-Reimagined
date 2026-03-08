@@ -369,7 +369,7 @@ onSurvivorSkipIntermission()
 	if(level.skip_intermission == survivors(true).size) 
 	{
 		notifyMessage(NOTIFY_SKIP_CASH_BONUS);
-		survivors_call(::survivor_give_score, undefined, level.timerHud.value * 35);
+		survivors_call(::survivor_give_score, undefined, get_skip_intermission_bonus());
 		level notify("intermission_end");
 	}
 	
@@ -493,6 +493,20 @@ waitIntermission(waitTime)
 	level.timerHud = undefined;
 }
 
+get_skip_intermission_bonus()
+{
+	remainingSeconds = level.timerHud.value;
+	if (!isDefined(remainingSeconds)) remainingSeconds = 0;
+
+	wave = level.wave_num;
+	if (!isDefined(wave) || wave < 1) wave = 1;
+
+	waveStep = int((wave - 1) / 5);
+	multiplier = min(35, 15 + (waveStep * 5));
+
+	return int(remainingSeconds * multiplier);
+}
+
 getSpawnPoint()
 {
 	if(!isDefined(self.firstSpawn))
@@ -546,7 +560,7 @@ notifyMessage(type, sound, titleText)
 			notifyData.sound = "survival_wave_end_splash";
 			break;
 		case NOTIFY_SKIP_CASH_BONUS:
-			notifyData.titleText = "Skip Intermission $ " + (level.timerHud.value * 35);
+			notifyData.titleText = "Skip Intermission $ " + get_skip_intermission_bonus();
 			notifyData.glowColor = (1, 0.49, 0);
 			notifyData.duration = 1;
 			notifyData.sound = "survival_bonus_splash";
