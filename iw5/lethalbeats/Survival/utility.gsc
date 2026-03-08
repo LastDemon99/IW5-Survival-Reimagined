@@ -1557,6 +1557,8 @@ survivor_revive()
     if (level.diehardmode)
 		self.headicon = "";
 
+	self switchToWeaponImmediate(isDefined(self.prevweapon) ? self.prevweapon : self player_get_primary());
+
     self setstance("crouch");
     self.revived = true;
 	self.inLastStand = false;
@@ -1631,6 +1633,54 @@ survivor_trigger_filter(survivor)
 	return true;
 }
 
+_survivor_save_weapon_slot(playerData, slotIndex, weapon)
+{
+	if (!isDefined(weapon)) return;
+
+	weaponData = self player_get_weapon_data(weapon);
+	if (!isDefined(weaponData) && isDefined(self.weaponData) && isDefined(self.weaponData[0]) && isDefined(self.weaponData[0][0]) && self.weaponData[0][0] == weapon)
+		weaponData = self.weaponData[0];
+	if (!isDefined(weaponData) && isDefined(self.weaponData) && isDefined(self.weaponData[1]) && isDefined(self.weaponData[1][0]) && self.weaponData[1][0] == weapon)
+		weaponData = self.weaponData[1];
+	if (!isDefined(weaponData)) weaponData = self player_create_weapon_data(weapon);
+
+	playerData["weaponData"][slotIndex] = weaponData;
+	playerData["ammoData"][slotIndex] = self player_get_ammo_data(weapon);
+}
+
+_survivor_get_restored_weapon(playerData)
+{
+	if (!isDefined(playerData)) return undefined;
+
+	weaponSlots = playerData["weaponData"];
+	if (!isDefined(weaponSlots)) weaponSlots = [];
+
+	primary = undefined;
+	secondary = undefined;
+
+	if (isDefined(weaponSlots[0])) primary = weaponSlots[0][0];
+	if (isDefined(weaponSlots[1])) secondary = weaponSlots[1][0];
+
+	desiredWeapon = playerData["selectedWeapon"];
+	if (_survivor_is_valid_restore_weapon(desiredWeapon)) return desiredWeapon;
+
+	desiredWeapon = playerData["prevWeapon"];
+	if (_survivor_is_valid_restore_weapon(desiredWeapon)) return desiredWeapon;
+
+	if (_survivor_is_valid_restore_weapon(primary)) return primary;
+	if (_survivor_is_valid_restore_weapon(secondary)) return secondary;
+
+	return undefined;
+}
+
+_survivor_is_valid_restore_weapon(weapon)
+{
+	if (!isDefined(weapon) || weapon == "none") return false;
+	if (string_starts_with(weapon, "alt_")) return false;
+	if (maps\mp\_utility::isKillstreakWeapon(weapon)) return false;
+	return self hasWeapon(weapon);
+}
+
 /*
 ///DocStringBegin
 detail: <Player> survivor_load_state(): <Bool>
@@ -1642,26 +1692,36 @@ survivor_load_state()
 	if (self isTestClient() || !isDefined(game["saveState"]) || !isDefined(game["saveState"][self.guid])) return false;
 
 	playerData = game["saveState"][self.guid];
+	if (!isDefined(playerData)) return false;
+
+	if (!isDefined(playerData["weaponData"])) playerData["weaponData"] = [];
+	if (!isDefined(playerData["ammoData"])) playerData["ammoData"] = [];
+	if (!isDefined(playerData["perks"])) playerData["perks"] = [];
+	if (!isDefined(playerData["grenades"])) playerData["grenades"] = [];
+	if (!isDefined(playerData["turrets"])) playerData["turrets"] = [];
+	if (!isDefined(playerData["airdrops"])) playerData["airdrops"] = [];
+	if (!isDefined(playerData["killstreak"])) playerData["killstreak"] = "";
 
 	self player_take_all_weapons();
+	self.weaponData = [];
 
-	self setOrigin(playerData["origin"]);
-	self setPlayerAngles(playerData["angles"]);
-	self setStance(playerData["stance"]);
+	if (isDefined(playerData["origin"])) self setOrigin(playerData["origin"]);
+	if (isDefined(playerData["angles"])) self setPlayerAngles(playerData["angles"]);
+	if (isDefined(playerData["stance"])) self setStance(playerData["stance"]);
 
-	self.pers["kills"] = playerData["kills"];
+	self.pers["kills"] = isDefined(playerData["kills"]) ? playerData["kills"] : 0;
 	self.score = self.pers["kills"];
 
-	self.pers["deaths"] = playerData["deaths"];
+	self.pers["deaths"] = isDefined(playerData["deaths"]) ? playerData["deaths"] : 0;
 	self.score = self.pers["deaths"];
 
-	self.pers["assists"] = playerData["assists"];
+	self.pers["assists"] = isDefined(playerData["assists"]) ? playerData["assists"] : 0;
 	self.score = self.pers["assists"];
 
-	self survivor_set_score(playerData["score"]);
-	self survivor_set_body_armor(playerData["armor"]);
+	self survivor_set_score(isDefined(playerData["score"]) ? playerData["score"] : getDvarInt("survival_start_money"));
+	self survivor_set_body_armor(isDefined(playerData["armor"]) ? playerData["armor"] : 0);
 
-	if (playerData["hasRevive"]) self survivor_give_last_stand();
+	if (isDefined(playerData["hasRevive"]) && playerData["hasRevive"]) self survivor_give_last_stand();
 	else
 	{
 		self.hasRevive = false;
@@ -1676,6 +1736,7 @@ survivor_load_state()
 	self player_clear_nades();
 	foreach(grenade, ammount in playerData["grenades"])
 	{
+		if (!isDefined(grenade)) continue;
 		if (ammount) self player_set_nades(grenade, ammount);
 		if (grenade == "claymore_mp") self player_set_action_slot(1, "weapon", grenade);
 		else if (grenade == "c4_mp") self player_set_action_slot(5, "weapon", grenade);
@@ -1683,6 +1744,7 @@ survivor_load_state()
 
 	foreach(sentryId, turret in playerData["turrets"])
 	{
+		if (!isDefined(turret) || !isDefined(turret["type"]) || !isDefined(turret["origin"]) || !isDefined(turret["angles"])) continue;
 		sentry = lethalbeats\survival\killstreaks\_sentry::spawnSentryAtLocation(turret["type"], turret["origin"], turret["angles"], self);
 		level.sentry++;
 	}
@@ -1702,6 +1764,7 @@ survivor_load_state()
 
 	foreach(airdrop in playerData["airdrops"])
 	{
+		if (!isDefined(airdrop) || !isDefined(airdrop[0]) || !isDefined(airdrop[1])) continue;
 		dropType = airdrop[0];
 		dropImpulse = (randomInt(5), randomInt(5), randomInt(5));
 		crateType = maps\mp\killstreaks\_airdrop::getcratetypefordroptype(dropType);
@@ -1715,14 +1778,20 @@ survivor_load_state()
 	{
 		if (!isDefined(playerData["weaponData"][i])) continue;
 		weapon = playerData["weaponData"][i][0];
-		self player_give_weapon(weapon, false, false, true);
+		if (!isDefined(weapon) || weapon == "none") continue;
+		self player_give_weapon(weapon, false, false, false);
 		self player_set_weapon_data(weapon, playerData["weaponData"][i]);
-		self player_set_ammo_data(weapon, playerData["ammoData"][i]);
+		if (isDefined(playerData["ammoData"][i])) self player_set_ammo_data(weapon, playerData["ammoData"][i]);
 	}
 
-	self.prevWeapon = playerData["prevWeapon"];
-	if (maps\mp\_utility::isKillstreakWeapon(playerData["currentWeapon"])) self switchToWeaponImmediate(self.prevWeapon);
-	else self switchToWeaponImmediate(playerData["currentWeapon"]);
+	self.prevWeapon = isDefined(playerData["prevWeapon"]) ? playerData["prevWeapon"] : undefined;
+	restoredWeapon = self _survivor_get_restored_weapon(playerData);
+	if (isDefined(restoredWeapon))
+	{
+		self setSpawnWeapon(restoredWeapon);
+		self switchToWeaponImmediate(restoredWeapon);
+		self.prevWeapon = restoredWeapon;
+	}
 
 	game["saveState"][self.guid] = undefined;
 
@@ -1781,13 +1850,15 @@ summary: Saves the game state for all players, including stats, inventory, and l
 */
 level_save_state()
 {
-	game["saveState"]["map"] = getDvar("mapname");
-	game["saveState"]["wave"] = level.wave_num;
+	saveState = [];
+	saveState["map"] = getDvar("mapname");
+	saveState["wave"] = level.wave_num;
 
 	for(i = 0; i < level.players.size; i++)
 	{
 		player = level.players[i];
 		if (player isTestClient()) continue;
+		playerData = [];
 		
 		playerData["origin"] = lethalbeats\vector::vector_truncate(player.origin, 3);
 		playerData["angles"] = lethalbeats\vector::vector_truncate(player getPlayerAngles(), 3);
@@ -1803,6 +1874,8 @@ level_save_state()
 		playerData["turrets"] = player.turrets;
 		playerData["airdrops"] = player.airdrops;
 		playerData["killstreak"] = "";
+		playerData["weaponData"] = [];
+		playerData["ammoData"] = [];
 
 		if (isDefined(player.pers["killstreaks"][0]) && player.pers["killstreaks"][0].available)
 			playerData["killstreak"] = player.pers["killstreaks"][0].streakname;
@@ -1813,22 +1886,70 @@ level_save_state()
 		playerData["currentWeapon"] = player getCurrentWeapon();
 		playerData["prevWeapon"] = player.prevWeapon;
 
-		primary = player player_get_primary();
-		if (isDefined(primary))
+		// Source of truth: snapshot active survival weaponData first.
+		for (slotIndex = 0; slotIndex < 2; slotIndex++)
 		{
-			playerData["weaponData"][0] = player player_get_weapon_data(primary);
-        	playerData["ammoData"][0] = player player_get_ammo_data(primary);
+			if (!isDefined(player.weaponData) || !isDefined(player.weaponData[slotIndex])) continue;
+			if (!isDefined(player.weaponData[slotIndex][0])) continue;
+
+			slotWeapon = player.weaponData[slotIndex][0];
+			if (!isDefined(slotWeapon) || slotWeapon == "none") continue;
+			if (!player hasWeapon(slotWeapon)) continue;
+
+			playerData["weaponData"][slotIndex] = player.weaponData[slotIndex];
+			playerData["ammoData"][slotIndex] = player player_get_ammo_data(slotWeapon);
 		}
+
+		primary = player player_get_primary();
+		if (isDefined(primary) && !isDefined(playerData["weaponData"][0])) player _survivor_save_weapon_slot(playerData, 0, primary);
 
 		secondary = player player_get_secondary();
-		if (isDefined(secondary))
+		if (isDefined(secondary) && !isDefined(playerData["weaponData"][1])) player _survivor_save_weapon_slot(playerData, 1, secondary);
+
+		// Restart can happen during transient weapon states; backfill from owned weapons if slots are missing.
+		slot = 0;
+		if (isDefined(playerData["weaponData"][0])) slot = 1;
+		if (isDefined(playerData["weaponData"][1])) slot = 2;
+
+		if (slot < 2)
 		{
-			playerData["weaponData"][1] = player player_get_weapon_data(secondary);
-        	playerData["ammoData"][1] = player player_get_ammo_data(secondary);
+			ownedWeapons = player player_get_weapons();
+			foreach (ownedWeapon in ownedWeapons)
+			{
+				if (slot >= 2) break;
+				if (!isDefined(ownedWeapon) || ownedWeapon == "none") continue;
+				if (string_starts_with(ownedWeapon, "alt_")) continue;
+				if (maps\mp\_utility::isKillstreakWeapon(ownedWeapon)) continue;
+				if (weaponClass(ownedWeapon) == "none" || weaponClass(ownedWeapon) == "grenade") continue;
+
+				alreadySaved = false;
+				if (isDefined(playerData["weaponData"][0]) && isDefined(playerData["weaponData"][0][0]) && playerData["weaponData"][0][0] == ownedWeapon) alreadySaved = true;
+				if (isDefined(playerData["weaponData"][1]) && isDefined(playerData["weaponData"][1][0]) && playerData["weaponData"][1][0] == ownedWeapon) alreadySaved = true;
+				if (alreadySaved) continue;
+
+				player _survivor_save_weapon_slot(playerData, slot, ownedWeapon);
+				slot++;
+			}
 		}
 
-		game["saveState"][player.guid] = playerData;
+		playerData["selectedWeapon"] = playerData["currentWeapon"];
+		if (!isDefined(playerData["selectedWeapon"]) || playerData["selectedWeapon"] == "none"
+			|| string_starts_with(playerData["selectedWeapon"], "alt_")
+			|| maps\mp\_utility::isKillstreakWeapon(playerData["selectedWeapon"])
+			|| !player hasWeapon(playerData["selectedWeapon"]))
+		{
+			playerData["selectedWeapon"] = playerData["prevWeapon"];
+			if (!isDefined(playerData["selectedWeapon"]) || playerData["selectedWeapon"] == "none" || !player hasWeapon(playerData["selectedWeapon"]))
+			{
+				if (isDefined(playerData["weaponData"][0])) playerData["selectedWeapon"] = playerData["weaponData"][0][0];
+				else if (isDefined(playerData["weaponData"][1])) playerData["selectedWeapon"] = playerData["weaponData"][1][0];
+			}
+		}
+
+		saveState[player.guid] = playerData;
 	}
+
+	game["saveState"] = saveState;
 }
 
 level_load_state()

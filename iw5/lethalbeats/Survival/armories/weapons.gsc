@@ -126,8 +126,7 @@ onBuy(page, item, price, index)
             else
             {
                 weapon = player player_get_build_weapon(item);
-                if (!isDefined(weapon)) self.weaponData = player newWeaponData(weapon_build(item));
-                else self.weaponData = player getWeaponData(weapon);
+                self.weaponData = isDefined(weapon) ? player getWeaponData(weapon) : player newWeaponData(weapon_build(item));
             }
             break;        
         case WEAPON_ATTACHS:
@@ -397,7 +396,8 @@ getWeaponData(weapon)
 
     waittillframeend;
 
-    weaponData = self.weaponData[self player_get_weapon_index(weapon)];
+    weaponIndex = self player_get_weapon_index(weapon);
+    weaponData = self.weaponData[weaponIndex];
     purchasedAttachSlots = undefined;
     purchasedBuffSlots = undefined;
 

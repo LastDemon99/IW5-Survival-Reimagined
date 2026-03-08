@@ -73,6 +73,17 @@ onPlayerSpawn()
 			}
 			else self thread survivor_zoom_effect();
 		}
+
+		weaponsAfterSpawn = self player_get_weapons();
+		if (!weaponsAfterSpawn.size)
+		{
+			fallbackWeapon = "iw5_fnfiveseven_mp";
+			self player_give_weapon(fallbackWeapon);
+			self.prevWeapon = fallbackWeapon;
+			self.weaponData = [self player_create_weapon_data(fallbackWeapon), undefined];
+			self setSpawnWeapon(fallbackWeapon);
+			self switchToWeaponImmediate(fallbackWeapon);
+		}
 		
 		self setClientDvar(UI_USE_SLOT, "none");
 		self setClientDvar("client_cmd", "");
@@ -554,6 +565,7 @@ onWeaponChange()
 		{
 			self player_take_all_weapon_buffs();
 			weaponData = self player_get_weapon_data(newWeapon);
+			if (!isDefined(weaponData) || !isDefined(weaponData[3])) continue;
 			foreach(buff in weaponData[3]) self player_give_perk(buff, true);
 		}
 		
