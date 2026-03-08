@@ -1327,11 +1327,21 @@ dropModelFromPlayer(weaponName, weaponModel, weaponData, ammoData)
 
     trigger = lethalbeats\trigger::trigger_create(origin, 45);
     trigger.owner = self;
+    trigger.weapon = weaponName;
     trigger lethalbeats\trigger::trigger_set_use("Hold ^3[{+activate}] ^7to pick up " + displayName);
-    trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
+    trigger lethalbeats\trigger::trigger_set_enable_condition(::_weaponPickupFilter);
     trigger thread weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel);
     trigger thread ammoPickupMonitor(weaponName, ammoData, weaponModel);    
     trigger thread _deletePickupAfterAWhile(weaponModel);
+}
+
+
+_weaponPickupFilter(player)
+{
+    foreach(weapon in player player_get_weapons())
+        if (isDefined(weapon) && self.weapon == weapon && player player_has_max_ammo(weapon, true))
+            return false;
+    return self survivor_trigger_filter(player);
 }
 
 waitDropWeapon()
