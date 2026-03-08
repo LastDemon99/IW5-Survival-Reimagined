@@ -124,6 +124,7 @@ onBotSpawn()
 		}
 
 		self.stuned = false;
+		self.stunEndTime = 0;
 		self.dropWeapon = true;
 		self.damageData = [];
 		self takeWeapon(self.secondaryWeapon);
@@ -328,7 +329,7 @@ onSprint()
 
 onStun(weapon, meansOfDeath)
 {
-	stunTime = 0;
+	stunTime = 1;
 
 	if (isDefined(self.damageData) && self.damageData.size > 0)
 	{
@@ -343,7 +344,7 @@ onStun(weapon, meansOfDeath)
 		}
 
 		if (totalDamage >= self.maxHealth * 0.35)
-			stunTime = 2;
+			stunTime = 3;
 	}
 
 	if (!stunTime)
@@ -362,11 +363,35 @@ onStun(weapon, meansOfDeath)
 
 	if (!stunTime) return;
 
-	self notify("stuned");
-	self endon("stuned");
+	newStunEnd = getTime() + int(stunTime * 1000);
+	if (!isDefined(self.stunEndTime) || self.stunEndTime < newStunEnd)
+		self.stunEndTime = newStunEnd;
+
+	remainingStun = float(self.stunEndTime - getTime()) / 1000.0;
+	if (remainingStun < 0.05) remainingStun = 0.05;
+
+	self shellShock("concussion_grenade_mp", remainingStun);
+
+	if (isDefined(self.stuned) && self.stuned)
+		return;
+
 	self.stuned = true;
-	self shellShock("concussion_grenade_mp", stunTime);
-	wait stunTime;
+	self thread onStunWatcher();
+}
+
+onStunWatcher()
+{
+	self endon("disconnect");
+	self endon("death");
+
+	for (;;)
+	{
+		if (!isDefined(self.stunEndTime) || getTime() >= self.stunEndTime)
+			break;
+
+		wait 0.05;
+	}
+
 	self.stuned = false;
 }
 
