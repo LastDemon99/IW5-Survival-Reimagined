@@ -547,6 +547,7 @@ lbSurvivalDeathCrash()
 	triggerFx(explosionEffect);	
 	
 	self maps\mp\killstreaks\_helicopter_guard::lbExplode();
+	explosionEffect delete();
 }
 
 _nodeFilter(node) 

@@ -236,6 +236,7 @@ _heli_crash()
 	triggerFx(explosionEffect);	
 	
 	self maps\mp\killstreaks\_helicopter::heli_explode();
+    explosionEffect delete();
 }
 
 _tryusehelicopter( lifeId, heliType )
