@@ -314,7 +314,7 @@ _sentry_burstFireStart()
     self endon("leaving");
     level endon("game_ended");
 
-    settings = lethalbeats\survival\difficulty::difficulty_get_vehicle_burst_settings();
+    settings = lethalbeats\survival\difficulty::difficulty_get_pavelow_burst_settings();
     fireTime = settings["fireTime"];
     minShots = settings["minShots"];
     maxShots = settings["maxShots"];

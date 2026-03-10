@@ -172,40 +172,74 @@ _difficulty_get_bot_profile_hard()
 //	          VEHICLE SETTINGS   	    //
 //////////////////////////////////////////
 
-_difficulty_get_vehicle_profile_easy()
+difficulty_get_h6_burst_settings()
 {
 	settings = [];
-	settings["fireTime"] = 0.15;
-	settings["minShots"] = 20;
-	settings["maxShots"] = 40;
-	settings["minPause"] = 2;
-	settings["maxPause"] = 4;
-	settings["windUpTime"] = 2;
-	return settings;
+
+	switch(difficulty_get_level())
+	{
+		case DIFFICULTY_HARD:
+			settings["fireTime"] = 0.05;
+			settings["minShots"] = 80;
+			settings["maxShots"] = 80;
+			settings["minPause"] = 0.5;
+			settings["maxPause"] = 1;
+			settings["windUpTime"] = 0;
+			return settings;
+
+		case DIFFICULTY_NORMAL:
+			settings["fireTime"] = 0.1;
+			settings["minShots"] = 40;
+			settings["maxShots"] = 80;
+			settings["minPause"] = 2;
+			settings["maxPause"] = 3;
+			settings["windUpTime"] = 1;
+			return settings;
+
+		default:
+			settings["fireTime"] = 0.15;
+			settings["minShots"] = 40;
+			settings["maxShots"] = 80;
+			settings["minPause"] = 2;
+			settings["maxPause"] = 3;
+			settings["windUpTime"] = 1.75;
+			return settings;
+	};
 }
 
-_difficulty_get_vehicle_profile_normal()
+difficulty_get_pavelow_burst_settings()
 {
 	settings = [];
-	settings["fireTime"] = 0.12;
-	settings["minShots"] = 30;
-	settings["maxShots"] = 60;
-	settings["minPause"] = 1.5;
-	settings["maxPause"] = 3;
-	settings["windUpTime"] = 1.75;
-	return settings;
-}
 
-_difficulty_get_vehicle_profile_hard()
-{
-	settings = [];
-	settings["fireTime"] = 0.1;
-	settings["minShots"] = 40;
-	settings["maxShots"] = 80;
-	settings["minPause"] = 1;
-	settings["maxPause"] = 2;
-	settings["windUpTime"] = 0.8;
-	return settings;
+	switch(difficulty_get_level())
+	{
+		case DIFFICULTY_HARD:
+			settings["fireTime"] = 0.035;
+			settings["minShots"] = 120;
+			settings["maxShots"] = 120;
+			settings["minPause"] = 0.25;
+			settings["maxPause"] = 0.5;
+			settings["windUpTime"] = 0;
+			return settings;
+
+		case DIFFICULTY_NORMAL:
+			settings["fireTime"] = 0.08;
+			settings["minShots"] = 60;
+			settings["maxShots"] = 100;
+			settings["minPause"] = 1;
+			settings["maxPause"] = 2;
+			settings["windUpTime"] = 0.5;
+			return settings;
+
+		default:
+			settings["fireTime"] = 0.12;
+			settings["minShots"] = 40;
+			settings["maxShots"] = 80;
+			settings["minPause"] = 1.5;
+			settings["maxPause"] = 2.5;
+			settings["windUpTime"] = 1;
+			return settings;
+	};
 }
 
 //////////////////////////////////////////
@@ -261,14 +295,4 @@ difficulty_get_bot_settings()
 		case DIFFICULTY_NORMAL: return self _difficulty_get_bot_profile_normal();
 		default: return self _difficulty_get_bot_profile_easy();
 	}
-}
-
-difficulty_get_vehicle_burst_settings()
-{
-	switch(difficulty_get_level())
-	{
-		case DIFFICULTY_HARD: return _difficulty_get_vehicle_profile_hard();
-		case DIFFICULTY_NORMAL: return _difficulty_get_vehicle_profile_normal();
-		default: return _difficulty_get_vehicle_profile_easy();
-	};
 }
