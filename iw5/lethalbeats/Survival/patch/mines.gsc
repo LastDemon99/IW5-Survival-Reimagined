@@ -113,10 +113,9 @@ c4Watch(item, weaponName)
     item.activated = true;
     item.weaponname = weaponName;
 
-    item thread maps\mp\gametypes\_shellshock::c4_earthquake();
     item thread mineDamage();
-    item thread c4empdamage();
-    item thread c4empkillstreakwait();
+    //item thread c4empdamage();
+    ///item thread c4empkillstreakwait();
     item thread c4WatchStuck();
 }
 
@@ -126,15 +125,16 @@ c4WatchStuck()
     self.owner endon("disconnect");
     self endon("death");
 
-    self waittill("missile_stuck");
-    
+    self waittill("missile_stuck");    
+    if (self.owner.team == "axis") return;
+
     trigger = trigger_create(self.origin, 70);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up C4");
     trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = self.owner;
     self.trigger = trigger;
 
-    if (self.owner.team == "allies") self thread setClaymoreTeamHeadIcon(self.owner.team);
+    self maps\mp\_entityheadicons::setTeamHeadIcon("allies", (0, 0, 20));
     self mineWatchPickup(self.owner, trigger);
 }
 
@@ -156,7 +156,9 @@ c4WatchAltDetonate()
         {
             if (isdefined(mine))
             {
-                if (isdefined(mine.trigger)) mine.trigger trigger_delete();
+                if (isdefined(mine.trigger)) mine.trigger trigger_delete();               
+                playRumbleOnPosition("grenade_rumble", mine.origin);
+                earthquake(0.4, 0.75, mine.origin, 512);
                 mine detonate();
             }
         }
@@ -207,9 +209,11 @@ claymoreWatchStuck(owner, weaponName)
     owner.mines[CLAYMORE][owner.mines[CLAYMORE].size] = self;
 
     self thread mineDamage();
-    self thread c4empdamage();
-    self thread c4empkillstreakwait();
+    //self thread c4empdamage();
+    //self thread c4empkillstreakwait();
     self thread claymoreWatchProximity();
+
+    if (self.owner.team == "axis") return;
 
     trigger = trigger_create(self.origin, 70);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up Claymore");
@@ -217,7 +221,7 @@ claymoreWatchStuck(owner, weaponName)
     trigger.owner = owner;
     self.trigger = trigger;
 
-    if (owner.team == "allies") self thread setClaymoreTeamHeadIcon(owner.team);
+    self maps\mp\_entityheadicons::setTeamHeadIcon("allies", (0, 0, 20));
     self mineWatchPickup(owner, trigger);
 }
 
@@ -280,8 +284,8 @@ bouncingbettyWatch(item, weaponName)
     item.weaponname = weaponName;
 
     item thread mineDamage();
-    item thread c4empdamage();
-    item thread c4empkillstreakwait();
+    //item thread c4empdamage();
+    //item thread c4empkillstreakwait();
     item thread bouncingbettyWatchStuck(self);
 }
 
@@ -293,13 +297,15 @@ bouncingbettyWatchStuck(owner)
     self thread mineBeacon();
     self thread bouncingbettyWatchProximity();
 
+    if (self.owner.team == "axis") return;
+
     trigger = trigger_create(self.origin + (0, 0, 25), 70);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up Bouncing Betty");
     trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = owner;
     self.trigger = trigger;
 
-    if (owner.team == "allies") self thread setClaymoreTeamHeadIcon(owner.team);
+    self maps\mp\_entityheadicons::setTeamHeadIcon("allies", (0, 0, 20));
     self mineWatchPickup(owner, trigger);
 }
 
@@ -394,6 +400,8 @@ throwingKnifeWatchStuck(owner, weaponName)
 
     self waittill("missile_stuck");
     
+    if (self.owner.team == "axis") return;
+
     trigger = trigger_create(self.origin, 90);
     trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up ThrowingKnife");
     trigger trigger_set_enable_use_condition(::minePickupCondition);
@@ -401,7 +409,7 @@ throwingKnifeWatchStuck(owner, weaponName)
     trigger.tag = "throwingKnife";
     self.trigger = trigger;
 
-    if (owner.team == "allies") self thread setClaymoreTeamHeadIcon(owner.team);
+    self maps\mp\_entityheadicons::setTeamHeadIcon("allies", (0, 0, 20));
     self mineWatchPickup(owner, trigger);
 }
 
@@ -478,6 +486,12 @@ mineDamage()
             self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
     }
 
+    if (self.weaponname == C4)
+    {
+        playRumbleOnPosition("grenade_rumble", self.origin);
+        earthquake(0.4, 0.75, self.origin, 512);
+    }
+
     self detonate(attacker);
 }
 
@@ -491,10 +505,7 @@ mineDeleteOnDisconnect()
     wait 0.05;
 
     foreach(mine in mines)
-    {
-        if (isdefined(mine.trigger)) mine.trigger trigger_delete();
-        mine delete();
-    }
+        mine notify("damage", 9999999, self, (0, 0, 0), mine.origin, "MOD_PROJECTILE_SPLASH", undefined, undefined, undefined, undefined, "artillery_mp");
 }
 
 mineWatchPickup(owner, trigger)
@@ -528,6 +539,8 @@ mineWatchPickup(owner, trigger)
 
 mineCreateBombSquadModel(model, owner)
 {
+    if (owner.team == "allies") return; // ignore survivor mines
+
     level endon("game_ended");
 	self endon("death");
 
@@ -542,17 +555,6 @@ mineCreateBombSquadModel(model, owner)
 
     self.bombSquad = bombSquadModel;
     level notify("update_bombsquad");
-    self waittill("death");
-
-    if (isdefined(self.trigger))
-    {
-        if (isdefined(self.damageArea)) self.damageArea trigger_delete();
-        self.trigger trigger_delete();
-        if (isDefined(self.bombSquad)) self.bombSquad delete();
-        
-        if (isDefined(owner) && isDefined(owner.mines[self.weaponname]))
-            owner.mines[self.weaponname] = array_remove(owner.mines[self.weaponname], self);
-    }
 }
 
 mineBombSquadVisibilityUpdater()
