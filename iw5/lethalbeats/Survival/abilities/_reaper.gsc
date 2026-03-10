@@ -69,6 +69,8 @@ _remotefiring(remote)
     remote endon("remote_done");
     remote endon("death");
 
+    isBotRemoteController = (isDefined(self.isHuman) && !self.isHuman);
+
     if (self.team == "axis")
     {
         ammo = undefined;
@@ -87,9 +89,33 @@ _remotefiring(remote)
     for (;;)
     {
         curTime = gettime();
+        wantsToFire = self attackbuttonpressed() || isBotRemoteController;
 
-        if (self attackbuttonpressed() && curTime - lastFireTime >= waitTime)
+        if (wantsToFire && curTime - lastFireTime >= waitTime)
         {
+            if (!isDefined(remote) || !isDefined(remote.targetent))
+            {
+                wait 0.05;
+                continue;
+            }
+
+            targetPos = remote.targetent.origin;
+            missileTargetEnt = remote.targetent;
+            if (isBotRemoteController)
+            {
+                botTargetEnt = self _getBotRemoteTargetEnt(remote);
+                if (!isDefined(botTargetEnt))
+                {
+                    wait 0.05;
+                    continue;
+                }
+
+                targetPos = botTargetEnt getTagOrigin("j_spineupper");
+                missileTargetEnt = botTargetEnt;
+                remote.targetent.origin = targetPos;
+                triggerfx(remote.targetent);
+            }
+
             if (isDefined(ammo))
             {
                 ammo--;
@@ -104,9 +130,9 @@ _remotefiring(remote)
             forward = anglestoforward(self getplayerangles());
             right = anglestoright(self getplayerangles());
             offset = origin + forward * 100 + right * -100;
-            missile = magicbullet("remote_mortar_missile_mp", offset, remote.targetent.origin, self);
+            missile = magicbullet("remote_mortar_missile_mp", offset, targetPos, self);
             earthquake(0.3, 0.5, origin, 256);
-            missile missile_settargetent(remote.targetent);
+            missile missile_settargetent(missileTargetEnt);
             missile missile_setflightmodedirect();
             missile thread maps\mp\killstreaks\_remotemortar::remotemissiledistance(remote);
             missile thread maps\mp\killstreaks\_remotemortar::remotemissilelife(remote);
@@ -121,6 +147,40 @@ _remotefiring(remote)
     self notify("removed_reaper_ammo");
     maps\mp\killstreaks\_remotemortar::remoteendride(remote);
     remote thread maps\mp\killstreaks\_remotemortar::remoteleave();
+}
+
+_getBotRemoteTargetEnt(remote)
+{
+    survivorsAlives = lethalbeats\survival\utility::survivors(true);
+    if (!isDefined(survivorsAlives) || !survivorsAlives.size)
+        return undefined;
+
+    originRef = self.origin;
+    if (isDefined(remote)) originRef = remote.origin;
+
+    closestTarget = undefined;
+    closestDist = 2147483647;
+
+    foreach (survivor in survivorsAlives)
+    {
+        if (!isDefined(survivor) || !isPlayer(survivor)) continue;
+        if (!maps\mp\_utility::isReallyAlive(survivor) || survivor.inLastStand) continue;
+
+        if (isDefined(remote) && !bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, remote))
+            continue;
+
+        dist = distanceSquared(originRef, survivor.origin);
+        if (dist < closestDist)
+        {
+            closestDist = dist;
+            closestTarget = survivor;
+        }
+    }
+
+    if (!isDefined(closestTarget))
+        return undefined;
+
+    return closestTarget;
 }
 
 _tryuseremotemortar( var_0 )

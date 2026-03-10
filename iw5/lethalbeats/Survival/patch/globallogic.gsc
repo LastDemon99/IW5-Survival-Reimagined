@@ -426,6 +426,8 @@ _isInRange(dist, curweap)
 
 patch_botFire(curweap)
 {
+    if (isDefined(self.isHuman) && !self.isHuman) return;
+
     self.bot.last_fire_time = gettime();
     settings = self lethalbeats\survival\difficulty::difficulty_get_bot_settings();
     isSemiAuto = weaponIsSemiAuto(curweap);
@@ -610,6 +612,8 @@ summary: Bots Pursuit Improvement.
 */
 patch_target_loop()
 {
+    if (isDefined(self.isHuman) && !self.isHuman) return;
+
 	myEye = self geteye();	
 	if (isdefined(self.remoteuav)) myEye = self.remoteuav gettagorigin("tag_origin");
 	
@@ -903,6 +907,8 @@ summary: Bots Aggression Strategy.
 */
 patch_watchToLook()
 {
+    if (isDefined(self.isHuman) && !self.isHuman) return;
+
 	self endon("disconnect");
 	self endon("death");
 	self endon("new_enemy");
