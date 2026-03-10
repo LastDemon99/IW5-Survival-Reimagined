@@ -206,16 +206,12 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 
 	if (isDefined(self.dogKnockdown) && self.dogKnockdown) return;
 	if (isDefined(eAttacker) && isDefined(eAttacker.team) && eAttacker.team == "allies" && eAttacker != self) return;
+	
 	if (lethalbeats\array::array_contains(MOD_MULTIPLIER, sMeansOfDeath))
 	{
 		iDamage *= 4;
 		if ((sMeansOfDeath != "MOD_RIFLE_BULLET" && self player_has_perk("_specialty_blastshield")) || (isDefined(eAttacker) && eAttacker == self)) 
 			iDamage /= 2;
-	}
-	else
-	{
-		if (isDefined(eAttacker) && eAttacker == self) iDamage /= 2;
-		else if (self player_has_weapon("riotshield_mp")) iDamage /= 3;
 	}
 
 	if (isDefined(sHitLoc) && sHitLoc == "shield") return;
@@ -225,7 +221,9 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 		if (isDefined(eAttacker.owner)) eAttacker = eAttacker.owner;
 	}
 
-	iDamage /= 20;
+	if (sWeapon == "remote_mortar_missile_mp" && !self.bodyArmor) iDamage = self.maxHealth / 2;
+	else iDamage /= 20;
+
 	self.summary["damagetaken"] += iDamage;
 	
 	if (self.inLastStand)
