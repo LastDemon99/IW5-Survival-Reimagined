@@ -3,6 +3,7 @@
 #include lethalbeats\player;
 #include lethalbeats\string;
 #include lethalbeats\weapon;
+#include lethalbeats\survival\difficulty;
 
 #define AFRICA_MILITIA_CLASS ["SMG", "ASSAULT", "LMG", "RIOT", "SHOTGUN"]
 
@@ -758,63 +759,62 @@ summary: Adjusts the bot's AI skill and behavior settings based on the current w
 bot_set_difficulty()
 {
 	wave = level.wave_num;
-	self.botDifficultySettings = lethalbeats\survival\difficulty::difficulty_get_bot_settings();
-	difficulty = self.botDifficultySettings;
-	wave_progress = min(1.0, max(0.0, (wave - 1) * difficulty["scale_rate"]));
+	botSettings = self difficulty_get_bot_settings();
 
 	self.pers["bots"]["skill"]["spawn_time"] = 0;
-	self.pers["bots"]["skill"]["aim_time"] = _bot_wave_scale_progress(difficulty["aim_time_init"], difficulty["aim_time_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["init_react_time"] = self.pers["bots"]["skill"]["aim_time"];
-	self.pers["bots"]["skill"]["reaction_time"] = _bot_wave_scale_progress(difficulty["reaction_time_init"], difficulty["reaction_time_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["remember_time"] = 25000; //_bot_wave_scale_progress(difficulty["remember_time_init"], difficulty["remember_time_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["no_trace_ads_time"] = _bot_wave_scale_progress(difficulty["no_trace_ads_init"], difficulty["no_trace_ads_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["aim_time"] = botSettings["aim_time"];
+	self.pers["bots"]["skill"]["init_react_time"] = botSettings["reaction_time"];
+	self.pers["bots"]["skill"]["reaction_time"] = botSettings["reaction_time"];
+	self.pers["bots"]["skill"]["remember_time"] = botSettings["remember_time"];
+	self.pers["bots"]["skill"]["no_trace_ads_time"] = botSettings["no_trace_ads_time"];
     self.pers["bots"]["skill"]["no_trace_look_time"] = self.pers["bots"]["skill"]["no_trace_ads_time"];
-	self.pers["bots"]["skill"]["fov"] = wave > difficulty["fov_max_wave"] ? -1 : _bot_wave_scale_progress(difficulty["fov_init"], difficulty["fov_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["dist_start"] = _bot_wave_scale_progress(difficulty["dist_start_init"], difficulty["dist_start_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["dist_max"] = _bot_wave_scale_progress(difficulty["dist_max_init"], difficulty["dist_max_end"], difficulty["scale_rate"], wave);
-    self.pers["bots"]["skill"]["help_dist"] = 3000;
-	self.pers["bots"]["skill"]["semi_time"] = _bot_wave_scale_progress(difficulty["semi_time_init"], difficulty["semi_time_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["shoot_after_time"] = _bot_wave_scale_progress(difficulty["shoot_after_init"], difficulty["shoot_after_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["aim_offset_time"] = _bot_wave_scale_progress(difficulty["aim_offset_time_init"], difficulty["aim_offset_time_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["aim_offset_amount"] = _bot_wave_scale_progress(difficulty["aim_offset_amount_init"], difficulty["aim_offset_amount_end"], difficulty["scale_rate"], wave);
-	self.pers["bots"]["skill"]["bone_update_interval"] = _bot_wave_scale_progress(difficulty["bone_update_init"], difficulty["bone_update_end"], difficulty["scale_rate"], wave);
+	self.pers["bots"]["skill"]["fov"] = botSettings["fov"];
+	self.pers["bots"]["skill"]["dist_start"] = botSettings["dist_start"];
+	self.pers["bots"]["skill"]["dist_max"] = botSettings["dist_max"];
+    self.pers["bots"]["skill"]["help_dist"] = botSettings["help_dist"];
+	self.pers["bots"]["skill"]["semi_time"] = botSettings["semi_time"];
+	self.pers["bots"]["skill"]["shoot_after_time"] = botSettings["shoot_after_time"];
+	self.pers["bots"]["skill"]["aim_offset_time"] = botSettings["aim_offset_time"];
+	self.pers["bots"]["skill"]["aim_offset_amount"] = botSettings["aim_offset_amount"];
+	self.pers["bots"]["skill"]["bone_update_interval"] = botSettings["bone_update_interval"];
     self.pers["bots"]["skill"]["bones"] = "j_spineupper,j_ankle_le,j_ankle_ri,j_ankle_le,j_ankle_ri";
     self.pers["bots"]["skill"]["ads_fov_multi"] = 0.5;
     self.pers["bots"]["skill"]["ads_aimspeed_multi"] = 0.5;
 
-    self.pers["bots"]["behavior"]["initswitch"] = 0;
-    self.pers["bots"]["behavior"]["strafe"] = 50;
-	self.pers["bots"]["behavior"]["nade"] = 70;
-	self.pers["bots"]["behavior"]["sprint"] = 60;
-	self.pers["bots"]["behavior"]["camp"] = 0;
-	self.pers["bots"]["behavior"]["follow"] = 100;
-	self.pers["bots"]["behavior"]["crouch"] = 0;
-	self.pers["bots"]["behavior"]["switch"] = 0;
-	self.pers["bots"]["behavior"]["class"] = 0;
-	self.pers["bots"]["behavior"]["jump"] = 20;
-	self.pers["bots"]["behavior"]["quickscope"] = 0;
+	self.pers["bots"]["behavior"]["initswitch"] = botSettings["behaviorInitSwitch"];
+	self.pers["bots"]["behavior"]["strafe"] = botSettings["behaviorStrafe"];
+	self.pers["bots"]["behavior"]["nade"] = botSettings["behaviorNade"];
+	self.pers["bots"]["behavior"]["sprint"] = botSettings["behaviorSprint"];
+	self.pers["bots"]["behavior"]["camp"] = botSettings["behaviorCamp"];
+	self.pers["bots"]["behavior"]["follow"] = botSettings["behaviorFollow"];
+	self.pers["bots"]["behavior"]["crouch"] = botSettings["behaviorCrouch"];
+	self.pers["bots"]["behavior"]["switch"] = botSettings["behaviorSwitch"];
+	self.pers["bots"]["behavior"]["class"] = botSettings["behaviorClass"];
+	self.pers["bots"]["behavior"]["jump"] = botSettings["behaviorJump"];
+	self.pers["bots"]["behavior"]["quickscope"] = botSettings["behaviorQuickscope"];
 
 	health = int(self bot_get_loadout(HEALTH));
 	if (level.wave_num > WAVE_LOOP)
 	{
-		growth = get_wave_loop_growth();
+		growth = difficulty_get_wave_loop_growth();
 		health = int(health * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP));
 	}
-	health = int(health * lethalbeats\survival\difficulty::difficulty_get_bot_health_multiplier());
+	healthMultiplier = botSettings["botHealthMultiplier"];
+	health = int(health * healthMultiplier);
 	self.maxhealth = health;
 	self.health = health;
 
 	self.moveSpeedScaler = float(self bot_get_loadout(SPEED)); 
-	self.moveSpeedScaler *= lethalbeats\survival\difficulty::difficulty_get_bot_speed_multiplier();
+	speedMultiplier = botSettings["botSpeedMultiplier"];
+	self.moveSpeedScaler *= speedMultiplier;
 	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
 
     if (self bot_is_dog())
     {
-        self.pers["bots"]["skill"]["aim_time"] = 0;
-        self.pers["bots"]["behavior"]["strafe"] = 35;
-        self.pers["bots"]["behavior"]["sprint"] = 100;
-        self.pers["bots"]["behavior"]["jump"] = 35;
-		return;
+		self.pers["bots"]["skill"]["aim_time"] = 0;
+		self.pers["bots"]["behavior"]["strafe"] = 35;
+		self.pers["bots"]["behavior"]["sprint"] = 100;
+		self.pers["bots"]["behavior"]["jump"] = 35;
     }
 	
 	if (self bot_is_jugger())
@@ -824,137 +824,29 @@ bot_set_difficulty()
 		self.pers["bots"]["behavior"]["strafe"] = 0;
 	}
 
-	if (lethalbeats\survival\difficulty::difficulty_is_easy() && !self bot_is_dog() && !self bot_is_jugger())
-	{
-		self.pers["bots"]["behavior"]["nade"] = 40;
-		self.pers["bots"]["behavior"]["sprint"] = 40;
-		self.pers["bots"]["behavior"]["strafe"] = 35;
-		self.pers["bots"]["behavior"]["jump"] = 10;
-	}
-
-	// Progressive nerf for automatic weapons on Easy/Normal: smoother early waves, less abrupt spikes
-	if (!lethalbeats\survival\difficulty::difficulty_is_hard())
-	{
-		primaryClass = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
-		if (array_contains(["assault", "smg", "lmg"], primaryClass))
-		{
-			nerfScale = 1.0 - (wave_progress * 0.5);
-			if (primaryClass == "smg")
-			{
-				self.pers["bots"]["skill"]["shoot_after_time"] *= 1.45 - (0.2 * wave_progress);
-				self.pers["bots"]["skill"]["aim_time"] += 0.09 * nerfScale;
-				self.pers["bots"]["skill"]["aim_offset_amount"] *= 1.22 - (0.08 * wave_progress);
-				self.pers["bots"]["skill"]["aim_offset_time"] *= 1.16 - (0.06 * wave_progress);
-			}
-			else
-			{
-				self.pers["bots"]["skill"]["shoot_after_time"] *= 1.30 - (0.12 * wave_progress);
-				self.pers["bots"]["skill"]["aim_time"] += 0.06 * nerfScale;
-				self.pers["bots"]["skill"]["aim_offset_amount"] *= 1.15 - (0.06 * wave_progress);
-				self.pers["bots"]["skill"]["aim_offset_time"] *= 1.10 - (0.04 * wave_progress);
-			}
-		}
-	}
-
-	weapon_class = weapon_get_class(self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY]);
-
-	if (lethalbeats\survival\difficulty::difficulty_is_hard() && (weapon_class == "projectile" || weapon_class == "sniper"))
-	{
-		self.pers["bots"]["skill"]["dist_max"] = 15000;
-		self.pers["bots"]["skill"]["dist_start"] = 10000;
-		return;
-	}
-
-	switch(weapon_class)
+	switch(weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]))
 	{
 		case "projectile":
 		case "sniper":
-			self.pers["bots"]["skill"]["dist_max"] = 15000;
-			self.pers["bots"]["skill"]["dist_start"] = 10000;
+			settings["dist_max"] = 10000; // dist_start botwarfare: distance start before target ability diminishes.
+			settings["dist_start"] = 5000; // dist_max botwarfare: longest distance a bot can target.
+			break;
+		case "lmg":
+		case "assault":
+			settings["dist_max"] = 1050;
+			settings["dist_start"] = 700;
 			break;
 		case "smg":
-			smg_range_scale = lethalbeats\survival\difficulty::difficulty_get_smg_range_scale(wave_progress);
-			self.pers["bots"]["skill"]["dist_max"] *= smg_range_scale;
-			self.pers["bots"]["skill"]["dist_start"] *= smg_range_scale;
+			settings["dist_max"] = 900;
+			settings["dist_start"] = 500;
 			break;
 		case "shotgun":
 		case "machine_pistol":
 		case "pistol":
-			self.pers["bots"]["skill"]["dist_max"] *= 0.2;
-			self.pers["bots"]["skill"]["dist_start"] *= 0.2;
+			settings["dist_max"] = 650;
+			settings["dist_start"] = 300;
 			break;
 	}
-}
-
-/*
-///DocStringBegin
-detail: _bot_wave_scale(init_value: <Float>, end_value: <Float>, scale: <Float>, wave: <Float>): <Float>
-summary: Calculates a scaled value based on the wave number, used for adjusting bot difficulty over time (legacy exponential scaling).
-///DocStringEnd
-*/
-_bot_wave_scale(init_value, end_value, scale, wave)
-{
-	scale_factor = 1 + scale * wave;
-	return init_value > end_value ? max(end_value, init_value / scale_factor) : min(end_value, init_value * scale_factor);
-}
-
-/*
-///DocStringBegin
-detail: _bot_wave_scale_linear(init_value: <Float>, end_value: <Float>, scale_rate: <Float>, wave: <Float>): <Float>
-summary: Calculates a scaled value based on the wave number using linear progression for smoother difficulty curve.
-///DocStringEnd
-*/
-_bot_wave_scale_linear(init_value, end_value, scale_rate, wave)
-{
-	progress = min(1.0, (wave - 1) * scale_rate);
-	current_value = init_value + (end_value - init_value) * progress;	
-	if (init_value > end_value) return max(end_value, current_value);
-	else return min(end_value, current_value);
-}
-
-/*
-///DocStringBegin
-detail: _bot_wave_scale_progress(init_value: <Float>, end_value: <Float>, scale_rate: <Float>, wave: <Float>): <Float>
-summary: Difficulty-aware scaler. Uses an eased-in curve for Easy to slow early aggression; keeps linear for Normal/Hard.
-///DocStringEnd
-*/
-_bot_wave_scale_progress(init_value, end_value, scale_rate, wave)
-{
-	return lethalbeats\survival\difficulty::difficulty_scale_progress(init_value, end_value, scale_rate, wave);
-}
-
-/*
-///DocStringBegin
-detail: get_wave_loop_growth(): <Float>
-summary: Returns post-loop per-wave growth multiplier by difficulty (Easy 1.03, Normal 1.05, Hard 1.06).
-///DocStringEnd
-*/
-get_wave_loop_growth()
-{
-	return lethalbeats\survival\difficulty::difficulty_get_wave_loop_growth();
-}
-
-/*
-///DocStringBegin
-detail: get_connected_survivor_multiplier(): <Float>
-summary: Returns a difficulty multiplier based on connected survivors (team allies). Baseline is 4 players = 1.0, fewer players reduce bot aggressiveness.
-///DocStringEnd
-*/
-get_connected_survivor_multiplier()
-{
-	return lethalbeats\survival\difficulty::difficulty_get_connected_survivor_multiplier();
-}
-
-/*
-///DocStringBegin
-detail: bot_get_difficulty_settings(): <Array>
-summary: Returns bot skill parameters based on difficulty level (1=Easy, 2=Normal, 3=Hard).
-///DocStringEnd
-*/
-bot_get_difficulty_settings()
-{
-	if (isDefined(self) && isDefined(self.botDifficultySettings)) return self.botDifficultySettings;
-	return lethalbeats\survival\difficulty::difficulty_get_bot_settings();
 }
 
 /*
@@ -2159,17 +2051,6 @@ get_default_loadout()
 
 /*
 ///DocStringBegin
-detail: get_waves_table(): <String>
-summary: Returns the CSV table path for the current difficulty: Easy/Normal/Hard.
-///DocStringEnd
-*/
-get_waves_table()
-{
-	return lethalbeats\survival\difficulty::difficulty_get_waves_table();
-}
-
-/*
-///DocStringBegin
 detail: get_botsTypes(): <String[]>
 summary: Return the types and amount of bots from the csv wave tables.
 ///DocStringEnd
@@ -2188,10 +2069,10 @@ get_botsTypes()
 	{
 		if (!(i % 2)) continue;
 
-		botCount = tableLookup(get_waves_table(), 0, wave_num, i + 1);
+		botCount = tableLookup(difficulty_get_waves_table(), 0, wave_num, i + 1);
 		if (botCount == "") break;
 
-		bot = tableLookup(get_waves_table(), 0, wave_num, i);
+		bot = tableLookup(difficulty_get_waves_table(), 0, wave_num, i);
 		bot = string_remove(bot, " ");
 		botCount = int(int(botCount) * scaleFactor);
 		totalCount += botCount;
@@ -2209,7 +2090,7 @@ get_botsTypes()
 	foreach (type, count in bots)
 		bots[type] = count / totalCount;
 
-	growth = get_wave_loop_growth();
+	growth = difficulty_get_wave_loop_growth();
 	newTotalCount = totalCount * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP) * scaleFactor;
 	newBots = [];
 

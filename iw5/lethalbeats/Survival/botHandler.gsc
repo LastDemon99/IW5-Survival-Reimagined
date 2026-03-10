@@ -125,7 +125,7 @@ onBotSpawn()
 
 		self.stuned = false;
 		self.stunEndTime = 0;
-		if (isDefined(self.bot)) self.bot.burstData = undefined;
+		if (isDefined(self.bot)) self.bot.fireCycleData = undefined;
 		self.dropWeapon = true;
 		self.damageData = [];
 		self takeWeapon(self.secondaryWeapon);
@@ -151,10 +151,13 @@ botWaitRespawn()
 		if (level.bots_awaits)
 		{
 			level.bots_awaits--;
-			range = lethalbeats\survival\difficulty::difficulty_get_bot_respawn_delay_range();
-			if (range[0] || range[1])
+			difficulty = self lethalbeats\survival\difficulty::difficulty_get_bot_settings();
+			delayMin = int(difficulty["botRespawnDelayMin"]);
+			delayMax = int(difficulty["botRespawnDelayMax"]);
+			if (delayMax < delayMin) delayMax = delayMin;
+			if (delayMin || delayMax)
 			{
-				delay = randomIntRange(range[0], range[1] + 1);
+				delay = randomIntRange(delayMin, delayMax + 1);
 				wait randomFloatRange(delay - 0.5, delay + 0.5);
 			}
 			break;
@@ -373,8 +376,8 @@ onStun(weapon, meansOfDeath)
 
 	self shellShock("concussion_grenade_mp", remainingStun);
 
-	// Force a fresh windup after stun; prevents carrying an in-progress burst.
-	if (isDefined(self.bot)) self.bot.burstData = undefined;
+	// Force a fresh windup after stun; prevents carrying an in-progress fire cycle.
+	if (isDefined(self.bot)) self.bot.fireCycleData = undefined;
 
 	if (isDefined(self.stuned) && self.stuned)
 		return;

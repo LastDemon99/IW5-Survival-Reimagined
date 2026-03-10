@@ -34,12 +34,12 @@ init()
     replacefunc(maps\mp\bots\_bot_internal::canFire, ::_canFire); // disable for dogs
     replacefunc(maps\mp\bots\_bot_internal::canAds, ::_canAds); // disable for dogs
     replacefunc(maps\mp\bots\_bot_internal::isInRange, ::_isInRange); // false for dogs
-    replacefunc(maps\mp\bots\_bot_internal::botFire, ::patch_botFire); // add wind up + burst fire behavior by difficulty
 	replacefunc(maps\mp\bots\_bot_chat::doquickmessage, ::blank); // disable quickmessage
 	replacefunc(maps\mp\bots\_bot_chat::init, ::blank); // disable bot chat
     replacefunc(maps\mp\gametypes\_playerlogic::waitRespawnButton, ::blank); // disable use button pressed to spawn
 	replacefunc(maps\mp\bots\_bot::add_bot,  maps\mp\gametypes\survival::onAddBot); // skip obituary, notify all bots are ready and bot spawn handler
     replacefunc(maps\mp\gametypes\_playerlogic::notifyConnecting,  maps\mp\gametypes\survival::onAddSurvivor); // skip obituary, notify players ready, and player spawn handler
+    replacefunc(maps\mp\bots\_bot_internal::botFire, ::patch_botFire); // add wind up + burst fire behavior by difficulty
     replacefunc(maps\mp\bots\_bot_internal::target_loop, ::patch_target_loop);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateTraced, ::patch_targetObjUpdateTraced);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateNoTrace, ::patch_targetObjUpdateNoTrace);
@@ -427,90 +427,56 @@ _isInRange(dist, curweap)
 patch_botFire(curweap)
 {
     self.bot.last_fire_time = gettime();
-    isProjectile = lethalbeats\weapon::weapon_get_class(curweap) == "projectile";
-
-    if (self bot_is_jugger() || self bot_is_dog() || (isProjectile && lethalbeats\survival\difficulty::difficulty_is_hard()))
-    {
-        if (!self.bot.is_cur_full_auto)
-        {
-            if (self.bot.semi_time) return;
-
-            self thread maps\mp\bots\_bot_internal::pressFire();
-            if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
-            self thread maps\mp\bots\_bot_internal::doSemiTime();
-            return;
-        }
-
-        self thread maps\mp\bots\_bot_internal::pressFire();
-        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
-        return;
-    }
-
+    settings = self lethalbeats\survival\difficulty::difficulty_get_bot_settings();
     isSemiAuto = weaponIsSemiAuto(curweap);
-
     targetId = -1;
     if (isdefined(self.bot.target) && isdefined(self.bot.target.entity)) targetId = self.bot.target.entity getentitynumber();
 
+    now = gettime();
+    windUpTime = settings["windUpTime"];
+
+    fireTime = settings["fireTime"];
+    minShots = int(settings["minShots"]);
+    maxShots = int(max(minShots + 5, settings["maxShots"]));
+    minPause = settings["minPause"];
+    maxPause = max(minPause, settings["maxPause"]);
+
     if (targetId < 0)
     {
-        if (isdefined(self.bot.burstData))
+        if (isdefined(self.bot.fireCycleData))
         {
-            self.bot.burstData.targetId = -1;
-            self.bot.burstData.hadVision = false;
-            self.bot.burstData.shotsLeft = 0;
-            self.bot.burstData.nextShotTime = 0;
-            self.bot.burstData.pauseUntil = 0;
-            self.bot.burstData.windUpUntil = 0;
+            self.bot.fireCycleData.targetId = -1;
+            self.bot.fireCycleData.hadVision = false;
+            self.bot.fireCycleData.wasVisibleLastTick = false;
+            self.bot.fireCycleData.shotsLeft = 0;
+            self.bot.fireCycleData.nextShotTime = 0;
+            self.bot.fireCycleData.pauseUntil = 0;
+            self.bot.fireCycleData.windUpUntil = 0;
         }
         return;
     }
 
-    now = gettime();
-    settings = bot_get_difficulty_settings();
-    if (!isSemiAuto)
+    if (!isdefined(self.bot.fireCycleData))
     {
-        // Apply burst/fire-rate pacing to non-semi-auto weapons.
-        if (lethalbeats\survival\difficulty::difficulty_is_easy())
-        {
-            settings["fireTime"] *= 1.25;
-            settings["windUpTime"] *= 1.2;
-            settings["minShots"] = int(max(10, settings["minShots"] * 0.7));
-            settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * 0.75));
-        }
-        else if (lethalbeats\survival\difficulty::difficulty_is_normal())
-        {
-            settings["fireTime"] *= 1.15;
-            settings["windUpTime"] *= 1.12;
-            settings["minShots"] = int(max(12, settings["minShots"] * 0.8));
-            settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * 0.85));
-        }
-        else
-        {
-            settings["fireTime"] *= 1.08;
-            settings["windUpTime"] *= 1.08;
-            settings["minShots"] = int(max(14, settings["minShots"] * 0.9));
-            settings["maxShots"] = int(max(settings["minShots"] + 5, settings["maxShots"] * 0.92));
-        }
-    }
-    if (!isdefined(self.bot.burstData))
-    {
-        self.bot.burstData = spawnstruct();
-        self.bot.burstData.targetId = -1;
-        self.bot.burstData.hadVision = false;
-        self.bot.burstData.shotsLeft = 0;
-        self.bot.burstData.nextShotTime = 0;
-        self.bot.burstData.pauseUntil = 0;
-        self.bot.burstData.windUpUntil = 0;
+        self.bot.fireCycleData = spawnstruct();
+        self.bot.fireCycleData.targetId = -1;
+        self.bot.fireCycleData.hadVision = false;
+        self.bot.fireCycleData.wasVisibleLastTick = false;
+        self.bot.fireCycleData.shotsLeft = 0;
+        self.bot.fireCycleData.nextShotTime = 0;
+        self.bot.fireCycleData.pauseUntil = 0;
+        self.bot.fireCycleData.windUpUntil = 0;
     }
 
-    if (self.bot.burstData.targetId != targetId)
+    if (self.bot.fireCycleData.targetId != targetId)
     {
-        self.bot.burstData.targetId = targetId;
-        self.bot.burstData.hadVision = false;
-        self.bot.burstData.shotsLeft = 0;
-        self.bot.burstData.nextShotTime = 0;
-        self.bot.burstData.pauseUntil = 0;
-        self.bot.burstData.windUpUntil = 0;
+        self.bot.fireCycleData.targetId = targetId;
+        self.bot.fireCycleData.hadVision = false;
+        self.bot.fireCycleData.wasVisibleLastTick = false;
+        self.bot.fireCycleData.shotsLeft = 0;
+        self.bot.fireCycleData.nextShotTime = 0;
+        self.bot.fireCycleData.pauseUntil = 0;
+        self.bot.fireCycleData.windUpUntil = 0;
     }
 
     canShootTarget = false;
@@ -519,48 +485,52 @@ patch_botFire(curweap)
 
     if (!canShootTarget)
     {
-        self.bot.burstData.hadVision = false;
-        self.bot.burstData.shotsLeft = 0;
-        self.bot.burstData.nextShotTime = 0;
-        self.bot.burstData.pauseUntil = 0;
-        self.bot.burstData.windUpUntil = 0;
+        self.bot.fireCycleData.hadVision = false;
+        self.bot.fireCycleData.wasVisibleLastTick = false;
+        self.bot.fireCycleData.shotsLeft = 0;
+        self.bot.fireCycleData.nextShotTime = 0;
+        self.bot.fireCycleData.pauseUntil = 0;
+        self.bot.fireCycleData.windUpUntil = 0;
         return;
     }
 
-    if (!self.bot.burstData.hadVision)
+    // Force windup every time visibility is reacquired (no-vision -> vision).
+    if (!self.bot.fireCycleData.wasVisibleLastTick)
     {
-        self.bot.burstData.hadVision = true;
-        self.bot.burstData.shotsLeft = 0;
-        self.bot.burstData.nextShotTime = 0;
-        self.bot.burstData.windUpUntil = now + int(settings["windUpTime"] * 1000);
+        self.bot.fireCycleData.hadVision = true;
+        self.bot.fireCycleData.wasVisibleLastTick = true;
+        self.bot.fireCycleData.shotsLeft = 0;
+        self.bot.fireCycleData.nextShotTime = 0;
+        self.bot.fireCycleData.windUpUntil = now + int(windUpTime * 1000);
     }
 
-    if (now < self.bot.burstData.pauseUntil || now < self.bot.burstData.windUpUntil || now < self.bot.burstData.nextShotTime) return;
+    if (now < self.bot.fireCycleData.pauseUntil || now < self.bot.fireCycleData.windUpUntil || now < self.bot.fireCycleData.nextShotTime) return;
 
-    if (isSemiAuto)
+    if (self.bot.fireCycleData.shotsLeft <= 0)
+        self.bot.fireCycleData.shotsLeft = randomIntRange(minShots, maxShots + 1);
+
+    if (isSemiAuto && !self.bot.is_cur_full_auto)
     {
         if (self.bot.semi_time) return;
 
         self thread maps\mp\bots\_bot_internal::pressFire();
         if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS();
         self thread maps\mp\bots\_bot_internal::doSemiTime();
-        return;
     }
-
-    if (self.bot.burstData.shotsLeft <= 0)
-        self.bot.burstData.shotsLeft = randomIntRange(settings["minShots"], settings["maxShots"] + 1);
-
-    self thread maps\mp\bots\_bot_internal::pressFire(settings["fireTime"]);
-    if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS(settings["fireTime"]);
-
-    self.bot.burstData.shotsLeft--;
-    if (self.bot.burstData.shotsLeft <= 0)
+    else
     {
-        self.bot.burstData.pauseUntil = now + int(randomfloatrange(settings["minPause"], settings["maxPause"]) * 1000);
-        self.bot.burstData.windUpUntil = self.bot.burstData.pauseUntil + int(settings["windUpTime"] * 1000);
-        self.bot.burstData.nextShotTime = 0;
+        self thread maps\mp\bots\_bot_internal::pressFire(fireTime);
+        if (self.bot.is_cur_akimbo) self thread maps\mp\bots\_bot_internal::pressADS(fireTime);
     }
-    else self.bot.burstData.nextShotTime = now + int(settings["fireTime"] * 1000);
+
+    self.bot.fireCycleData.shotsLeft--;
+    if (self.bot.fireCycleData.shotsLeft <= 0)
+    {
+        self.bot.fireCycleData.pauseUntil = now + int(randomfloatrange(minPause, maxPause) * 1000);
+        self.bot.fireCycleData.windUpUntil = self.bot.fireCycleData.pauseUntil + int(windUpTime * 1000);
+        self.bot.fireCycleData.nextShotTime = 0;
+    }
+    else self.bot.fireCycleData.nextShotTime = now + int(fireTime * 1000);
 }
 
 /*
@@ -622,15 +592,14 @@ patch_onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, v
 	else self lethalbeats\Survival\survivorHandler::onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration);
 }
 
-_isIgnoredBotTarget(ent)
+_releaseSurvivorTargetSlot(targetObj)
 {
-    if (!isDefined(ent)) return false;
-    if (!isDefined(ent.classname)) return false;
-    if (ent.classname == "misc_turret") return true;
-    if (isSubStr(ent.classname, "grenade")) return true;
-    if (isDefined(ent.model) && isSubStr(ent.model, "sentry")) return true;
-    if (isDefined(ent.model) && (ent.model == "projectile_bouncing_betty_grenade" || ent.model == "ims_scorpion_body")) return true;
-    return false;
+    if (!isDefined(targetObj) || !isDefined(targetObj.entity)) return;
+
+    targetEnt = targetObj.entity;
+    targetCount = 0;
+    if (isDefined(targetEnt.survival_target_count)) targetCount = int(targetEnt.survival_target_count);
+    targetEnt.survival_target_count = max(0, targetCount - 1);
 }
 
 /*
@@ -647,16 +616,21 @@ patch_target_loop()
 	theTime = gettime();
 	myAngles = self getplayerangles();
 	myFov = self.pers["bots"]["skill"]["fov"];
+    if (!isDefined(myFov)) myFov = 0.75;
 	bestTargets = [];
 	bestTime = 2147483647;
 	rememberTime = self.pers["bots"]["skill"]["remember_time"];
+    if (!isDefined(rememberTime)) rememberTime = 1000;
 	initReactTime = self.pers["bots"]["skill"]["init_react_time"];
+    if (!isDefined(initReactTime)) initReactTime = 1000;
 	hasTarget = isdefined(self.bot.target);
 	usingRemote = self isusingremote();
 	ignoreSmoke = issubstr(self getcurrentweapon(), "_thermal");
 	vehEnt = undefined;
 	adsAmount = self playerads();
+    if (!isDefined(adsAmount)) adsAmount = 0;
 	adsFovFact = self.pers["bots"]["skill"]["ads_fov_multi"];
+    if (!isDefined(adsFovFact)) adsFovFact = 0.5;
 	
 	if (usingRemote)
 	{
@@ -669,340 +643,190 @@ patch_target_loop()
 	
 	// reduce fov if ads'ing
 	if (adsAmount > 0) myFov *= 1 - adsFovFact * adsAmount;
-	
+
+    if (isDefined(self.stuned) && self.stuned)
+        return;
+
+    survivorsAlives = survivors(true);
+
+    if (isDefined(self.bot.script_target))
+    {
+        ent = self.bot.script_target;
+        if (lethalbeats\array::array_contains(survivorsAlives, ent))
+        {
+            if (isDefined(ent))
+            {
+                key = ent getentitynumber() + "";
+                self.bot.targets[key] = undefined;
+            }
+
+            if (hasTarget && isDefined(self.bot.target) && isDefined(self.bot.target.entity) && self.bot.target.entity == ent)
+            {
+                self _releaseSurvivorTargetSlot(self.bot.target);
+                self.bot.target = undefined;
+                hasTarget = false;
+            }
+
+            self.bot.script_target = undefined;
+            self.bot.script_target_offset = undefined;
+        }
+    }
+
+    if (!isDefined(survivorsAlives) || !survivorsAlives.size)
+    {
+        if (hasTarget && isDefined(self.bot.target) && isDefined(self.bot.target.entity))
+        {
+            self _releaseSurvivorTargetSlot(self.bot.target);
+            self.bot.target = undefined;
+            self notify("new_enemy");
+        }
+        return;
+    }
+
 	if (hasTarget && !isdefined(self.bot.target.entity))
 	{
+        self _releaseSurvivorTargetSlot(self.bot.target);
 		self.bot.target = undefined;
 		hasTarget = false;
 	}
 
-    if (isDefined(self.stuned) && self.stuned)
-        return;
-	
-	playercount = level.players.size;
-	humanPlayer = undefined;
-	
-    // SURVIVAL MODE: Find the human player
-	for (i = 0; i < playercount; i++)
-	{
-		player = level.players[i];
-		
-		if (player == self) continue;
-		
-        if (player.sessionstate != "playing" || !isreallyalive(player)) continue;
-        survivorIsOut = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
-        if (survivorIsOut || (isDefined(player.inLastStand) && player.inLastStand) || (isDefined(player.dogKnockdown) && player.dogKnockdown)) continue;
-		
-        if (!isdefined(player.pers["isBot"]) || !player.pers["isBot"])
-		{
-			humanPlayer = player;
-			break;
-		}
-	}
-	
-	for (i = -1; i < playercount; i++)
-	{
-		obj = undefined;
-		
-		if (i == -1)
-		{
-			if (!isdefined(self.bot.script_target))
-				continue;
-			
-			ent = self.bot.script_target;
-            if (_isIgnoredBotTarget(ent))
+    foreach (survivor in survivorsAlives)
+    {
+        key = survivor getentitynumber() + "";
+        obj = self.bot.targets[key];
+        isObjDef = isdefined(obj);
+        daDist = distancesquared(self.origin, survivor.origin);
+
+        if (usingRemote) daDist = 0;
+
+        canTargetPlayer = false;
+        if (usingRemote)
+        {
+            canTargetPlayer = (bullettracepassed(myEye, survivor gettagorigin("j_head"), false, vehEnt)
+                            && !survivor _hasperk("specialty_blindeye"));
+        }
+        else
+        {
+            hasLineOfSight = (survivor checkTraceForBone(myEye, "j_head") ||
+                            survivor checkTraceForBone(myEye, "j_spineupper") ||
+                            survivor checkTraceForBone(myEye, "j_ankle_le") ||
+                            survivor checkTraceForBone(myEye, "j_ankle_ri"));
+
+            smokeCheck = (ignoreSmoke ||
+                        SmokeTrace(myEye, survivor.origin, level.smokeradius) ||
+                        daDist < level.bots_maxknifedistance * 8);
+
+            fovCheck = (getConeDot(survivor.origin, self.origin, myAngles) >= (myFov * 0.5) ||
+                        (isObjDef && isdefined(obj.trace_time)) ||
+                        daDist < level.bots_maxknifedistance * 6);
+
+            canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
+            if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
+                canTargetPlayer = hasLineOfSight;
+        }
+
+        if (isdefined(self.bot.target_this_frame) && self.bot.target_this_frame == survivor)
+        {
+            self.bot.target_this_frame = undefined;
+            canTargetPlayer = true;
+        }
+
+        if (isdefined(self.remoteuav) && isdefined(survivor.uavremotemarkedby))
+            canTargetPlayer = false;
+
+        if (canTargetPlayer)
+        {
+            if (!isObjDef)
             {
-                key = ent getentitynumber() + "";
-                self.bot.targets[key] = undefined;
-                if (isDefined(self.bot.target) && isDefined(self.bot.target.entity) && self.bot.target.entity == ent)
-                    self.bot.target = undefined;
-                self.bot.script_target = undefined;
-                continue;
+                obj = self createTargetObj(survivor, theTime);
+                obj.is_human_player = true;
+                obj.is_survivor_target = true;
+                self.bot.targets[key] = obj;
             }
 
-			key = ent getentitynumber() + "";
-			daDist = distancesquared(self.origin, ent.origin);
-			obj = self.bot.targets[key];
-			isObjDef = isdefined(obj);
-            isHumanPlayer = false;
-			entOrigin = ent.origin;
-			
-			if (isdefined(self.bot.script_target_offset))
-				entOrigin += self.bot.script_target_offset;
-			
-			if (ignoreSmoke || (SmokeTrace(myEye, entOrigin, level.smokeradius)) && bullettracepassed(myEye, entOrigin, false, ent))
-			{
-				if (!isObjDef)
-				{
-					obj = self createTargetObj(ent, theTime);
-					obj.offset = self.bot.script_target_offset;					
-					self.bot.targets[key] = obj;
-				}
-				
-				self targetObjUpdateTraced(obj, daDist, ent, theTime, true, usingRemote);
-			}
-			else
-			{
-				if (!isObjDef) continue;
-				
-				self targetObjUpdateNoTrace(obj);
-				
-				if (obj.no_trace_time > rememberTime)
-				{
-					self.bot.targets[key] = undefined;
-					continue;
-				}
-			}
-		}
-		else
-		{
-			player = level.players[i];
-			
-			if (player == self) continue;
-			
-			key = player getentitynumber() + "";
-			obj = self.bot.targets[key];			
-			daDist = distancesquared(self.origin, player.origin);
-			
-			if (usingRemote) daDist = 0;
-			
-			isObjDef = isdefined(obj);
-			
-            // SURVIVAL MODE: Do not ignore the human player even if they share the same team
-			isHumanPlayer = (isdefined(humanPlayer) && player == humanPlayer);
-			
-            if (!isHumanPlayer && ((level.teambased && self.team == player.team) || player.sessionstate != "playing" || !isreallyalive(player)))
+            self targetObjUpdateTraced(obj, daDist, survivor, theTime, false, usingRemote);
+        }
+        else
+        {
+            if (!isObjDef) continue;
+
+            self targetObjUpdateNoTrace(obj);
+
+            currentRememberTime = rememberTime * 3;
+            if (obj.no_trace_time > currentRememberTime)
             {
-                if (isObjDef) self.bot.targets[key] = undefined;				
+                self.bot.targets[key] = undefined;
                 continue;
             }
-            
-            // balance logic for other bots
-            if (!isHumanPlayer)
-            {
-                if (self.team == "axis")
-                {
-                    survivorIsDeath = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
-                    if (survivorIsDeath || (isDefined(player.inLastStand) && player.inLastStand) || (isDefined(player.dogKnockdown) && player.dogKnockdown) || (isDefined(self.stuned) && self.stuned))
-                    {
-                        if (isObjDef) self.bot.targets[key] = undefined;				
-                        continue;
-                    }
-                }
-            }
-			
-			canTargetPlayer = false;
-			
-			if (usingRemote)
-			{
-				canTargetPlayer = (bullettracepassed(myEye, player gettagorigin("j_head"), false, vehEnt)
-						&& !player _hasperk("specialty_blindeye"));
-			}
-			else
-			{
-                // SURVIVAL MODE: Use more permissive checks for the human player
-				if (isHumanPlayer)
-				{
-					hasLineOfSight = (player checkTraceForBone(myEye, "j_head") ||
-							player checkTraceForBone(myEye, "j_spineupper") ||
-							player checkTraceForBone(myEye, "j_ankle_le") ||
-							player checkTraceForBone(myEye, "j_ankle_ri"));
-					
-					smokeCheck = (ignoreSmoke ||
-							SmokeTrace(myEye, player.origin, level.smokeradius) ||
-							daDist < level.bots_maxknifedistance * 8);
-					
-					fovCheck = (getConeDot(player.origin, self.origin, myAngles) >= (myFov * 0.5) ||
-							(isObjDef && isdefined(obj.trace_time)) ||
-							daDist < level.bots_maxknifedistance * 6);
-					
-					canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
-					
-					if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
-						canTargetPlayer = hasLineOfSight;
-				}
-				else if (self.team == "axis")
-				{
-                    // standard behavior for other axis bots
-					hasLineOfSight = (player checkTraceForBone(myEye, "j_head") ||
-							player checkTraceForBone(myEye, "j_spineupper") ||
-							player checkTraceForBone(myEye, "j_ankle_le") ||
-							player checkTraceForBone(myEye, "j_ankle_ri"));
-					
-					smokeCheck = (ignoreSmoke ||
-							SmokeTrace(myEye, player.origin, level.smokeradius) ||
-							daDist < level.bots_maxknifedistance * 8);
-					
-					fovCheck = (getConeDot(player.origin, self.origin, myAngles) >= (myFov * 0.5) ||
-							(isObjDef && isdefined(obj.trace_time)) ||
-							daDist < level.bots_maxknifedistance * 6);
-					
-					canTargetPlayer = (hasLineOfSight && smokeCheck && fovCheck);
-					
-					if (!canTargetPlayer && daDist < level.bots_maxknifedistance * 3)
-						canTargetPlayer = hasLineOfSight;
-				}
-				else
-				{
-					canTargetPlayer = ((player checkTraceForBone(myEye, "j_head") ||
-								player checkTraceForBone(myEye, "j_ankle_le") ||
-								player checkTraceForBone(myEye, "j_ankle_ri"))
-								
-							&& (ignoreSmoke ||
-								SmokeTrace(myEye, player.origin, level.smokeradius) ||
-								daDist < level.bots_maxknifedistance * 4)
-								
-							&& (getConeDot(player.origin, self.origin, myAngles) >= myFov ||
-								(isObjDef && obj.trace_time)));
-				}
-			}
-			
-			if (isdefined(self.bot.target_this_frame) && self.bot.target_this_frame == player)
-			{
-				self.bot.target_this_frame = undefined;				
-				canTargetPlayer = true;
-			}
-			
-			if (isdefined(self.remoteuav) && isdefined(player.uavremotemarkedby))
-				canTargetPlayer = false;
-			
-			if (canTargetPlayer)
-			{
-				if (!isObjDef)
-				{
-					obj = self createTargetObj(player, theTime);
-                    if (isHumanPlayer) obj.is_human_player = true;					
-					self.bot.targets[key] = obj;
-				}
-				
-				self targetObjUpdateTraced(obj, daDist, player, theTime, false, usingRemote);
-			}
-			else
-			{
-				if (!isObjDef) continue;
-				
-				self targetObjUpdateNoTrace(obj);
-				
-				currentRememberTime = rememberTime;
-				if (isHumanPlayer || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity)))
-					currentRememberTime *= 3; // increase remember time
-				
-				if (obj.no_trace_time > currentRememberTime)
-				{
-					self.bot.targets[key] = undefined;
-					continue;
-				}
-			}
-		}
-		
-		if (!isdefined(obj)) continue;		
-		if (theTime - obj.time < initReactTime) continue;
-		
-		timeDiff = theTime - obj.trace_time_time;
-		
-        // Survivor target priority
-        if ((isDefined(isHumanPlayer) && isHumanPlayer) || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity)))
-			timeDiff = int(timeDiff * 0.1);
-		
-		if (timeDiff < bestTime)
-		{
-			bestTargets = [];
-			bestTime = timeDiff;
-		}
-		
-		if (timeDiff == bestTime) bestTargets[key] = obj;
-	}
-	
-	if (hasTarget && isdefined(bestTargets[self.bot.target.entity getentitynumber() + ""]))
-		return;
-	
-	closest = 2147483647;
-	toBeTarget = undefined;	
-	bestKeys = getarraykeys(bestTargets);
-	
-	// MULTI-PLAYER DISTRIBUTION: Balance survivor targeting by current attacker count
-    if (bestKeys.size > 1)
+        }
+
+        if (!isdefined(obj)) continue;
+        if (theTime - obj.time < initReactTime) continue;
+
+        timeDiff = int((theTime - obj.trace_time_time) * 0.1);
+        if (timeDiff < bestTime)
+        {
+            bestTargets = [];
+            bestTime = timeDiff;
+        }
+
+        if (timeDiff == bestTime) bestTargets[key] = obj;
+    }
+
+    beforeTargetID = -1;
+    newTargetID = -1;
+    toBeTarget = undefined;
+
+    if (hasTarget && isDefined(self.bot.target) && isdefined(self.bot.target.entity))
+        beforeTargetID = self.bot.target.entity getentitynumber();
+
+    bestKeys = getarraykeys(bestTargets);
+    if (bestKeys.size)
     {
-        // Keep only survivor candidates from the best target set
-        victimCandidates = [];
+        minTargetCount = 2147483647;
+        closest = 2147483647;
+
         foreach (k in bestKeys)
         {
-            candidateObj = bestTargets[k];
-            if (isDefined(candidateObj.is_human_player) || (self.team == "axis" && isDefined(candidateObj.entity) && isPlayer(candidateObj.entity)))
-                victimCandidates[victimCandidates.size] = candidateObj;
-        }
+            targetObj = bestTargets[k];
+            if (!isDefined(targetObj) || !isDefined(targetObj.entity)) continue;
 
-        if (victimCandidates.size > 1)
-        {
-            // Prefer the survivor currently targeted by fewer bots
-            bestVictim = undefined;
-            minTargetCount = 2147483647;
+            targetEnt = targetObj.entity;
+            targetCount = 0;
+            if (isDefined(targetEnt.survival_target_count)) targetCount = int(targetEnt.survival_target_count);
 
-            foreach (v in victimCandidates)
+            if (targetCount < minTargetCount)
             {
-                victimEnt = v.entity;
-                if (!isDefined(victimEnt.survival_target_count)) victimEnt.survival_target_count = 0;
-
-                // Lower attacker count wins
-                if (victimEnt.survival_target_count < minTargetCount)
-                {
-                    minTargetCount = victimEnt.survival_target_count;
-                    bestVictim = v;
-                }
-            }
-            toBeTarget = bestVictim;
-        }
-    }
-
-    if (!isDefined(toBeTarget))
-    {
-        for (i = bestKeys.size - 1; i >= 0; i--)
-        {
-            targetObj = bestTargets[bestKeys[i]];
-            
-            // Prefer survivor targets first
-            if (isDefined(targetObj.is_human_player) || (self.team == "axis" && isDefined(targetObj.entity) && isPlayer(targetObj.entity)))
-            {
+                minTargetCount = targetCount;
+                closest = targetObj.dist;
                 toBeTarget = targetObj;
-                break;
+                continue;
             }
-            
-            theDist = targetObj.dist;
-            
-            if (theDist > closest) continue;
-            
-            closest = theDist;
-            toBeTarget = targetObj;
+
+            if (targetCount == minTargetCount && targetObj.dist < closest)
+            {
+                closest = targetObj.dist;
+                toBeTarget = targetObj;
+            }
         }
     }
-	
-	beforeTargetID = -1;
-	newTargetID = -1;
-	
-	if (hasTarget && isDefined(self.bot.target) && isdefined(self.bot.target.entity))
-	{
-		beforeTargetID = self.bot.target.entity getentitynumber();
-        
-        // Release one attacker slot from the previous target
-        targetEnt = self.bot.target.entity;
-        targetCount = 0;
-        if (isDefined(targetEnt.survival_target_count)) targetCount = int(targetEnt.survival_target_count);
-        targetEnt.survival_target_count = max(0, targetCount - 1);
-	}
-	
-	if (isdefined(toBeTarget) && isdefined(toBeTarget.entity))
-	{
-		newTargetID = toBeTarget.entity getentitynumber();
-        
-        // Reserve one attacker slot on the new target
-        targetEnt = toBeTarget.entity;
-        targetCount = 0;
-        if (isDefined(targetEnt.survival_target_count)) targetCount = int(targetEnt.survival_target_count);
-        targetEnt.survival_target_count = targetCount + 1;
-	}
-	
+
+    if (isdefined(toBeTarget) && isdefined(toBeTarget.entity))
+        newTargetID = toBeTarget.entity getentitynumber();
+
 	if (beforeTargetID != newTargetID)
 	{
+        if (hasTarget && isDefined(self.bot.target) && isdefined(self.bot.target.entity))
+            self _releaseSurvivorTargetSlot(self.bot.target);
+
+        if (isdefined(toBeTarget) && isdefined(toBeTarget.entity))
+        {
+            targetEnt = toBeTarget.entity;
+            targetCount = 0;
+            if (isDefined(targetEnt.survival_target_count)) targetCount = int(targetEnt.survival_target_count);
+            targetEnt.survival_target_count = targetCount + 1;
+        }
+
 		self.bot.target = toBeTarget;
 		self notify("new_enemy");
 	}
@@ -1011,16 +835,22 @@ patch_target_loop()
 patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 {
 	distClose = self.pers["bots"]["skill"]["dist_start"];
-	distClose *= self.bot.cur_weap_dist_multi;
+    if (!isDefined(distClose)) distClose = 750;
+    weapDistMulti = 1;
+    if (isDefined(self.bot.cur_weap_dist_multi)) weapDistMulti = self.bot.cur_weap_dist_multi;
+    distClose *= weapDistMulti;
 	distClose *= distClose;
 	
 	distMax = self.pers["bots"]["skill"]["dist_max"];
-	distMax *= self.bot.cur_weap_dist_multi;
+    if (!isDefined(distMax)) distMax = 2000;
+    distMax *= weapDistMulti;
 	distMax *= distMax;
+    if (distMax <= distClose) distMax = distClose + 1;
 	
 	timeMulti = 1;
 	
-    targetIsSurvivor = (isDefined(obj.is_human_player) && obj.is_human_player) || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity));
+    targetIsSurvivor = (isDefined(obj.is_survivor_target) && obj.is_survivor_target)
+        || (isDefined(obj.entity) && (obj.entity player_is_survivor()));
 
     // ignore max distance & increase track multiplier if target is survivor
 	if (!usingRemote && !isScriptObj && !targetIsSurvivor)
@@ -1042,7 +872,8 @@ patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 patch_targetObjUpdateNoTrace(obj)
 {
 	incrementAmount = 50;	
-    targetIsSurvivor = (isDefined(obj.is_human_player) && obj.is_human_player) || (self.team == "axis" && isDefined(obj.entity) && isPlayer(obj.entity));
+    targetIsSurvivor = (isDefined(obj.is_survivor_target) && obj.is_survivor_target)
+        || (isDefined(obj.entity) && (obj.entity player_is_survivor()));
 	
     // increase no_trace if target is survivor
     if (targetIsSurvivor) incrementAmount = 25;	
@@ -1051,13 +882,13 @@ patch_targetObjUpdateNoTrace(obj)
 	obj.trace_time = 0;
 
     // If we lose LOS on the active target, require windup again on reacquisition.
-    if (isDefined(self.bot) && isDefined(self.bot.burstData) && isDefined(self.bot.target) && isDefined(self.bot.target.entity)
+    if (isDefined(self.bot) && isDefined(self.bot.fireCycleData) && isDefined(self.bot.target) && isDefined(self.bot.target.entity)
         && isDefined(obj.entity) && self.bot.target.entity == obj.entity)
     {
-        self.bot.burstData.shotsLeft = 0;
-        self.bot.burstData.nextShotTime = 0;
-        self.bot.burstData.pauseUntil = 0;
-        self.bot.burstData.windUpUntil = 0;
+        self.bot.fireCycleData.shotsLeft = 0;
+        self.bot.fireCycleData.nextShotTime = 0;
+        self.bot.fireCycleData.pauseUntil = 0;
+        self.bot.fireCycleData.windUpUntil = 0;
     }
 
     // do not reset didlook for survivor target
@@ -1132,15 +963,10 @@ patch_watchToLook()
 			continue;
 		}
 		
-        settings = self bot_get_difficulty_settings();
-        tacticalSettings = lethalbeats\survival\difficulty::difficulty_get_tactical_action_settings(
-            self.pers["bots"]["behavior"]["jump"],
-            isdefined(self.bot.target.is_human_player) && self.bot.target.is_human_player,
-            settings
-        );
-        jumpChance = tacticalSettings["jumpChance"];
-        jumpCooldown = tacticalSettings["jumpCooldown"];
-        dropshotDuration = tacticalSettings["dropshotDuration"];
+        settings = self lethalbeats\survival\difficulty::difficulty_get_bot_settings();
+        jumpChance = self.pers["bots"]["behavior"]["jump"];
+        jumpCooldown = isDefined(settings["tacticalJumpCooldown"]) ? settings["tacticalJumpCooldown"] : 2500;
+        dropshotDuration = isDefined(settings["tacticalDropshotDuration"]) ? settings["tacticalDropshotDuration"] : 1.25;
 		
 		if (randomint(100) > jumpChance)
 		{
