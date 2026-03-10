@@ -1948,8 +1948,7 @@ heli_modified_damage(damage, attacker, weapon, meansOfDeath)
 
 	if (!isDefined(weapon) || !isDefined(attacker) || !isPlayer(attacker)) return damage;
 	if (weapon_has_attach_gl(weapon)) return damage * 2;
-	if (attacker player_has_perk("specialty_bulletpenetration") && weapon_get_class(weapon) == "sniper") return damage * 2;
-	if (attacker player_has_perk("specialty_bulletpenetration") || weapon_get_class(weapon) == "sniper") return damage * 1.5;
+	if (attacker player_has_perk("specialty_bulletpenetration")) return damage * 1.5;
 	return damage;
 }
 
