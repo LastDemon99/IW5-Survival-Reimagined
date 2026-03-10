@@ -260,17 +260,20 @@ onWaveStart()
 	{
 		level waittill("wave_start");
 
+		
 		if(!level.wave_num) level.wave_num = level_get_wave();
 		else
 		{
 			level.wave_num++;
+
+			/*
 			if (level.wave_num > 23 || (level.wave_num - 1) % 4 == 0)
 			{
 				foreach(player in level.players) if (player isTestClient()) kick(player getEntityNumber());	
 				level_save_state();
 				map_restart(1);
 				return;
-			}
+			}*/
 		}
 
 		thread bot_clear_models();
