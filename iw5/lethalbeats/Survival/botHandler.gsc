@@ -55,7 +55,7 @@ onBotSpawn()
 		self disableWeaponPickup();
 		self bot_set_loadout();
 
-		isHuman = true;
+		self.isHuman = true;
 		abilities = self bot_get_abilities(true);
 
 		foreach(ability in abilities)
@@ -64,7 +64,7 @@ onBotSpawn()
 			{
 				case DOG:
 					self lethalbeats\survival\abilities\_dog::giveAbility();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case MARTYRDOM:
 					self lethalbeats\survival\abilities\_martyrdom::giveAbility();
@@ -74,38 +74,38 @@ onBotSpawn()
 					break;
 				case CHOPPER:
 					self thread lethalbeats\Survival\abilities\_chopper::giveAbility();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case JUGGER:
 					self thread lethalbeats\survival\abilities\_juggernaut::giveAbility();
 					break;
 				case PAVE_LOW:
 					self thread lethalbeats\Survival\abilities\_pavelow::giveAbility();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case REAPER:
 					self thread lethalbeats\Survival\abilities\_reaper::giveAbility();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case REMOTE_TANK:
 					self thread lethalbeats\Survival\abilities\_tank::giveAbility();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case AIRSTRIKE:
 					self thread lethalbeats\Survival\abilities\_killstreaks::giveAirstrike();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case PREDATOR:
 					self thread lethalbeats\Survival\abilities\_killstreaks::givePredator();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case COUNTER_UAV:
 					self thread lethalbeats\Survival\abilities\_killstreaks::giveCounterUAV();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case EMP:
 					self thread lethalbeats\Survival\abilities\_killstreaks::giveEmp();
-					isHuman = false;
+					self.isHuman = false;
 					break;
 				case IMS:
 					if (level.ims.size < 4) self thread lethalbeats\survival\abilities\_killstreaks::giveStreak("ims");
@@ -116,7 +116,7 @@ onBotSpawn()
 			}
 		}
 
-		if (!isHuman) 
+		if (!self.isHuman) 
 		{
 			self.damageData = undefined;
 			self.dropWeapon = false;
@@ -167,8 +167,8 @@ botWaitRespawn()
 
 onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset)
 {
-	if (isDefined(eAttacker) && !isPlayer(eAttacker) && sMeansOfDeath == "MOD_TRIGGER_HURT") return;
-	if (self bot_is_jugger() && (isDefined(self.isDropped) && !self.isDropped)) return;
+	if (!self.isHuman && !self bot_is_dog()) return;
+	if (self bot_is_jugger() && !self.isDropped) return;
 
 	self.bleedData = undefined;
 

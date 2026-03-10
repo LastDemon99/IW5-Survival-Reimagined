@@ -22,6 +22,8 @@ init()
 
 giveAbility()
 {
+	self.isDropped = false;
+
 	lethalbeats\Survival\utility::level_wait_vehicle_limit();
 
 	dropZones = level.juggDrop[getDvar("mapname")];
@@ -34,7 +36,6 @@ giveAbility()
 	}
 	level.juggerDropInUse[level.juggerDropInUse.size] = dropZone;
 
-	self.isDropped = false;
 	self thread _doFlyBy(self, dropZone, randomFloat(360), 825);
 	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
 	self thread maps\mp\killstreaks\_juggernaut::juggernautSounds();
