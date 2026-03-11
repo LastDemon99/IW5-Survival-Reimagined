@@ -248,12 +248,7 @@ claymoreWatchProximity()
     self notify("mine_triggered");
     self playsound("claymore_activated");
 
-    if (isplayer(player) && player maps\mp\_utility::_hasPerk("specialty_delaymine"))
-    {
-        player notify("triggered_claymore");
-        wait(level.delayminetime);
-    }
-    else wait(level.claymoredetectiongraceperiod);
+    wait(level.claymoredetectiongraceperiod);
 
     if (isdefined(self.trigger))
     {
@@ -329,12 +324,7 @@ bouncingbettyWatchProximity()
     self notify("mine_triggered");
     self playSound("mine_betty_click");
 
-    if (isPlayer(player) && player maps\mp\_utility::_hasPerk("specialty_delaymine"))
-    {
-        player notify("triggered_mine");
-        wait(level.delayminetime);
-    }
-    else wait(level.minedetectiongraceperiod);
+    wait(level.minedetectiongraceperiod);
 
     self playSound("mine_betty_spin");
     playFx(level.mine_launch, self.origin);
