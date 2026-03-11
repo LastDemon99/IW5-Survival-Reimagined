@@ -1,4 +1,5 @@
 #include maps\mp\killstreaks\_helicopter;
+#include lethalbeats\survival\utility;
 
 init()
 {
@@ -325,7 +326,7 @@ _sentry_burstFireStart()
     for (;;)
     {
         targetEnt = self getturrettarget(false);
-        if (isdefined(targetEnt) && (!isdefined(targetEnt.spawntime) || (gettime() - targetEnt.spawntime) / 1000 > 5) && (isdefined(targetEnt.team) && targetEnt.team != "spectator") && maps\mp\_utility::isReallyAlive(targetEnt) && !targetEnt.inLastStand)
+        if (targetEnt player_is_valid_target())
         {
             targetLost = false;
             timer = windUpTime;
@@ -335,7 +336,7 @@ _sentry_burstFireStart()
                 wait 0.1;
                 timer -= 0.1;
                 currentTarget = self getturrettarget(false); // check if target cover
-                if(!isdefined(currentTarget) || currentTarget != targetEnt)
+                if(!isdefined(currentTarget) || currentTarget != targetEnt || !currentTarget  player_is_valid_target())
                 {
                     targetLost = true;
                     break;
@@ -349,7 +350,7 @@ _sentry_burstFireStart()
                 for (i = 0; i < numShots; i++)
                 {
                     currentTarget = self getturrettarget(false);
-                    if(!isdefined(currentTarget)) break; // stop firing if lose target of it mid-burst
+                    if(!isdefined(currentTarget) || !currentTarget  player_is_valid_target()) break; // stop firing if lose target of it mid-burst
                     self shootturret();
                     wait(fireTime);
                 }

@@ -655,9 +655,41 @@ patch_target_loop()
 
     survivorsAlives = survivors(true);
 
+    // Purge stale survivor targets that are no longer alive.
+    if (!isDefined(self.bot.targets)) self.bot.targets = [];
+    targetKeys = getarraykeys(self.bot.targets);
+    foreach (targetKey in targetKeys)
+    {
+        targetObj = self.bot.targets[targetKey];
+        if (!isDefined(targetObj) || !isDefined(targetObj.entity))
+        {
+            self.bot.targets[targetKey] = undefined;
+            continue;
+        }
+
+        targetEnt = targetObj.entity;
+        if (targetEnt player_is_survivor() && !targetEnt player_is_valid_target())
+        {
+            if (hasTarget && isDefined(self.bot.target) && isDefined(self.bot.target.entity) && self.bot.target.entity == targetEnt)
+            {
+                self _releaseSurvivorTargetSlot(self.bot.target);
+                self.bot.target = undefined;
+                hasTarget = false;
+            }
+
+            self.bot.targets[targetKey] = undefined;
+        }
+    }
+
     if (isDefined(self.bot.script_target))
     {
         ent = self.bot.script_target;
+        if (isDefined(ent) && ent player_is_survivor() && !ent player_is_valid_target())
+        {
+            self.bot.script_target = undefined;
+            self.bot.script_target_offset = undefined;
+        }
+
         if (lethalbeats\array::array_contains(survivorsAlives, ent))
         {
             if (isDefined(ent))
@@ -698,6 +730,8 @@ patch_target_loop()
 
     foreach (survivor in survivorsAlives)
     {
+        if (!isDefined(survivor) || !survivor player_is_valid_target()) continue;
+
         key = survivor getentitynumber() + "";
         obj = self.bot.targets[key];
         isObjDef = isdefined(obj);
@@ -857,6 +891,7 @@ patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 	
     targetIsSurvivor = (isDefined(obj.is_survivor_target) && obj.is_survivor_target)
         || (isDefined(obj.entity) && (obj.entity player_is_survivor()));
+    targetIsAliveSurvivor = isDefined(obj.entity) && (obj.entity player_is_survivor()) && obj.entity player_is_valid_target();
 
     // ignore max distance & increase track multiplier if target is survivor
 	if (!usingRemote && !isScriptObj && !targetIsSurvivor)
@@ -864,7 +899,7 @@ patch_targetObjUpdateTraced(obj, daDist, ent, theTime, isScriptObj, usingRemote)
 		if (daDist > distMax) timeMulti = 0;
 		else if (daDist > distClose) timeMulti = 1 - ((daDist - distClose) / (distMax - distClose));
 	}
-	if (targetIsSurvivor) timeMulti = 1.5;
+    if (targetIsSurvivor && targetIsAliveSurvivor) timeMulti = 1.5;
 	
 	obj.no_trace_time = 0;
 	obj.trace_time += int(50 * timeMulti);
@@ -880,9 +915,10 @@ patch_targetObjUpdateNoTrace(obj)
 	incrementAmount = 50;	
     targetIsSurvivor = (isDefined(obj.is_survivor_target) && obj.is_survivor_target)
         || (isDefined(obj.entity) && (obj.entity player_is_survivor()));
+    targetIsAliveSurvivor = isDefined(obj.entity) && (obj.entity player_is_survivor()) && obj.entity player_is_valid_target();
 	
     // increase no_trace if target is survivor
-    if (targetIsSurvivor) incrementAmount = 25;	
+    if (targetIsSurvivor && targetIsAliveSurvivor) incrementAmount = 25;	
 	
     obj.no_trace_time += incrementAmount;
 	obj.trace_time = 0;
@@ -898,7 +934,7 @@ patch_targetObjUpdateNoTrace(obj)
     }
 
     // do not reset didlook for survivor target
-	if (!targetIsSurvivor) obj.didlook = false;
+    if (!targetIsSurvivor || !targetIsAliveSurvivor) obj.didlook = false;
 }
 
 /*

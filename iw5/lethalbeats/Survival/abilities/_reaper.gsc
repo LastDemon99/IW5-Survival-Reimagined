@@ -164,6 +164,7 @@ _getBotRemoteTargetEnt(remote)
     foreach (survivor in survivorsAlives)
     {
         if (!isDefined(survivor) || !isPlayer(survivor)) continue;
+        if (!(survivor lethalbeats\survival\utility::player_is_valid_target())) continue;
         if (!maps\mp\_utility::isReallyAlive(survivor) || survivor.inLastStand) continue;
 
         if (isDefined(remote) && !bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, remote))

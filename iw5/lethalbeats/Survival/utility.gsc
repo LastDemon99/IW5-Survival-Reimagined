@@ -493,6 +493,12 @@ player_show()
 	}
 }
 
+player_is_valid_target()
+{
+	if (self.team == "axis") return true;
+	return self survivor_is_alive() && !self.inLastStand;
+}
+
 //////////////////////////////////////////
 //	              BOT   		        //
 //////////////////////////////////////////
@@ -946,6 +952,11 @@ bot_clear_models()
 //	             SURVIVOR   	        //
 //////////////////////////////////////////
 
+survivor_is_alive()
+{
+	return self.sessionState == "playing" && !isDefined(level.survivors_deaths[self.guid]) && !isDefined(level.survivors_bleedout[self.guid]);
+}
+
 /*
 ///DocStringBegin
 detail: survivors(alives?: <Boolean | Undefined>): <Entity[]>
@@ -958,11 +969,9 @@ survivors(alives)
 	if (!isDefined(alives)) return survivors;
 
 	result = [];
-	foreach(player in survivors)
-	{
-		isDeath = isDefined(level.survivors_deaths[player.guid]) || isDefined(level.survivors_bleedout[player.guid]);
-		if (alives == !isDeath) result[result.size] = player;
-	}
+	foreach(survivor in survivors)
+		if (alives == survivor survivor_is_alive()) 
+			result[result.size] = survivor;
 
 	return result;
 }

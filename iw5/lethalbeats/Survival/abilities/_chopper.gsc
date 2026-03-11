@@ -1,6 +1,7 @@
 #include maps\mp\_utility;
 #include common_scripts\utility;
 #include lethalbeats\array;
+#include lethalbeats\survival\utility;
 
 #define MIN_HELI_SEPARATION 1500
 #define BLIND_SPOT_DOT_PRODUCT 0.95
@@ -24,7 +25,7 @@ init()
 
 giveAbility()
 {
-	lethalbeats\Survival\utility::level_wait_vehicle_limit();
+	level_wait_vehicle_limit();
 	self [[level.killStreakFuncs["littlebird_survival"]]]();
 	self suicide();
 }
@@ -125,7 +126,7 @@ createLBSurvival()
 
 	if (lb.hasNodeSystem)
 	{
-		survivors = lethalbeats\survival\utility::survivors(true);
+		survivors = survivors(true);
 		if(isDefined(survivors) && survivors.size > 0)
 			closestNode = maps\mp\killstreaks\_helicopter_guard::lbSupport_getClosestNode(array_random(survivors).origin);
 		else
@@ -136,7 +137,7 @@ createLBSurvival()
 	}
 	else
 	{
-		survivors = lethalbeats\survival\utility::survivors(true);
+		survivors = survivors(true);
 		target = (isDefined(survivors) && survivors.size > 0) ? array_random(survivors).origin : level.mapcenter;
 		lb.targetPos = (target * (1,1,0)) + (0,0,flyHeight);
 	}
@@ -220,7 +221,7 @@ followPlayer_NodeBased()
 	{
 		wait randomIntRange(2, 4);
 
-		target = sortByDistance(lethalbeats\survival\utility::survivors(true), self.origin)[0];
+		target = sortByDistance(survivors(true), self.origin)[0];
         if(!isDefined(target))
         {
             wait 1;
@@ -256,7 +257,9 @@ followPlayer_Dynamic()
 
 	for(;;)
 	{
-		if (isdefined(self.mgTurretLeft getturrettarget(false)) || isdefined(self.mgTurretRight getturrettarget(false)))
+		leftTarget = self.mgTurretLeft getturrettarget(false);
+		rightTarget = self.mgTurretRight getturrettarget(false);
+		if (leftTarget player_is_valid_target() || rightTarget player_is_valid_target())
         {
             self Vehicle_SetSpeed(0, 20, 20); // If a turret has a target, force slow down to "stabilize"
             self waittill_any_timeout(4.0, "chopper_done_shooting");  // waiting firing end
@@ -264,7 +267,7 @@ followPlayer_Dynamic()
             self.timeForNextMove = gettime(); // force repositioning after shooting
         }
 
-		survivors = lethalbeats\survival\utility::survivors(true);
+		survivors = survivors(true);
 		if (!survivors.size)
 		{
 			wait 1;
@@ -338,7 +341,7 @@ followPlayer_Dynamic()
 		}
 
 		best_target = self.mgTurretLeft getturrettarget(false);
-		if (!isDefined(best_target))
+		if (!best_target player_is_valid_target())
 			best_target = target;
 			
 		self ClearLookAtEnt();
@@ -410,7 +413,7 @@ lbBurstFireStart()
     for (;;)
     {
         targetEnt = self getturrettarget(false);
-        if (isdefined(targetEnt) && (!isdefined(targetEnt.spawntime) || (gettime() - targetEnt.spawntime) / 1000 > 5) && (isdefined(targetEnt.team) && targetEnt.team != "spectator") && maps\mp\_utility::isReallyAlive(targetEnt) && !targetEnt.inLastStand)
+		if (targetEnt player_is_valid_target())
         {
             self.vehicle setlookatent(targetEnt);
             targetLost = false;
@@ -421,7 +424,7 @@ lbBurstFireStart()
                 wait 0.1;
                 timer -= 0.1;
                 currentTarget = self getturrettarget(false); // check if target cover
-                if(!isdefined(currentTarget) || currentTarget != targetEnt)
+				if(!isdefined(currentTarget) || currentTarget != targetEnt || !currentTarget player_is_valid_target())
                 {
                     targetLost = true;
                     break;
@@ -435,7 +438,7 @@ lbBurstFireStart()
                 for (i = 0; i < numShots; i++)
                 {
                     currentTarget = self getturrettarget(false);
-                    if(!isdefined(currentTarget)) break; // stop firing if lose target of it mid-burst
+					if(!isdefined(currentTarget) || !currentTarget player_is_valid_target()) break; // stop firing if lose target of it mid-burst
                     
                     self.vehicle setlookatent(currentTarget);
                     self shootturret();
@@ -466,7 +469,7 @@ lbSurvivalHandleDamage()
 		if (!isDefined(self)) return;
 
 		self.wasaDmaged = true;
-		self.damageTaken += self lethalbeats\survival\utility::heli_modified_damage(damage, attacker, weapon);
+		self.damageTaken += self heli_modified_damage(damage, attacker, weapon);
 		
 		if(state != 4)
 		{
@@ -477,7 +480,7 @@ lbSurvivalHandleDamage()
 		
 		if(isDefined(attacker) && isPlayer(attacker))
 		{
-			if(attacker != self.owner && Distance2D(attacker.origin, self.origin) <= self.targettingRadius && !attacker lethalbeats\player::player_has_perk("specialty_blindeye"))
+			if(attacker != self.owner && attacker player_is_valid_target() && Distance2D(attacker.origin, self.origin) <= self.targettingRadius && !attacker lethalbeats\player::player_has_perk("specialty_blindeye"))
 			{
 				self setLookAtEnt(attacker);
 				self.mgTurretLeft SetTargetEntity(attacker);
@@ -507,7 +510,7 @@ lbSurvivalHandleDamage()
 			}
 
 			self.owner thread leaderDialogOnPlayer("lbguard_destroyed");
-			self lethalbeats\survival\utility::bot_kill(attacker);
+			self bot_kill(attacker);
 			self notify("death");
 		}
 	}
