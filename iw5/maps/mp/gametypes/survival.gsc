@@ -237,6 +237,12 @@ onStartGametype()
 	level.c4s = [];
 	level.claymores = [];
 	level.droppedWeapons = [];
+
+	regenTime = maps\mp\gametypes\_tweakables::getTweakableValue("player", "healthregentime");
+	if (isDefined(regenTime)) regenTime = 5;
+	level.healthoverlaycutoff = 0.55;
+    level.playerhealth_regularregendelay = regenTime * 1000;
+    level.healthregendisabled = level.playerhealth_regularregendelay <= 0;
 	
 	level.difficulty = getDvarInt("survival_enemy_difficulty");
 		

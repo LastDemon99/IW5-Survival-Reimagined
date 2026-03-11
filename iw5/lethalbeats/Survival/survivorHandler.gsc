@@ -101,6 +101,7 @@ onPlayerSpawn()
 		self thread dropWeaponMonitor();
 		self thread onPlayerMelee();
 		self thread onHoldBreath();
+		self thread maps\mp\gametypes\_healthoverlay::playerHealthRegen();
 
 		self notify("weapon_change", self getCurrentWeapon());
 		if (self isTestClient()) self survivor_take_last_stand();

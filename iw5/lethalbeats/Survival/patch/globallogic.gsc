@@ -44,6 +44,8 @@ init()
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateTraced, ::patch_targetObjUpdateTraced);
     replacefunc(maps\mp\bots\_bot_internal::targetObjUpdateNoTrace, ::patch_targetObjUpdateNoTrace);
     replacefunc(maps\mp\bots\_bot_internal::watchToLook, ::patch_watchToLook);
+    replaceFunc(maps\mp\gametypes\_healthoverlay::init, ::blank);
+    replaceFunc(maps\mp\perks\_perks::cac_modified_damage, ::patch_cac_modified_damage);
     
     // GAME
     replacefunc(maps\mp\_events::multiKill, ::patch_multiKill); // update challenges, double, triple, multi
@@ -1755,4 +1757,169 @@ patch_hurtPlayersThink()
         }
         wait 0.5;
     }
+}
+
+patch_cac_modified_damage(victim, attacker, damage, meansOfDeath, weapon, impactPoint, impactDir, hitLoc)
+{
+    if (victim.team == "axis") return int(damage);
+
+    damageAdd = 0;
+
+    if (maps\mp\_utility::isBulletDamage(meansOfDeath))
+    {
+        if (isplayer(attacker) && attacker maps\mp\_utility::_hasPerk("specialty_paint_pro") && !maps\mp\_utility::isKillstreakWeapon(weapon))
+        {
+            if (!victim maps\mp\perks\_perkfunctions::isPainted())
+                attacker maps\mp\gametypes\_missions::processChallenge("ch_bulletpaint");
+
+            victim thread maps\mp\perks\_perkfunctions::setPainted();
+        }
+
+        if (isplayer(attacker) && isdefined(weapon) && maps\mp\_utility::getWeaponClass(weapon) == "weapon_sniper" && issubstr(weapon, "silencer"))
+            damage *= 0.75;
+
+        if (isplayer(attacker) && (attacker maps\mp\_utility::_hasPerk("specialty_stopping_power") && attacker maps\mp\_utility::_hasPerk("specialty_bulletdamage") || attacker maps\mp\_utility::_hasPerk("specialty_moredamage")))
+            damage += damage * level.bulletdamagemod;
+
+        if (victim maps\mp\_utility::isJuggernaut())
+            damage *= level.armorvestmod;
+    }
+    else if (isexplosivedamagemod(meansOfDeath))
+    {
+        if (isplayer(attacker) && attacker != victim && attacker isitemunlocked("specialty_paint") && attacker maps\mp\_utility::_hasPerk("specialty_paint") && !maps\mp\_utility::isKillstreakWeapon(weapon))
+        {
+            if (!victim maps\mp\perks\_perkfunctions::isPainted())
+                attacker maps\mp\gametypes\_missions::processChallenge("ch_paint_pro");
+
+            victim thread maps\mp\perks\_perkfunctions::setPainted();
+        }
+
+        if (isplayer(attacker) && weaponinheritsperks(weapon) && attacker maps\mp\_utility::_hasPerk("specialty_explosivedamage") && victim maps\mp\_utility::_hasPerk("_specialty_blastshield"))
+            damageAdd += 0;
+        else if (isplayer(attacker) && weaponinheritsperks(weapon) && attacker maps\mp\_utility::_hasPerk("specialty_explosivedamage"))
+            damageAdd += damage * level.explosivedamagemod;
+        else if (victim maps\mp\_utility::_hasPerk("_specialty_blastshield") && (weapon != "semtex_mp" || damage != 120))
+            damageAdd -= int(damage * (1 - level.blastshieldmod));
+
+        if (maps\mp\_utility::isKillstreakWeapon(weapon) && isplayer(attacker) && attacker maps\mp\_utility::_hasPerk("specialty_dangerclose"))
+            damageAdd += damage * level.dangerclosemod;
+
+        if (victim maps\mp\_utility::isJuggernaut())
+        {
+            switch (weapon)
+            {
+                case "ac130_25mm_mp":
+                    damage *= level.armorvestmod;
+                    break;
+                case "remote_mortar_missile_mp":
+                    damage *= 0.2;
+                    break;
+                default:
+                    if (damage < 1000)
+                    {
+                        if (damage > 1)
+                            damage *= level.armorvestmod;
+                    }
+
+                    break;
+            }
+        }
+
+        if (10 - (level.graceperiod - level.ingraceperiod) > 0)
+            damage *= level.armorvestmod;
+    }
+    else if (meansOfDeath == "MOD_FALLING")
+    {
+        if (victim isitemunlocked("specialty_falldamage") && victim maps\mp\_utility::_hasPerk("specialty_falldamage"))
+        {
+            if (damage > 0)
+                victim maps\mp\gametypes\_missions::processChallenge("ch_falldamage");
+
+            damageAdd = 0;
+            damage = 0;
+        }
+    }
+    else if (meansOfDeath == "MOD_MELEE")
+    {
+        if (isdefined(victim.haslightarmor) && victim.haslightarmor)
+        {
+            if (issubstr(weapon, "riotshield"))
+                damage = int(victim.maxhealth * 0.66);
+            else
+                damage = victim.maxhealth + 1;
+        }
+
+        if (victim maps\mp\_utility::isJuggernaut())
+        {
+            damage = 20;
+            damageAdd = 0;
+        }
+    }
+    else if (meansOfDeath == "MOD_IMPACT")
+    {
+        if (victim maps\mp\_utility::isJuggernaut())
+        {
+            switch (weapon)
+            {
+                case "concussion_grenade_mp":
+                case "frag_grenade_mp":
+                case "smoke_grenade_mp":
+                case "flash_grenade_mp":
+                case "semtex_mp":
+                    damage = 5;
+                    break;
+                default:
+                    if (damage < 1000)
+                        damage = 25;
+
+                    break;
+            }
+
+            damageAdd = 0;
+        }
+    }
+
+    if (victim maps\mp\_utility::_hasPerk("specialty_combathigh"))
+    {
+        if (isdefined(self.damageblockedtotal) && (!level.teambased || isdefined(attacker) && isdefined(attacker.team) && victim.team != attacker.team))
+        {
+            damageTotal = damage + damageAdd;
+            damageBlocked = damageTotal - damageTotal / 3;
+            self.damageblockedtotal += damageBlocked;
+
+            if (self.damageblockedtotal >= 101)
+            {
+                self notify("combathigh_survived");
+                self.damageblockedtotal = undefined;
+            }
+        }
+
+        if (weapon != "throwingknife_mp")
+        {
+            switch (meansOfDeath)
+            {
+                case "MOD_MELEE":
+                case "MOD_FALLING":
+                    break;
+                default:
+                    damage = int(damage / 3);
+                    damageAdd = int(damageAdd / 3);
+                    break;
+            }
+        }
+    }
+
+    if (isdefined(victim.haslightarmor) && victim.haslightarmor && weapon == "throwingknife_mp")
+    {
+        damage = victim.health;
+        damageAdd = 0;
+    }
+
+    if (damage <= 1)
+    {
+        damage = 1;
+        return damage;
+    }
+    else
+        return int(damage + damageAdd);
 }
