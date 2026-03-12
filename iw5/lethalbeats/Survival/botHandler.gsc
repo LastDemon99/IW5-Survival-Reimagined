@@ -77,6 +77,7 @@ onBotSpawn()
 					self.isHuman = false;
 					break;
 				case JUGGER:
+					self freezeControls(true);
 					self thread lethalbeats\survival\abilities\_juggernaut::giveAbility();
 					break;
 				case PAVE_LOW:

@@ -158,6 +158,7 @@ _juggerDrop(mi17, rope, sp_jugger)
 				self lethalbeats\player::player_enable_weapons();
 				sp_jugger delete();
 				self.isDropped = true;
+				self freezeControls(false);
 				continue;
 			case 230:
 				mi17 thread maps\mp\killstreaks\_helicopter::heli_leave();
