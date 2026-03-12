@@ -242,6 +242,29 @@ difficulty_get_pavelow_burst_settings()
 	};
 }
 
+difficulty_get_reaper_burst_settings()
+{
+	settings = [];
+
+	switch(difficulty_get_level())
+	{
+		case DIFFICULTY_HARD:
+			settings["fireTime"] = 2.2;
+			settings["windUpTime"] = 0;
+			return settings;
+
+		case DIFFICULTY_NORMAL:
+			settings["fireTime"] = 4.5;
+			settings["windUpTime"] = 0.75;
+			return settings;
+
+		default:
+			settings["fireTime"] = 5;
+			settings["windUpTime"] = 1;
+			return settings;
+	};
+}
+
 //////////////////////////////////////////
 //	             UTILITY        	    //
 //////////////////////////////////////////

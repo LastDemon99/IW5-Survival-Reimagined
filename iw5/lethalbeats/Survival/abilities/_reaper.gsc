@@ -70,16 +70,22 @@ _remotefiring(remote)
     remote endon("death");
 
     isBotRemoteController = (isDefined(self.isHuman) && !self.isHuman);
+    reaperSettings = lethalbeats\survival\difficulty::difficulty_get_reaper_burst_settings();
 
-    if (self.team == "axis")
+    if (isBotRemoteController)
     {
         ammo = undefined;
-        waitTime = 5000;
+        waitTime = reaperSettings["fireTime"] * 1000;
+        windUpTime = reaperSettings["windUpTime"] * 1000;
+        botWasVisibleLastTick = false;
+        botWindUpUntil = 0;
+        botTargetId = -1;
     }
     else
     {
         ammo = 14;
         waitTime = 2200;
+        windUpTime = 0;
     }
 
     curTime = gettime();
@@ -105,6 +111,24 @@ _remotefiring(remote)
             {
                 botTargetEnt = self _getBotRemoteTargetEnt(remote);
                 if (!isDefined(botTargetEnt))
+                {
+                    botWasVisibleLastTick = false;
+                    botTargetId = -1;
+                    botWindUpUntil = 0;
+                    wait 0.05;
+                    continue;
+                }
+
+                currentTargetId = botTargetEnt getentitynumber();
+                if (!botWasVisibleLastTick || botTargetId != currentTargetId)
+                {
+                    botWasVisibleLastTick = true;
+                    botTargetId = currentTargetId;
+                    botWindUpUntil = curTime + windUpTime;
+                }
+
+                // Require windup every time LOS is reacquired or target changes.
+                if (curTime < botWindUpUntil)
                 {
                     wait 0.05;
                     continue;
