@@ -46,6 +46,7 @@ init()
     replacefunc(maps\mp\bots\_bot_internal::watchToLook, ::patch_watchToLook);
     replaceFunc(maps\mp\gametypes\_healthoverlay::init, ::blank);
     replaceFunc(maps\mp\perks\_perks::cac_modified_damage, ::patch_cac_modified_damage);
+    replaceFunc(maps\mp\_stinger::stingerUsageLoop, ::patch_stingerUsageLoop);
     
     // GAME
     replacefunc(maps\mp\_events::multiKill, ::patch_multiKill); // update challenges, double, triple, multi
@@ -1051,6 +1052,126 @@ patch_watchToLook()
 			self lethalbeats\Survival\patch\globallogic::_crouch();
 		}
 	}
+}
+
+patch_stingerUsageLoop()
+{
+    self endon("death");
+    self endon("disconnect");
+    self endon("faux_spawn");
+
+    LOCK_LENGTH = 1000;
+    self maps\mp\_stinger::initStingerUsage();
+
+    for (;;)
+    {
+        wait 0.05;
+        weapon = self getcurrentweapon();
+
+        if (weapon != "stinger_mp")
+        {
+            self maps\mp\_stinger::resetStingerLocking();
+            continue;
+        }
+
+        if (self playerads() < 0.95)
+        {
+            self maps\mp\_stinger::resetStingerLocking();
+            continue;
+        }
+
+        self.stingeruseentered = 1;
+
+        if (!isdefined(self.stingerstage))
+            self.stingerstage = 0;
+
+        maps\mp\_stinger::stingerDebugDraw(self.stingertarget);
+
+        if (self.stingerstage == 0)
+        {
+            targets = maps\mp\_stinger::getTargetList();
+
+            if (targets.size == 0)
+                continue;
+
+            targetsInReticle = [];
+
+            foreach (target in targets)
+            {
+                if (!isdefined(target))
+                    continue;
+
+                insideReticle = self worldpointinreticle_circle(target.origin, 65, 75);
+
+                if (insideReticle)
+                    targetsInReticle[targetsInReticle.size] = target;
+            }
+
+            if (targetsInReticle.size == 0)
+                continue;
+
+            sortedTargets = sortbydistance(targetsInReticle, self.origin);
+
+            if (!self maps\mp\_stinger::lockSightTest(sortedTargets[0]))
+                continue;
+
+            self thread maps\mp\_stinger::loopStingerLockingFeedback();
+            self.stingertarget = sortedTargets[0];
+            self.stingerlockstarttime = gettime();
+            self.stingerstage = 1;
+            self.stingerlostsightlinetime = 0;
+        }
+
+        if (self.stingerstage == 1)
+        {
+            if (!maps\mp\_stinger::stillValidStingerLock(self.stingertarget))
+            {
+                self maps\mp\_stinger::resetStingerLocking();
+                continue;
+            }
+
+            passed = self maps\mp\_stinger::softSightTest();
+
+            if (!passed)
+                continue;
+
+            timePassed = gettime() - self.stingerlockstarttime;
+
+            if (maps\mp\_utility::_hasPerk("specialty_fasterlockon"))
+            {
+                if (timePassed < LOCK_LENGTH * 0.5)
+                    continue;
+            }
+            else if (timePassed < LOCK_LENGTH)
+                continue;
+
+            self notify("stop_javelin_locking_feedback");
+            self thread maps\mp\_stinger::loopStingerLockedFeedback();
+
+            if (self.stingertarget.model == "vehicle_av8b_harrier_jet_opfor_mp" || self.stingertarget.model == "vehicle_av8b_harrier_jet_mp" || self.stingertarget.model == "vehicle_little_bird_armed" || self.stingertarget.model == "vehicle_ugv_talon_mp")
+                self weaponlockfinalize(self.stingertarget);
+            else if (isplayer(self.stingertarget))
+                self weaponlockfinalize(self.stingertarget, (100, 0, 64));
+            else
+                self weaponlockfinalize(self.stingertarget, (100, 0, -32));
+
+            self.stingerstage = 2;
+        }
+
+        if (self.stingerstage == 2)
+        {
+            passed = self maps\mp\_stinger::softSightTest();
+
+            if (!passed)
+                continue;
+
+            if (!maps\mp\_stinger::stillValidStingerLock(self.stingertarget))
+            {
+                self maps\mp\_stinger::resetStingerLocking();
+                continue;
+            }
+        }
+    }
 }
 
 //////////////////////////////////////////
