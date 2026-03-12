@@ -36,6 +36,20 @@ onPlayerSpawn()
 	level endon("game_ended");
 	self endon("disconnect");
 
+	self.hud_damagefeedback = newclienthudelem(self);
+	self.hud_damagefeedback.horzalign = "center";
+	self.hud_damagefeedback.vertalign = "middle";
+	self.hud_damagefeedback.x = -12;
+	self.hud_damagefeedback.y = -12;
+	self.hud_damagefeedback.alpha = 0;
+	self.hud_damagefeedback.archived = 1;
+	self.hud_damagefeedback setshader("damage_feedback", 24, 48);
+
+	self.hasriotshieldequipped = false;
+	self.perks = [];
+
+	self thread maps\mp\gametypes\_weapons::watchMissileUsage();
+
 	for(;;)
 	{
 		self waittill("spawned_player");
@@ -105,6 +119,25 @@ onPlayerSpawn()
 
 		self notify("weapon_change", self getCurrentWeapon());
 		if (self isTestClient()) self survivor_take_last_stand();
+
+		self.currentweaponatspawn = self getcurrentweapon();
+        self.empendtime = 0;
+        self.concussionendtime = 0;
+        self.hits = 0;
+        maps\mp\gametypes\_gamelogic::setHasDoneCombat(self, 0);
+
+        self thread maps\mp\gametypes\_weapons::WatchStingerUsage();
+        self thread maps\mp\gametypes\_weapons::WatchJavelinUsage();
+        self thread maps\mp\gametypes\_weapons::watchWeaponReload();
+		//self thread maps\mp\_equipment::watchtrophyusage();
+		self thread lethalbeats\survival\patch\mines::grenadeWatchUsage();
+        self thread maps\mp\gametypes\_class::trackRiotShield();
+        self thread maps\mp\gametypes\_weapons::stanceRecoilAdjuster();
+        self.lasthittime = [];
+        self.droppeddeathweapon = undefined;
+        self.tookweaponfrom = [];
+        self.currentweaponatspawn = undefined;
+        self.trophyremainingammo = undefined;
  	}
 }
 
@@ -525,7 +558,10 @@ onWeaponSwitchStarted()
 
 		self.enableUse = false;
 		if(newWeapon != "none" && !isDefined(self.lastStand))
+		{
 			self.prevWeapon = self getCurrentWeapon();
+			self.saved_lastweapon = self.prevWeapon;
+		}
 
 		self thread _forceNotifyUpdate();
 	}
@@ -545,6 +581,9 @@ onWeaponChange()
 	level endon("game_ended");
 	self endon("disconnect");
 	self endon("death");
+
+	currentWeapon = self.currentweaponatspawn;
+    self.saved_lastweapon = currentWeapon;
 
 	for(;;)
 	{

@@ -57,7 +57,6 @@ init()
 	replacefunc(maps\mp\gametypes\_spawnlogic::getAllOtherPlayers, ::_survivor_alives); // get spawnpoints dm will check getallotherplayers, now where the survivors are
     replacefunc(maps\mp\gametypes\_weapons::dropWeaponForDeath, ::patch_dropweaponfordeath); // allows pick up ammunition regardless of the weapon attachs
 	replacefunc(maps\mp\gametypes\_missions::playerKilled, ::blank); // disables challenge splash?... I don't remember
-	replacefunc(maps\mp\gametypes\_music_and_dialog::onPlayerSpawned, ::blank); // disable default mp music and on start match
     replacefunc(maps\mp\gametypes\_deathicons::addDeathIcon, ::blank); // disable death icon
 	replacefunc(maps\mp\gametypes\_damage::playerKilled_internal,  lethalbeats\survival\patch\damage::playerkilled_internal); // disable death obituary & disable death corpses on first bot death
     replacefunc(maps\mp\gametypes\_damage::handleNormalDeath,  lethalbeats\survival\patch\damage::handlenormaldeath); // disable nuke streak
@@ -72,14 +71,10 @@ init()
     replaceFunc(maps\mp\killstreaks\_killstreaks::enablekillstreakactionslots, ::patch_enablekillstreakactionslots);
     replaceFunc(maps\mp\gametypes\_gamelogic::matchStartTimer, ::blank);
     replaceFunc(maps\mp\gametypes\_gamelogic::waitForPlayers, ::blank);
-    replaceFunc(maps\mp\gametypes\_weapons::watchGrenadeUsage, lethalbeats\survival\patch\mines::grenadeWatchUsage);
-    replaceFunc(maps\mp\gametypes\_weapons::watchMineUsage, ::blank);
     replaceFunc(maps\mp\gametypes\_weapons::bombSquadWaiter, ::blank);
     replaceFunc(maps\mp\_load::hurtplayersthink, ::patch_hurtPlayersThink);
 
     // CLEAN
-    replaceFunc(maps\mp\_awards::onPlayerSpawned, ::blank);
-    replaceFunc(maps\mp\_awards::monitorPositionCamping, ::blank);
     replaceFunc(maps\mp\_animatedmodels::animateModel, ::patch_animateModel);
     replaceFunc(common_scripts\_dynamic_world::playerTouchTriggerThink, ::patch_playerTouchTriggerThink);
     replaceFunc(common_scripts\_destructible::play_sound, ::patch_play_sound);
@@ -92,16 +87,84 @@ init()
     replaceFunc(maps\mp\gametypes\_damage::callback_playerDamage_internal, lethalbeats\survival\patch\damage::callback_playerDamage_internal);
     replaceFunc(maps\mp\gametypes\_missions::updatechallenges, ::_updatechallenges);
     replaceFunc(maps\mp\_utility::updateobjectivetext, ::blank);
-    replaceFunc(maps\mp\_utility::getObjectiveHintText, ::_textBlank);
+    replaceFunc(maps\mp\_utility::getObjectiveHintText, ::_textBlank);    
+    replaceFunc(maps\mp\_areas::init, ::blank);
+    replaceFunc(maps\mp\_awards::init, ::blank);
+    replaceFunc(maps\mp\_utility::incPlayerStat, ::blank);
+    replaceFunc(maps\mp\_utility::incPersStat, ::blank);
+    replaceFunc(maps\mp\_utility::setPlayerStat, ::blank);
+    replaceFunc(maps\mp\_utility::setPlayerStatIfGreater, ::blank);
+    replaceFunc(maps\mp\_utility::setPlayerStatIfLower, ::blank);
+    replaceFunc(maps\mp\_utility::initPlayerStat, ::blank);
+    replaceFunc(maps\mp\_utility::getNextLifeId, ::_getNextLifeId);
+    replaceFunc(maps\mp\gametypes\_weapons::setWeaponStat, ::blank);
+    replaceFunc(maps\mp\gametypes\_rank::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_gamelogic::fixranktable, ::blank);
+    replaceFunc(maps\mp\gametypes\_gamelogic::setWeaponStat, ::blank);
+    replaceFunc(maps\mp\gametypes\_rank::getrankforxp, ::_getRankForXp);
+    replaceFunc(maps\mp\gametypes\_rank::getWeaponRank, ::_getRankForXp);
+    replaceFunc(maps\mp\gametypes\_rank::getrankinfominxp, ::_getRankForXp);
+    replaceFunc(maps\mp\_events::checkmatchdatakills, ::blank);
+    replaceFunc(maps\mp\_crib::init, ::blank);
+    replaceFunc(maps\mp\_defcon::init, ::blank);
+    replaceFunc(maps\mp\_empgrenade::init, ::blank);
+    replaceFunc(maps\mp\_radiation::radiation, ::blank);
+    replaceFunc(maps\mp\_skill::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_battlechatter_mp::onPlayerConnect, ::blank);
+    replaceFunc(maps\mp\gametypes\_damagefeedback::onPlayerConnect, ::blank);
+    replaceFunc(maps\mp\gametypes\_damagefeedback::updateDamageFeedback, ::patch_updateDamageFeedback);
+    replaceFunc(maps\mp\gametypes\_deathicons::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_friendicons::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_gameobjects::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_hud_message::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_missions::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_music_and_dialog::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_playercards::init, ::blank);
+    //replaceFunc(maps\mp\gametypes\_spectating::init, ::blank);
+    replaceFunc(maps\mp\gametypes\_teams::init, ::patch_teamsInit);
+    replaceFunc(maps\mp\gametypes\_weapons::sniperDustWatcher, ::blank);
+    replaceFunc(maps\mp\gametypes\_weapons::onPlayerConnect, ::blank);
+    replaceFunc(maps\mp\killstreaks\_ac130::onPlayerConnect, ::blank);
+    replaceFunc(maps\mp\killstreaks\_autoshotgun::init, ::blank);
+    replaceFunc(maps\mp\killstreaks\_deployablebox::init, ::blank);
+    replaceFunc(maps\mp\killstreaks\_emp::init, ::blank);
+    replaceFunc(maps\mp\killstreaks\_nuke::init, ::blank);
+    replaceFunc(maps\mp\perks\_perks::onPlayerConnect, ::blank);
+    replaceFunc(maps\mp\killstreaks\_uav::onPlayerConnect, ::blank);
+    replaceFunc(maps\mp\_utility::isEMPed, ::_isEMPed);
+
+    precacheShader("waypoint_revive");
+
+    level.maxrank = int(tablelookup("mp/rankTable.csv", 0, "maxrank", 1));
+    level.maxprestige = int(tablelookup("mp/rankIconTable.csv", 0, "maxprestige", 1));
 
     level.breakables_fx["barrel"]["explode"] = loadfx("props/barrelExp");
     level.breakables_fx["barrel"]["burn_start"] = loadfx("props/barrel_fire_top");
     level.breakables_fx["barrel"]["burn"] = loadfx("props/barrel_fire_top");
 
+    level.teamemped["allies"] = 0;
+    level.teamemped["axis"] = 0;
+
+    level.numgametypereservedobjectives = 0;
+
     level.onRespawnDelay = ::patch_getRespawnDelay; // although it is not used, it is required to return a value to avoid errors
 
     level thread lethalbeats\survival\patch\mines::mineBombSquadVisibilityUpdater();
+
+    level waittill("prematch_done");
+    game["voice"]["allies"] = maps\mp\gametypes\_teams::getTeamVoicePrefix("allies") + "1mc_";
+    game["voice"]["axis"] = maps\mp\gametypes\_teams::getTeamVoicePrefix("axis") + "1mc_";
+    game["dialog"]["lbguard_destroyed"] = "lbguard_destroyed";
+    game["dialog"]["remote_sentry_destroyed"] = "remote_sentry_destroyed";
+    game["dialog"]["sentry_destroyed"] = "sentry_destroyed";
+    game["dialog"]["ims_destroyed"] = "ims_destroyed";
+    game["strings"]["target_destroyed"] = &"MP_TARGET_DESTROYED";
 }
+
+_isEMPed() { return false; }
+
+_getNextLifeId() { return 1; }
+_getRankForXp(xpVal) { return 0; }
 
 _updatechallenges() { self.challengedata = []; }
 
@@ -230,13 +293,20 @@ summary: Change score popup to survival money animation, move over time left & d
 */
 patch_xppointspopupfinalize(amount, bonus, hudColor, glowAlpha)
 {
+    if (self.team == "axis") return;
+
     self endon("disconnect");
     self endon("joined_team");
     self endon("joined_spectators");
 
     if (amount == 0) return;
     if (!isdefined(self) || !isPlayer(self)) return;
-	if (!isDefined(self.hud_xpPointsPopup)) self.hud_xpPointsPopupself = maps\mp\gametypes\_rank::createXpPointsPopup();
+	if (!isDefined(self.hud_xpPointsPopup))
+    {
+        self.hud_xpPointsPopup = self maps\mp\gametypes\_rank::createXpPointsPopup();
+        self.xpupdatetotal = 0;
+        self.bonusupdatetotal = 0;
+    }
 	
 	self.hud_xpPointsPopup.x = 30;
 	self.hud_xpPointsPopup.y = -50;
@@ -2079,4 +2149,76 @@ patch_cac_modified_damage(victim, attacker, damage, meansOfDeath, weapon, impact
     }
     else
         return int(damage + damageAdd);
+}
+
+patch_updateDamageFeedback(typeHit)
+{
+    if (!isplayer(self) || self.team == "axis") return;
+
+    x = -12;
+    y = -12;
+
+    if (getdvarint("camera_thirdPerson"))
+        yOffset = self getthirdpersoncrosshairoffset() * 240;
+    else
+        yOffset = getdvarfloat("cg_crosshairVerticalOffset") * 240;
+
+    if (level.splitscreen || self issplitscreenplayer())
+        yOffset *= 0.5;
+
+    feedbackDurationOverride = 0;
+    startAlpha = 1;
+
+    if (typeHit == "hitBodyArmor")
+    {
+        self.hud_damagefeedback setshader("damage_feedback_j", 24, 48);
+        self playlocalsound("MP_hit_alert");
+    }
+    else if (typeHit == "hitLightArmor")
+    {
+        self.hud_damagefeedback setshader("damage_feedback_lightarmor", 24, 48);
+        self playlocalsound("MP_hit_alert");
+    }
+    else if (typeHit == "hitJuggernaut")
+    {
+        self.hud_damagefeedback setshader("damage_feedback_juggernaut", 24, 48);
+        self playlocalsound("MP_hit_alert");
+    }
+    else if (typeHit == "none")
+        return;
+    else if (typeHit == "scavenger" && !level.hardcoremode)
+    {
+        x = -36;
+        y = 32;
+        self.hud_damagefeedback setshader("scavenger_pickup", 64, 32);
+        feedbackDurationOverride = 2.5;
+    }
+    else
+    {
+        self.hud_damagefeedback setshader("damage_feedback", 24, 48);
+        self playlocalsound("MP_hit_alert");
+    }
+
+    self.hud_damagefeedback.alpha = startAlpha;
+
+    if (feedbackDurationOverride != 0)
+        self.hud_damagefeedback fadeovertime(feedbackDurationOverride);
+    else
+        self.hud_damagefeedback fadeovertime(1);
+
+    self.hud_damagefeedback.alpha = 0;
+
+    if (self.hud_damagefeedback.x != x)
+        self.hud_damagefeedback.x = x;
+
+    y -= int(yOffset);
+
+    if (self.hud_damagefeedback.y != y)
+        self.hud_damagefeedback.y = y;
+}
+
+patch_teamsInit()
+{
+    maps\mp\gametypes\_teams::initScoreBoard();
+    maps\mp\gametypes\_teams::setPlayerModels();
 }

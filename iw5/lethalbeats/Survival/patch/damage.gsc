@@ -900,8 +900,8 @@ callback_playerDamage_internal( eInflictor, eAttacker, victim, iDamage, iDFlags,
             if ( isdefined( eAttacker ) )
                 level.lastlegitimateattacker = eAttacker;
 
-            if ( isdefined( eAttacker ) && isplayer( eAttacker ) && isdefined( sWeapon ) )
-                eAttacker thread maps\mp\gametypes\_weapons::checkHit( sWeapon, victim );
+            //if ( isdefined( eAttacker ) && isplayer( eAttacker ) && isdefined( sWeapon ) )
+                //eAttacker thread maps\mp\gametypes\_weapons::checkHit( sWeapon, victim );
 
             if ( isdefined( eAttacker ) && isplayer( eAttacker ) && isdefined( sWeapon ) && eAttacker != victim )
             {

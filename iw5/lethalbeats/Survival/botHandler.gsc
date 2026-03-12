@@ -33,7 +33,10 @@ onBotSpawn()
 {
 	level endon("game_ended");
 	self endon("disconnect");
-	
+
+	self.hasriotshieldequipped = false;
+	self.perks = [];
+
 	for(;;)
 	{
 		self waittill("spawned_player");		
@@ -47,6 +50,9 @@ onBotSpawn()
 		}
 	
 		self.grenades = [];
+		self.primaryweapon = self player_get_primary();
+		self.currentweaponatspawn = self.primaryweapon;
+		self.saved_lastweapon = self.prevWeapon;
 	
 		self show();
 		self setContents(100);
@@ -127,7 +133,7 @@ onBotSpawn()
 		self.stuned = false;
 		self.stunEndTime = 0;
 		if (isDefined(self.bot)) self.bot.fireCycleData = undefined;
-		self.dropWeapon = true;
+		self.dropWeapon = !self bot_is_jugger();
 		self.damageData = [];
 		self takeWeapon(self.secondaryWeapon);
 		self thread onChangeWeapons();
@@ -138,6 +144,26 @@ onBotSpawn()
 		mines = 0;
 		foreach(player in level.players) mines += array_get_values(player.mines).size;
 		if (mines >= 30) self player_clear_nades();
+
+		factionPrefix = maps\mp\gametypes\_teams::getTeamVoicePrefix(self.team);
+
+        if (!isdefined(self.pers["voiceIndex"]) || factionPrefix != "RU_" && self.pers["voiceNum"] >= 3)
+        {
+            if (factionPrefix == "RU_") self.pers["voiceNum"] = randomintrange(0, 4);
+            else self.pers["voiceNum"] = randomintrange(0, 2);
+            self.pers["voicePrefix"] = factionPrefix + self.pers["voiceNum"] + "_";
+        }
+
+        self thread maps\mp\gametypes\_battlechatter_mp::claymoreTracking();
+        self thread maps\mp\gametypes\_battlechatter_mp::reloadTracking();
+        self thread maps\mp\gametypes\_battlechatter_mp::grenadeTracking();
+        self thread maps\mp\gametypes\_battlechatter_mp::grenadeProximityTracking();
+        self thread maps\mp\gametypes\_battlechatter_mp::suppressingFireTracking();
+		
+		self thread lethalbeats\survival\patch\mines::grenadeWatchUsage();
+		if (self hasWeapon("riotshield_mp")) self thread maps\mp\gametypes\_class::trackRiotShield();
+
+		self maps\mp\_utility::setRecoilScale(0, 100);
 	}
 }
 
@@ -225,6 +251,8 @@ onBotKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLo
 		if (!self bot_is_killstreak() && !(self bot_is_jugger() && !self.isDropped)) self bot_kill(eAttacker);
 		if (self bot_is_explosive()) self notify("detonate", eAttacker);
 	}
+
+	if (self.dropWeapon) self player_drop_weapon();
 
 	self maps\mp\bots\_bot_internal::onKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 	self maps\mp\bots\_bot_script::onKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);

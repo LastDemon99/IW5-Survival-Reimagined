@@ -254,7 +254,7 @@ claymoreWatchProximity()
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
         self.trigger trigger_delete();
-        self.bombSquad delete();
+        if (isdefined(self.bombSquad)) self.bombSquad delete();
         self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
     }
 
@@ -351,7 +351,7 @@ bouncingbettyWatchProximity()
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
         self.trigger trigger_delete();
-        self.bombSquad delete();
+        if (isdefined(self.bombSquad)) self.bombSquad delete();
         self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
     }
 
@@ -470,7 +470,7 @@ mineDamage()
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
         self.trigger trigger_delete();
-        if (isDefined(self.bombSquad)) self.bombSquad delete();
+        if (isdefined(self.bombSquad)) self.bombSquad delete();
         
         if (isDefined(self.owner) && isDefined(self.owner.mines[self.weaponname]))
             self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
