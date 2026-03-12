@@ -73,40 +73,40 @@ onBotSpawn()
 					self thread lethalbeats\survival\abilities\_chemical::giveAbility();
 					break;
 				case CHOPPER:
-					self thread lethalbeats\Survival\abilities\_chopper::giveAbility();
 					self.isHuman = false;
+					self thread lethalbeats\Survival\abilities\_chopper::giveAbility();
 					break;
 				case JUGGER:
 					self freezeControls(true);
 					self thread lethalbeats\survival\abilities\_juggernaut::giveAbility();
 					break;
 				case PAVE_LOW:
-					self thread lethalbeats\Survival\abilities\_pavelow::giveAbility();
 					self.isHuman = false;
+					self thread lethalbeats\Survival\abilities\_pavelow::giveAbility();
 					break;
 				case REAPER:
 					self thread lethalbeats\Survival\abilities\_reaper::giveAbility();
 					self.isHuman = false;
 					break;
 				case REMOTE_TANK:
-					self thread lethalbeats\Survival\abilities\_tank::giveAbility();
 					self.isHuman = false;
+					self thread lethalbeats\Survival\abilities\_tank::giveAbility();
 					break;
 				case AIRSTRIKE:
-					self thread lethalbeats\Survival\abilities\_killstreaks::giveAirstrike();
 					self.isHuman = false;
+					self thread lethalbeats\Survival\abilities\_killstreaks::giveAirstrike();
 					break;
 				case PREDATOR:
-					self thread lethalbeats\Survival\abilities\_killstreaks::givePredator();
 					self.isHuman = false;
+					self thread lethalbeats\Survival\abilities\_killstreaks::givePredator();
 					break;
 				case COUNTER_UAV:
-					self thread lethalbeats\Survival\abilities\_killstreaks::giveCounterUAV();
 					self.isHuman = false;
+					self thread lethalbeats\Survival\abilities\_killstreaks::giveCounterUAV();
 					break;
 				case EMP:
-					self thread lethalbeats\Survival\abilities\_killstreaks::giveEmp();
 					self.isHuman = false;
+					self thread lethalbeats\Survival\abilities\_killstreaks::giveEmp();
 					break;
 				case IMS:
 					if (level.ims.size < 4) self thread lethalbeats\survival\abilities\_killstreaks::giveStreak("ims");
