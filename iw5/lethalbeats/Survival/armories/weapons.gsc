@@ -65,6 +65,14 @@ onInit()
 {
     player = self.owner;
     weapon = player getCurrentWeapon();
+
+    if (weapon_get_class(weapon) == "explosive")
+    {
+        weapon = player.prevWeapon;
+        player switchToWeaponImmediate(weapon);
+        player waittill("weapon_change");
+    }
+
     self.weaponData = player getWeaponData(weapon);
     if (weapon != "none") self.weaponData[IS_PRIMARY] = player player_is_weapon_primary(self.weaponData[BUILD_NAME]);
 }

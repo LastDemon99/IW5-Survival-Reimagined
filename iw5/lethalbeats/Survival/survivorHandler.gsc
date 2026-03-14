@@ -335,7 +335,6 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 	self.inLastStand = true;
 	self.lastStand = true;
 	self.health = self.maxhealth;
-	self.prevWeapon = self getCurrentWeapon();
 
 	self playSound("generic_death_american_" + randomIntRange(1, 8));
 	self player_give_laststand_weapon("iw5_fnfiveseven_mp");
@@ -552,15 +551,23 @@ onWeaponSwitchStarted()
 	self endon("disconnect");
 	self endon("death");
 
+	self.prevWeapon = self getCurrentWeapon();
+	self.saved_lastweapon = self.prevWeapon;
+
 	for(;;)
 	{
 		self waittill("weapon_switch_started", newWeapon);
 
+		currWeapon = self getCurrentWeapon();
+
+		validCurrWep = isDefined(currWeapon) && currWeapon != "none" && !isDefined(self.lastStand) && lethalbeats\weapon::weapon_get_class(currWeapon) != "explosive";
+		validNewWep = isDefined(newWeapon) && newWeapon != "none";
+
 		self.enableUse = false;
-		if(newWeapon != "none" && !isDefined(self.lastStand))
+		if(validCurrWep && validNewWep)
 		{
-			self.prevWeapon = self getCurrentWeapon();
-			self.saved_lastweapon = self.prevWeapon;
+			self.prevWeapon = currWeapon;
+			self.saved_lastweapon = currWeapon;
 		}
 
 		self thread _forceNotifyUpdate();
@@ -581,9 +588,6 @@ onWeaponChange()
 	level endon("game_ended");
 	self endon("disconnect");
 	self endon("death");
-
-	currentWeapon = self.currentweaponatspawn;
-    self.saved_lastweapon = currentWeapon;
 
 	for(;;)
 	{

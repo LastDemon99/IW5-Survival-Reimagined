@@ -1508,6 +1508,14 @@ weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
 
         currWeapon = player getCurrentWeapon();
         if (!isDefined(currWeapon) || currWeapon == "none") continue;
+        weaponModel delete();
+
+        if (lethalbeats\weapon::weapon_get_class(currWeapon) == "explosive")
+        {
+            currWeapon = player.prevWeapon;
+            player switchToWeaponImmediate(currWeapon);
+            player waittill("weapon_change");
+        }
 
         weapons = player player_get_weapons();
         if (weapons.size > 1)
@@ -1535,7 +1543,6 @@ weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
 
         if (isDefined(weaponModel.droppedIndex)) level.droppedWeapons = lethalbeats\array::array_remove_index(level.droppedWeapons, weaponModel.droppedIndex);
 
-        weaponModel delete();
         self lethalbeats\trigger::trigger_delete();
     }
 }
