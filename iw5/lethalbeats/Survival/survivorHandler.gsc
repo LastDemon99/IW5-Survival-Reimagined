@@ -728,7 +728,7 @@ onHideScore()
 	self notifyOnPlayerCommand(show_score, "+scores");
 	self notifyOnPlayerCommand(hide_score, "-scores");
 
-	lbDiscord = hud_create_string(self, "^4Discord^7: https://discord.gg/PrpYznV33s", "hudsmall", 0.8, "TOP CENTER", "TOP CENTER", 0, 10);
+	lbDiscord = hud_create_string(self, "^4Discord^7: https://discord.gg/R7TXwSP9kq", "hudsmall", 0.8, "TOP CENTER", "TOP CENTER", 0, 10);
 	lbDiscord.alpha = 0;
 	lbDiscord.hideWhenInMenu = false;
 	
