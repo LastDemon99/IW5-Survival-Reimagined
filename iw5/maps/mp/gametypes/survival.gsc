@@ -237,6 +237,7 @@ onStartGametype()
 	level.c4s = [];
 	level.claymores = [];
 	level.droppedWeapons = [];
+	level.rankedmatch = 0;
 
 	regenTime = maps\mp\gametypes\_tweakables::getTweakableValue("player", "healthregentime");
 	if (isDefined(regenTime)) regenTime = 5;
