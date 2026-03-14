@@ -181,12 +181,13 @@ botWaitRespawn()
 			difficulty = self lethalbeats\survival\difficulty::difficulty_get_bot_settings();
 			delayMin = int(difficulty["botRespawnDelayMin"]);
 			delayMax = int(difficulty["botRespawnDelayMax"]);
-			if (delayMax < delayMin) delayMax = delayMin;
-			if (delayMin || delayMax)
-			{
-				delay = randomIntRange(delayMin, delayMax + 1);
-				wait randomFloatRange(delay - 0.5, delay + 0.5);
-			}
+
+			if (delayMax <= delayMin) delay = delayMax;
+			else if (delayMin || delayMax) delay = randomIntRange(delayMin, delayMax + 1);
+			else delay = 1;
+
+			if (delay <= 0) break;
+			wait delay;
 			break;
 		}
 	}
