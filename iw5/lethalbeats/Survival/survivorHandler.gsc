@@ -305,6 +305,7 @@ onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 {
 	if (self.inLastStand && isDefined(self.lastStandBar.type) && self.lastStandBar.type == "revive") 
 	{
+		wait 0.35;
 		self notify("auto_revive");
 		self survivor_revive();
 	}
