@@ -451,9 +451,8 @@ weaponDamageModifier(weapon, damage, meansOfDeath, attacker, isExplosiveDamage)
 		case "iw5_ksg":
 			return damage * 2.5;
 		case "iw5_mk14":
-			return damage * 2;
 		case "iw5_1887":
-			return damage * 1.5;
+			return damage * 2;
 		default:
 			return damage;
 	}
