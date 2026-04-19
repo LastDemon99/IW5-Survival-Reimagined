@@ -364,9 +364,20 @@ onSprint()
 
 onStun(weapon, meansOfDeath)
 {
-	stunTime = 1;
+	stunTime = 0;
 
-	if (isDefined(self.damageData) && self.damageData.size > 0)
+	if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 2;
+	else if (isDefined(weapon))
+	{
+		switch(weapon)
+		{
+			case "artillery_mp":
+			case "flash_grenade_mp": stunTime = 4; break;
+			case "concussion_grenade_mp": stunTime = 5; break;
+		}
+	}
+
+	if (!self bot_is_jugger() && isDefined(self.damageData) && self.damageData.size > 0)
 	{
 		totalDamage = 0;
 		currentTime = getTime();
@@ -380,20 +391,6 @@ onStun(weapon, meansOfDeath)
 
 		if (totalDamage >= self.maxHealth * 0.35)
 			stunTime = 3;
-	}
-
-	if (!stunTime)
-	{
-		if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 2;
-		else if (isDefined(weapon))
-		{
-			switch(weapon)
-			{
-				case "artillery_mp":
-				case "flash_grenade_mp": stunTime = 4; break;
-				case "concussion_grenade_mp": stunTime = 5; break;
-			}
-		}
 	}
 
 	if (!stunTime) return;
