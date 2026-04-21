@@ -1,4 +1,5 @@
 #include lethalbeats\survival\utility;
+#include lethalbeats\botactor\utility;
 #include lethalbeats\array;
 #include lethalbeats\string;
 #include lethalbeats\hud;
@@ -8,6 +9,10 @@
 #define NOTIFY_DIALOG 2
 #define NOTIFY_WAVE_END 3
 #define NOTIFY_SKIP_CASH_BONUS 5
+
+#define SCRIPT_MOVE 3
+#define CHASE_TARGET 22
+#define SKILL_CHASE_DIST_MIN 76
 
 #define INTERMISSION_TIME 25
 
@@ -39,12 +44,9 @@ main()
 	setDvarIfUninitialized("survival_enemy_difficulty", 1);
 	setDvarIfUninitialized("sv_mapRotation", "dsr survival map mp_dome map mp_mogadishu map mp_bootleg map mp_lambeth map mp_hardhat map mp_interchange map mp_alpha map mp_bravo map mp_plaza2 map mp_exchange map mp_carbon map mp_paris map mp_radar map mp_seatown map mp_underground map mp_village map mp_favela map mp_highrise map mp_nightshift map mp_nuked map mp_rust");
 
-	setDvar("bots_manage_add", 18 - getDvarInt("survival_survivors_limit"));
 	setDvar("sv_cheats", 1);	
 	setDvar("cg_drawCrosshair", 1);
 	setDvar("cg_drawCrosshairNames", 0);
-	setDvar("bots_main_chat", 0);
-	setDvar("bots_main_menu", 0);
 	setDvar("scr_game_graceperiod", 0);
 	setDvar("scr_game_playerwaittime", 0);
 	setDvar("scr_game_matchstarttime", 0);
@@ -74,36 +76,6 @@ main()
 
 	lethalbeats\survival\dev\test::init();
 	if (getDvarInt("survival_dev_mode") > 1) lethalbeats\survival\dev\mapedit::init();
-
-	entities = getentarray("trigger_multiple", "classname");
-	foreach(entity in entities) entity delete();
-
-	entities = getentarray("trigger_once", "classname");
-	foreach(entity in entities) entity delete();
-
-	entities = getentarray("trigger_use", "classname");
-	foreach(entity in entities) entity delete();
-
-    entities = getentarray("trigger_radius", "classname");
-    foreach(entity in entities) entity delete();
-
-	entities = getentarray("trigger_lookat", "classname");
-	foreach(entity in entities) entity delete();
-
-	entities = getentarray("trigger_damage", "classname");
-	foreach(entity in entities) entity delete();
-
-	entities = getentarray("trigger_multiple_softlanding", "targetname");
-	foreach(entity in entities) entity delete();
-
-	entities = getentarray("destructible_toy", "targetname");
-	foreach(entity in entities) entity delete();
-
-	entities = getentarray("light_destructible", "targetname");
-	foreach(entity in entities) entity delete();
-
-	entities = getentarray("destructable", "targetname");
-	foreach(entity in entities) entity delete();
 }
 
 initializematchrules()
@@ -176,8 +148,8 @@ onStartGametype()
 	
     maps\mp\gametypes\_spawnlogic::placeSpawnPoints("mp_tdm_spawn_allies_start");
     maps\mp\gametypes\_spawnlogic::placeSpawnPoints("mp_tdm_spawn_axis_start");
-    maps\mp\gametypes\_spawnlogic::addSpawnPoints("allies", "mp_tdm_spawn");
-    maps\mp\gametypes\_spawnlogic::addSpawnPoints("axis", "mp_tdm_spawn");
+    maps\mp\gametypes\_spawnlogic::addSpawnPoints("allies", "mp_dm_spawn");
+    maps\mp\gametypes\_spawnlogic::addSpawnPoints("axis", "mp_dm_spawn");
 		
 	minimapCorner = getEntArray("minimap_corner", "targetname");
 	level.mapcenter = minimapCorner.size ? maps\mp\gametypes\_spawnlogic::findBoxCenter(minimapCorner[0].origin, minimapCorner[1].origin) : (0, 0, 0);
@@ -215,12 +187,11 @@ onStartGametype()
 	lethalbeats\utility::clear_score_info();
 	
 	level.startTime = gettime();
-	level.defaultLoadout = get_default_loadout();
+	level.defaultLoadout = lethalbeats\utility::get_loadout_blank("iw5_fnfiveseven");
 	level.wave_num = 0;
 	level.axisTarget = undefined;
 	
 	level.bots_slots = 18 - getDvarInt("survival_survivors_limit");
-	level.bots_connected = 0;
 	level.bots_wave = [];
 	level.bots_total_count = 0;
 	level.bots_deaths = 0;
@@ -238,6 +209,7 @@ onStartGametype()
 	level.claymores = [];
 	level.droppedWeapons = [];
 	level.rankedmatch = 0;
+	level.bots_maxknifedistance = 128 * 128;
 
 	regenTime = maps\mp\gametypes\_tweakables::getTweakableValue("player", "healthregentime");
 	if (isDefined(regenTime)) regenTime = 5;
@@ -248,15 +220,20 @@ onStartGametype()
 	level.difficulty = getDvarInt("survival_enemy_difficulty");
 		
 	lethalbeats\survival\patch\globallogic::patch_callbacks();
+	lethalbeats\botactor\utility::bot_init();
 
 	if (!getDvarInt("survival_wave_start")) return;
+
+	level thread waitPlayers();
+	level thread addBots();
 	
 	level thread onWaveStart();
 	level thread onWaveEnd();
 	level thread onEndLevel();
-	level thread waitPlayers();
+
 	level thread level_vehicle_monitor();
 	level thread level_bots_give_ammo();
+	level thread botTargetMonitor();
 }
 
 onWaveStart()
@@ -266,22 +243,9 @@ onWaveStart()
 	for(;;)
 	{
 		level waittill("wave_start");
-
 		
 		if(!level.wave_num) level.wave_num = level_get_wave();
-		else
-		{
-			level.wave_num++;
-
-			/*
-			if (level.wave_num > 23 || (level.wave_num - 1) % 4 == 0)
-			{
-				foreach(player in level.players) if (player isTestClient()) kick(player getEntityNumber());	
-				level_save_state();
-				map_restart(1);
-				return;
-			}*/
-		}
+		else level.wave_num++;
 
 		thread bot_clear_models();
 
@@ -294,9 +258,8 @@ onWaveStart()
 		level.bots_deaths = 0;
 		level.score_base = 0;
 		level.waveStartTime = gettime();
-		level.bots_maxknifedistance -= level.bots_maxknifedistance / 4;
 
-		level notify("release_bots");
+		foreach(bot in bots()) bot notify("release_bot");
 		print("TotalCount: " + level.bots_wave.size);
 		
 		intel_dialog = get_intel_dialog(level.bots_wave);
@@ -407,36 +370,40 @@ onNormalDeath(victim, attacker, lifeId)
 		attacker.finalKill = true;
 }
 
-onAddBot()
+addBots()
 {
-	bot = addTestClient();
-	if (!isDefined(bot)) return;
+	level endon("game_ended");
+	level waittill("player_spawned");
 
-	bot.pers["isBot"] = true;
-	bot.pers["isBotWarfare"] = true;
-	bot.pers["score"] = 0;
-
-	level.bots_connected++;
-	if (level.bots_connected <= level.bots_slots)
+	for (i = 0; i < level.bots_slots; i++)
 	{
-		bot.pers["team"] = "axis";
-		bot.sessionteam = "axis";
-		bot.botType = "easy";
+		bot = lethalbeats\botactor\utility::bot_add("axis");
+		if (!isDefined(bot)) continue;
+
+		bot.pers["isBot"] = true;
+		bot.pers["score"] = 0;
+
 		bot thread lethalbeats\Survival\botHandler::onBotSpawn();
-
-		if (level.bots_connected == level.bots_slots)
-		{
-			level notify("bots_connected");
-			//setDvar("bots_manage_add", 4); // add allies bots // dev test
-		}
+		bot thread lethalbeats\Survival\botHandler::botWaitRespawn();
 	}
-	//else bot lethalbeats\survival\dev\test::onAddAllyBot(); // dev test
 
-	bot thread maps\mp\bots\_bot::added();
+	level notify("bots_connected");
+}
+
+getAxisActorSpawnPoint()
+{
+	spawnPoints = maps\mp\gametypes\_spawnlogic::getTeamSpawnPoints("axis");
+	if (!isDefined(spawnPoints) || !spawnPoints.size) return undefined;
+
+	filtered = array_filter(spawnPoints, ::_spawnPointFilter);
+	if (!isDefined(filtered) || !filtered.size) filtered = spawnPoints;
+
+	return maps\mp\gametypes\_spawnlogic::getSpawnpoint_nearTeam(filtered);
 }
 
 onAddSurvivor()
 {
+	level notify("survivor_connected");
 	waittillframeend;
     if (!isdefined(self) || self isTestClient()) return;
 	if (isDefined(level.waitingLabel)) self thread onSurvivorSkipWaitPlayers();
@@ -532,19 +499,365 @@ getSpawnPoint()
 	team = self isTestClient() ? "axis" : "allies";
 	maps\mp\gametypes\_menus::addToTeam(team, 1);
 	
-	if (!level.wave_num && team == "allies")
+	if (team == "allies")
 	{
-		spawnPoints = maps\mp\gametypes\_spawnlogic::getSpawnpointArray("mp_tdm_spawn_allies_start");
+		if (!level.wave_num) spawnPoints = maps\mp\gametypes\_spawnlogic::getSpawnpointArray("mp_tdm_spawn_allies_start");
+		else spawnPoints = maps\mp\gametypes\_spawnlogic::getTeamSpawnPoints(team);
 		return array_random(array_filter(spawnPoints, ::_spawnPointFilter));
 	}
 	
 	spawnPoints = maps\mp\gametypes\_spawnlogic::getTeamSpawnPoints(team);
-	return maps\mp\gametypes\_spawnlogic::getSpawnpoint_nearTeam(array_filter(spawnPoints, ::_spawnPointFilter));
+	return _getAxisSpawnpoint(spawnPoints);
+}
+
+_getAxisSpawnpoint(spawnPoints)
+{
+	if (!isDefined(spawnPoints) || !spawnPoints.size) return undefined;
+	if (!isDefined(level.axisSpawnSectorLastUse)) level.axisSpawnSectorLastUse = [];
+
+	minSpawnDistSq = 1200 * 1200; 
+	anchors = [];
+	center = (0, 0, 0);
+
+	foreach (survivor in survivors(true))
+	{
+		if (!isDefined(survivor)) continue;
+		anchors[anchors.size] = survivor;
+		center += survivor.origin;
+	}
+
+	if (anchors.size) center = (center[0] / anchors.size, center[1] / anchors.size, center[2] / anchors.size);
+	else if (isDefined(level.mapcenter)) center = level.mapcenter;
+
+	strictUnseenCandidates = [];
+	strictCandidates = [];
+	relaxedCandidates = [];
+
+	foreach (spawnPoint in spawnPoints)
+	{
+		if (!isDefined(spawnPoint)) continue;
+		if (is_shop_near(spawnPoint.origin)) continue;
+
+		minDistSq = minSpawnDistSq;
+		isVisible = false;
+
+		if (anchors.size)
+		{
+			minDistSq = 999999999;
+			foreach (survivor in anchors)
+			{
+				distSq = distanceSquared(spawnPoint.origin, survivor.origin);
+				if (distSq < minDistSq) minDistSq = distSq;
+				if (!isVisible) isVisible = SightTracePassed(survivor getEye(), spawnPoint.origin + (0, 0, 40), false, survivor);
+			}
+		}
+
+		candidate = spawnStruct();
+		candidate.spawnPoint = spawnPoint;
+		candidate.minDistSq = minDistSq;
+		candidate.sector = _getAxisSpawnSector(spawnPoint.origin, center);
+		
+		relaxedCandidates[relaxedCandidates.size] = candidate;
+
+		if (minDistSq >= minSpawnDistSq)
+		{
+			strictCandidates[strictCandidates.size] = candidate;
+			if (!isVisible) strictUnseenCandidates[strictUnseenCandidates.size] = candidate;
+		}
+	}
+
+	candidates = [];
+	if (strictUnseenCandidates.size > 0) candidates = strictUnseenCandidates;
+	else if (strictCandidates.size > 0) candidates = strictCandidates;
+	else
+	{
+		if (relaxedCandidates.size > 0 && anchors.size > 0)
+		{
+			bestRelaxed = [];
+			highestMinDistSq = 0;
+			
+			foreach (candidate in relaxedCandidates)
+			{
+				if (candidate.minDistSq > highestMinDistSq)
+					highestMinDistSq = candidate.minDistSq;
+			}
+			
+			marginDist = highestMinDistSq * 0.8; 
+			foreach (candidate in relaxedCandidates)
+			{
+				if (candidate.minDistSq >= marginDist)
+					bestRelaxed[bestRelaxed.size] = candidate;
+			}
+			candidates = bestRelaxed;
+		}
+		else 
+		{
+			candidates = relaxedCandidates;
+		}
+	}
+
+	if (!candidates.size) return array_random(spawnPoints);
+
+	freeCandidates = [];
+	foreach (candidate in candidates)
+	{
+		if (!positionwouldtelefrag(candidate.spawnPoint.origin))
+			freeCandidates[freeCandidates.size] = candidate;
+	}
+	if (freeCandidates.size) candidates = freeCandidates;
+
+	sectorCandidates = [];
+	bestSectorTime = undefined;
+	foreach (candidate in candidates)
+	{
+		sectorTime = 0;
+		if (isDefined(level.axisSpawnSectorLastUse[candidate.sector]))
+			sectorTime = level.axisSpawnSectorLastUse[candidate.sector];
+
+		if (!isDefined(bestSectorTime) || sectorTime < bestSectorTime)
+		{
+			bestSectorTime = sectorTime;
+			sectorCandidates = [];
+			sectorCandidates[sectorCandidates.size] = candidate;
+		}
+		else if (sectorTime == bestSectorTime)
+			sectorCandidates[sectorCandidates.size] = candidate;
+	}
+	if (sectorCandidates.size) candidates = sectorCandidates;
+
+	bestCandidates = [];
+	oldestUseTime = undefined;
+	foreach (candidate in candidates)
+	{
+		useTime = 0;
+		if (isDefined(candidate.spawnPoint.lastspawntime))
+			useTime = candidate.spawnPoint.lastspawntime;
+
+		if (!isDefined(oldestUseTime) || useTime < oldestUseTime)
+		{
+			oldestUseTime = useTime;
+			bestCandidates = [];
+			bestCandidates[bestCandidates.size] = candidate;
+		}
+		else if (useTime == oldestUseTime)
+			bestCandidates[bestCandidates.size] = candidate;
+	}
+
+	if (!bestCandidates.size) bestCandidates = candidates;
+	pick = bestCandidates[randomInt(bestCandidates.size)];
+
+	if (!isDefined(pick) || !isDefined(pick.spawnPoint))
+	{
+		pick = candidates[randomInt(candidates.size)];
+		if (!isDefined(pick) || !isDefined(pick.spawnPoint))
+			return array_random(spawnPoints);
+	}
+
+	level.axisSpawnSectorLastUse[pick.sector] = gettime();
+	return pick.spawnPoint;
+}
+
+_getAxisSpawnSector(origin, center)
+{
+	dir = origin - center;
+	dir = (dir[0], dir[1], 0);
+
+	if (abs(dir[0]) < 1 && abs(dir[1]) < 1)
+		return 0;
+
+	yaw = vectorToAngles(dir)[1];
+	if (yaw < 0) yaw += 360;
+
+	sector = int((yaw + 22.5) / 45);
+	if (sector >= 8) sector = 0;
+
+	return sector;
 }
 
 _spawnPointFilter(i)
 {
 	return !is_shop_near(i.origin);
+}
+
+botTargetMonitor()
+{
+	level endon("game_ended");
+
+	for (;;)
+	{
+		aliveSurvivors = survivors(true);
+		aliveBots = bots(undefined, true);
+
+		if (!aliveSurvivors.size || !aliveBots.size)
+		{
+			wait 0.35;
+			continue;
+		}
+
+		assignCount = [];
+		assignBots = [];
+		botTargets = [];
+		targetQuota = [];
+
+		foreach (survivor in aliveSurvivors)
+		{
+			assignCount[survivor.guid] = 0;
+			assignBots[survivor.guid] = [];
+		}
+
+		// Equitable assignment for all alive survivors: each survivor gets
+		// floor(bots/survivors) and first remainder survivors get +1.
+		baseQuota = int(aliveBots.size / aliveSurvivors.size);
+		remainder = aliveBots.size - (baseQuota * aliveSurvivors.size);
+		for (i = 0; i < aliveSurvivors.size; i++)
+		{
+			survivor = aliveSurvivors[i];
+			targetQuota[survivor.guid] = baseQuota;
+			if (i < remainder)
+				targetQuota[survivor.guid] = targetQuota[survivor.guid] + 1;
+		}
+
+		// Assign each bot to the nearest survivor that still has quota.
+		foreach (bot in aliveBots)
+		{
+			best = undefined;
+			bestDistSq = undefined;
+
+			foreach (survivor in aliveSurvivors)
+			{
+				if (assignCount[survivor.guid] >= targetQuota[survivor.guid])
+					continue;
+
+				distSq = distanceSquared(bot.origin, survivor.origin);
+				if (!isDefined(best) || distSq < bestDistSq)
+				{
+					best = survivor;
+					bestDistSq = distSq;
+				}
+			}
+
+			if (!isDefined(best))
+			{
+				bestIndex = _botTargetNearestSurvivorIndex(bot, aliveSurvivors);
+				if (bestIndex < 0) continue;
+				best = aliveSurvivors[bestIndex];
+			}
+
+			list = assignBots[best.guid];
+			list[list.size] = bot;
+			assignBots[best.guid] = list;
+			assignCount[best.guid] = assignCount[best.guid] + 1;
+			botTargets[bot.guid] = best;
+		}
+
+		foreach (bot in aliveBots)
+		{
+			target = botTargets[bot.guid];
+			if (!isDefined(target) || !isDefined(target.origin)) continue;
+
+			needsIssue = !isDefined(bot.targetGuid) || bot.targetGuid != target.guid;
+			
+			if (!needsIssue)
+			{
+				if (!isDefined(bot.actor) || !isDefined(bot.actor[CHASE_TARGET]) || bot.actor[CHASE_TARGET] != target)
+					needsIssue = true;
+				else if (!bot.actor[SCRIPT_MOVE])
+				{
+					chaseMinSq = bot.actor[SKILL_CHASE_DIST_MIN];
+					if (!isDefined(chaseMinSq) || chaseMinSq <= 0) chaseMinSq = 0;
+					else chaseMinSq *= chaseMinSq; // Square it for comparison
+
+					if (distanceSquared(bot.origin, target.origin) > chaseMinSq + (64 * 64))
+						needsIssue = true;
+				}
+			}
+
+			if (needsIssue)
+			{
+				bot.targetGuid = target.guid;
+				if (bot lethalbeats\survival\utility::bot_is_dog() || bot.primaryweapon == "riotshield_mp") bot lethalbeats\botactor\utility::bot_melee_charge(target);
+				else if (isDefined(bot.goap))
+				{
+					bot.actor[CHASE_TARGET] = target;
+					bot lethalbeats\botactor\utility::bot_set_target(target);
+				}
+				else bot lethalbeats\botactor\utility::bot_chase(target);
+			}
+		}
+
+		wait 0.35;
+	}
+}
+
+_botTargetNearestSurvivorIndex(bot, aliveSurvivors)
+{
+	bestIndex = -1;
+	bestDistSq = -1;
+
+	for (i = 0; i < aliveSurvivors.size; i++)
+	{
+		survivor = aliveSurvivors[i];
+		if (!isDefined(survivor) || !isDefined(survivor.origin)) continue;
+
+		distSq = distanceSquared(bot.origin, survivor.origin);
+		if (bestIndex == -1 || distSq < bestDistSq)
+		{
+			bestIndex = i;
+			bestDistSq = distSq;
+		}
+	}
+
+	return bestIndex;
+}
+
+_botTargetFindByCount(aliveSurvivors, assignCount, findUnder, targetMin)
+{
+	best = undefined;
+	bestCount = undefined;
+
+	foreach (survivor in aliveSurvivors)
+	{
+		count = assignCount[survivor.guid];
+
+		if (findUnder)
+		{
+			if (count >= targetMin) continue;
+			if (!isDefined(best) || count < bestCount)
+			{
+				best = survivor;
+				bestCount = count;
+			}
+		}
+		else
+		{
+			if (count <= targetMin) continue;
+			if (!isDefined(best) || count > bestCount)
+			{
+				best = survivor;
+				bestCount = count;
+			}
+		}
+	}
+
+	return best;
+}
+
+_botTargetFindCountSurvivor(aliveSurvivors, assignCount, minCount)
+{
+	best = undefined;
+	bestCount = undefined;
+
+	foreach (survivor in aliveSurvivors)
+	{
+		count = assignCount[survivor.guid];
+		if (!isDefined(best) || (minCount && count < bestCount) || (!minCount && count > bestCount))
+		{
+			best = survivor;
+			bestCount = count;
+		}
+	}
+
+	return best;
 }
 
 notifyMessage(type, sound, titleText)

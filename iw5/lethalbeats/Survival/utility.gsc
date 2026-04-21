@@ -90,6 +90,18 @@
 #define BODY_MODEL 17
 #define HEAD_MODEL 18
 
+// BOTS SETTINGS
+#define SKILL_AIM_TIME 60
+#define SKILL_DIST_MAX 68
+#define SKILL_DIST_START 170
+#define BEHAVIOR_STRAFE 100
+#define BEHAVIOR_SPRINT 102
+#define BEHAVIOR_JUMP 104
+#define BOT_HEALTH_MULTIPLIER 161
+#define BOT_SPEED_MULTIPLIER 162
+#define BOT_RESPAWN_DELAY_MIN 163
+#define BOT_RESPAWN_DELAY_MAX 164
+
 //////////////////////////////////////////
 //	             PLAYER   		        //
 //////////////////////////////////////////
@@ -660,11 +672,7 @@ summary: Sets the bot's loadout based on the current wave's bot pool, assigning 
 ///DocStringEnd
 */
 bot_set_loadout()
-{
-	popData = array_pop(level.bots_wave);
-	level.bots_wave = popData[0];
-    self.botType = popData[1];
-	
+{	
 	if(!isDefined(self.botType)) return;
 	if(!isDefined(self bot_get_loadout(PRIMARY))) return;
 
@@ -690,7 +698,7 @@ bot_set_loadout()
 	if (isDefined(tactical) && tactical != NONE && tactical != SPECIALTY_NULL)
 		self player_set_nades(tactical, 4);
 	
-	self maps\mp\bots\_bot_utility::botGiveLoadout(self.team, "gamemode", false, true);
+	self player_give_loadout(self.team, "gamemode", false, true);
 	self maps\mp\killstreaks\_killstreaks::clearKillstreaks();
 	
 	self.botPrice = int(self bot_get_loadout(PRICE));
@@ -728,8 +736,6 @@ bot_set_loadout()
 			level.bots_weapons_data[secondaryWep] = self player_create_weapon_data(secondaryWep, secondaryBuff);
 		}
 	}
-	
-	self bot_set_difficulty();
 
 	if (game[self.team] == "opforce_africa" && self bot_has_ability("easy"))
 	{
@@ -756,6 +762,27 @@ bot_get_loadout(column)
 	return tableLookup(TABLE, 0, self.botType, column);
 }
 
+bot_set_health()
+{
+	health = int(self bot_get_loadout(HEALTH));
+	if (level.wave_num > WAVE_LOOP)
+	{
+		growth = difficulty_get_wave_loop_growth();
+		health = int(health * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP));
+	}
+	health = int(health * self.actor[BOT_HEALTH_MULTIPLIER]);
+	self.maxhealth = health;
+	self.health = health;
+}
+
+bot_set_speed()
+{
+	self.moveSpeedScaler = float(self bot_get_loadout(SPEED)); 
+	speedMultiplier = self.actor[BOT_SPEED_MULTIPLIER];
+	self.moveSpeedScaler *= speedMultiplier;
+	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
+}
+
 /*
 ///DocStringBegin
 detail: <Player> bot_set_difficulty(): <Void>
@@ -764,93 +791,46 @@ summary: Adjusts the bot's AI skill and behavior settings based on the current w
 */
 bot_set_difficulty()
 {
-	wave = level.wave_num;
-	botSettings = self difficulty_get_bot_settings();
-
-	self.pers["bots"]["skill"]["spawn_time"] = 0;
-	self.pers["bots"]["skill"]["aim_time"] = botSettings["aim_time"];
-	self.pers["bots"]["skill"]["init_react_time"] = botSettings["reaction_time"];
-	self.pers["bots"]["skill"]["reaction_time"] = botSettings["reaction_time"];
-	self.pers["bots"]["skill"]["remember_time"] = botSettings["remember_time"];
-	self.pers["bots"]["skill"]["no_trace_ads_time"] = botSettings["no_trace_ads_time"];
-    self.pers["bots"]["skill"]["no_trace_look_time"] = self.pers["bots"]["skill"]["no_trace_ads_time"];
-	self.pers["bots"]["skill"]["fov"] = botSettings["fov"];
-	self.pers["bots"]["skill"]["dist_start"] = botSettings["dist_start"];
-	self.pers["bots"]["skill"]["dist_max"] = botSettings["dist_max"];
-    self.pers["bots"]["skill"]["help_dist"] = botSettings["help_dist"];
-	self.pers["bots"]["skill"]["semi_time"] = botSettings["semi_time"];
-	self.pers["bots"]["skill"]["shoot_after_time"] = botSettings["shoot_after_time"];
-	self.pers["bots"]["skill"]["aim_offset_time"] = botSettings["aim_offset_time"];
-	self.pers["bots"]["skill"]["aim_offset_amount"] = botSettings["aim_offset_amount"];
-	self.pers["bots"]["skill"]["bone_update_interval"] = botSettings["bone_update_interval"];
-    self.pers["bots"]["skill"]["bones"] = "j_spineupper,j_ankle_le,j_ankle_ri,j_ankle_le,j_ankle_ri";
-    self.pers["bots"]["skill"]["ads_fov_multi"] = 0.5;
-    self.pers["bots"]["skill"]["ads_aimspeed_multi"] = 0.5;
-
-	self.pers["bots"]["behavior"]["initswitch"] = botSettings["behaviorInitSwitch"];
-	self.pers["bots"]["behavior"]["strafe"] = botSettings["behaviorStrafe"];
-	self.pers["bots"]["behavior"]["nade"] = botSettings["behaviorNade"];
-	self.pers["bots"]["behavior"]["sprint"] = botSettings["behaviorSprint"];
-	self.pers["bots"]["behavior"]["camp"] = botSettings["behaviorCamp"];
-	self.pers["bots"]["behavior"]["follow"] = botSettings["behaviorFollow"];
-	self.pers["bots"]["behavior"]["crouch"] = botSettings["behaviorCrouch"];
-	self.pers["bots"]["behavior"]["switch"] = botSettings["behaviorSwitch"];
-	self.pers["bots"]["behavior"]["class"] = botSettings["behaviorClass"];
-	self.pers["bots"]["behavior"]["jump"] = botSettings["behaviorJump"];
-	self.pers["bots"]["behavior"]["quickscope"] = botSettings["behaviorQuickscope"];
-
-	health = int(self bot_get_loadout(HEALTH));
-	if (level.wave_num > WAVE_LOOP)
-	{
-		growth = difficulty_get_wave_loop_growth();
-		health = int(health * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP));
-	}
-	healthMultiplier = botSettings["botHealthMultiplier"];
-	health = int(health * healthMultiplier);
-	self.maxhealth = health;
-	self.health = health;
-
-	self.moveSpeedScaler = float(self bot_get_loadout(SPEED)); 
-	speedMultiplier = botSettings["botSpeedMultiplier"];
-	self.moveSpeedScaler *= speedMultiplier;
-	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
-
+	difficulty = self difficulty_get_bot_settings();
+	foreach(key in getArrayKeys(difficulty))
+		self.actor[key] = difficulty[key];
+	
     if (self bot_is_dog())
     {
-		self.pers["bots"]["skill"]["aim_time"] = 0;
-		self.pers["bots"]["behavior"]["strafe"] = 35;
-		self.pers["bots"]["behavior"]["sprint"] = 100;
-		self.pers["bots"]["behavior"]["jump"] = 35;
+		self.actor[SKILL_AIM_TIME] = 0;
+		self.actor[BEHAVIOR_STRAFE] = 0;
+		self.actor[BEHAVIOR_SPRINT] = 0;
+		self.actor[BEHAVIOR_JUMP] = 0;
     }
 	
 	if (self bot_is_jugger())
 	{
-		self.pers["bots"]["behavior"]["sprint"] = 0;
-		self.pers["bots"]["behavior"]["jump"] = 0;
-		self.pers["bots"]["behavior"]["strafe"] = 0;
+		self.actor[BEHAVIOR_SPRINT] = 0;
+		self.actor[BEHAVIOR_JUMP] = 0;
+		self.actor[BEHAVIOR_STRAFE] = 0;
 	}
 
 	switch(weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]))
 	{
 		case "projectile":
 		case "sniper":
-			settings["dist_max"] = 10000; // dist_start botwarfare: distance start before target ability diminishes.
-			settings["dist_start"] = 5000; // dist_max botwarfare: longest distance a bot can target.
+			self.actor[SKILL_DIST_MAX] = 10000;
+			self.actor[SKILL_DIST_START] = 5000;
 			break;
 		case "lmg":
 		case "assault":
-			settings["dist_max"] = 1050;
-			settings["dist_start"] = 700;
+			self.actor[SKILL_DIST_MAX] = 1050;
+			self.actor[SKILL_DIST_START] = 700;
 			break;
 		case "smg":
-			settings["dist_max"] = 900;
-			settings["dist_start"] = 500;
+			self.actor[SKILL_DIST_MAX] = 900;
+			self.actor[SKILL_DIST_START] = 500;
 			break;
 		case "shotgun":
 		case "machine_pistol":
 		case "pistol":
-			settings["dist_max"] = 650;
-			settings["dist_start"] = 300;
+			self.actor[SKILL_DIST_MAX] = 650;
+			self.actor[SKILL_DIST_START] = 300;
 			break;
 	}
 }
@@ -2204,7 +2184,7 @@ summary: Internal function to check if a bot is of 'regular' difficulty based on
 */
 _is_regular_bot()
 {
-	return self.pers["bots"]["skill"]["aim_time"] == 0.3;
+	return isDefined(self.actor) && isDefined(self.actor[SKILL_AIM_TIME]) && self.actor[SKILL_AIM_TIME] == 0.3;
 }
 
 /*

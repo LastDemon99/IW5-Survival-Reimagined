@@ -6,6 +6,43 @@
 #define WAVES_TABLE_NORMAL "mp/survival_wave_normal.csv"
 #define WAVES_TABLE_HARD "mp/survival_wave_hard.csv"
 
+#define SKILL_AIM_TIME 60
+#define SKILL_INIT_REACT_TIME 61
+#define SKILL_REACTION_TIME 62
+#define SKILL_NO_TRACE_ADS_TIME 63
+#define SKILL_NO_TRACE_LOOK_TIME 64
+#define SKILL_REMEMBER_TIME 65
+#define SKILL_FOV 67
+#define SKILL_DIST_MAX 68
+#define SKILL_SEMI_TIME 79
+#define SKILL_SHOOT_AFTER_TIME 69
+#define SKILL_AIM_OFFSET_TIME 70
+#define SKILL_AIM_OFFSET_AMOUNT 71
+#define SKILL_BONE_UPDATE_INTERVAL 72
+#define SKILL_BONES 73
+#define SKILL_ADS_FOV_MULTI 74
+#define SKILL_ADS_AIMSPEED_MULTI 75
+
+#define BEHAVIOR_STRAFE 100
+#define BEHAVIOR_NADE 101
+#define BEHAVIOR_SPRINT 102
+#define BEHAVIOR_CROUCH 103
+#define BEHAVIOR_JUMP 104
+#define BEHAVIOR_QUICKSCOPE 105
+
+#define FIRE_TIME 110
+#define MIN_SHOTS 111
+#define MAX_SHOTS 112
+#define MIN_PAUSE 113
+#define MAX_PAUSE 114
+#define WIND_UP_TIME 115
+
+#define SURVIVOR_DAMAGE_SCALE 160
+#define BOT_HEALTH_MULTIPLIER 161
+#define BOT_SPEED_MULTIPLIER 162
+#define BOT_RESPAWN_DELAY_MIN 163
+#define BOT_RESPAWN_DELAY_MAX 164
+
 //////////////////////////////////////////
 //	           BOTS SETTINGS   	        //
 //////////////////////////////////////////
@@ -14,51 +51,47 @@ _difficulty_get_bot_profile_easy()
 {
 	settings = [];
 
-	// Target Acquisition And Tracking (BotWarfare)
-	settings["aim_time"] = 0.95; // botwarfare: how long it takes for a bot to aim to a location (s).
-	settings["reaction_time"] = 3000; // botwarfare: reaction time of the bot for initial/reoccurring targets (ms).
-	settings["remember_time"] = 0; // botwarfare: how long a bot remembers a target without sight (ms).
-	settings["no_trace_ads_time"] = 0; // botwarfare: how long a bot ADSes when it cannot see the target (ms).
-	settings["help_dist"] = 500; // botwarfare: how far a bot has awareness
-	settings["fov"] = 0.65; // botwarfare: bot FOV, -1 is 360 and 1 is 0 (cone dot).
+	// Target acquisition and tracking (botActor).
+	settings[SKILL_AIM_TIME] = 0.5;
+	settings[SKILL_INIT_REACT_TIME] = 1.0;
+	settings[SKILL_REACTION_TIME] = 1.0;
+	settings[SKILL_REMEMBER_TIME] = undefined;
+	settings[SKILL_NO_TRACE_ADS_TIME] = 0;
+	settings[SKILL_NO_TRACE_LOOK_TIME] = 0;
+	settings[SKILL_FOV] = 0.65;
 
-	// Aim Correction And Post-LOS Behavior (BotWarfare)
-	settings["semi_time"] = 1; // botwarfare: how fast a bot shoots semiauto (s).
-	settings["shoot_after_time"] = 1.65; // botwarfare: how long a bot shoots after target dies/cannot be seen (s).
-	settings["aim_offset_time"] = 2; // botwarfare: how long a bot corrects aim after targeting (s).
-	settings["aim_offset_amount"] = 5.25; // botwarfare: how far a bot's incorrect aim is.
-	settings["bone_update_interval"] = 2.6; // botwarfare: how often a bot changes target bone (s).
+	// Aim correction / post-LOS (botActor).
+	settings[SKILL_SEMI_TIME] = 1;
+	settings[SKILL_SHOOT_AFTER_TIME] = 1.65;
+	settings[SKILL_AIM_OFFSET_TIME] = 2;
+	settings[SKILL_AIM_OFFSET_AMOUNT] = 5.25;
+	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.5;
 
-	// Human Bot Behavior (BotWarfare)
-	settings["behaviorInitSwitch"] = 0; // botwarfare: percentage of how often the bot switches weapons on spawn.
-	settings["behaviorStrafe"] = 20; // botwarfare: percentage of how often the bot strafes a target.
-	settings["behaviorNade"] = 30; // botwarfare: percentage of how often the bot throws grenades.
-	settings["behaviorSprint"] = 30; // botwarfare: percentage of how often the bot sprints.
-	settings["behaviorCamp"] = 0; // botwarfare: percentage of how often the bot camps.
-	settings["behaviorFollow"] = 100; // botwarfare: percentage of how often the bot follows.
-	settings["behaviorCrouch"] = 0; // botwarfare: percentage of how often the bot crouches.
-	settings["behaviorSwitch"] = 0; // botwarfare: percentage of how often the bot switches weapons.
-	settings["behaviorClass"] = 0; // botwarfare: percentage of how often the bot changes classes.
-	settings["behaviorJump"] = 5; // botwarfare: percentage of how often the bot jumpshots/dropshots.
-	settings["behaviorQuickscope"] = 0; // botwarfare: quickscope behavior toggle.
+	// Human behavior (botActor).
+	settings[BEHAVIOR_STRAFE] = 20;
+	settings[BEHAVIOR_NADE] = 30;
+	settings[BEHAVIOR_SPRINT] = 30;
+	settings[BEHAVIOR_CROUCH] = 0;
+	settings[BEHAVIOR_JUMP] = 5;
+	settings[BEHAVIOR_QUICKSCOPE] = 0;
 
-	// Fire Cycle (Survival)
-	settings["fireTime"] = 0.35; // survival: duration per fire pulse in the unified fire cycle (s).
-	settings["minShots"] = 10; // survival: minimum shots per continuous fire cycle.
-	settings["maxShots"] = 15; // survival: maximum shots per continuous fire cycle.
-	settings["minPause"] = 3; // survival: minimum pause between fire cycles (s).
-	settings["maxPause"] = 5; // survival: maximum pause between fire cycles (s).
-	settings["windUpTime"] = 0.8; // survival: prep time before first shot after LOS/target reacquire (s).
+	// Fire cycle (botActor).
+	settings[FIRE_TIME] = 0.35;
+	settings[MIN_SHOTS] = 10;
+	settings[MAX_SHOTS] = 15;
+	settings[MIN_PAUSE] = 3;
+	settings[MAX_PAUSE] = 5;
+	settings[WIND_UP_TIME] = 0.8;
 
-	// Survivability And Spawn (Survival)
-	settings["survivorDamageScale"] = 0.8; // survival: damage taken scale for survivors.
-	settings["botHealthMultiplier"] = 1; // survival: bot health multiplier.
-	settings["botSpeedMultiplier"] = 0.85; // survival: bot speed multiplier.
-	settings["botRespawnDelayMin"] = 3; // survival: minimum bot respawn delay (s).
-	settings["botRespawnDelayMax"] = 6; // survival: maximum bot respawn delay (s).
+	// Survival multipliers.
+	settings[SURVIVOR_DAMAGE_SCALE] = 0.8;
+	settings[BOT_HEALTH_MULTIPLIER] = 1;
+	settings[BOT_SPEED_MULTIPLIER] = 0.85;
+	settings[BOT_RESPAWN_DELAY_MIN] = 3;
+	settings[BOT_RESPAWN_DELAY_MAX] = 6;
 
 	weaponClass = lethalbeats\weapon::weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]);
-	if (weaponClass == "sniper") settings["semi_time"] = 4; // botwarfare: how fast a bot shoots semiauto (s).
+	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 4;
 
 	return settings;
 }
@@ -67,51 +100,47 @@ _difficulty_get_bot_profile_normal()
 {
 	settings = [];
 
-	// Target Acquisition And Tracking (BotWarfare)
-	settings["aim_time"] = 0.75; // botwarfare: how long it takes for a bot to aim to a location (s).
-	settings["reaction_time"] = 1800; // botwarfare: reaction time of the bot for initial/reoccurring targets (ms).
-	settings["remember_time"] = 400; // botwarfare: how long a bot remembers a target without sight (ms).
-	settings["no_trace_ads_time"] = 350; // botwarfare: how long a bot ADSes when it cannot see the target (ms).
-	settings["help_dist"] = 800; // botwarfare: how far a bot has awareness
-	settings["fov"] = 0.6; // botwarfare: bot FOV, -1 is 360 and 1 is 0 (cone dot).
+	// Target acquisition and tracking (botActor).
+	settings[SKILL_AIM_TIME] = 0.35;
+	settings[SKILL_INIT_REACT_TIME] = 0.8;
+	settings[SKILL_REACTION_TIME] = 0.8;
+	settings[SKILL_REMEMBER_TIME] = undefined;
+	settings[SKILL_NO_TRACE_ADS_TIME] = 0.35;
+	settings[SKILL_NO_TRACE_LOOK_TIME] = 0.35;
+	settings[SKILL_FOV] = 0.6;
 
-	// Aim Correction And Post-LOS Behavior (BotWarfare)
-	settings["semi_time"] = 0.85; // botwarfare: how fast a bot shoots semiauto (s).
-	settings["shoot_after_time"] = 1.2; // botwarfare: how long a bot shoots after target dies/cannot be seen (s).
-	settings["aim_offset_time"] = 1.5; // botwarfare: how long a bot corrects aim after targeting (s).
-	settings["aim_offset_amount"] = 4; // botwarfare: how far a bot's incorrect aim is.
-	settings["bone_update_interval"] = 2; // botwarfare: how often a bot changes target bone (s).
+	// Aim correction / post-LOS (botActor).
+	settings[SKILL_SEMI_TIME] = 0.85;
+	settings[SKILL_SHOOT_AFTER_TIME] = 1.2;
+	settings[SKILL_AIM_OFFSET_TIME] = 1.5;
+	settings[SKILL_AIM_OFFSET_AMOUNT] = 4;
+	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.3;
 
-	// Human Bot Behavior (BotWarfare)
-	settings["behaviorInitSwitch"] = 0; // botwarfare: percentage of how often the bot switches weapons on spawn.
-	settings["behaviorStrafe"] = 35; // botwarfare: percentage of how often the bot strafes a target.
-	settings["behaviorNade"] = 45; // botwarfare: percentage of how often the bot throws grenades.
-	settings["behaviorSprint"] = 45; // botwarfare: percentage of how often the bot sprints.
-	settings["behaviorCamp"] = 0; // botwarfare: percentage of how often the bot camps.
-	settings["behaviorFollow"] = 100; // botwarfare: percentage of how often the bot follows.
-	settings["behaviorCrouch"] = 0; // botwarfare: percentage of how often the bot crouches.
-	settings["behaviorSwitch"] = 0; // botwarfare: percentage of how often the bot switches weapons.
-	settings["behaviorClass"] = 0; // botwarfare: percentage of how often the bot changes classes.
-	settings["behaviorJump"] = 12; // botwarfare: percentage of how often the bot jumpshots/dropshots.
-	settings["behaviorQuickscope"] = 0; // botwarfare: quickscope behavior toggle.
+	// Human behavior (botActor).
+	settings[BEHAVIOR_STRAFE] = 35;
+	settings[BEHAVIOR_NADE] = 45;
+	settings[BEHAVIOR_SPRINT] = 45;
+	settings[BEHAVIOR_CROUCH] = 0;
+	settings[BEHAVIOR_JUMP] = 12;
+	settings[BEHAVIOR_QUICKSCOPE] = 0;
 
-	// Fire Cycle (Survival)
-	settings["fireTime"] = 0.22; // survival: duration per fire pulse in the unified fire cycle (s).
-	settings["minShots"] = 16; // survival: minimum shots per continuous fire cycle.
-	settings["maxShots"] = 26; // survival: maximum shots per continuous fire cycle.
-	settings["minPause"] = 2; // survival: minimum pause between fire cycles (s).
-	settings["maxPause"] = 3.5; // survival: maximum pause between fire cycles (s).
-	settings["windUpTime"] = 0.55; // survival: prep time before first shot after LOS/target reacquire (s).
+	// Fire cycle (botActor).
+	settings[FIRE_TIME] = 0.22;
+	settings[MIN_SHOTS] = 16;
+	settings[MAX_SHOTS] = 26;
+	settings[MIN_PAUSE] = 2;
+	settings[MAX_PAUSE] = 3.5;
+	settings[WIND_UP_TIME] = 0.55;
 
-	// Survivability And Spawn (Survival)
-	settings["survivorDamageScale"] = 1; // survival: damage taken scale for survivors.
-	settings["botHealthMultiplier"] = 1.1; // survival: bot health multiplier.
-	settings["botSpeedMultiplier"] = 1; // survival: bot speed multiplier.
-	settings["botRespawnDelayMin"] = 1; // survival: minimum bot respawn delay (s).
-	settings["botRespawnDelayMax"] = 3; // survival: maximum bot respawn delay (s).
+	// Survival multipliers.
+	settings[SURVIVOR_DAMAGE_SCALE] = 1;
+	settings[BOT_HEALTH_MULTIPLIER] = 1.1;
+	settings[BOT_SPEED_MULTIPLIER] = 1;
+	settings[BOT_RESPAWN_DELAY_MIN] = 1;
+	settings[BOT_RESPAWN_DELAY_MAX] = 3;
 
 	weaponClass = lethalbeats\weapon::weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]);
-	if (weaponClass == "sniper") settings["semi_time"] = 2.4; // botwarfare: how fast a bot shoots semiauto (s).
+	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 2.4;
 
 	return settings;
 }
@@ -120,50 +149,47 @@ _difficulty_get_bot_profile_hard()
 {
 	settings = [];
 
-	// Target Acquisition And Tracking (BotWarfare)
-	settings["aim_time"] = 0.45; // botwarfare: how long it takes for a bot to aim to a location (s).
-	settings["reaction_time"] = 900; // botwarfare: reaction time of the bot for initial/reoccurring targets (ms).
-	settings["remember_time"] = 900; // botwarfare: how long a bot remembers a target without sight (ms).
-	settings["no_trace_ads_time"] = 700; // botwarfare: how long a bot ADSes when it cannot see the target (ms).
-	settings["help_dist"] = 1200; // botwarfare: how far a bot has awareness
-	settings["fov"] = 0.5; // botwarfare: bot FOV, -1 is 360 and 1 is 0 (cone dot).
+	// Target acquisition and tracking (botActor).
+	settings[SKILL_AIM_TIME] = 0.1;
+	settings[SKILL_INIT_REACT_TIME] = 0.4;
+	settings[SKILL_REACTION_TIME] = 0.4;
+	settings[SKILL_REMEMBER_TIME] = undefined;
+	settings[SKILL_NO_TRACE_ADS_TIME] = 0.7;
+	settings[SKILL_NO_TRACE_LOOK_TIME] = 0.7;
+	settings[SKILL_FOV] = 0.5;
 
-	// Aim Correction And Post-LOS Behavior (BotWarfare)
-	settings["semi_time"] = 0.55; // botwarfare: how fast a bot shoots semiauto (s).
-	settings["shoot_after_time"] = 0.8; // botwarfare: how long a bot shoots after target dies/cannot be seen (s).
-	settings["aim_offset_time"] = 0.9; // botwarfare: how long a bot corrects aim after targeting (s).
-	settings["aim_offset_amount"] = 2.75; // botwarfare: how far a bot's incorrect aim is.
-	settings["bone_update_interval"] = 1.2; // botwarfare: how often a bot changes target bone (s).
+	// Aim correction / post-LOS (botActor).
+	settings[SKILL_SEMI_TIME] = 0.55;
+	settings[SKILL_SHOOT_AFTER_TIME] = 0.8;
+	settings[SKILL_AIM_OFFSET_TIME] = 0.9;
+	settings[SKILL_AIM_OFFSET_AMOUNT] = 2.75;
+	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.1;
 
-	// Fire Cycle (Survival)
-	settings["fireTime"] = 0.12; // survival: duration per fire pulse in the unified fire cycle (s).
-	settings["minShots"] = 28; // survival: minimum shots per continuous fire cycle.
-	settings["maxShots"] = 45; // survival: maximum shots per continuous fire cycle.
-	settings["minPause"] = 1; // survival: minimum pause between fire cycles (s).
-	settings["maxPause"] = 2; // survival: maximum pause between fire cycles (s).
-	settings["windUpTime"] = 0.25; // survival: prep time before first shot after LOS/target reacquire (s).
+	// Human behavior (botActor).
+	settings[BEHAVIOR_STRAFE] = 50;
+	settings[BEHAVIOR_NADE] = 70;
+	settings[BEHAVIOR_SPRINT] = 60;
+	settings[BEHAVIOR_CROUCH] = 0;
+	settings[BEHAVIOR_JUMP] = 20;
+	settings[BEHAVIOR_QUICKSCOPE] = 0;
 
-	// Survivability And Spawn (Survival)
-	settings["botHealthMultiplier"] = 1.35; // survival: bot health multiplier.
-	settings["botSpeedMultiplier"] = 1.2; // survival: bot speed multiplier.
-	settings["botRespawnDelayMin"] = 0; // survival: minimum bot respawn delay (s).
-	settings["botRespawnDelayMax"] = 1; // survival: maximum bot respawn delay (s).
+	// Fire cycle (botActor).
+	settings[FIRE_TIME] = 0.12;
+	settings[MIN_SHOTS] = 28;
+	settings[MAX_SHOTS] = 45;
+	settings[MIN_PAUSE] = 1;
+	settings[MAX_PAUSE] = 2;
+	settings[WIND_UP_TIME] = 0.25;
 
-	// Human Bot Behavior (BotWarfare)
-	settings["behaviorInitSwitch"] = 0; // botwarfare: percentage of how often the bot switches weapons on spawn.
-	settings["behaviorStrafe"] = 50; // botwarfare: percentage of how often the bot strafes a target.
-	settings["behaviorNade"] = 70; // botwarfare: percentage of how often the bot throws grenades.
-	settings["behaviorSprint"] = 60; // botwarfare: percentage of how often the bot sprints.
-	settings["behaviorCamp"] = 0; // botwarfare: percentage of how often the bot camps.
-	settings["behaviorFollow"] = 100; // botwarfare: percentage of how often the bot follows.
-	settings["behaviorCrouch"] = 0; // botwarfare: percentage of how often the bot crouches.
-	settings["behaviorSwitch"] = 0; // botwarfare: percentage of how often the bot switches weapons.
-	settings["behaviorClass"] = 0; // botwarfare: percentage of how often the bot changes classes.
-	settings["behaviorJump"] = 20; // botwarfare: percentage of how often the bot jumpshots/dropshots.
-	settings["behaviorQuickscope"] = 0; // botwarfare: quickscope behavior toggle.
+	// Survival multipliers.
+	settings[SURVIVOR_DAMAGE_SCALE] = 1;
+	settings[BOT_HEALTH_MULTIPLIER] = 1.35;
+	settings[BOT_SPEED_MULTIPLIER] = 1.2;
+	settings[BOT_RESPAWN_DELAY_MIN] = 0;
+	settings[BOT_RESPAWN_DELAY_MAX] = 1;
 
 	weaponClass = lethalbeats\weapon::weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]);
-	if (weaponClass == "sniper") settings["semi_time"] = 1.4; // botwarfare: how fast a bot shoots semiauto (s).
+	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 1.4;
 
 	return settings;
 }

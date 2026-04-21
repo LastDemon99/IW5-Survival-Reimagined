@@ -1,6 +1,7 @@
 #include lethalbeats\survival\utility;
 #include lethalbeats\array;
 #include lethalbeats\player;
+#include lethalbeats\botactor\ai_goap_attacker;
 
 #define GAME_MODE_LOADOUT "gamemodeLoadout"
 #define LOADOUT_PRIMARY_BUFF "loadoutPrimaryBuff"
@@ -29,6 +30,29 @@
 #define SENTRY 13
 #define RIOT_SHIELD 14
 
+#define BOT_RESPAWN_DELAY_MIN 163
+#define BOT_RESPAWN_DELAY_MAX 164
+
+survival_goap_group()
+{
+	if (isDefined(level.survival_goap_group) && isDefined(level.survival_goap_group.active) && level.survival_goap_group.active)
+		return level.survival_goap_group;
+
+	grp = bot_goap_create(undefined, "survival");
+	grp bot_goap_set_option("flank_enabled", 1);
+	grp bot_goap_set_option("flank_mode", 2);
+	grp bot_goap_set_option("cover_nodes", 0);
+	grp bot_goap_set_option("full_max_per_target", 16);
+	grp bot_goap_set_option("flank_max_per_side", 4);
+	grp bot_goap_set_option("pressure_dist", 3000);
+	grp bot_goap_set_option("contact_dist", 1600);
+	grp bot_goap_set_option("flank_hold_ms", 2500);
+	grp bot_goap_set_option("hunt_route_steps", 4);
+
+	level.survival_goap_group = grp;
+	return grp;
+}
+
 onBotSpawn()
 {
 	level endon("game_ended");
@@ -36,23 +60,12 @@ onBotSpawn()
 
 	self.hasriotshieldequipped = false;
 	self.perks = [];
+	self.grenades = [];
 
 	for(;;)
 	{
 		self waittill("spawned_player");		
 		waittillframeend;
-
-		if (!level.bots_total_count)
-		{
-			self.dropWeapon = false;
-			self suicide();
-			continue;
-		}
-	
-		self.grenades = [];
-		self.primaryweapon = self player_get_primary();
-		self.currentweaponatspawn = self.primaryweapon;
-		self.saved_lastweapon = self.prevWeapon;
 	
 		self show();
 		self setContents(100);
@@ -60,7 +73,14 @@ onBotSpawn()
 		self player_disable_usability();
 		self disableWeaponPickup();
 		self bot_set_loadout();
+		self bot_set_health();
+		self bot_set_speed();
 
+		self.primaryweapon = self player_get_primary();
+		self.currentweaponatspawn = self.primaryweapon;
+		self.saved_lastweapon = self.prevWeapon;
+
+		self.targetGuid = undefined;
 		self.isHuman = true;
 		abilities = self bot_get_abilities(true);
 
@@ -138,7 +158,6 @@ onBotSpawn()
 		self takeWeapon(self.secondaryWeapon);
 		self thread onChangeWeapons();
 		self thread onSprint();
-		self thread maps\mp\bots\_bot_script::bot_target_vehicle();
 		self player_unset_Perk("specialty_finalstand");
 
 		mines = 0;
@@ -161,9 +180,13 @@ onBotSpawn()
         self thread maps\mp\gametypes\_battlechatter_mp::suppressingFireTracking();
 		
 		self thread lethalbeats\survival\patch\mines::grenadeWatchUsage();
-		if (self hasWeapon("riotshield_mp")) self thread maps\mp\gametypes\_class::trackRiotShield();
-
 		self maps\mp\_utility::setRecoilScale(0, 100);
+		if (self hasWeapon("riotshield_mp")) self thread maps\mp\gametypes\_class::trackRiotShield();
+		else
+		{
+			self lethalbeats\botactor\behavior::bot_set_engagement("free");
+			self lethalbeats\botactor\behavior::bot_do(lethalbeats\botactor\behavior::bot_task_goap(survival_goap_group()));
+		}
 	}
 }
 
@@ -172,23 +195,29 @@ botWaitRespawn()
 	level endon("game_ended");
 	self endon("disconnect");
 
-	for(;;) 
+	for(;;)
 	{
-		if (!level.bots_awaits) level waittill("release_bots");
+		self lethalbeats\utility::waittill_any("release_bot", "bot_wait_respawn");
+		if (!level.bots_awaits) self waittill("release_bot");
 		if (level.bots_awaits)
 		{
 			level.bots_awaits--;
-			difficulty = self lethalbeats\survival\difficulty::difficulty_get_bot_settings();
-			delayMin = int(difficulty["botRespawnDelayMin"]);
-			delayMax = int(difficulty["botRespawnDelayMax"]);
 
-			if (delayMax <= delayMin) delay = delayMax;
-			else if (delayMin || delayMax) delay = randomIntRange(delayMin, delayMax + 1);
-			else delay = 1;
+			popData = array_pop(level.bots_wave);
+			level.bots_wave = popData[0];
+			self.botType = popData[1];
+			self bot_set_difficulty();
 
-			if (delay <= 0) break;
-			wait delay;
-			break;
+			if (isDefined(self.actor)) self.actor[65] = undefined; // SKILL_REMEMBER_TIME
+
+			delay = 0;
+			delayMin = int(self.actor[BOT_RESPAWN_DELAY_MIN]);
+			delayMax = int(self.actor[BOT_RESPAWN_DELAY_MAX]);
+
+			if ((delayMin < delayMax) && (delayMin >= 0)) delay = randomIntRange(delayMin, delayMax + 1);
+			if (delay > 0) wait delay;
+
+			self lethalbeats\botactor\utility::bot_spawn();
 		}
 	}
 }
@@ -234,9 +263,6 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 
 	if (self bot_is_explosive() && isExplosiveDamage) self notify("detonate", eAttacker);
 	
-	self maps\mp\bots\_bot_internal::onDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
-	self maps\mp\bots\_bot_script::onDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
-	
 	self [[level.prevCallbackPlayerDamage]](eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset);
 }
 
@@ -249,14 +275,11 @@ onBotKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLo
 	if(level.wave_num)
 	{
 		if (self bot_is_jugger()) self unsetPerk("specialty_radarjuggernaut", true);
-		if (!self bot_is_killstreak() && !(self bot_is_jugger() && !self.isDropped)) self bot_kill(eAttacker);
 		if (self bot_is_explosive()) self notify("detonate", eAttacker);
+		if (!self bot_is_killstreak() && !(self bot_is_jugger() && !self.isDropped) && !bot_is_dog()) self bot_kill(eAttacker);
 	}
 
 	if (self.dropWeapon) self player_drop_weapon();
-
-	self maps\mp\bots\_bot_internal::onKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
-	self maps\mp\bots\_bot_script::onKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 	
 	self [[level.prevCallbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 }
@@ -404,7 +427,7 @@ onStun(weapon, meansOfDeath)
 
 	self shellShock("concussion_grenade_mp", remainingStun);
 
-	// Force a fresh windup after stun; prevents carrying an in-progress fire cycle.
+	// Force a fresh windup after stun, prevents carrying an in-progress fire cycle.
 	if (isDefined(self.bot)) self.bot.fireCycleData = undefined;
 
 	if (isDefined(self.stuned) && self.stuned)

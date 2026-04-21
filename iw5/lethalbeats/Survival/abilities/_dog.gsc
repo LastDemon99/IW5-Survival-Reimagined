@@ -31,6 +31,8 @@
 
 #define SHARP_TURN_WHILE_RUNNING_THRESHOLD 100
 
+#define CHASE_TARGET 22
+
 init()
 {
 	precacheitem("iw5_dog_mp");
@@ -78,7 +80,10 @@ giveAbility()
 	self setSpawnWeapon(weapon);
 	self lethalbeats\player::player_disable_weapon_switch();
 	self lethalbeats\player::player_disable_offhand_weapons();
-	self allowJump(false);
+	self lethalbeats\player::player_give_perk("specialty_longersprint");
+    self lethalbeats\botactor\utility::bot_hold_sprint();
+	self lethalbeats\botactor\utility::bot_set_melee_distance(60);
+	self lethalbeats\botactor\utility::bot_hold_melee_charge();
 
 	self.pers["primaryWeapon"] = weapon;
 
@@ -212,6 +217,9 @@ onDogPlayerDamage(player)
 	dog.victim = player;
 
 	player shellshock("dog_bite", 1.5);
+	playerVel = player getVelocity();
+	player setVelocity((playerVel[0] * 0.5, playerVel[1] * 0.5, playerVel[2]));
+	player allowSprint(false);
 
 	if (dog.attackAmount == 2) 
 	{
@@ -222,6 +230,7 @@ onDogPlayerDamage(player)
 	else dog.isAttacking0 = true;
 
 	wait 0.5;
+	player allowSprint(true);
 	dog.isAttacking0 = false;
 }
 
@@ -502,12 +511,58 @@ monitorTurn()
 
     for (;;) 
 	{
+		if (!isDefined(self.dog))
+		{
+			wait 0.2;
+			continue;
+		}
+
         self.dog.runAnimation = RUNNING;
-		self setPlayerAngles(vectorToAngles(self getEntityVelocity()));
-		angleDifference = angleClamp180(vectorToAngles(self.bot.moveto)[1] - self getPlayerAngles()[1]);
-        if (angleDifference > 10 && angleDifference <= 45) self.dog.runAnimation = RUN_LEAN_R;
-        else if (angleDifference < -10 && angleDifference >= -45) self.dog.runAnimation = RUN_LEAN_L;
-        wait 0.5;
+
+		currentAngles = self getPlayerAngles();
+		if (!isDefined(currentAngles) || !isDefined(currentAngles[1]))
+		{
+			wait 0.2;
+			continue;
+		}
+
+		desiredYaw = undefined;
+
+		if (isDefined(self.actor) && isDefined(self.actor[CHASE_TARGET]) && isDefined(self.actor[CHASE_TARGET].origin))
+		{
+			toTarget = self.actor[CHASE_TARGET].origin - self.origin;
+			toTarget = (toTarget[0], toTarget[1], 0);
+			if (lengthSquared(toTarget) > 16)
+				desiredYaw = vectorToAngles(toTarget)[1];
+		}
+
+		if (!isDefined(desiredYaw))
+		{
+			vel = self getEntityVelocity();
+			vel = (vel[0], vel[1], 0);
+			if (lengthSquared(vel) > 25)
+				desiredYaw = vectorToAngles(vel)[1];
+		}
+
+		if (!isDefined(desiredYaw) && isDefined(self.bot) && isDefined(self.bot.moveto))
+		{
+			moveDir = self.bot.moveto - self.origin;
+			moveDir = (moveDir[0], moveDir[1], 0);
+			if (lengthSquared(moveDir) > 16)
+				desiredYaw = vectorToAngles(moveDir)[1];
+		}
+
+		if (isDefined(desiredYaw))
+		{
+			angleDifference = angleClamp180(desiredYaw - currentAngles[1]);
+			if (isDefined(angleDifference))
+			{
+				if (angleDifference > 10 && angleDifference <= 60) self.dog.runAnimation = RUN_LEAN_R;
+				else if (angleDifference < -10 && angleDifference >= -60) self.dog.runAnimation = RUN_LEAN_L;
+			}
+		}
+
+        wait 0.2;
     }
 }
 
@@ -558,10 +613,10 @@ monitorIdle()
 		if (self isOnLadder()) 
 		{
 			self allowJump(true);
-			self maps\mp\bots\_bot_internal::jump();
+			self lethalbeats\botactor\utility::bot_press_jump();
 			self allowJump(false);
 		}
-		else if (self getstance() != "stand") self maps\mp\bots\_bot_internal::stand();
+		else if (self getstance() != "stand") self lethalbeats\botactor\utility::bot_press_stand();
 
         if (lengthSquared(self getVelocity()) < 2)
         {
