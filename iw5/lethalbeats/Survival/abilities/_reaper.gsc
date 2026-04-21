@@ -1,38 +1,86 @@
 init()
 {
-	replacefunc(maps\mp\killstreaks\_remotemortar::handletimeout, ::_handleTimeout);
+    replacefunc(maps\mp\killstreaks\_remotemortar::handletimeout, ::_handleTimeout);
     replacefunc(maps\mp\killstreaks\_remotemortar::damagetracker, ::_handleDamage);
     replacefunc(maps\mp\killstreaks\_remotemortar::remotefiring, ::_remotefiring);
     replacefunc(maps\mp\killstreaks\_remotemortar::tryuseremotemortar, ::_tryuseremotemortar);
+    replacefunc(maps\mp\killstreaks\_remotemortar::startremotemortar, ::_startremotemortar);
+    replacefunc(maps\mp\killstreaks\_remotemortar::handleownerchangeteam, ::_handleOwnerChangeTeam);
+    replacefunc(maps\mp\killstreaks\_remotemortar::handleownerdisconnect, ::_handleOwnerDisconnect);
 }
 
 giveAbility()
 {
     lethalbeats\Survival\utility::level_wait_vehicle_limit();
 	self [[level.killStreakFuncs["remote_mortar"]]]();
+    self suicide();
 }
 
 _handleTimeout(remote)
 {
-	if (self.team == "axis") return;
+    if (isDefined(self.team) && self.team == "axis")
+        return;
+
     level endon("game_ended");
     remote endon("disconnect");
     remote endon("removed_reaper_ammo");
     self endon("death");
+    
     lifeSpan = 40.0;
     maps\mp\gametypes\_hostmigration::waitLongDurationWithHostMigrationPause(lifeSpan);
-    while (remote.firingreaper) wait 0.05;
+    
+    if (isDefined(remote) && isDefined(remote.firingreaper))
+    {
+        while (remote.firingreaper) wait 0.05;
+    }
+    
     if (isdefined(remote)) remote maps\mp\killstreaks\_remotemortar::remoteendride(self);
     self thread maps\mp\killstreaks\_remotemortar::remoteleave();
+}
+
+_handleOwnerChangeTeam(owner)
+{
+    if (isDefined(self.team) && self.team == "axis")
+        return;
+        
+    level endon("game_ended");
+    self endon("remote_done");
+    self endon("death");
+    owner endon("disconnect");
+    owner endon("removed_reaper_ammo");
+    owner common_scripts\utility::waittill_any("joined_team", "joined_spectators");
+
+    if (isdefined(owner))
+        owner maps\mp\killstreaks\_remotemortar::remoteendride(self);
+
+    thread maps\mp\killstreaks\_remotemortar::remoteleave();
+}
+
+_handleOwnerDisconnect(owner)
+{
+    if (isDefined(self.team) && self.team == "axis")
+        return;
+
+    level endon("game_ended");
+    self endon("remote_done");
+    self endon("death");
+    owner endon("removed_reaper_ammo");
+    owner waittill("disconnect");
+    thread maps\mp\killstreaks\_remotemortar::remoteleave();
 }
 
 _handleDamage()
 {
     level endon("game_ended");
-    self.owner endon("disconnect");
+    
+    if (!isDefined(self.team) || self.team != "axis")
+        self.owner endon("disconnect");
+
     self.health = 999999;
     self.maxhealth = 1500;
     self.damagetaken = 0;
+    
+    if (isDefined(self.owner.botPrice)) self.botPrice = self.owner.botPrice;
 
     for (;;)
     {
@@ -48,14 +96,15 @@ _handleDamage()
         if (isdefined(self.owner)) self.owner playlocalsound("reaper_damaged");
         if (self.damagetaken >= self.maxhealth)
         {
-            if (isplayer(attacker) && (!isdefined(self.owner) || attacker != self.owner))
+            if (isplayer(attacker))
             {
                 attacker notify("destroyed_killstreak", weapon);
                 thread maps\mp\_utility::teamPlayerCardSplash("callout_destroyed_remote_mortar", attacker);
                 attacker thread maps\mp\gametypes\_rank::xpEventPopup(&"SPLASHES_DESTROYED_REMOTE_MORTAR");
                 thread maps\mp\gametypes\_missions::vehicleKilled(self.owner, self, undefined, attacker, damage, meansOfDeath, weapon);
             }
-            self.owner lethalbeats\survival\utility::bot_kill(attacker);
+
+            if (self.owner.team == "axis") self lethalbeats\survival\utility::bot_kill(attacker);
             self thread maps\mp\killstreaks\_remotemortar::remoteexplode();
             return;
         }
@@ -107,6 +156,7 @@ _remotefiring(remote)
 
             targetPos = remote.targetent.origin;
             missileTargetEnt = remote.targetent;
+            
             if (isBotRemoteController)
             {
                 botTargetEnt = self _getBotRemoteTargetEnt(remote);
@@ -179,6 +229,7 @@ _getBotRemoteTargetEnt(remote)
     if (!isDefined(survivorsAlives) || !survivorsAlives.size)
         return undefined;
 
+    // self is either vehicle (AI case) or owner (human/bot controller case)
     originRef = self.origin;
     if (isDefined(remote)) originRef = remote.origin;
 
@@ -191,8 +242,17 @@ _getBotRemoteTargetEnt(remote)
         if (!(survivor lethalbeats\survival\utility::player_is_valid_target())) continue;
         if (!maps\mp\_utility::isReallyAlive(survivor) || survivor.inLastStand) continue;
 
-        if (isDefined(remote) && !bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, remote))
-            continue;
+        // Check LOS from vehicle or owner
+        if (isDefined(remote)) 
+        {
+             if (!bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, remote))
+                continue;
+        }
+        else 
+        {
+             if (!bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, self))
+                continue;
+        }
 
         dist = distanceSquared(originRef, survivor.origin);
         if (dist < closestDist)
@@ -208,19 +268,124 @@ _getBotRemoteTargetEnt(remote)
     return closestTarget;
 }
 
-_tryuseremotemortar( var_0 )
+_tryuseremotemortar(lifeId)
 {
-    self maps\mp\_utility::setUsingRemote( "remote_mortar" );
-    var_1 = self maps\mp\killstreaks\_killstreaks::initridekillstreak( "remote_mortar" );
-
-    if ( var_1 != "success" )
+    if (isDefined(self.team) && self.team == "axis")
     {
-        if ( var_1 != "disconnect" )
-            maps\mp\_utility::clearUsingRemote();
+        self maps\mp\_matchdata::logKillstreakEvent("remote_mortar", self.origin);
+        return _startremotemortar(lifeId);
+    }
 
+    self maps\mp\_utility::setUsingRemote("remote_mortar");
+    var_1 = self maps\mp\killstreaks\_killstreaks::initridekillstreak("remote_mortar");
+
+    if (var_1 != "success")
+    {
+        if (var_1 != "disconnect") maps\mp\_utility::clearUsingRemote();
         return 0;
     }
 
-    self maps\mp\_matchdata::logKillstreakEvent( "remote_mortar", self.origin );
-    return maps\mp\killstreaks\_remotemortar::startremotemortar( var_0 );
+    self maps\mp\_matchdata::logKillstreakEvent("remote_mortar", self.origin);
+    return maps\mp\killstreaks\_remotemortar::startremotemortar(lifeId);
+}
+
+_startremotemortar(lifeId)
+{
+    remote = maps\mp\killstreaks\_remotemortar::spawnremote(lifeId, self);
+
+    if (!isdefined(remote))
+        return 0;
+
+    level.remote_mortar = remote;
+    remote.owner = self;
+    remote.team = self.team;
+    self.firingreaper = 0;
+
+    if (isDefined(self.team) && self.team == "axis") remote thread _axisReaperAI();
+    else remote thread maps\mp\killstreaks\_remotemortar::remoteride(remote);
+    
+    thread maps\mp\_utility::teamPlayerCardSplash("used_remote_mortar", self);
+    return 1;
+}
+
+_axisReaperAI()
+{
+    level endon("game_ended");
+    self endon("death");
+    self endon("remote_done");
+
+    wait 3;
+
+    self.targetent = spawnfx(level.remote_mortar_fx["laserTarget"], (0, 0, 0));
+    self thread _axisReaperTargetingAI();
+
+    reaperSettings = lethalbeats\survival\difficulty::difficulty_get_reaper_burst_settings();
+    fireRate = reaperSettings["fireTime"];
+    lastFireTime = gettime() - fireRate * 1000;
+
+    for (;;)
+    {
+        target = self _getBotRemoteTargetEnt();
+
+        if (isDefined(target))
+        {
+            curTime = gettime();
+            if (curTime - lastFireTime >= fireRate * 1000)
+            {
+                lastFireTime = curTime;
+                self.firingreaper = 1;
+
+                launchOrigin = self gettagorigin("tag_player");
+                if (!isDefined(launchOrigin))
+                    launchOrigin = self.origin;
+
+                forward = anglestoforward(self.angles);
+                right = anglestoright(self.angles);
+                offset = launchOrigin + forward * 100 + right * -100;
+
+                owner = self.owner;
+                missileOwner = owner;
+                if (!isDefined(missileOwner)) missileOwner = self;
+
+                missile = magicbullet("remote_mortar_missile_mp", offset, self.targetent.origin, missileOwner);
+                missile.type = "remote_mortar";
+                missile missile_settargetent(self.targetent);
+                missile missile_setflightmodedirect();
+
+                missile thread maps\mp\killstreaks\_remotemortar::remotemissiledistance(self);
+                missile thread maps\mp\killstreaks\_remotemortar::remotemissilelife(self);
+
+                missile waittill("death");
+                self.firingreaper = 0;
+            }
+        }
+
+        wait 0.05;
+    }
+}
+
+_axisReaperTargetingAI()
+{
+    level endon("game_ended");
+    self endon("death");
+    self endon("remote_done");
+
+    trackingFactor = lethalbeats\survival\difficulty::difficulty_get_reaper_burst_settings()["trackingFactor"];
+
+    for (;;)
+    {
+        target = self _getBotRemoteTargetEnt();
+        if (isDefined(target))
+        {
+            targetPos = target getTagOrigin("j_spineupper");
+            
+            // If first time tracking, snap to position. Otherwise, interpolate for lag effect.
+            if (!isDefined(self.lastTargetPos)) self.targetent.origin = targetPos;
+            else self.targetent.origin = self.targetent.origin + (targetPos - self.targetent.origin) * trackingFactor;
+            
+            self.lastTargetPos = targetPos;
+            triggerfx(self.targetent);
+        }
+        wait 0.05;
+    }
 }

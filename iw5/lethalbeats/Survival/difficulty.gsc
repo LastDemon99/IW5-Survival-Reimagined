@@ -277,16 +277,19 @@ difficulty_get_reaper_burst_settings()
 		case DIFFICULTY_HARD:
 			settings["fireTime"] = 2.2;
 			settings["windUpTime"] = 0;
+			settings["trackingFactor"] = 0.45;
 			return settings;
 
 		case DIFFICULTY_NORMAL:
 			settings["fireTime"] = 4.5;
 			settings["windUpTime"] = 0.75;
+			settings["trackingFactor"] = 0.25;
 			return settings;
 
 		default:
 			settings["fireTime"] = 5;
 			settings["windUpTime"] = 1;
+			settings["trackingFactor"] = 0.15;
 			return settings;
 	};
 }
