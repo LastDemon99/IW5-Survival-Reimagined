@@ -249,12 +249,7 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 	}
 
 	if (isDefined(sHitLoc) && sHitLoc == "shield") return;
-	if (isDefined(eAttacker))
-	{
-		if (eAttacker bot_is_dog()) eAttacker lethalbeats\Survival\abilities\_dog::onDogPlayerDamage(self);
-		if (isDefined(eAttacker.owner)) eAttacker = eAttacker.owner;
-	}
-
+	if (isDefined(eAttacker) && isDefined(eAttacker.owner)) eAttacker = eAttacker.owner;
 	if (sWeapon == "remote_mortar_missile_mp" && !self.bodyArmor) iDamage = self.maxHealth / 2;
 	else iDamage /= 20;
 

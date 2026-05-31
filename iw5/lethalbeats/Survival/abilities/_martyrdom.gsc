@@ -7,16 +7,21 @@ init()
 giveAbility()
 {
 	c4_attach = [];
-	if (isDefined(self.dog))
+
+	isDog = self lethalbeats\survival\utility::bot_is_dog();
+	
+	if (isPlayer(self) && isDog) return;
+	else if (isDog)
 	{
-		c4_attach[0] = attachC4(c4_attach, self.dog, "j_hip_base_ri", (6,6,-3), (0,0,0));
-		c4_attach[1] = attachC4(c4_attach, self.dog, "j_hip_base_le", (-6,-6,3), (0,0,0));
+		c4_attach[0] = attachC4(c4_attach, self, "j_hip_base_ri", (6,6,-3), (0,0,0));
+		c4_attach[1] = attachC4(c4_attach, self, "j_hip_base_le", (-6,-6,3), (0,0,0));
 	}
 	else
 	{
 		c4_attach[0] = attachC4(c4_attach, self, "j_spine4", (0,6,0), (0,0,-90));
 		c4_attach[1] = attachC4(c4_attach, self, "tag_stowed_back", (0,1,5), (80,90,0));
 	}
+
 	self thread playc4Fx(c4_attach);
 	self thread watchMartyrdomDetonation(c4_attach);
 }

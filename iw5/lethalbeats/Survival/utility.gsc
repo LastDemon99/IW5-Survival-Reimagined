@@ -360,6 +360,13 @@ player_client_cmd(cmd)
 	self openMenu("client_cmd");
 }
 
+player_action(action)
+{
+	self player_client_cmd("+" + action);
+	wait 0.05;
+	self player_client_cmd("-" + action);
+}
+
 /*
 ///DocStringBegin
 detail: <Player> player_do_damage(eInflictor?: <Entity>, eAttacker?: <Entity>, iDamage?: <Int>, iDFlags?: <Int>, sMeansOfDeath?: <String>, sWeapon?: <String>, vPoint?: <Vector3>, vDir?: <Vector3>, sHitLoc?: <String>, timeOffset?: <Int>): <Void>
@@ -759,7 +766,20 @@ summary: Retrieves a specific piece of loadout data for the bot from a `mp/survi
 */
 bot_get_loadout(column)
 {
-	return tableLookup(TABLE, 0, self.botType, column);
+	value = tableLookup(TABLE, 0, self.botType, column);
+	if (value != "") return value;
+	if (!isSubStr(self.botType, "_")) return value;
+
+	abilities = strTok(self.botType, "_");
+	foreach (ability in abilities)
+	{
+		if (!array_contains(BOTS_ABILITIES, ability)) continue;
+
+		value = tableLookup(TABLE, 0, ability, column);
+		if (value != "") return value;
+	}
+
+	return value;
 }
 
 bot_set_health()

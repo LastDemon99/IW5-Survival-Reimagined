@@ -181,7 +181,7 @@ onBotSpawn()
 		
 		self thread lethalbeats\survival\patch\mines::grenadeWatchUsage();
 		self maps\mp\_utility::setRecoilScale(0, 100);
-		if (self hasWeapon("riotshield_mp")) self thread maps\mp\gametypes\_class::trackRiotShield();
+		if (self.primaryweapon == "riotshield_mp") self thread maps\mp\gametypes\_class::trackRiotShield();
 		else
 		{
 			self lethalbeats\botactor\behavior::bot_set_engagement("free");
@@ -224,7 +224,7 @@ botWaitRespawn()
 
 onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, timeOffset)
 {
-	if (!self.isHuman && !self bot_is_dog()) return;
+	if (!self.isHuman) return;
 	if (self bot_is_jugger() && !self.isDropped) return;
 
 	self.bleedData = undefined;
