@@ -48,7 +48,6 @@
 #define DOG_PAIN_TIME 1.56
 #define DOG_CONCUSSED_TIME 1.5
 #define DOG_ATTACK_TIME 1.5
-#define DOG_ATTACK_WINDUP 0.25
 
 #define DOG_DROP_HEIGHT = 32;
 #define DOG_SCAN_FORWARD = 28;
@@ -317,33 +316,35 @@ dogTurn180(targetYaw)
 
 dogAttack(target)
 {
-	wait DOG_ATTACK_WINDUP;
 	if (self.isAttacking || self.isInPain || self.isConcussed || !dogIsValidTarget(target)) return;
 
-	if (isDefined(self.victim) && self.victim == target) self.biteCount++;
-	
 	self.isAttacking = true;
-	self.victim = target;
-
 	self dogSetAnim(RUN_ATTACK, true);
 	self rotateTo((0, vectortoyaw(target.origin - self.origin), 0), 0.1);
 	self playSound("anml_dog_attack_jump");
 	self waittill("rotatedone");
 
+	wait DOG_ATTACK_TIME / 3;
 	if (isDefined(target) && distanceSquared(self.origin, target.origin) <= DOG_ATTACK_DIST * DOG_ATTACK_DIST)
 	{
-		if (self.biteCount > 1 && !target.dogKnockdown) self dogKnockdown(target);
+		if (self.biteCount > 1 && !target.dogKnockdown)
+		{
+			self dogKnockdown(target);
+			return;
+		}
 		else
 		{
+			if (isDefined(self.victim) && self.victim == target) self.biteCount++;
+			self.victim = target;
 			target shellshock("dog_bite", 1.0);
 			vel = target getVelocity();
 			target setVelocity((vel[0] * 0.5, vel[1] * 0.5, vel[2]));
 			target lethalbeats\survival\utility::player_do_damage(self, self, 35, undefined, "MOD_MELEE", undefined, target.origin);
 			if (target isOnLadder()) target lethalbeats\survival\utility::player_action("gostand");
-			wait DOG_ATTACK_TIME;
 		}
 	}
-	
+	wait 1;
+
 	self.isAttacking = false;
 	self.currentAnim = "";
 }
