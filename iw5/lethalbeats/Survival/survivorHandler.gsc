@@ -756,7 +756,7 @@ dropWeaponMonitor()
 	{
 		self waittill("drop_weapon");
 
-		if (self player_get_weapons().size < 2 || self.inLastStand) continue;
+		if (self player_get_weapons().size < 2 || self.inLastStand || !self.enableUse) continue;
 		if (is_shop_near(self.origin))
 		{
 			self hud_set_lower_message("fail_drop_weapon", "You cannot drop a weapon while near the terminals.", 2, 1);

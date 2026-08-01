@@ -421,16 +421,6 @@ player_get_weapon_data(weapon)
     return self lethalbeats\survival\armories\weapons::getWeaponData(weapon);
 }
 
-player_drop_weapon()
-{
-	weapon = self getCurrentWeapon();
-	if (!isDefined(weapon)) weapon = "none";
-	if (weapon != "none") self player_take_all_weapon_buffs();
-
-	self.lastdroppableweapon = weapon;
-	self lethalbeats\survival\patch\globallogic::patch_dropWeaponForDeath(self);
-}
-
 player_give_random_ammo(weapon, minClips, maxClips)
 {
 	if (!isDefined(weapon)) weapon = self getCurrentWeapon();
@@ -516,6 +506,178 @@ player_is_valid_target()
 {
 	if (self.team == "axis") return true;
 	return self survivor_is_alive() && !self.inLastStand;
+}
+
+player_drop_weapon()
+{ 
+    if (!self.dropWeapon || is_shop_near(self.origin)) return;
+
+    weapon = self getCurrentWeapon();
+    if (!isdefined(weapon) || weapon == "none" || !self hasweapon(weapon)) return;
+    if (lethalbeats\string::string_starts_with(weapon, "alt_")) weapon = getSubStr(weapon, 4, weapon.size);
+	self.lastdroppableweapon = weapon;
+
+    if (self player_is_survivor())
+    {
+        weaponData = self player_get_weapon_data(weapon);
+        ammoData = self player_get_ammo_data(weapon);
+		self player_take_all_weapon_buffs();
+    }
+    else
+    {
+        weaponData = undefined;
+        ammoData = undefined;
+    }
+
+	self takeWeapon(weapon);
+
+    displayName = lethalbeats\weapon::weapon_get_display_name(weapon);
+    modelName = lethalbeats\weapon::weapon_get_model(weapon);
+
+    forward = anglesToForward(self getPlayerAngles());
+    start = self getEye() + (forward * 10);
+    forwardPush = (forward[0] * 60, forward[1] * 60, 0);
+    endOrigin_Air = self.origin + forwardPush + (self getVelocity() * 2.5);
+    trace = bullettrace(endOrigin_Air, endOrigin_Air - (0, 0, 1000), false, self);
+    moveVector = trace["position"] - start;
+    randomRotation = (randomIntRange(-350, 350), randomIntRange(-350, 350), randomIntRange(-350, 350));
+
+    weaponModel = lethalbeats\utility::spawn_model(start, modelName);
+    weaponModel rotateVelocity(randomRotation, 1.2, 0.1);
+    weaponModel moveGravity(moveVector, 1.2);
+
+    result = weaponModel _waitDropWeapon();
+    weaponModel.origin = result[0];
+    weaponModel.angles = result[1];
+
+    trigger = lethalbeats\trigger::trigger_create(weaponModel.origin, 45);
+	
+	weaponModel.trigger = trigger;
+	add_dropped_weapon(weaponModel);
+
+    trigger.owner = self;
+	trigger.weapon = weapon;
+    trigger lethalbeats\trigger::trigger_set_use("Hold ^3[{+activate}] ^7to pick up " + displayName);
+    trigger lethalbeats\trigger::trigger_set_enable_condition(::_weaponPickupFilter);
+    trigger thread _weaponPickupMonitor(weapon, ammoData, weaponData, weaponModel);
+    trigger thread _ammoPickupMonitor(weapon, ammoData, weaponModel);
+	trigger thread _onModelDeath(weaponModel);
+}
+
+_onModelDeath(weaponModel)
+{
+	self endon("death");
+	weaponModel waittill("death");
+	self lethalbeats\trigger::trigger_delete();
+}
+
+_waitDropWeapon()
+{
+    self endon("death");
+    for(i = 0; i < 100; i++)
+    {
+        trace = bullettrace(self.origin, self.origin - (0, 0, 35), false, self);
+        if (isDefined(trace["entity"]) || !isDefined(trace["surfacetype"]) || trace["surfacetype"] == "none")
+        {
+            wait 0.05;
+            continue;
+        }
+
+        angles = lethalbeats\vector::vector_angles_orient_to_normal(trace["normal"], self.angles[1]);
+        return [trace["position"] + (0, 0, 0.5), angles + (0, 0, 90)];
+    }
+    waittillframeend;
+    return [self.origin, self.angles];
+}
+
+_weaponPickupFilter(player)
+{
+    foreach(weapon in player player_get_weapons())
+        if (isDefined(weapon) && self.weapon == weapon && player player_has_max_ammo(weapon, true))
+            return false;
+    return self survivor_trigger_filter(player);
+}
+
+_weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
+{
+    self endon("death");
+	self endon("ammo_pickup");
+
+    for(;;)
+    {
+        self waittill("trigger_use", player, keyType);
+
+        if (keyType == "jkey_down")
+        {
+            result = player lethalbeats\utility::waittill_any_return("jkey_up", 0.45);
+            if (isString(result)) continue;
+        }
+
+        currWeapon = player getCurrentWeapon();
+        if (!isDefined(currWeapon) || currWeapon == "none") continue;
+
+		self notify("weapon_pickup");
+		player playSound("weap_ammo_pickup");
+		weaponModel hide();
+
+        if (lethalbeats\weapon::weapon_get_class(currWeapon) == "explosive")
+        {
+            currWeapon = player.prevWeapon;
+            player switchToWeaponImmediate(currWeapon);
+            player waittill("weapon_change");
+        }
+
+        weapons = player player_get_weapons();
+        if (weapons.size > 1)
+        {
+            player player_drop_weapon();
+            if (player hasWeapon(currWeapon))
+            {
+                player player_take_all_weapon_buffs();
+                player takeWeapon(currWeapon);
+            }
+        }
+		
+        player player_give_weapon(weaponName);
+        
+        if (!isDefined(weaponData)) weaponData = level player_get_weapon_data(weaponName);
+        player player_set_weapon_data(weaponName, weaponData);
+
+        if (!isDefined(ammoData)) ammoData = lethalbeats\weapon::weapon_get_random_ammo_data(weaponName);
+        player player_set_ammo_data(weaponName, ammoData);
+
+        player survivor_switch_to_weapon(weaponName);
+        delete_dropped_weapon(weaponModel);
+    }
+}
+
+_ammoPickupMonitor(weaponName, ammoData, weaponModel)
+{
+    self endon("death");
+	self endon("weapon_pickup");
+
+    baseWeaponName = lethalbeats\weapon::weapon_get_baseName(weaponName);
+    isSurvivorWeapon = isDefined(self.owner) && self.owner player_is_survivor();
+
+    for(;;)
+    {
+        self waittill("trigger_radius", player);
+
+		if (!isDefined(weaponModel)) break;
+        if (isSurvivorWeapon) continue;
+
+        targetWeapon = player player_get_build_weapon(baseWeaponName);
+        if (!isDefined(targetWeapon)) continue;
+        if (player player_has_max_ammo(targetWeapon, true)) continue;
+
+		self notify("ammo_pickup");
+
+        if (!isDefined(ammoData)) ammoData = lethalbeats\weapon::weapon_get_random_ammo_data(weaponName);
+        player player_add_ammo_from_data(targetWeapon, ammoData);
+
+		player playSound("weap_ammo_pickup");
+        delete_dropped_weapon(weaponModel);
+    }
 }
 
 //////////////////////////////////////////
@@ -946,6 +1108,7 @@ bot_clear_models()
 	}
 
 	level.droppedWeapons = [];
+	if (level.droppedWeapons.size > getDvarInt("survival_dropped_weapons_limit")) delete_dropped_weapon();
 }
 
 //////////////////////////////////////////
@@ -1711,6 +1874,36 @@ survivor_enable_weapons()
 //////////////////////////////////////////
 //	             LEVEL   		        //
 //////////////////////////////////////////
+
+add_dropped_weapon(model)
+{
+	level.droppedWeapons[level.droppedWeapons.size] = model;
+}
+
+delete_dropped_weapon(model)
+{
+	if (isDefined(model)) level.droppedWeapons = array_remove(level.droppedWeapons, model);
+	else
+	{
+		droppedWeapons = array_shift(level.droppedWeapons);
+		level.droppedWeapons = droppedWeapons[0];
+		model = droppedWeapons[1];
+	}
+
+	if (!isDefined(model))
+	{
+		level.droppedWeapons = array_remove_undefined(level.droppedWeapons);
+		return;
+	}
+
+	if (isDefined(model.trigger))
+	{
+		trigger = model.trigger;
+		model delete();
+		trigger lethalbeats\trigger::trigger_delete();
+	}
+	else model delete();
+}
 
 kill_all_survivors()
 {

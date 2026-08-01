@@ -279,7 +279,7 @@ onBotKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLo
 		if (!self bot_is_killstreak() && !(self bot_is_jugger() && !self.isDropped) && !bot_is_dog()) self bot_kill(eAttacker);
 	}
 
-	if (self.dropWeapon) self player_drop_weapon();
+	if (self.dropWeapon) self thread player_drop_weapon();
 	
 	self [[level.prevCallbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 }
