@@ -1064,50 +1064,10 @@ bot_kill(attacker)
 			}
 		}
 	}
-	if (isPlayer(self)) 
-	{
-		self suicide();
-		self thread bot_delete_AfterAWhile();
-	}
+	if (isPlayer(self) && isAlive(self)) self suicide();
 	level.bots_deaths++;
 	if (level.bots_total_count == level.bots_deaths) level notify("wave_end");
-	if (level.bots_deaths % 15 == 0) thread bot_clear_models();
-}
-
-bot_delete_AfterAWhile()
-{
-	waittillframeend;
-	body = self.body;
-	if (level.wave_num < 13) wait randomIntRange(5, 10);
-	else if (level.wave_num < 22) wait randomIntRange(3, 6);
-	else wait randomFloatRange(2, 3);
-	if (isDefined(body)) body delete();
-}
-
-bot_clear_models()
-{
-	level endon("wave_start");
-
-	survivors = survivors();
-
-	foreach(bot in bots())
-	{
-		if (isDefined(bot.body) && !array_any_ent(survivors, ::player_can_see, bot.body.origin))
-			bot.body delete();
-	}
-
-	maxDist = 500 * 500;
-	foreach(weapon in level.droppedWeapons)
-	{
-		if (isDefined(weapon))
-		{
-			foreach(survivor in survivors)
-				if (distanceSquared(survivor.origin, weapon.origin) > maxDist && !survivor player_can_see(weapon.origin))
-					weapon delete();
-		}
-	}
-
-	level.droppedWeapons = [];
+	if (level.corpses.size > getDvarInt("survival_corpses_limit")) delete_corpse();
 	if (level.droppedWeapons.size > getDvarInt("survival_dropped_weapons_limit")) delete_dropped_weapon();
 }
 
@@ -1903,6 +1863,30 @@ delete_dropped_weapon(model)
 		trigger lethalbeats\trigger::trigger_delete();
 	}
 	else model delete();
+}
+
+add_corpse(model)
+{
+	level.corpses[level.corpses.size] = model;
+}
+
+delete_corpse(model)
+{
+	if (isDefined(model)) level.corpses = array_remove(level.corpses, model);
+	else
+	{
+		corpses = array_shift(level.corpses);
+		level.corpses = corpses[0];
+		model = corpses[1];
+	}
+
+	if (!isDefined(model))
+	{
+		level.corpses = array_remove_undefined(level.corpses);
+		return;
+	}
+
+	model delete();
 }
 
 kill_all_survivors()

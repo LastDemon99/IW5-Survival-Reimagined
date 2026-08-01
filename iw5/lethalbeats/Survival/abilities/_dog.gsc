@@ -219,13 +219,12 @@ onDogDeath()
 	if (!knockdownMelee) self lethalbeats\survival\utility::bot_kill(attacker);
 
 	if (isDefined(self.knockdownState) && isDefined(self.victim)) self dogKnockdownStandUp(self.victim);
-	else if (!knockdownMelee) self scriptModelPlayAnim(DOG_PREFIX + DEATH);
+	if (!knockdownMelee) self scriptModelPlayAnim(DOG_PREFIX + DEATH);
 	
 	self.knockdownState = undefined;
 	self.isAttacking = false;
 	self.currentAnim = "";
-	self.body = self;
-	self thread lethalbeats\survival\utility::bot_delete_AfterAWhile();
+	lethalbeats\survival\utility::add_corpse(self);
 }
 
 dogThink()
@@ -548,6 +547,7 @@ dogKnockdownAttackLate(player)
 	wait 0.85;
 
 	if (isDefined(player)) player suicide();
+	lethalbeats\survival\utility::add_corpse(self.body);
 
 	self.knockdownState = undefined;
 	self.biteCount = 0;
@@ -555,8 +555,6 @@ dogKnockdownAttackLate(player)
 	self.victim = undefined;
 	self.hands delete();
 	self.spot delete();
-
-	self thread lethalbeats\survival\utility::bot_delete_AfterAWhile();
 }
 
 dogKnockdownMeleeDeath(player)
