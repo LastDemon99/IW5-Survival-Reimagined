@@ -578,3 +578,78 @@ mineBombSquadVisibilityUpdater()
         }
     }
 }
+
+ims_setActive() // self == ims
+{
+	self setCursorHint("HINT_NOICON");
+	self setHintString(level.imsSettings[self.imsType].hintString);
+
+	owner = self.owner;
+	owner ForceUseHintOff();
+
+    self maps\mp\_entityheadicons::setPlayerHeadIcon(level.teamBased ? self.team : owner, (0, 0, 45));
+	self MakeUsable();
+	self SetCanDamage(true);
+
+	// destroy any other ims and put this one in the list
+	if(IsDefined(owner.imsList))
+	{
+		foreach(ims in owner.imsList)
+		{
+			// make sure we aren't just picking up and placing the same one again
+			if(ims == self) continue;
+			ims notify("death");
+		}
+	}
+
+	owner.imsList = [];
+	owner.imsList[0] = self;
+
+	foreach (player in level.players)
+	{
+		if(player == owner) self enablePlayerUse(player);
+		else self disablePlayerUse(player);
+	}	
+
+	if(self.shouldSplash)
+	{
+		level thread maps\mp\_utility::teamPlayerCardSplash(level.imsSettings[self.imsType].splashName, owner);
+		self.shouldSplash = false;
+	}
+
+	// make sure we don't go too high if there's something above it
+	// need to shoot bullet traces from each pod and pick the lowest, this way it'll minimize instances where the sensor won't shoot because it's under a hole in the ceiling
+	positionOffset = (0, 0, 20);
+	traceOffset = (0, 0, 256);
+	results = [];
+	tagOrigin = self GetTagOrigin(level.imsSettings[self.imsType].tagExplosive1) + positionOffset;
+	results[0] = BulletTrace(tagOrigin, tagOrigin + (traceOffset - positionOffset), false, self);
+	tagOrigin = self GetTagOrigin(level.imsSettings[self.imsType].tagExplosive2) + positionOffset;
+	results[1] = BulletTrace(tagOrigin, tagOrigin + (traceOffset - positionOffset), false, self);
+	tagOrigin = self GetTagOrigin(level.imsSettings[self.imsType].tagExplosive3) + positionOffset;
+	results[2] = BulletTrace(tagOrigin, tagOrigin + (traceOffset - positionOffset), false, self);
+	tagOrigin = self GetTagOrigin(level.imsSettings[self.imsType].tagExplosive4) + positionOffset;
+	results[3] = BulletTrace(tagOrigin, tagOrigin + (traceOffset - positionOffset), false, self);
+	
+	lowestZ = results[0];
+	for(i = 0; i < results.size; i++)
+	{
+		if(results[i]["position"][2] < lowestZ["position"][2])
+			lowestZ = results[i];
+	}
+
+	// minus some units on the z so this will work in cramped places like in a train
+	self.attackHeightPos = lowestZ["position"] - (0, 0, 20);
+	// trigger height should be around 100 so you don't trigger it from the second floor
+	attackTrigger = Spawn("trigger_radius", self.origin, 0, 256, 100);
+	self.attackTrigger = attackTrigger;
+	// move at 200 units per second
+	self.attackMoveTime = Distance(self.origin, self.attackHeightPos) / 200;
+
+	self thread maps\mp\killstreaks\_ims::ims_blinky_light();
+	self thread maps\mp\killstreaks\_ims::ims_attackTargets();
+	self thread maps\mp\killstreaks\_ims::ims_playerConnected();
+	
+	foreach(player in level.players)
+		self thread maps\mp\killstreaks\_ims::ims_playerJoinedTeam(player);
+}

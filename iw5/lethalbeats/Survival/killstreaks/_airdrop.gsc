@@ -242,6 +242,7 @@ _dropthecrate(dropPoint, dropType, lbHeight, dropImmediately, crateOverride, sta
     dropCrate = createairdropcrate(self.owner, dropType, crateType, startPos);
     dropCrate.airdropId = self.airdropId;
     dropCrate thread _airDropCrateDeath();
+    dropCrate.killcament delete();
 
     switch (dropType)
     {

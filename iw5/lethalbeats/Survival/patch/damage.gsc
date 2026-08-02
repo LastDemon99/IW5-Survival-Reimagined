@@ -207,7 +207,7 @@ playerKilled_internal(eInflictor, attacker, victim, iDamage, sMeansOfDeath, sWea
         if (sMeansOfDeath == "MOD_GRENADE" && eInflictor == attacker)
             addAttacker(victim, attacker, eInflictor, sWeapon, iDamage, (0.0, 0.0, 0.0), vDir, sHitLoc, psOffsetTime, sMeansOfDeath);
 
-        doKillcam = 1;
+        doKillcam = 0;
         handleNormalDeath(lifeId, attacker, eInflictor, sWeapon, sMeansOfDeath);
         victim thread maps\mp\gametypes\_missions::playerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, sPrimaryWeapon, sHitLoc, attacker.modifiers);
         victim.pers["cur_death_streak"]++;

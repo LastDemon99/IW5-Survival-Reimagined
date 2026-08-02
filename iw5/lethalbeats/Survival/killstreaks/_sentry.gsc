@@ -157,10 +157,6 @@ sentryInitSentry(sentryType, owner)
 			self SetTopArc(80);
 			self SetDefaultDropPitch(-89.0);
 			self.laser_on = false;
-			killCamEnt = Spawn("script_model", self GetTagOrigin("tag_laser"));
-			killCamEnt LinkTo(self);
-			self.killcament = killCamEnt;
-			self.killcament setscriptmoverkillcam("explosive");
 			break;
 		default:
             self setdefaultdroppitch(-89.0);

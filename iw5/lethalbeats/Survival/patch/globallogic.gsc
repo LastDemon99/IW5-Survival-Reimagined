@@ -113,6 +113,8 @@ init()
     replaceFunc(maps\mp\perks\_perks::onPlayerConnect, ::blank);
     replaceFunc(maps\mp\killstreaks\_uav::onPlayerConnect, ::blank);
     replaceFunc(maps\mp\_utility::isEMPed, ::_isEMPed);
+    replaceFunc(maps\mp\_load::deletedestructiblekillcament, ::deleteDestructibleKillCamEnt);
+    replaceFunc(maps\mp\killstreaks\_ims::ims_setActive, lethalbeats\survival\patch\mines::ims_setActive);
 
     precacheShader("waypoint_revive");
 
@@ -1337,4 +1339,9 @@ patch_teamsInit()
 {
     maps\mp\gametypes\_teams::initScoreBoard();
     maps\mp\gametypes\_teams::setPlayerModels();
+}
+
+deleteDestructibleKillCamEnt()
+{
+	self.killCamEnt delete();
 }
