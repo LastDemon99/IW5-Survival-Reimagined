@@ -248,7 +248,7 @@ dogThink()
 			self.currentAnim = "";
 		}
 
-		if (!isDefined(target) || !dogIsValidTarget(target))
+		if (!isDefined(target) || !lethalbeats\survival\utility::survivor_filter(target))
 		{
 			target = self dogGetTarget();
 			self dogResetPath();
@@ -315,7 +315,7 @@ dogTurn180(targetYaw)
 
 dogAttack(target)
 {
-	if (self.isAttacking || self.isInPain || self.isConcussed || !dogIsValidTarget(target)) return;
+	if (self.isAttacking || self.isInPain || self.isConcussed || !lethalbeats\survival\utility::survivor_filter(target)) return;
 
 	self.isAttacking = true;
 	self dogSetAnim(RUN_ATTACK, true);
@@ -389,15 +389,6 @@ dogSetAnim(animation, force)
 	self scriptModelPlayAnim(DOG_PREFIX + animation);
 }
 
-dogIsValidTarget(target)
-{
-	if (!isDefined(target) || !isPlayer(target) || !isAlive(target) || target.dogKnockdown) return false;
-	if (isDefined(target.sessionState) && target.sessionState != "playing") return false;
-	if (isDefined(level.survivors_deaths) && isDefined(target.guid) && isDefined(level.survivors_deaths[target.guid])) return false;
-	if (isDefined(level.survivors_bleedout) && isDefined(target.guid) && isDefined(level.survivors_bleedout[target.guid])) return false;
-	return true;
-}
-
 dogGetTarget()
 {
 	targets = lethalbeats\player::players_get_list("allies");
@@ -406,7 +397,7 @@ dogGetTarget()
 
 	foreach(player in targets)
 	{
-		if (!self dogIsValidTarget(player)) continue;
+		if (!self lethalbeats\survival\utility::survivor_filter(player)) continue;
 		dist = distanceSquared(self.origin, player.origin);
 		if (!isDefined(bestDist) || dist < bestDist)
 		{
@@ -751,7 +742,7 @@ dogMoveTowards(dest, target)
 			continue;
 		}
 
-		if (isDefined(target) && !dogIsValidTarget(target)) return false;
+		if (isDefined(target) && !lethalbeats\survival\utility::survivor_filter(target)) return false;
 
 		delta = (dest[0] - self.origin[0], dest[1] - self.origin[1], 0);
 		distSq = lengthsquared(delta);

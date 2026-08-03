@@ -1,7 +1,6 @@
 #include lethalbeats\survival\utility;
 #include lethalbeats\array;
 #include lethalbeats\player;
-#include lethalbeats\botactor\ai_goap_attacker;
 
 #define GAME_MODE_LOADOUT "gamemodeLoadout"
 #define LOADOUT_PRIMARY_BUFF "loadoutPrimaryBuff"
@@ -33,25 +32,6 @@
 #define BOT_RESPAWN_DELAY_MIN 163
 #define BOT_RESPAWN_DELAY_MAX 164
 
-survival_goap_group()
-{
-	if (isDefined(level.survival_goap_group) && isDefined(level.survival_goap_group.active) && level.survival_goap_group.active)
-		return level.survival_goap_group;
-
-	grp = bot_goap_create(undefined, "survival");
-	grp bot_goap_set_option("flank_enabled", 1);
-	grp bot_goap_set_option("flank_mode", 2);
-	grp bot_goap_set_option("cover_nodes", 0);
-	grp bot_goap_set_option("full_max_per_target", 16);
-	grp bot_goap_set_option("flank_max_per_side", 4);
-	grp bot_goap_set_option("pressure_dist", 3000);
-	grp bot_goap_set_option("contact_dist", 1600);
-	grp bot_goap_set_option("flank_hold_ms", 2500);
-	grp bot_goap_set_option("hunt_route_steps", 4);
-
-	level.survival_goap_group = grp;
-	return grp;
-}
 
 onBotSpawn()
 {
@@ -181,12 +161,16 @@ onBotSpawn()
 		
 		self thread lethalbeats\survival\patch\mines::grenadeWatchUsage();
 		self maps\mp\_utility::setRecoilScale(0, 100);
-		if (self.primaryweapon == "riotshield_mp") self thread maps\mp\gametypes\_class::trackRiotShield();
-		else
+		if (self.primaryweapon == "riotshield_mp")
 		{
-			self lethalbeats\botactor\behavior::bot_set_engagement("free");
-			self lethalbeats\botactor\behavior::bot_do(lethalbeats\botactor\behavior::bot_task_goap(survival_goap_group()));
+			self lethalbeats\botactor\utility::bot_hold_melee_charge();
+			self thread maps\mp\gametypes\_class::trackRiotShield();
 		}
+
+		self lethalbeats\botactor\behavior::bot_set_engagement("free");
+		hunt = lethalbeats\botactor\behavior::bot_task_custom(lethalbeats\botactor\ai_hunter::bot_hunter_run);
+		self lethalbeats\botactor\behavior::bot_set_standing_task(hunt);
+		self lethalbeats\botactor\behavior::bot_do(hunt);
 	}
 }
 

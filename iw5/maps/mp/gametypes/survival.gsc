@@ -227,6 +227,12 @@ onStartGametype()
 	lethalbeats\survival\patch\globallogic::patch_callbacks();
 	lethalbeats\botactor\utility::bot_init();
 
+	lethalbeats\botactor\config::bot_config_set("grenade_flee", 1);
+	lethalbeats\botactor\config::bot_config_set("grenade_radius", 700);
+	lethalbeats\botactor\config::bot_config_set("grenade_windup_min_ms", 0);
+	lethalbeats\botactor\config::bot_config_set("grenade_windup_max_ms", 0);
+	lethalbeats\botactor\config::bot_config_set("path_searches_per_tick", 8);
+
 	if (!getDvarInt("survival_wave_start")) return;
 
 	level thread waitPlayers();
@@ -238,8 +244,12 @@ onStartGametype()
 
 	level thread level_vehicle_monitor();
 	level thread level_bots_give_ammo();
-	level thread botTargetMonitor();
+
+	lethalbeats\botactor\ai_hunter::bot_hunter_start(::getBots, ::gettSurvivors);
 }
+
+getBots() { return bots(undefined, true); }
+gettSurvivors() { return array_filter(level.players, ::survivor_filter); }
 
 onWaveStart()
 {
@@ -750,169 +760,6 @@ _getAxisSpawnSector(origin, center)
 _spawnPointFilter(i)
 {
 	return !is_shop_near(i.origin);
-}
-
-botTargetMonitor()
-{
-	level endon("game_ended");
-
-	for (;;)
-	{
-		aliveSurvivors = survivors(true);
-		aliveBots = bots(undefined, true);
-
-		if (!aliveSurvivors.size || !aliveBots.size)
-		{
-			wait 0.35;
-			continue;
-		}
-
-		assignCount = [];
-		assignBots = [];
-		botTargets = [];
-		targetQuota = [];
-
-		foreach (survivor in aliveSurvivors)
-		{
-			assignCount[survivor.guid] = 0;
-			assignBots[survivor.guid] = [];
-		}
-
-		// Equitable assignment for all alive survivors: each survivor gets
-		// floor(bots/survivors) and first remainder survivors get +1.
-		baseQuota = int(aliveBots.size / aliveSurvivors.size);
-		remainder = aliveBots.size - (baseQuota * aliveSurvivors.size);
-		for (i = 0; i < aliveSurvivors.size; i++)
-		{
-			survivor = aliveSurvivors[i];
-			targetQuota[survivor.guid] = baseQuota;
-			if (i < remainder)
-				targetQuota[survivor.guid] = targetQuota[survivor.guid] + 1;
-		}
-
-		// Assign each bot to the nearest survivor that still has quota.
-		foreach (bot in aliveBots)
-		{
-			best = undefined;
-			bestDistSq = undefined;
-
-			foreach (survivor in aliveSurvivors)
-			{
-				if (assignCount[survivor.guid] >= targetQuota[survivor.guid])
-					continue;
-
-				distSq = distanceSquared(bot.origin, survivor.origin);
-				if (!isDefined(best) || distSq < bestDistSq)
-				{
-					best = survivor;
-					bestDistSq = distSq;
-				}
-			}
-
-			if (!isDefined(best))
-			{
-				bestIndex = _botTargetNearestSurvivorIndex(bot, aliveSurvivors);
-				if (bestIndex < 0) continue;
-				best = aliveSurvivors[bestIndex];
-			}
-
-			list = assignBots[best.guid];
-			list[list.size] = bot;
-			assignBots[best.guid] = list;
-			assignCount[best.guid] = assignCount[best.guid] + 1;
-			botTargets[bot.guid] = best;
-		}
-
-		foreach (bot in aliveBots)
-		{
-			target = botTargets[bot.guid];
-			if (!isDefined(target) || !isDefined(target.origin)) continue;
-
-			needsIssue = !isDefined(bot.targetGuid) || bot.targetGuid != target.guid;
-			
-			if (!needsIssue)
-			{
-				if (!isDefined(bot.actor) || !isDefined(bot.actor[CHASE_TARGET]) || bot.actor[CHASE_TARGET] != target)
-					needsIssue = true;
-				else if (!bot.actor[SCRIPT_MOVE])
-				{
-					chaseMinSq = bot.actor[SKILL_CHASE_DIST_MIN];
-					if (!isDefined(chaseMinSq) || chaseMinSq <= 0) chaseMinSq = 0;
-					else chaseMinSq *= chaseMinSq; // Square it for comparison
-
-					if (distanceSquared(bot.origin, target.origin) > chaseMinSq + (64 * 64))
-						needsIssue = true;
-				}
-			}
-
-			if (needsIssue)
-			{
-				bot.targetGuid = target.guid;
-				if (bot lethalbeats\survival\utility::bot_is_dog() || bot.primaryweapon == "riotshield_mp") bot lethalbeats\botactor\utility::bot_melee_charge(target);
-				else if (isDefined(bot.goap))
-				{
-					bot.actor[CHASE_TARGET] = target;
-					bot lethalbeats\botactor\utility::bot_set_target(target);
-				}
-				else bot lethalbeats\botactor\utility::bot_chase(target);
-			}
-		}
-
-		wait 0.35;
-	}
-}
-
-_botTargetNearestSurvivorIndex(bot, aliveSurvivors)
-{
-	bestIndex = -1;
-	bestDistSq = -1;
-
-	for (i = 0; i < aliveSurvivors.size; i++)
-	{
-		survivor = aliveSurvivors[i];
-		if (!isDefined(survivor) || !isDefined(survivor.origin)) continue;
-
-		distSq = distanceSquared(bot.origin, survivor.origin);
-		if (bestIndex == -1 || distSq < bestDistSq)
-		{
-			bestIndex = i;
-			bestDistSq = distSq;
-		}
-	}
-
-	return bestIndex;
-}
-
-_botTargetFindByCount(aliveSurvivors, assignCount, findUnder, targetMin)
-{
-	best = undefined;
-	bestCount = undefined;
-
-	foreach (survivor in aliveSurvivors)
-	{
-		count = assignCount[survivor.guid];
-
-		if (findUnder)
-		{
-			if (count >= targetMin) continue;
-			if (!isDefined(best) || count < bestCount)
-			{
-				best = survivor;
-				bestCount = count;
-			}
-		}
-		else
-		{
-			if (count <= targetMin) continue;
-			if (!isDefined(best) || count > bestCount)
-			{
-				best = survivor;
-				bestCount = count;
-			}
-		}
-	}
-
-	return best;
 }
 
 _botTargetFindCountSurvivor(aliveSurvivors, assignCount, minCount)

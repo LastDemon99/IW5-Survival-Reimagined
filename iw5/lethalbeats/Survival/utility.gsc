@@ -1626,6 +1626,15 @@ survivor_wait_skip()
 	self waittill("skip_intermission");
 }
 
+survivor_filter(survivor)
+{
+	if (!isDefined(survivor) || !isPlayer(survivor) || survivor.team != "allies" || !isAlive(survivor) || survivor.dogKnockdown) return false;
+	if (isDefined(survivor.sessionState) && survivor.sessionState != "playing") return false;
+	if (isDefined(level.survivors_deaths) && isDefined(survivor.guid) && isDefined(level.survivors_deaths[survivor.guid])) return false;
+	if (isDefined(level.survivors_bleedout) && isDefined(survivor.guid) && isDefined(level.survivors_bleedout[survivor.guid])) return false;
+	return true;
+}
+
 /*
 ///DocStringBegin
 detail: <Trigger> survivor_trigger_filter(survivor <Player>): <Bool>
@@ -1634,7 +1643,7 @@ summary: Returns true if a player can use the trigger.
 */
 survivor_trigger_filter(survivor)
 {
-	if (survivor.team != "allies" || (isDefined(survivor.inLastStand) && survivor.inLastStand)) return false;
+	if (!survivor_filter(survivor)) return false;
 
 	// triggers priority, disable other nearby triggers
 	if (self.tag != "revive")
