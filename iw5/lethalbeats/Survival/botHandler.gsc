@@ -12,6 +12,7 @@
 
 #define INSTAKILL ["MOD_HEAD_SHOT", "MOD_MELEE", "MOD_RIFLE_BULLET"]
 #define EXPLOSIVE_DAMAGE ["MOD_EXPLOSIVE", "MOD_GRENADE", "MOD_GRENADE_SPLASH", "MOD_PROJECTILE", "MOD_PROJECTILE_SPLASH"]
+#define SHIELD_BULLET_DAMAGE ["MOD_PISTOL_BULLET", "MOD_RIFLE_BULLET", "MOD_EXPLOSIVE_BULLET"]
 
 #define DOG 0
 #define MARTYRDOM 1
@@ -221,6 +222,9 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 			eAttacker.summary["hits"]++;
 			if (eAttacker.summary["hits"] <= eAttacker.summary["totalshots"]) eAttacker.summary["accuracy"] = clamp(eAttacker.summary["hits"] / eAttacker.summary["totalshots"], 0.0, 1.0) * 100;
 			iDamage = self weaponDamageModifier(sWeapon, iDamage, sMeansOfDeath, eAttacker, isExplosiveDamage);
+
+			if (isDefined(sHitLoc) && sHitLoc == "shield" && array_contains(SHIELD_BULLET_DAMAGE, sMeansOfDeath) && eAttacker player_has_perk("specialty_bulletpenetration"))
+				sHitLoc = "torso_upper";
 		}
 
 		if(isDefined(self.damageData) && !self.inLastStand && !isExplosiveDamage && !array_contains(INSTAKILL, sMeansOfDeath))
