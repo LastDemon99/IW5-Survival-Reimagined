@@ -59,7 +59,7 @@ _handleDamage(inflictor, attacker, damage, iDFlags, meansOfDeath, weapon, point,
     }
 
     if (isexplosivedamagemod(meansOfDeath) && weapon == "destructible_car") modifiedDamage = vehicle.maxhealth;
-    if (isdefined(attacker.owner) && isplayer(attacker.owner)) attacker.owner maps\mp\gametypes\_damagefeedback::updateDamageFeedback("remote_tank");
+    if (isdefined(attacker) && isdefined(attacker.owner) && isplayer(attacker.owner)) attacker.owner maps\mp\gametypes\_damagefeedback::updateDamageFeedback("remote_tank");
 
     if (isdefined(weapon))
     {

@@ -387,10 +387,17 @@ lbBurstFireController()
     self.vehicle endon("death");
     level endon("game_ended");
 
+    firing = false;
+
     for (;;)
     {
-        self waittill("turretstatechange");		
-        if (self isfiringturret()) thread lbBurstFireStart();
+        self waittill("turretstatechange");
+		
+		isFiring = self isfiringturret();
+        if (isFiring == firing) continue;
+
+        firing = isFiring;
+        if (firing) thread lbBurstFireStart();
         else self notify("stop_shooting");
     }
 }
@@ -491,7 +498,7 @@ lbSurvivalHandleDamage()
 			attacker maps\mp\gametypes\_damagefeedback::updateDamageFeedback("helicopter");
 		}
 		
-		if(isDefined(attacker.owner) && isPlayer(attacker.owner)) 
+		if(isDefined(attacker) && isDefined(attacker.owner) && isPlayer(attacker.owner))
 			attacker.owner maps\mp\gametypes\_damagefeedback::updateDamageFeedback("helicopter");
 		
 		if (self.damageTaken >= self.customHealth)
@@ -500,7 +507,7 @@ lbSurvivalHandleDamage()
 			stopfxontag(level.chopper_fx["damage"]["heavy_smoke"], self, "tail_rotor_jnt");
 			stopfxontag(level.chopper_fx["damage"]["on_fire"], self, "tail_rotor_jnt");
 			
-			if (isPlayer(attacker))
+			if (isDefined(attacker) && isPlayer(attacker))
 			{
 				attacker notify("destroyed_helicopter");
 				attacker notify("destroyed_killstreak", weapon);

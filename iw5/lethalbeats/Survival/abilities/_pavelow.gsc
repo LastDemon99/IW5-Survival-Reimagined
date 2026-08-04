@@ -164,6 +164,7 @@ _heli_damage_monitor()
     {
         self waittill("damage", damage, attacker, direction_vec, point, meansOfDeath, modelName, tagName, partName, iDFlags, weapon);
 
+        if (!isdefined(attacker)) continue;
         if (isdefined(attacker.class) && attacker.class == "worldspawn") continue;
         if (attacker == self || !maps\mp\gametypes\_weapons::friendlyFireCheck(self.owner, attacker))
             continue;

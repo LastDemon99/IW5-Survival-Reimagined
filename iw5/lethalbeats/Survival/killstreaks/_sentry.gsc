@@ -322,15 +322,15 @@ sentryHandleDamage()
 		sentryOwner = self.owner;
 		sentryTeam = sentryOwner.team;
 
-		if (isDefined(attacker.owner)) attacker = attacker.owner;
-		if (meansOfDeath == "MOD_MELEE" && attacker == sentryOwner)
+		if (isDefined(attacker) && isDefined(attacker.owner)) attacker = attacker.owner;
+		if (meansOfDeath == "MOD_MELEE" && isDefined(attacker) && attacker == sentryOwner)
 		{
 			attacker maps\mp\gametypes\_damagefeedback::updateDamageFeedback("sentry");
 			self.damagetaken += self.maxhealth;
 		}
 		else
 		{
-			if (sentryTeam == "allies" || sentryTeam == attacker.team) continue;
+			if (sentryTeam == "allies" || (isDefined(attacker) && isDefined(attacker.team) && sentryTeam == attacker.team)) continue;
 
 			if (isdefined(iDFlags) && iDFlags & level.idflags_penetration)
 				self.wasdamagedfrombulletpenetration = 1;
