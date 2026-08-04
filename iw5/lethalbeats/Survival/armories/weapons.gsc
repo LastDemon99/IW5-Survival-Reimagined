@@ -315,14 +315,14 @@ isDisabledOption(item, index)
             if (weapon[CLASS] == "riot" && (index != INDEX_ADD_BUFF && index != INDEX_BUFF_SLOT)) return true;
             if (index == INDEX_ATTACH_SLOT)
             {
-                if (weapon[BASENAME] == "iw5_mp412" || weapon[BASENAME] == "iw5_44magnum" || weapon[BASENAME] == "iw5_1887") return true;
+                if (weapon[BASENAME] == "iw5_mp412" || weapon[BASENAME] == "iw5_44magnum") return true;
                 return weapon[ATTACH_SLOTS] == weapon[MAX_ATTACHS];
             }
             if (index == INDEX_BUFF_SLOT)
             {
                 return weapon[BUFF_SLOTS] == (weapon[CLASS] == "riot" ? 2 : 3);
             }
-            return index == INDEX_ADD_ATTACH && weapon[BASENAME] == "iw5_1887";
+            return false;
         case WEAPON_ATTACHS:
             if (!(weapon[ATTACH_SLOTS] - weapon[ATTACHS].size)) return true;
             item = attach_build(item, weapon[BASENAME]);

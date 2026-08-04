@@ -213,6 +213,12 @@ onStartGametype()
 
 	lethalbeats\weapon::weapon_custom_add("pistol", "iw5_iw4beretta", "M9", "weapon_beretta", ["silencer02", "xmags", "akimbo"], 2);
 
+	lethalbeats\weapon::weapon_custom_add("shotgun", "iw5_1887", "Model 1887", "weapon_model1887", ["akimbo"], 1);
+
+	smg = array_append(smg, "hamrhybrid");
+	lethalbeats\weapon::weapon_custom_add("smg", "iw5_ump45", "UMP45", "weapon_ump45_iw5", smg);
+	lethalbeats\weapon::weapon_custom_add("smg", "iw5_p90", "P90", "weapon_p90_iw5", smg);
+
 	lethalbeats\utility::clear_score_info();
 	
 	level.startTime = gettime();
