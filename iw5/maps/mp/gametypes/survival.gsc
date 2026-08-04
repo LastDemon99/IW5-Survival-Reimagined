@@ -188,6 +188,31 @@ onStartGametype()
 	maps\mp\killstreaks\_airstrike::init();
 
     lethalbeats\weapon::weapon_init();
+	assault = ["acog", "reflex", "eotech", "thermal", "silencer", "heartbeat", "xmags"];
+	lethalbeats\weapon::weapon_custom_add("assault", "iw5_iw4fal", "FAL", "weapon_fn_fal", assault);
+	lethalbeats\weapon::weapon_custom_add("assault", "iw5_iw4famas", "FAMAS", "weapon_famas", assault);
+	lethalbeats\weapon::weapon_custom_add("assault", "iw5_iw4fn2000", "F2000", "weapon_fn2000", assault);
+	lethalbeats\weapon::weapon_custom_add("assault", "iw5_iw4tavor", "TAR-21", "weapon_tavor", assault);
+
+	smg = ["acogsmg", "reflexsmg", "eotechsmg", "thermalsmg", "silencer", "xmags", "rof", "akimbo"];
+	lethalbeats\weapon::weapon_custom_add("smg", "iw5_iw4mp5k", "MP5K", "weapon_mp5k", smg);
+	lethalbeats\weapon::weapon_custom_add("smg", "iw5_iw4uzi", "Mini-Uzi", "weapon_mini_uzi", smg);
+	lethalbeats\weapon::weapon_custom_add("smg", "iw5_iw4kriss", "Vector", "weapon_kriss", smg);
+
+	lmg = ["acog", "reflexlmg", "eotechlmg", "thermal", "grip", "silencer", "heartbeat", "xmags"];
+	lethalbeats\weapon::weapon_custom_add("lmg", "iw5_iw4m240", "M240", "weapon_m240", ["acog", "reflexlmg", "eotechlmg", "thermal", "hybrid", "silencer", "heartbeat", "xmags"]);
+	lethalbeats\weapon::weapon_custom_add("lmg", "iw5_iw4aug", "AUG HBAR", "weapon_steyr_lmg", lmg);
+	lethalbeats\weapon::weapon_custom_add("lmg", "iw5_iw4rpd", "RPD", "weapon_rpd", lmg);
+
+	lethalbeats\weapon::weapon_custom_add("shotgun", "iw5_iw4m1014", "M1014", "weapon_benelli_super_90", ["reflex", "eotech", "grip", "silencer03", "xmags"]);
+	lethalbeats\weapon::weapon_custom_add("shotgun", "iw5_iw4ranger", "Ranger", "weapon_sawed_off_double_barrel", ["akimbo"], 1);
+
+	machinePistol = ["reflexsmg", "eotechsmg", "silencer02", "xmags", "akimbo"];
+	lethalbeats\weapon::weapon_custom_add("machine_pistol", "iw5_iw4beretta393", "M93 Raffica", "weapon_beretta_393", machinePistol);
+	lethalbeats\weapon::weapon_custom_add("machine_pistol", "iw5_iw4pp2000", "PP2000", "weapon_pp2000", machinePistol);
+
+	lethalbeats\weapon::weapon_custom_add("pistol", "iw5_iw4beretta", "M9", "weapon_beretta", ["silencer02", "xmags", "akimbo"], 2);
+
 	lethalbeats\utility::clear_score_info();
 	
 	level.startTime = gettime();

@@ -438,7 +438,7 @@ getWeaponData(weapon)
 
 getAmmoPrice(weapon) // self -> player
 {
-    price = getPrice("ammo_" + weapon_get_class(weapon));
+    price = getPrice("ammo_" + weapon_get_class(weapon_get_baseName(weapon)));
     foreach(attach in weapon_get_current_attachs(weapon))
     {
         if (attach_is_gl(attach)) price += getPrice("ammo_gl");
