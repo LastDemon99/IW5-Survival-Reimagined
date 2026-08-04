@@ -152,9 +152,6 @@ playerKilled_internal(eInflictor, attacker, victim, iDamage, sMeansOfDeath, sWea
         }
     }
 
-    victim maps\mp\gametypes\_weapons::dropScavengerForDeath(attacker);
-    victim maps\mp\gametypes\_weapons::dropWeaponForDeath(attacker);
-
     if (!isFauxDeath)
     {
         victim.sessionstate = "dead";

@@ -45,6 +45,7 @@ main()
 	setDvarIfUninitialized("survival_enemy_difficulty", 1);
 	setDvarIfUninitialized("survival_dropped_weapons_limit", 15);
 	setDvarIfUninitialized("survival_corpses_limit", 10);
+	setDvarIfUninitialized("survival_scavenger_ratio", 20);
 	setDvarIfUninitialized("sv_mapRotation", "dsr survival map mp_dome map mp_mogadishu map mp_bootleg map mp_lambeth map mp_hardhat map mp_interchange map mp_alpha map mp_bravo map mp_plaza2 map mp_exchange map mp_carbon map mp_paris map mp_radar map mp_seatown map mp_underground map mp_village map mp_favela map mp_highrise map mp_nightshift map mp_nuked map mp_rust");
 
 	setDvar("sv_cheats", 1);	

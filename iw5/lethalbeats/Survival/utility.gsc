@@ -221,6 +221,15 @@ player_get_max_nades(nade)
 	}
 }
 
+player_get_nades()
+{
+	nades = [];
+	foreach(nade, count in self.grenades)
+		if (self hasWeapon(nade))
+			nades[nades.size] = nade;
+	return nades;
+}
+
 /*
 ///DocStringBegin
 detail: <Player> player_has_nades(nade: <String>): <Bool>
@@ -419,42 +428,6 @@ summary: Retrieves custom weapon data. It checks the player's cache, then a glob
 player_get_weapon_data(weapon)
 {
     return self lethalbeats\survival\armories\weapons::getWeaponData(weapon);
-}
-
-player_give_random_ammo(weapon, minClips, maxClips)
-{
-	if (!isDefined(weapon)) weapon = self getCurrentWeapon();
-	if (!isDefined(minClips)) minClips = 2;
-	if (!isDefined(maxClips)) maxClips = 4;
-
-	if (minClips > maxClips) minClips = maxClips;
-
-	clipSize = weaponClipSize(weapon);
-	maxStock = weaponMaxAmmo(weapon);
-
-	if (clipSize == 0 || maxStock == 0)
-	{
-		self player_give_max_ammo(weapon);
-		return;
-	}
-
-	numClipsToGive = randomIntRange(minClips, maxClips + 1);
-	randomAmmo = numClipsToGive * clipSize;
-	newStockAmmo = int(min(randomAmmo, maxStock));
-
-	self setWeaponAmmoStock(weapon, newStockAmmo);
-	self setWeaponAmmoClip(weapon, clipSize);
-	
-	if (string_starts_with(weapon, "alt_")) return;
-
-	if (weapon_has_attach_akimbo(weapon)) self setWeaponAmmoClip(weapon, clipSize, "left");
-
-	if (weapon_has_attach_alt(weapon))
-	{
-		altWeapon = "alt_" + weapon;
-		self giveMaxAmmo(altWeapon);
-		self setWeaponAmmoClip(altWeapon, weaponClipSize(altWeapon));
-	}
 }
 
 player_hide() // `playerHide` func is only reversible after respawn... there is no playerShow func, what the hell? ⊂(´•﹏•`⊂)?

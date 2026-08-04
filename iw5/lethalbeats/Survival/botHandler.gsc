@@ -268,6 +268,19 @@ onBotKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLo
 	}
 
 	if (self.dropWeapon) self thread player_drop_weapon();
+
+	if (isDefined(eAttacker) && eAttacker player_is_survivor() && eAttacker player_has_perk("specialty_scavenger"))
+	{
+		scavenger_ratio = getDvarInt("survival_scavenger_ratio");
+		if (scavenger_ratio < 0) scavenger_ratio = 0;
+		else if (scavenger_ratio > 100) scavenger_ratio = 100;
+		
+		if (lethalbeats\math::math_chance(scavenger_ratio))
+		{
+			scavengerBag = self dropScavengerBag("scavenger_bag_mp");
+			scavengerBag thread onScavengerBagPickup();
+		}
+	}
 	
 	self [[level.prevCallbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 }
@@ -439,6 +452,31 @@ onStunWatcher()
 	}
 
 	self.stuned = false;
+}
+
+onScavengerBagPickup()
+{
+ 	self endon("death");
+    level endon("game_ended");
+    self waittill("scavenger", player);
+
+	foreach(weapon in player player_get_weapons())
+		if (weapon == player getCurrentWeapon() || lethalbeats\math::math_chance(50))
+			player player_give_random_ammo(undefined, 10, 20);
+
+	foreach(nade in player player_get_nades())
+	{
+		if (nade == "claymore_mp" || nade == "c4_mp")
+		{
+			if (lethalbeats\math::math_chance(10))
+				player player_add_nades(nade, 1);
+		}
+		else if (lethalbeats\math::math_chance(20))
+			player player_add_nades(nade, 1);
+	}
+
+    player playlocalsound("scavenger_pack_pickup");
+	player maps\mp\gametypes\_damagefeedback::updatedamagefeedback("scavenger");
 }
 
 weaponDamageModifier(weapon, damage, meansOfDeath, attacker, isExplosiveDamage)

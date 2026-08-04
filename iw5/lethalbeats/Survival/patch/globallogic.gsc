@@ -37,7 +37,6 @@ init()
     replacefunc(maps\mp\_utility::isKillstreakWeapon, ::patch_iskillstreakweapon); // enable c4 & claymore action slot
     replacefunc(maps\mp\gametypes\_weapons::watchWeaponUsage, ::patch_watchWeaponUsage); // fix last stand
 	replacefunc(maps\mp\gametypes\_spawnlogic::getAllOtherPlayers, ::_survivor_alives); // get spawnpoints dm will check getallotherplayers, now where the survivors are
-    replacefunc(maps\mp\gametypes\_weapons::dropWeaponForDeath, ::blank); // allows pick up ammunition regardless of the weapon attachs
     replacefunc(maps\mp\gametypes\_battlechatter_mp::sayLocalSound, ::patch_saylocalsound);
     replacefunc(maps\mp\gametypes\_gamelogic::threadedSetWeaponStatByName, ::patch_threadedSetWeaponStatByName);
     replaceFunc(maps\mp\gametypes\_weapons::getDamageableEnts, ::patch_getDamageableEnts);

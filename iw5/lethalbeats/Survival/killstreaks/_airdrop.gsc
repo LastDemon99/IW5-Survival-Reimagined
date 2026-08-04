@@ -19,6 +19,7 @@ init()
     game["strings"]["specialty_fastreload_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
     game["strings"]["_specialty_blastshield_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
     game["strings"]["specialty_detectexplosive_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
+    game["strings"]["specialty_scavenger_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
 
 	addCrateType("minigun_turret", "minigun_turret", 20, ::_killstreakCrateThink);
 	addCrateType("gl_turret", "gl_turret", 20, ::_killstreakCrateThink);
@@ -29,6 +30,7 @@ init()
     addCrateType("perk_fastreload", "specialty_fastreload_ks", 20, ::_killstreakCrateThink);
     addCrateType("perk_blastshield", "_specialty_blastshield_ks", 20, ::_killstreakCrateThink);
     addCrateType("perk_sitrep", "specialty_detectexplosive_ks", 20, ::_killstreakCrateThink);
+    addCrateType("perk_scavenger", "specialty_scavenger_ks", 20, ::_killstreakCrateThink);
 }
 
 giveAirDrop(type)
@@ -64,6 +66,8 @@ _getcratetypefordroptype(dropType)
             return "_specialty_blastshield_ks";
         case "perk_sitrep":
             return "specialty_detectexplosive_ks";
+        case "perk_scavenger":
+            return "specialty_scavenger_ks";
         case "airdrop_sentry_minigun":
             return "sentry";
         case "airdrop_predator_missile":

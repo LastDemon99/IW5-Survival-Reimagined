@@ -29,6 +29,7 @@
 #define FAST_RELOAD 4
 #define BLAST_SHIELD 5
 #define SITREP 6
+#define SCAVENGER 7
 
 // self -> shop
 // self.owner -> player
@@ -108,6 +109,9 @@ onBuy(item, price, index)
             break;
         case SITREP:
              self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_sitrep");
+            break;
+        case SCAVENGER:
+             self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_scavenger");
             break;
     }
     self.owner buyItem(price);
