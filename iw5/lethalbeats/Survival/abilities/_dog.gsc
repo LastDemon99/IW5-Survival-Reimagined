@@ -464,6 +464,7 @@ dogKnockdown(player)
 	self endon("dog_death");
 	self endon("dog_pain");
 
+	player lethalbeats\dynamicmenus\dynamic_shop::closeShop();
 	player setStance("stand");
 	player.dogKnockdown = true;
 

@@ -441,6 +441,7 @@ player_hide() // `playerHide` func is only reversible after respawn... there is 
 	{
 		hideData["weaponData"][0] = self player_get_weapon_data(primary);
 		hideData["ammoData"][0] = self player_get_ammo_data(primary);
+		self takeWeapon(primary);
 	}
 
 	secondary = self player_get_secondary();
@@ -448,14 +449,14 @@ player_hide() // `playerHide` func is only reversible after respawn... there is 
 	{
 		hideData["weaponData"][1] = self player_get_weapon_data(secondary);
 		hideData["ammoData"][1] = self player_get_ammo_data(secondary);
+		self takeWeapon(secondary);
 	}
 	
 	self.hideData = hideData;
 
 	self detachall();
 	self attach("null_head", "", true);
-	self setmodel("null_body");	
-	self player_take_all_weapons(true); // do not show a linked world weapon model
+	self setmodel("null_body");
 }
 
 player_show()
