@@ -46,6 +46,7 @@ main()
 	setDvarIfUninitialized("survival_dropped_weapons_limit", 15);
 	setDvarIfUninitialized("survival_corpses_limit", 10);
 	setDvarIfUninitialized("survival_scavenger_ratio", 20);
+	setDvarIfUninitialized("survival_wave_cleanup_interval", 30);
 	setDvarIfUninitialized("sv_mapRotation", "dsr survival map mp_dome map mp_mogadishu map mp_bootleg map mp_lambeth map mp_hardhat map mp_interchange map mp_alpha map mp_bravo map mp_plaza2 map mp_exchange map mp_carbon map mp_paris map mp_radar map mp_seatown map mp_underground map mp_village map mp_favela map mp_highrise map mp_nightshift map mp_nuked map mp_rust");
 
 	setDvar("sv_cheats", 1);	
@@ -292,7 +293,19 @@ onWaveStart()
 		level waittill("wave_start");
 		
 		if(!level.wave_num) level.wave_num = level_get_wave();
-		else level.wave_num++;
+		else
+		{
+			level.wave_num++;
+
+			cleanupInterval = getDvarInt("survival_wave_cleanup_interval");
+			if (cleanupInterval && (level.wave_num - 1) % cleanupInterval == 0)
+			{
+				foreach(player in level.players) if (player isTestClient()) kick(player getEntityNumber());
+				level_save_state();
+				map_restart(1);
+				return;
+			}
+		}
 
 		print("Wave: " + level.wave_num);
 		survivors_call(::survivor_wave_init);
