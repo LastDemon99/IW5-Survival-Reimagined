@@ -65,8 +65,9 @@ onInit()
 {
     player = self.owner;
     weapon = player getCurrentWeapon();
+    weaponClass =  weapon_get_class(weapon);
 
-    if (weapon_get_class(weapon) == "explosive")
+    if (weapon == "none" || weaponClass == "explosive" || weaponClass == "killstreak")
     {
         weapon = player.prevWeapon;
         player switchToWeaponImmediate(weapon);
