@@ -3,6 +3,20 @@ giveStreak(streak)
     self [[level.killStreakFuncs[streak]]]();
 }
 
+giveIMS()
+{
+    self endon("death");
+    for(;;)
+    {
+        if (level.botsIMS.size < getDvarInt("survival_bot_ims_limit"))
+        {
+            self giveStreak("ims");
+            self waittill("placed_ims");
+        }
+        wait 30;
+    }
+}
+
 giveEmp()
 {
 	self [[level.killStreakFuncs["emp"]]]();

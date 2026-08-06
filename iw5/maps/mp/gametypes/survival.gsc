@@ -45,6 +45,7 @@ main()
 	setDvarIfUninitialized("survival_enemy_difficulty", 1);
 	setDvarIfUninitialized("survival_dropped_weapons_limit", 15);
 	setDvarIfUninitialized("survival_corpses_limit", 10);
+	setDvarIfUninitialized("survival_bot_ims_limit", 4);
 	setDvarIfUninitialized("survival_scavenger_ratio", 20);
 	setDvarIfUninitialized("survival_wave_cleanup_interval", 30);
 	setDvarIfUninitialized("sv_mapRotation", "dsr survival map mp_dome map mp_mogadishu map mp_bootleg map mp_lambeth map mp_hardhat map mp_interchange map mp_alpha map mp_bravo map mp_plaza2 map mp_exchange map mp_carbon map mp_paris map mp_radar map mp_seatown map mp_underground map mp_village map mp_favela map mp_highrise map mp_nightshift map mp_nuked map mp_rust");
@@ -177,6 +178,7 @@ onStartGametype()
     lethalbeats\survival\killstreaks\_airdrop::init();
     lethalbeats\Survival\abilities\_chopper::init();
     lethalbeats\survival\killstreaks\_sentry::init();
+	lethalbeats\survival\killstreaks\_ims::init();
     level thread lethalbeats\survival\killstreaks\_uav::init();
 
     lethalbeats\survival\abilities\_chemical::init();
@@ -245,6 +247,7 @@ onStartGametype()
 	level.claymores = [];
 	level.droppedWeapons = [];
 	level.corpses = [];
+	level.botsIMS = [];
 	level.rankedmatch = 0;
 	level.bots_maxknifedistance = 128 * 128;
 	level.blockWeaponDrops = 1;

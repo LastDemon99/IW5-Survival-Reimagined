@@ -117,7 +117,7 @@ onBotSpawn()
 					self thread lethalbeats\Survival\abilities\_killstreaks::giveEmp();
 					break;
 				case IMS:
-					if (level.ims.size < 4) self thread lethalbeats\survival\abilities\_killstreaks::giveStreak("ims");
+					self thread lethalbeats\survival\abilities\_killstreaks::giveIMS();
 					break;
 				case SENTRY:
 					if (level.turrets.size < 6) self thread lethalbeats\survival\abilities\_killstreaks::giveStreak("sentry");
