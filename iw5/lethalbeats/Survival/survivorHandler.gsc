@@ -294,6 +294,8 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 		if (isDefined(self.currMenu)) self lethalbeats\DynamicMenus\dynamic_shop::closeShop();
 		self survivor_take_body_armor();
 	}
+
+	self player_drop_weapon();
 	
 	self [[level.prevCallbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);
 }
@@ -739,7 +741,7 @@ dropWeaponMonitor()
 			continue;
 		}
 
-		self player_drop_weapon();
+		self player_drop_weapon(false);
 		self playSound("ammo_crate_use");
 
 		weapons = lethalbeats\player::player_get_weapons();

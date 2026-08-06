@@ -59,6 +59,7 @@ onBotSpawn()
 
 		self.primaryweapon = self player_get_primary();
 		self.currentweaponatspawn = self.primaryweapon;
+		self.prevWeapon = self.currentweaponatspawn;
 		self.saved_lastweapon = self.prevWeapon;
 
 		self.targetGuid = undefined;

@@ -482,32 +482,88 @@ player_is_valid_target()
 	return self survivor_is_alive() && !self.inLastStand;
 }
 
-player_drop_weapon()
-{ 
+player_drop_weapon(isDeath)
+{
     if (!self.dropWeapon || is_shop_near(self.origin)) return;
+	if (!isDefined(isDeath)) isDeath = true;
 
-    weapon = self getCurrentWeapon();
-    if (!isdefined(weapon) || weapon == "none" || !self hasweapon(weapon)) return;
-    if (lethalbeats\string::string_starts_with(weapon, "alt_")) weapon = getSubStr(weapon, 4, weapon.size);
-	self.lastdroppableweapon = weapon;
+	isSurvivor = self player_is_survivor();
+	self player_take_all_weapon_buffs();
 
-    if (self player_is_survivor())
-    {
-        weaponData = self player_get_weapon_data(weapon);
-        ammoData = self player_get_ammo_data(weapon);
-		self player_take_all_weapon_buffs();
-    }
-    else
-    {
-        weaponData = undefined;
-        ammoData = undefined;
-    }
+	if (!isSurvivor || !isDeath)
+	{
+		weapon = self getCurrentWeapon();
+		if (!isdefined(weapon) || weapon == "none" || weapon_get_class(weapon) == "explosive") weapon = self.prevWeapon;
+		if (!isdefined(weapon)) return;
+
+		if (lethalbeats\string::string_starts_with(weapon, "alt_")) weapon = getSubStr(weapon, 4, weapon.size);
+		self.lastdroppableweapon = weapon;
+
+		if (isSurvivor)
+			self _dropWeapon(weapon, self player_get_ammo_data(weapon), self player_get_weapon_data(weapon), true);
+		else
+			self _dropWeapon(weapon, undefined, undefined, false);
+
+		return;
+	}
+
+	slot = 0;
+	foreach(weapon in player_get_weapons())
+	{
+		self _dropWeapon(weapon, self player_get_ammo_data(weapon), self player_get_weapon_data(weapon), false, slot);
+		slot++;
+	}
+}
+
+_dropWeapon(weapon, ammoData, weaponData, throw, slot)
+{
+	if (!isDefined(slot)) slot = 0;
 
 	self takeWeapon(weapon);
 
-    displayName = lethalbeats\weapon::weapon_get_display_name(weapon);
+	displayName = lethalbeats\weapon::weapon_get_display_name(weapon);
     modelName = lethalbeats\weapon::weapon_get_model(weapon);
+	weaponModel = throw ? self _dropWeaponThrown(modelName) : self _dropWeaponPlaced(modelName, slot);
 
+    trigger = lethalbeats\trigger::trigger_create(weaponModel.origin, 45);
+	
+	weaponModel.trigger = trigger;
+
+	if (self player_is_bot()) add_dropped_weapon(weaponModel);
+	else weaponModel thread _deleteWeaponAfterAWhile();
+
+    trigger.owner = self;
+	trigger.weapon = weapon;
+    trigger lethalbeats\trigger::trigger_set_use("Hold ^3[{+activate}] ^7to pick up " + displayName);
+    trigger lethalbeats\trigger::trigger_set_enable_condition(::_weaponPickupFilter);
+    trigger thread _weaponPickupMonitor(weapon, ammoData, weaponData, weaponModel);
+    trigger thread _ammoPickupMonitor(weapon, ammoData, weaponModel);
+	trigger thread _onModelDeath(weaponModel);
+}
+
+_dropWeaponPlaced(modelName, slot)
+{
+	origin = slot ? self.origin + anglesToForward(self getPlayerAngles()) * 20 : self.origin;
+
+    ground = playerPhysicsTrace(origin, origin - (0, 0, 1024), false, self.body);
+    if (!isDefined(ground))
+        ground = origin;
+
+    dropAngles = (0, self.angles[1], 0);
+    normalTrace = bullettrace(origin + (0, 0, 20), ground - (0, 0, 32), false, self);
+    if (isDefined(normalTrace) && isDefined(normalTrace["normal"]))
+        dropAngles = lethalbeats\vector::vector_angles_orient_to_normal(normalTrace["normal"], self.angles[1]) + (0, 0, 90);
+
+    weaponModel = lethalbeats\utility::spawn_model(ground + (0, 0, 0.5), modelName);
+    weaponModel.angles = dropAngles;
+
+	if (slot) weaponModel rotateYaw(45, 0.15);
+
+    return weaponModel;
+}
+
+_dropWeaponThrown(modelName)
+{
     forward = anglesToForward(self getPlayerAngles());
     start = self getEye() + (forward * 10);
     forwardPush = (forward[0] * 60, forward[1] * 60, 0);
@@ -520,22 +576,41 @@ player_drop_weapon()
     weaponModel rotateVelocity(randomRotation, 1.2, 0.1);
     weaponModel moveGravity(moveVector, 1.2);
 
-    result = weaponModel _waitDropWeapon();
-    weaponModel.origin = result[0];
-    weaponModel.angles = result[1];
+	weaponModel endon("death");
+    for(i = 0; i < 100; i++)
+    {
+        trace = bullettrace(weaponModel.origin, weaponModel.origin - (0, 0, 35), false, weaponModel);
+        if (isDefined(trace["entity"]) || !isDefined(trace["surfacetype"]) || trace["surfacetype"] == "none")
+        {
+            wait 0.05;
+            continue;
+        }
 
-    trigger = lethalbeats\trigger::trigger_create(weaponModel.origin, 45);
-	
-	weaponModel.trigger = trigger;
-	add_dropped_weapon(weaponModel);
+        angles = lethalbeats\vector::vector_angles_orient_to_normal(trace["normal"], weaponModel.angles[1]);
+		weaponModel.origin = trace["position"] + (0, 0, 0.5);
+    	weaponModel.angles = angles + (0, 0, 90);
+		break;
+    }
+    return weaponModel;
+}
 
-    trigger.owner = self;
-	trigger.weapon = weapon;
-    trigger lethalbeats\trigger::trigger_set_use("Hold ^3[{+activate}] ^7to pick up " + displayName);
-    trigger lethalbeats\trigger::trigger_set_enable_condition(::_weaponPickupFilter);
-    trigger thread _weaponPickupMonitor(weapon, ammoData, weaponData, weaponModel);
-    trigger thread _ammoPickupMonitor(weapon, ammoData, weaponModel);
-	trigger thread _onModelDeath(weaponModel);
+_deleteWeaponAfterAWhile()
+{
+	self endon("death");
+	self.trigger endon("ammo_pickup");
+	self.trigger endon("weapon_pickup");
+
+	waitWave = level.wave_num + 2;
+
+	for(;;)
+	{
+		level waittill("wave_start");
+		if (level.wave_num >= waitWave)
+		{
+			if (isDefined(self.trigger)) self.trigger lethalbeats\trigger::trigger_delete();
+			self delete();
+		}
+	}
 }
 
 _onModelDeath(weaponModel)
@@ -543,25 +618,6 @@ _onModelDeath(weaponModel)
 	self endon("death");
 	weaponModel waittill("death");
 	self lethalbeats\trigger::trigger_delete();
-}
-
-_waitDropWeapon()
-{
-    self endon("death");
-    for(i = 0; i < 100; i++)
-    {
-        trace = bullettrace(self.origin, self.origin - (0, 0, 35), false, self);
-        if (isDefined(trace["entity"]) || !isDefined(trace["surfacetype"]) || trace["surfacetype"] == "none")
-        {
-            wait 0.05;
-            continue;
-        }
-
-        angles = lethalbeats\vector::vector_angles_orient_to_normal(trace["normal"], self.angles[1]);
-        return [trace["position"] + (0, 0, 0.5), angles + (0, 0, 90)];
-    }
-    waittillframeend;
-    return [self.origin, self.angles];
 }
 
 _weaponPickupFilter(player)
@@ -604,7 +660,7 @@ _weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
         weapons = player player_get_weapons();
         if (weapons.size > 1)
         {
-            player player_drop_weapon();
+            player player_drop_weapon(false);
             if (player hasWeapon(currWeapon))
             {
                 player player_take_all_weapon_buffs();
