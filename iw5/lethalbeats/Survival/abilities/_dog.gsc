@@ -45,14 +45,14 @@
 #define DOG_MAX_ORIENT_ROLL 28
 #define DOG_SEPARATION_RADIUS 35
 
+#define DOG_STEP_Z 18
+#define DOG_STEP_SLOP_SQ 20 * 20
+#define DOG_BLOCKED_TICKS 3
+#define DOG_DEFLECT_ANGLES [35, -35, 70, -70, 110, -110]
+
 #define DOG_PAIN_TIME 1.56
 #define DOG_CONCUSSED_TIME 1.5
 #define DOG_ATTACK_TIME 1.5
-
-#define DOG_DROP_HEIGHT = 32;
-#define DOG_SCAN_FORWARD = 28;
-#define DOG_SCAN_STEP = 18;
-#define DOG_SCAN_LEVELS = 3;
 
 #define EXPLOSIVE_DAMAGE ["MOD_EXPLOSIVE", "MOD_GRENADE", "MOD_GRENADE_SPLASH", "MOD_PROJECTILE", "MOD_PROJECTILE_SPLASH"]
 
@@ -734,6 +734,7 @@ dogFollowPath(target)
 dogMoveTowards(dest, target)
 {
 	prevPos = self.origin;
+	blocked = 0;
 
 	for (;;)
 	{
@@ -774,6 +775,28 @@ dogMoveTowards(dest, target)
 		dir = self dogApplySeparation(dir, targetOrigin, prevPos);
 
 		next = self.origin + (dir * stepDist);
+
+		if (!(self dogCanStep(self.origin, next)))
+		{
+			dir = self dogDeflect(dir, stepDist);
+			if (!isDefined(dir))
+			{
+				blocked++;
+				if (blocked >= DOG_BLOCKED_TICKS)
+					return false;
+
+				self dogSetAnim(IDLE);
+				self.stuckTime += DOG_TICK;
+				wait DOG_TICK;
+				continue;
+			}
+
+			next = self.origin + (dir * stepDist);
+			targetYaw = vectortoyaw(dir);
+		}
+
+		blocked = 0;
+
 		ground = self dogGetGround(next);
 		nextAngles = (0, targetYaw, 0);
 		if (isDefined(ground) && isDefined(ground["position"]))
@@ -832,7 +855,7 @@ dogMoveDirect(victim)
 
 	next = self.origin + (dir * stepDist);
 
-	if (!bulletTracePassed(self.origin + (0, 0, 24), next + (0, 0, 24), false, undefined))
+	if (!(self dogCanStep(self.origin, next)))
 		return false;
 
 	ground = self dogGetGround(next);
@@ -985,8 +1008,56 @@ dogCanMoveDirect(target)
 	if (!isDefined(target)) return false;
 	goal = target.origin;
 	if (abs(goal[2] - self.origin[2]) > 48) return false;
-	if (!bulletTracePassed(self.origin + (0, 0, 24), goal + (0, 0, 24), false, undefined)) return false;
+	if (!(self dogCanStep(self.origin, goal))) return false;
 	return self dogPathIsNavigable(self.origin, goal);
+}
+
+dogStepTrace(from, to)
+{
+	lift = (0, 0, DOG_STEP_Z);
+
+	dogTraceIgnore = isDefined(self.hitBox) ? self.hitBox : self;
+
+	start = playerPhysicsTrace(from, from + lift, false, dogTraceIgnore);
+	if (!isDefined(start)) start = from + lift;
+
+	end = playerPhysicsTrace(to, to + lift, false, dogTraceIgnore);
+	if (!isDefined(end)) end = to + lift;
+
+	hit = playerPhysicsTrace(start, end, false, dogTraceIgnore);
+	if (!isDefined(hit)) return undefined;
+
+	return hit;
+}
+
+dogCanStep(from, to)
+{
+	hit = self dogStepTrace(from, to);
+	if (!isDefined(hit)) return false;
+	return distanceSquared(hit, to + (0, 0, DOG_STEP_Z)) <= DOG_STEP_SLOP_SQ;
+}
+
+/*
+///DocStringBegin
+detail: <Entity> dogDeflect(dir: <Vector3>, stepDist: <Float>): <Vector3 | Undefined>
+summary: A nearby walkable direction, or undefined if trapped. Angles up to 110° escape corners, while small adjustments only push the dog into the wall.
+///DocStringEnd
+*/
+dogDeflect(dir, stepDist)
+{
+	yaw = vectortoyaw(dir);
+	deflections = DOG_DEFLECT_ANGLES;
+
+	for (i = 0; i < deflections.size; i++)
+	{
+		test = anglestoforward((0, yaw + deflections[i], 0));
+		test = vectornormalize((test[0], test[1], 0));
+
+		if (self dogCanStep(self.origin, self.origin + (test * stepDist)))
+			return test;
+	}
+
+	return undefined;
 }
 
 dogPathIsNavigable(start, end)
