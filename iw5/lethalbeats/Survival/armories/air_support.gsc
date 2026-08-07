@@ -80,7 +80,7 @@ onBuy(item, price, index)
         if (index == MINIGUN_TURRET || index == GL_TURRET)
         {
             self.owner  lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(item);
-            level.sentry++;
+            level.survivors_sentry_count++;
         }
         else self.owner maps\mp\killstreaks\_killstreaks::giveKillstreak(item);
         self.owner buyItem(price);
@@ -152,7 +152,7 @@ isDisabledOption(item, index)
     {
         case AIR_SUPPORT_MAIN:
             if (index == PREDATOR_MISSILE || index == PRECISION_AIRSTRIKE) return self.owner.pers["killstreaks"].size == 6;
-            if (index == MINIGUN_TURRET || index == GL_TURRET) return level.sentry >= 3 || self.owner.pers["killstreaks"].size == 6;
+            if (index == MINIGUN_TURRET || index == GL_TURRET) return level.survivors_sentry_count >= 3 || self.owner.pers["killstreaks"].size == 6;
             break;
         case AIR_SUPPORT_PERKS:
             return self.owner.pers["killstreaks"].size == 6;

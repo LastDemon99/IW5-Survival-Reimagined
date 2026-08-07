@@ -45,6 +45,7 @@ main()
 	setDvarIfUninitialized("survival_enemy_difficulty", 1);
 	setDvarIfUninitialized("survival_dropped_weapons_limit", 15);
 	setDvarIfUninitialized("survival_corpses_limit", 10);
+	setDvarIfUninitialized("survival_bot_sentry_limit", 8);
 	setDvarIfUninitialized("survival_bot_ims_limit", 4);
 	setDvarIfUninitialized("survival_scavenger_ratio", 20);
 	setDvarIfUninitialized("survival_wave_cleanup_interval", 30);
@@ -237,7 +238,7 @@ onStartGametype()
 	level.bots_weapons_data = [];
 	level.survivors_deaths = [];
 	level.survivors_bleedout = [];
-	level.sentry = 0;
+	level.survivors_sentry_count = 0;
 	level.score_base = 0;
 	level.game_ended = 0;
 	level.maxPerPlayerExplosives = 10;
@@ -248,6 +249,7 @@ onStartGametype()
 	level.droppedWeapons = [];
 	level.corpses = [];
 	level.botsIMS = [];
+	level.botsSentry = [];
 	level.rankedmatch = 0;
 	level.bots_maxknifedistance = 128 * 128;
 	level.blockWeaponDrops = 1;

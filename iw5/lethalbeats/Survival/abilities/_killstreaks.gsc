@@ -3,6 +3,20 @@ giveStreak(streak)
     self [[level.killStreakFuncs[streak]]]();
 }
 
+giveSentry()
+{
+    self endon("death");
+    for(;;)
+    {
+        if (level.botsSentry.size < getDvarInt("survival_bot_sentry_limit"))
+        {
+            self giveStreak("sentry");
+            self waittill("placed_sentry");
+        }
+        wait 30;
+    }
+}
+
 giveIMS()
 {
     self endon("death");

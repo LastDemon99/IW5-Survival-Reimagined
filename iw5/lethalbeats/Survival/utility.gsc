@@ -1809,7 +1809,7 @@ survivor_load_state()
 	{
 		if (!isDefined(turret) || !isDefined(turret["type"]) || !isDefined(turret["origin"]) || !isDefined(turret["angles"])) continue;
 		sentry = lethalbeats\survival\killstreaks\_sentry::spawnSentryAtLocation(turret["type"], turret["origin"], turret["angles"], self);
-		level.sentry++;
+		level.survivors_sentry_count++;
 	}
 
 	self.earnedstreaklevel = 0;
@@ -1819,7 +1819,7 @@ survivor_load_state()
 		if (string_starts_with(playerData["killstreak"], "airdrop_"))
 		{
 			playerData["killstreak"] = string_slice(playerData["killstreak"], 8);
-			if (string_ends_with(playerData["killstreak"], "turret")) level.sentry++;
+			if (string_ends_with(playerData["killstreak"], "turret")) level.survivors_sentry_count++;
 			self lethalbeats\survival\killstreaks\_airdrop::giveAirDrop(playerData["killstreak"]);
 		}
 		else self maps\mp\killstreaks\_killstreaks::giveKillstreak(playerData["killstreak"]);
