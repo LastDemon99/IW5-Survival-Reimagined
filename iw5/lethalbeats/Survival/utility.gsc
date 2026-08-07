@@ -2151,7 +2151,8 @@ heli_modified_damage(damage, attacker, weapon, meansOfDeath)
 				return littlebird ? self.customHealth : self.maxHealth / 2;
 			case "m320_mp":
 			case "xm25_mp":
-				return littlebird ? self.customHealth / 4 : self.maxHealth / 8;
+			case "c4_mp":
+				return littlebird ? self.customHealth / 3 : self.maxHealth / 8;
 			case "ac130_105mm_mp":
 			case "ac130_40mm_mp":
 			case "remotemissile_projectile_mp":
@@ -2169,12 +2170,17 @@ heli_modified_damage(damage, attacker, weapon, meansOfDeath)
 				self.largeprojectiledamage = 0;
 				return damage * 2;
 		}
+	
+		if (isDefined(meansOfDeath) && (meansOfDeath == "MOD_EXPLOSIVE" || meansOfDeath == "MOD_GRENADE" || meansOfDeath == "MOD_GRENADE_SPLASH" || meansOfDeath == "MOD_PROJECTILE" || meansOfDeath == "MOD_PROJECTILE_SPLASH")) 
+			return damage * 2.5;
 	}
 
-	if (!isDefined(weapon) || !isDefined(attacker) || !isPlayer(attacker)) return damage;
-	if (weapon_has_attach_gl(weapon)) return damage * 2;
-	if (attacker player_has_perk("specialty_bulletpenetration")) return damage * 1.5;
-	return damage;
+	multiplier = 1;
+	if (attacker player_has_perk("specialty_bulletpenetration")) multiplier += 0.5;
+	if (attacker player_has_perk("specialty_armorpiercing")) multiplier += 0.5;
+	if (weapon_get_class(weapon) == "sniper") multiplier += 0.5;
+	if (multiplier > 1) return damage * multiplier;
+	return 0;
 }
 
 /*
@@ -2189,11 +2195,6 @@ equipmen_modified_damage(damage, attacker, weapon, meansOfDeath)
 	if (meansOfDeath == "MOD_MELEE") return self.maxHealth;
 	if (isDefined(weapon))
 	{
-		weapon_class = weapon_get_class(weapon);
-		if (weapon_class == "projectile" || weapon_has_attach_gl(weapon)) return self.maxHealth;
-		if (attacker player_has_perk("specialty_bulletpenetration") && weapon_get_class(weapon) == "sniper") return damage * 2;
-		if (attacker player_has_perk("specialty_bulletpenetration") || weapon_get_class(weapon) == "sniper") return damage * 1.5;
-
 		switch (weapon)
 		{
 			case "ac130_105mm_mp":
@@ -2206,6 +2207,15 @@ equipmen_modified_damage(damage, attacker, weapon, meansOfDeath)
 			case "bomb_site_mp":
 				return self.maxHealth;
 		}
+
+		if (isDefined(meansOfDeath) && (meansOfDeath == "MOD_EXPLOSIVE" || meansOfDeath == "MOD_GRENADE" || meansOfDeath == "MOD_GRENADE_SPLASH" || meansOfDeath == "MOD_PROJECTILE" || meansOfDeath == "MOD_PROJECTILE_SPLASH")) 
+			return self.maxHealth;
+
+		multiplier = 1;
+		if (attacker player_has_perk("specialty_bulletpenetration")) multiplier += 0.5;
+		if (attacker player_has_perk("specialty_armorpiercing")) multiplier += 0.5;
+		if (weapon_get_class(weapon) == "sniper") multiplier += 0.5;
+		if (multiplier > 1) return damage * multiplier;
 	}
 	return 0;
 }

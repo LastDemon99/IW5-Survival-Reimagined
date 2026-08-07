@@ -90,7 +90,7 @@ _handleDamage()
         if (isdefined(iDFlags) && iDFlags & level.idflags_penetration) self.wasdamagedfrombulletpenetration = 1;
 
         self.wasdamaged = 1;
-        self.damagetaken += self lethalbeats\survival\utility::heli_modified_damage(damage, attacker, weapon);
+        self.damagetaken += self lethalbeats\survival\utility::heli_modified_damage(damage, attacker, weapon, meansOfDeath);
 
         if (isplayer(attacker)) attacker maps\mp\gametypes\_damagefeedback::updateDamageFeedback("");
         if (isdefined(self.owner)) self.owner playlocalsound("reaper_damaged");

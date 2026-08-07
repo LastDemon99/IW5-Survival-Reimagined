@@ -476,7 +476,7 @@ lbSurvivalHandleDamage()
 		if (!isDefined(self)) return;
 
 		self.wasaDmaged = true;
-		self.damageTaken += self heli_modified_damage(damage, attacker, weapon);
+		self.damageTaken += self heli_modified_damage(damage, attacker, weapon, meansOfDeath);
 		
 		if(state != 4)
 		{
