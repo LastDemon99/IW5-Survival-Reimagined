@@ -50,20 +50,11 @@ grenadeWatchUsage()
             continue;
         }
 
-        if (weaponName == "frag_grenade_mp")
+        if (weaponName == "frag_grenade_mp" || weaponName == "frag_grenade_short_mp" || weaponName == "semtex_mp")
         {
             item thread mineCreateBombSquadModel("projectile_m67fraggrenade_bombsquad", self);
             continue;
         }
-
-        if (weaponName == "frag_grenade_short_mp")
-        {
-            item thread mineCreateBombSquadModel("projectile_m67fraggrenade_bombsquad", self);
-            continue;
-        }
-
-        if (weaponName == "semtex_mp")
-            item thread mineCreateBombSquadModel("projectile_semtex_grenade_bombsquad", self);
 
         if (weaponName == "throwingknife_mp")
             self throwingKnifeWatch(item, weaponName);
@@ -529,52 +520,16 @@ mineWatchPickup(owner, trigger)
 
 mineCreateBombSquadModel(model, owner)
 {
-    if (owner.team == "allies") return; // ignore survivor mines
-
-    level endon("game_ended");
-	self endon("death");
-
-    self waittill("mine_ready");
+    if (!isDefined(owner)) owner = self.owner;
+    if (owner lethalbeats\survival\utility::player_is_survivor()) return;
     bombSquadModel = spawn("script_model", self.origin);
+    bombSquadModel.angles = self.angles;
     bombSquadModel hide();
-    wait 0.05;
-
+    bombSquadModel thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater("allies", owner);
     bombSquadModel setmodel(model);
-    bombSquadModel linkTo(self);
-    bombSquadModel setContents(0);
-
-    self.bombSquad = bombSquadModel;
-    level notify("update_bombsquad");
-}
-
-mineBombSquadVisibilityUpdater()
-{
-    level endon("game_ended");
-
-    for(;;)
-    {
-        level lethalbeats\utility::waittill_any("joined_team", "player_spawned", "changed_kit", "update_bombsquad");
-        
-        mines = [];
-		foreach(player in level.players)
-            if (isDefined(player) && isDefined(player.mines))
-                mines = array_combine(mines, array_get_values(player.mines));
-
-        foreach(mine in mines)
-        {
-            if (!isDefined(mine) || !isDefined(mine.bombSquad)) continue;
-
-            foreach(player in level.players)
-            {
-                if (!isDefined(player) || !isAlive(player) || !isDefined(player.team) || !isDefined(mine.team)) continue;
-
-                if (player.team != mine.team)
-                {
-                    hasPerk = player maps\mp\_utility::_hasPerk("specialty_detectexplosive");
-                    if (isDefined(hasPerk) && hasPerk)
-                        mine.bombSquad showToPlayer(player);
-                }
-            }
-        }
-    }
+    bombSquadModel linkto(self);
+    bombSquadModel setcontents(0);
+    self.bombsquadmodel = bombSquadModel;
+    self waittill("death");
+    bombSquadModel delete();
 }

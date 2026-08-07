@@ -34,6 +34,7 @@ attachC4(c4_attach, body, tag, origin_offset, angles_offset)
 	c4_model setCanDamage(false);
 	c4_model notSolid();
 	c4_model setcontents(0);
+	c4_model thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("weapon_c4_bombsquad", isDefined(body.owner) ? body.owner : body);
 	return c4_model;
 }
 

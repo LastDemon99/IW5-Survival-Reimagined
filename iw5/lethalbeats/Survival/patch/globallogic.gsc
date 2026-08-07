@@ -130,8 +130,6 @@ init()
 
     level.onRespawnDelay = ::patch_getRespawnDelay; // although it is not used, it is required to return a value to avoid errors
 
-    level thread lethalbeats\survival\patch\mines::mineBombSquadVisibilityUpdater();
-
     level waittill("prematch_done");
     game["voice"]["allies"] = maps\mp\gametypes\_teams::getTeamVoicePrefix("allies") + "1mc_";
     game["voice"]["axis"] = maps\mp\gametypes\_teams::getTeamVoicePrefix("axis") + "1mc_";
