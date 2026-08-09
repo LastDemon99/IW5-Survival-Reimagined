@@ -425,7 +425,6 @@ handleNormalDeath(lifeId, attacker, eInflictor, sWeapon, sMeansOfDeath)
     }
 
     maps\mp\gametypes\_gamescore::givePlayerScore("kill", attacker, self);
-    maps\mp\_skill::processKill(attacker, self);
     scoreSub = maps\mp\gametypes\_tweakables::getTweakableValue("game", "deathpointloss");
     maps\mp\gametypes\_gamescore::_getPlayerScore(self, maps\mp\gametypes\_gamescore::_setPlayerScore(self) - scoreSub);
 
