@@ -143,8 +143,8 @@ onBotSpawn()
 		self player_unset_Perk("specialty_finalstand");
 
 		mines = 0;
-		foreach(player in level.players) mines += array_get_values(player.mines).size;
-		if (mines >= 30) self player_clear_nades();
+		foreach(bot in bots()) mines += array_get_values(bot.mines).size;
+		if (mines >= getDvarInt("survival_bot_mines_limit")) self player_clear_nades();
 
 		factionPrefix = maps\mp\gametypes\_teams::getTeamVoicePrefix(self.team);
 
@@ -485,25 +485,16 @@ weaponDamageModifier(weapon, damage, meansOfDeath, attacker, isExplosiveDamage)
 	if (weapon == "artillery_mp" || isExplosiveDamage) return damage * 3;
 	if (meansOfDeath == "MOD_HEAD_SHOT") damage *= 1.5;
 
-	weaponClass = lethalbeats\weapon::weapon_get_class(weapon);
-	if (weaponClass == "riot") return damage;
-	if (weaponClass == "sniper") return self bot_is_jugger() ? damage * 1.5 : damage * 4;
-	
 	if (lethalbeats\string::string_starts_with(weapon, "alt_") && isSubStr(weapon, "shotgun"))
 		return damage * 4;
-	
-	switch(lethalbeats\weapon::weapon_get_baseName(weapon))
-	{
-		case "iw5_deserteagle":
-		case "iw5_44magnum":
-			return damage * 4;
-		case "iw5_mp412":
-		case "iw5_ksg":
-			return damage * 2.5;
-		case "iw5_mk14":
-		case "iw5_1887":
-			return damage * 2;
-		default:
-			return damage;
-	}
+
+	weaponBaseName = lethalbeats\weapon::weapon_get_baseName(weapon);
+	weaponMultiplier = (self bot_is_jugger() ? "dmg_jugg_wep_" : "dmg_wep_") + weaponBaseName;
+	if (getDvarFloat(weaponMultiplier)) return damage * getDvarFloat(weaponMultiplier);
+
+	weaponClass = lethalbeats\weapon::weapon_get_class(weapon);
+	classMultiplier = (self bot_is_jugger() ? "dmg_jugg_class_" : "dmg_class_") + weaponClass;
+	if (getDvarFloat(classMultiplier)) return damage * getDvarFloat(classMultiplier);
+
+	return damage;
 }
