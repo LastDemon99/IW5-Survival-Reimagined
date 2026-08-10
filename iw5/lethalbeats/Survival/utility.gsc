@@ -1099,6 +1099,7 @@ bot_kill(attacker)
 	if (level.bots_total_count == level.bots_deaths) level notify("wave_end");
 	if (level.corpses.size > getDvarInt("survival_corpses_limit")) delete_corpse();
 	if (level.droppedWeapons.size > getDvarInt("survival_dropped_weapons_limit")) delete_dropped_weapon();
+	if (level.scavengerBags.size > getDvarInt("survival_scavenger_bags_limit")) delete_scavenger_bag();
 }
 
 //////////////////////////////////////////
@@ -1207,7 +1208,8 @@ survivor_give_perk(perk)
 	else if(perk == "specialty_blastshield") perk = "_specialty_blastshield";
 	else if(perk == "specialty_bombsquad") perk = "specialty_detectexplosive";
 	
-	self player_give_perk(perk, false);
+	if (lethalbeats\survival\killstreaks\_perks::perks_is_custom(perk)) self.perks[perk] = true;
+	else self player_give_perk(perk, false);
 	
 	// player_perks -> ui_perks
 	if(perk == "specialty_bulletaccuracy") perk = "specialty_steadyaim";
@@ -1926,6 +1928,22 @@ delete_corpse(model)
 	}
 
 	model delete();
+}
+
+delete_scavenger_bag()
+{
+	scavengerBags = array_shift(level.scavengerBags);
+	level.scavengerBags = scavengerBags[0];
+	model = scavengerBags[1];
+
+	if (!isDefined(model)) level.scavengerBags = array_remove_undefined(level.scavengerBags);
+	else if (isDefined(model.trigger))
+	{
+		trigger = model.trigger;
+		model delete();
+		trigger lethalbeats\trigger::trigger_delete();
+	}
+	else model delete();
 }
 
 kill_all_survivors()
