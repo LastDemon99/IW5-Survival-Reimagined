@@ -90,6 +90,7 @@ _mi17_setup(owner, pathStart, pathGoal)
 	mi17 = SpawnHelicopter(owner, pathStart, forward, "pavelow_mp", "vehicle_mi17_woodland_fly_cheap");
 	mi17 maps\mp\killstreaks\_helicopter::addToLittleBirdList();
 	mi17 thread maps\mp\killstreaks\_helicopter::removeFromLittleBirdListOnDeath();
+	mi17 thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("vehicle_mi17_bombsquad", self);
 	
 	mi17.health = 999999;
 	mi17.maxhealth = 2000;

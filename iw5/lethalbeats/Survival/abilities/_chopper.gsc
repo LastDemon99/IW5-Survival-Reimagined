@@ -85,6 +85,7 @@ createLBSurvival()
 	lb thread maps\mp\killstreaks\_helicopter::removeFromLittleBirdListOnDeath();
 	lb.health = 999999;
 	lb.maxhealth = 999999;
+	lb thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("vehicle_little_bird_bombsquad", self);
 	
 	difficulty = getDvarInt("survival_enemy_difficulty");
 	speedMultiplier = 1.0;

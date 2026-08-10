@@ -15,6 +15,7 @@ giveAbility()
 	tank linkto(self, "tag_shield_back", (0,0,0), (0,0,0));
 	tank setCanDamage(false);
 	tank notSolid();
+	tank thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("gas_backpack_bombsquad", self);
 	self thread detonateMonitor(tank);
 	self thread smokeFx();
 
@@ -80,6 +81,7 @@ mineMonitor()
 		mine setCanDamage(false);
 		mine notSolid();
 		mine setContents(0);
+		mine thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("ims_explosive_bombsquad", self);
 
 		fxEnt = SpawnFx(level._effect["chemical_mine_spew"], mine.origin);
 		triggerFx(fxEnt);

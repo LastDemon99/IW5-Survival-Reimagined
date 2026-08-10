@@ -61,6 +61,7 @@ _damageTracker(isCounterUAV, isAdvanced)
     self.health = 999999;
     self.maxhealth = getBotData(HEALTH);
     self.damagetaken = 0;
+    self thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("vehicle_uav_bombsquad", self);
 
     for (;;)
     {

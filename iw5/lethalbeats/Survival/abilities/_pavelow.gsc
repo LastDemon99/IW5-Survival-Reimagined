@@ -103,6 +103,8 @@ _heli_think(lifeId, owner, startNode, heli_team, heliType)
     heli thread _heli_damage_monitor();
     heli thread heli_health();
     heli thread heli_existance();
+    heli thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("vehicle_pavelow_bombsquad", self);
+
     heli endon("helicopter_done");
     heli endon("crashing");
     heli endon("leaving");

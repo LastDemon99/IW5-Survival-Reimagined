@@ -79,6 +79,7 @@ _handleDamage()
     self.health = 999999;
     self.maxhealth = 1500;
     self.damagetaken = 0;
+    self thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("vehicle_predator_bombsquad", self);
     
     if (isDefined(self.owner.botPrice)) self.botPrice = self.owner.botPrice;
 
