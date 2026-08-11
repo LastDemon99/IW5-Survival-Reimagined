@@ -1,11 +1,21 @@
 #include lethalbeats\survival\utility;
 #include lethalbeats\player;
 
-#define CUSTOM_PERKS ["specialty_scavenger"]
+#define CUSTOM_PERKS ["specialty_scavenger", "specialty_blindeye"]
 
 perks_is_custom(perk)
 {
 	return lethalbeats\array::array_contains(CUSTOM_PERKS, perk);
+}
+
+perks_give(perk)
+{
+	if (perk == "specialty_blindeye") 
+	{
+		self player_give_perk("specialty_armorpiercing");
+		self player_give_perk("specialty_fasterlockon");
+	}
+	self.perks[perk] = true;
 }
 
 scavenger_drop()

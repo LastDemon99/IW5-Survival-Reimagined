@@ -180,6 +180,7 @@ createLBSurvival()
 	lb thread lbSurvivalDeathCrash();
 	lb thread maps\mp\killstreaks\_helicopter_guard::lbSupport_lightFX();
 	lb thread handleIncomingMissiles();
+	lb thread lethalbeats\survival\utility::heli_custom_targeting();
 
 	return lb;
 }
@@ -222,7 +223,7 @@ followPlayer_NodeBased()
 	{
 		wait randomIntRange(2, 4);
 
-		target = sortByDistance(survivors(true), self.origin)[0];
+		target = lethalbeats\survival\utility::bot_get_air_target(self.origin);
         if(!isDefined(target))
         {
             wait 1;
@@ -275,7 +276,12 @@ followPlayer_Dynamic()
 			continue;
 		}
 
-		target = sortByDistance(survivors, self.origin)[0];
+		target = lethalbeats\survival\utility::bot_get_air_target(self.origin);
+		if (!isDefined(target))
+		{
+			wait 1;
+			continue;
+		}
 
 		is_in_blind_spot = false;
 		vector_to_target = vectornormalize(target.origin - self.origin);
@@ -425,7 +431,10 @@ lbBurstFireStart()
         {
             self.vehicle setlookatent(targetEnt);
             targetLost = false;
-            timer = windUpTime;
+            actualWindUpTime = windUpTime;
+            if (targetEnt lethalbeats\player::player_has_perk("specialty_blindeye"))
+                actualWindUpTime = windUpTime * getDvarFloat("survival_blindeye_windup_mult");
+            timer = actualWindUpTime;
             
             while(timer > 0)
             {

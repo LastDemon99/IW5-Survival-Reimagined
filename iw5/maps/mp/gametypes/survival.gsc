@@ -50,6 +50,8 @@ main()
 	setDvarIfUninitialized("survival_bot_mines_limit", 20);
 	setDvarIfUninitialized("survival_scavenger_bags_limit", 15);
 	setDvarIfUninitialized("survival_scavenger_ratio", 20);
+	setDvarIfUninitialized("survival_blindeye_target_ratio", 40);
+	setDvarIfUninitialized("survival_blindeye_windup_mult", 1.5);
 	setDvarIfUninitialized("survival_wave_cleanup_interval", 30);
 	setDvarIfUninitialized("sv_mapRotation", "dsr survival map mp_dome map mp_mogadishu map mp_bootleg map mp_lambeth map mp_hardhat map mp_interchange map mp_alpha map mp_bravo map mp_plaza2 map mp_exchange map mp_carbon map mp_paris map mp_radar map mp_seatown map mp_underground map mp_village map mp_favela map mp_highrise map mp_nightshift map mp_nuked map mp_rust");
 

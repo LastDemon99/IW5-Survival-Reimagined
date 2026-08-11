@@ -28,8 +28,9 @@
 #define LONGER_SPRINT 3
 #define FAST_RELOAD 4
 #define BLAST_SHIELD 5
-#define SITREP 6
-#define SCAVENGER 7
+#define BLINDEYE 6
+#define SITREP 7
+#define SCAVENGER 8
 
 // self -> shop
 // self.owner -> player
@@ -106,6 +107,9 @@ onBuy(item, price, index)
             break;
         case BLAST_SHIELD:
             self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_blastshield");
+            break;
+        case BLINDEYE:
+            self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_blindeye");
             break;
         case SITREP:
              self.owner lethalbeats\survival\killstreaks\_airdrop::giveAirDrop("perk_sitrep");

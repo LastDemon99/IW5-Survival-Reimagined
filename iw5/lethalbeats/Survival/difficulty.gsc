@@ -210,7 +210,7 @@ difficulty_get_h6_burst_settings()
 			settings["maxShots"] = 80;
 			settings["minPause"] = 0.5;
 			settings["maxPause"] = 1;
-			settings["windUpTime"] = 0;
+			settings["windUpTime"] = 0.5;
 			return settings;
 
 		case DIFFICULTY_NORMAL:
@@ -245,7 +245,7 @@ difficulty_get_pavelow_burst_settings()
 			settings["maxShots"] = 120;
 			settings["minPause"] = 0.25;
 			settings["maxPause"] = 0.5;
-			settings["windUpTime"] = 0;
+			settings["windUpTime"] = 0.25;
 			return settings;
 
 		case DIFFICULTY_NORMAL:
@@ -276,7 +276,7 @@ difficulty_get_reaper_burst_settings()
 	{
 		case DIFFICULTY_HARD:
 			settings["fireTime"] = 2.2;
-			settings["windUpTime"] = 0;
+			settings["windUpTime"] = 0.35;
 			settings["trackingFactor"] = 0.45;
 			return settings;
 

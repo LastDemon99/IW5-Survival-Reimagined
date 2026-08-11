@@ -239,7 +239,11 @@ claymoreWatchProximity()
     self notify("mine_triggered");
     self playsound("claymore_activated");
 
-    wait(level.claymoredetectiongraceperiod);
+    delay = level.claymoredetectiongraceperiod;
+    if (isDefined(player) && player lethalbeats\player::player_has_perk("specialty_blindeye"))
+        delay *= getDvarFloat("survival_blindeye_windup_mult");
+
+    wait(delay);
 
     if (isdefined(self.trigger))
     {
@@ -315,7 +319,11 @@ bouncingbettyWatchProximity()
     self notify("mine_triggered");
     self playSound("mine_betty_click");
 
-    wait(level.minedetectiongraceperiod);
+    delay = level.minedetectiongraceperiod;
+    if (isDefined(player) && player lethalbeats\player::player_has_perk("specialty_blindeye"))
+        delay *= getDvarFloat("survival_blindeye_windup_mult");
+
+    wait(delay);
 
     self playSound("mine_betty_spin");
     playFx(level.mine_launch, self.origin);

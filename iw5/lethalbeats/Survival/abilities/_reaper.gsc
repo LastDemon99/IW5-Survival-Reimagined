@@ -175,7 +175,12 @@ _remotefiring(remote)
                 {
                     botWasVisibleLastTick = true;
                     botTargetId = currentTargetId;
-                    botWindUpUntil = curTime + windUpTime;
+                    
+                    actualWindUpTime = windUpTime;
+                    if (botTargetEnt lethalbeats\player::player_has_perk("specialty_blindeye"))
+                        actualWindUpTime = int(windUpTime * getDvarFloat("survival_blindeye_windup_mult"));
+                        
+                    botWindUpUntil = curTime + actualWindUpTime;
                 }
 
                 // Require windup every time LOS is reacquired or target changes.
@@ -226,47 +231,10 @@ _remotefiring(remote)
 
 _getBotRemoteTargetEnt(remote)
 {
-    survivorsAlives = lethalbeats\survival\utility::survivors(true);
-    if (!isDefined(survivorsAlives) || !survivorsAlives.size)
-        return undefined;
-
-    // self is either vehicle (AI case) or owner (human/bot controller case)
     originRef = self.origin;
     if (isDefined(remote)) originRef = remote.origin;
 
-    closestTarget = undefined;
-    closestDist = 2147483647;
-
-    foreach (survivor in survivorsAlives)
-    {
-        if (!isDefined(survivor) || !isPlayer(survivor)) continue;
-        if (!(survivor lethalbeats\survival\utility::player_is_valid_target())) continue;
-        if (!maps\mp\_utility::isReallyAlive(survivor) || survivor.inLastStand) continue;
-
-        // Check LOS from vehicle or owner
-        if (isDefined(remote)) 
-        {
-             if (!bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, remote))
-                continue;
-        }
-        else 
-        {
-             if (!bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, self))
-                continue;
-        }
-
-        dist = distanceSquared(originRef, survivor.origin);
-        if (dist < closestDist)
-        {
-            closestDist = dist;
-            closestTarget = survivor;
-        }
-    }
-
-    if (!isDefined(closestTarget))
-        return undefined;
-
-    return closestTarget;
+    return lethalbeats\survival\utility::bot_get_air_target(originRef, isDefined(remote) ? remote : self);
 }
 
 _tryuseremotemortar(lifeId)

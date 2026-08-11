@@ -1208,8 +1208,10 @@ survivor_give_perk(perk)
 	else if(perk == "specialty_blastshield") perk = "_specialty_blastshield";
 	else if(perk == "specialty_bombsquad") perk = "specialty_detectexplosive";
 	
-	if (lethalbeats\survival\killstreaks\_perks::perks_is_custom(perk)) self.perks[perk] = true;
-	else self player_give_perk(perk, false);
+	if (lethalbeats\survival\killstreaks\_perks::perks_is_custom(perk))
+		lethalbeats\survival\killstreaks\_perks::perks_give(perk);
+	else 
+		self player_give_perk(perk, false);
 	
 	// player_perks -> ui_perks
 	if(perk == "specialty_bulletaccuracy") perk = "specialty_steadyaim";
@@ -2469,3 +2471,75 @@ summary: By modifying the game logic, certain functions give errors, replace wit
 ///DocStringEnd
 */
 blank(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) { }
+
+/*
+///DocStringBegin
+detail: <Entity> bot_get_air_target(originRef: <Vector>, remoteEnt?: <Entity>): <Entity | Undefined>
+summary: Returns a survivor target for air units based on blindeye perk logic and distance.
+///DocStringEnd
+*/
+bot_get_air_target(originRef, remoteEnt)
+{
+    valid_targets = [];
+    foreach(survivor in survivors(true))
+    {
+        if (!isDefined(survivor) || !isPlayer(survivor)) continue;
+        if (!(survivor player_is_valid_target())) continue;
+        if (!maps\mp\_utility::isReallyAlive(survivor) || survivor.inLastStand) continue;
+        
+        if (isDefined(remoteEnt))
+        {
+            if (!bullettracepassed(originRef, survivor getTagOrigin("j_spineupper"), false, remoteEnt)) continue;
+        }
+
+        valid_targets[valid_targets.size] = survivor;
+    }
+    
+    if (!valid_targets.size) return undefined;
+    
+    valid_targets = sortByDistance(valid_targets, originRef);
+    
+    foreach(survivor in valid_targets)
+    {
+        if (survivor lethalbeats\player::player_has_perk("specialty_blindeye"))
+        {
+            if (lethalbeats\math::math_chance(getDvarInt("survival_blindeye_target_ratio")))
+                return survivor;
+            continue;
+        }
+        return survivor;
+    }
+    
+    return array_random(valid_targets);
+}
+
+/*
+///DocStringBegin
+detail: <Entity> heli_custom_targeting(): <Void>
+summary: Thread that periodically updates turret targets using bot_get_air_target.
+///DocStringEnd
+*/
+heli_custom_targeting()
+{
+    self endon("death");
+    level endon("game_ended");
+    for(;;)
+    {
+        target = bot_get_air_target(self.origin);
+        if (isDefined(target))
+        {
+            if (isDefined(self.mgturretleft)) self.mgturretleft SetTargetEntity(target);
+            if (isDefined(self.mgturretright)) self.mgturretright SetTargetEntity(target);
+            if (isDefined(self.mgTurretLeft)) self.mgTurretLeft SetTargetEntity(target);
+            if (isDefined(self.mgTurretRight)) self.mgTurretRight SetTargetEntity(target);
+        }
+        else
+        {
+            if (isDefined(self.mgturretleft)) self.mgturretleft ClearTargetEntity();
+            if (isDefined(self.mgturretright)) self.mgturretright ClearTargetEntity();
+            if (isDefined(self.mgTurretLeft)) self.mgTurretLeft ClearTargetEntity();
+            if (isDefined(self.mgTurretRight)) self.mgTurretRight ClearTargetEntity();
+        }
+        wait 0.5;
+    }
+}

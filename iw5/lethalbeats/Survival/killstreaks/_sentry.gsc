@@ -240,7 +240,13 @@ _sentry_burstFireStart()
 	self LaserOn();
 	self.laser_on = true;
 
-	if (self.owner.team == "axis") self playSound("stinger_locking");
+	if (self.owner.team == "axis")
+	{
+		self playSound("stinger_locking");
+		target = self getturrettarget(false);
+		if (isDefined(target) && isPlayer(target) && target lethalbeats\player::player_has_perk("specialty_blindeye"))
+			wait (0.5 * getDvarFloat("survival_blindeye_windup_mult"));
+	}
 	else wait 0.5;
 
 	self sentry_spinUp();

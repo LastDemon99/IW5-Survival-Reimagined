@@ -104,6 +104,7 @@ _heli_think(lifeId, owner, startNode, heli_team, heliType)
     heli thread heli_health();
     heli thread heli_existance();
     heli thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("vehicle_pavelow_bombsquad", self);
+    heli thread lethalbeats\survival\utility::heli_custom_targeting();
 
     heli endon("helicopter_done");
     heli endon("crashing");
@@ -332,7 +333,10 @@ _sentry_burstFireStart()
         if (targetEnt player_is_valid_target())
         {
             targetLost = false;
-            timer = windUpTime;
+            actualWindUpTime = windUpTime;
+            if (targetEnt lethalbeats\player::player_has_perk("specialty_blindeye"))
+                actualWindUpTime = windUpTime * getDvarFloat("survival_blindeye_windup_mult");
+            timer = actualWindUpTime;
             
             while(timer > 0)
             {
