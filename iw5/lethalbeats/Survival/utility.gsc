@@ -1073,25 +1073,20 @@ bot_kill(attacker)
 	{
 		if (isDefined(attacker.owner))
 		{
-			attacker.owner.summary["kills"]++;
-			attacker.owner survivor_give_score(int(self.botPrice / 2));
-
+			attacker = attacker.owner;
 			if (self bot_is_killstreak())
 			{
-				attacker.owner.pers["kills"]++;
-				attacker.owner.kills++;
+				attacker.summary["kills"]++;
+				attacker.pers["kills"]++;
+				attacker survivor_give_score(self.botPrice);
 			}
+			else attacker survivor_give_score(int(self.botPrice / 2));
 		}
-		else if (isPlayer(attacker))
+		else
 		{
 			attacker.summary["kills"]++;
+			attacker.pers["kills"]++;
 			attacker survivor_give_score(self.botPrice);
-
-			if (self bot_is_killstreak())
-			{
-				attacker.pers["kills"]++;
-				attacker.kills++;
-			}
 		}
 	}
 	if (isPlayer(self) && isAlive(self)) self suicide();
