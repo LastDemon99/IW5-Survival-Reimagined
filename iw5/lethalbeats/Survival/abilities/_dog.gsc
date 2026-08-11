@@ -805,8 +805,8 @@ dogMoveTowards(dest, target)
 			nextAngles = dogGetGroundAngles(ground, targetYaw);
 		}
 
-		self rotateTo(nextAngles, DOG_TICK);
-		self moveTo(next, DOG_TICK);
+		self rotateTo(nextAngles, DOG_TICK + 0.04);
+		self moveTo(next, DOG_TICK + 0.04);
 
 		if (distanceSquared(self.origin, prevPos) <= DOG_STUCK_DIST_SQ)
 			self.stuckTime += DOG_TICK;
@@ -865,8 +865,8 @@ dogMoveDirect(victim)
 	next = ground["position"];
 	nextAngles = dogGetGroundAngles(ground, targetYaw);
 
-	self rotateTo(nextAngles, DOG_TICK);
-	self moveTo(next, DOG_TICK);
+	self rotateTo(nextAngles, DOG_TICK + 0.04);
+	self moveTo(next, DOG_TICK + 0.04);
 
 	if (distanceSquared(self.origin, self.lastOrigin) <= DOG_STUCK_DIST_SQ)
 		self.stuckTime += DOG_TICK;
