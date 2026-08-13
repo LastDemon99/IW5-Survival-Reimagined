@@ -2,15 +2,15 @@
 // INIT CONFIGS                                 //
 //////////////////////////////////////////////////
 
-set survival_dev_mode 					0
-set survival_wait_shops 				1
-set survival_wave_start 				1
-set survival_wait_respawn 				1
+set survival_dev_mode 					1
+set survival_wait_shops 				0
+set survival_wave_start 				8
+set survival_wait_respawn 				0
 set survival_survivors_limit 			5
-set survival_start_armor 				250
-set survival_start_money 				500
+set survival_start_armor 				99999999
+set survival_start_money 				99999999
 set survival_enemy_multiplier 			1
-set survival_enemy_difficulty 			2
+set survival_enemy_difficulty 			3
 set survival_dropped_weapons_limit 		15
 set survival_corpses_limit 				10
 set survival_bot_sentry_limit 			8
@@ -270,8 +270,8 @@ set bot_sentry_martyrdom 				"iw5_m9,iw5_usp45,specialty_null,smoke_grenade_mp,1
 set bot_ims_martyrdom 					"iw5_m9,iw5_usp45,specialty_null,smoke_grenade_mp,100,1.1,125,body_russian_military_smg_a_airborne,head_russian_military_a head_russian_military_c"
 set bot_dog 							"none,none,specialty_null,none,60,1,100,null_body,null_head"
 set bot_dog_martyrdom 					"none,none,specialty_null,none,60,1,150,null_body,null_head"
-set bot_chopper 						"none,none,specialty_null,none,1200,0,800,,"
-set bot_pavelow 						"none,none,specialty_null,none,2000,0,1600,,"
+set bot_chopper 						"none,none,specialty_null,none,2200,0,800,,"
+set bot_pavelow 						"none,none,specialty_null,none,4000,0,1600,,"
 set bot_reaper 							"none,none,specialty_null,none,1200,0,2000,,"
 set bot_airstrike 						"none,none,specialty_null,none,1200,0,1600,,"
 set bot_predator 						"none,none,specialty_null,none,1200,0,1600,,"
@@ -281,32 +281,32 @@ set bot_counteruav 						"none,none,specialty_null,none,1200,0,800,,"
 // WAVES CONFIGS                                //
 //////////////////////////////////////////////////
 
-set wave_1								"easy_shot,14"
-set wave_2								"easy_shot,14,dog,4"
-set wave_3								"easy_shot,14,dog_martyrdom,4"
-set wave_4								"easy_shot,14,easy_smg,14,dog_martyrdom,4"
-set wave_5								"easy_shot,14,easy_smg,14,easy_assault,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4"
-set wave_6								"easy_shot,14,easy_smg,14,easy_assault,14,easy_sniper,4,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4"
-set wave_7								"chopper,2"
-set wave_8								"regular_shot,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,chopper,2"
-set wave_9								"regular_shot,14,regular_smg,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,chopper,2"
-set wave_10								"regular_shot,14,regular_smg,14,regular_assault,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,chopper,2"
-set wave_11								"regular_shot,14,regular_smg,14,regular_assault,14,regular_sniper,4,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,chopper,2"
-set wave_12								"jugger_regular,2,chopper,2"
-set wave_13								"hardened_shot,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
-set wave_14								"hardened_shot,14,hardened_smg,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
-set wave_15								"hardened_shot,14,hardened_smg,14,hardened_assault,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
-set wave_16								"hardened_shot,14,hardened_smg,14,hardened_assault,14,hardened_sniper,4,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
-set wave_17								"jugger_regular,1,chopper,2,pavelow,1"
-set wave_18								"veteran_shot,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,predator,2,chopper,2,jugger_regular,1"
-set wave_19								"veteran_shot,14,veteran_smg,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,predator,2,chopper,2,jugger_regular,1"
-set wave_20								"veteran_shot,14,veteran_smg,14,veteran_assault,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,predator,2,chopper,2,jugger_regular,1"
-set wave_21								"veteran_shot,14,veteran_smg,14,veteran_assault,14,veteran_sniper,4,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,predator,2,chopper,2,jugger_regular,1"
-set wave_22								"jugger_regular,1,chopper,2,pavelow,1,reaper,1,jugger_riotshield,1"
-set wave_23								"elite_shot,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1"
-set wave_24								"elite_shot,14,elite_smg,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1"
-set wave_25								"elite_shot,14,elite_smg,14,elite_assault,14,dog_martyrdom,4,martyrdom,3,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1"
-set wave_26								"elite_shot,14,elite_smg,14,elite_assault,14,elite_sniper,4,dog_martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1,jugger_regular,1"
+set wave_1                              "easy_shot,14"
+set wave_2                              "easy_shot,14,dog,4"
+set wave_3                              "easy_shot,14,dog_martyrdom,4"
+set wave_4                              "easy_shot,12,easy_smg,16,dog_martyrdom,4"
+set wave_5                              "regular_shot,8,easy_smg,14,easy_assault,14,dog_martyrdom,3,martyrdom,4,rpg_martyrdom,3"
+set wave_6                              "regular_shot,12,regular_smg,12,regular_assault,8,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4"
+set wave_7                              "chopper,2"
+set wave_8                              "regular_shot,12,regular_smg,16,regular_assault,12,dog_martyrdom,3,martyrdom,4,rpg_martyrdom,3,ims_martyrdom,2,sentry_martyrdom,2,chopper,2"
+set wave_9                              "regular_shot,12,regular_smg,16,regular_assault,16,regular_sniper,4,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,chopper,2"
+set wave_10                             "jugger_regular,2,chopper,2"
+set wave_11                             "hardened_shot,12,hardened_smg,12,dog_martyrdom,4,martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,chopper,1"
+set wave_12                             "hardened_shot,14,hardened_smg,14,hardened_assault,12,dog_martyrdom,4,martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,chopper,1"
+set wave_13                             "hardened_shot,12,hardened_smg,18,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
+set wave_14                             "hardened_shot,14,hardened_smg,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
+set wave_15                             "veteran_shot,14,dog_martyrdom,4,martyrdom,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
+set wave_16                             "veteran_shot,14,veteran_smg,14,dog_martyrdom,4,martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,chopper,2,jugger_regular,1"
+set wave_17                             "jugger_regular,1,chopper,2,pavelow,1"
+set wave_18                             "veteran_shot,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,predator,2,chopper,2,jugger_regular,1"
+set wave_19                             "veteran_shot,14,veteran_smg,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,predator,2,chopper,2,jugger_regular,1"
+set wave_20                             "elite_shot,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1"
+set wave_21                             "elite_shot,14,elite_smg,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1"
+set wave_22                             "jugger_regular,1,chopper,2,pavelow,1,reaper,1,jugger_riotshield,1"
+set wave_23                             "elite_shot,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1"
+set wave_24                             "elite_shot,14,elite_smg,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1"
+set wave_25                             "elite_shot,14,elite_smg,14,elite_assault,14,dog_martyrdom,4,martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1"
+set wave_26                             "elite_shot,14,elite_smg,14,elite_assault,14,elite_sniper,4,dog_martyrdom,4,rpg_martyrdom,4,chemical,4,ims_martyrdom,2,sentry_martyrdom,2,counteruav,1,airstrike,2,chopper,2,jugger_regular,1,pavelow,1,reaper,1,jugger_riotshield,1,jugger_regular,1"
 
 //////////////////////////////////////////////////
 // DSR CONFIGS                                  //
