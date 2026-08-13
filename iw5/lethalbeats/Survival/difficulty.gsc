@@ -2,9 +2,6 @@
 #define DIFFICULTY_NORMAL 2
 #define DIFFICULTY_HARD 3
 
-#define WAVES_TABLE_EASY "mp/survival_wave_easy.csv"
-#define WAVES_TABLE_NORMAL "mp/survival_wave_normal.csv"
-#define WAVES_TABLE_HARD "mp/survival_wave_hard.csv"
 
 #define SKILL_AIM_TIME 60
 #define SKILL_INIT_REACT_TIME 61
@@ -38,8 +35,7 @@
 #define WIND_UP_TIME 115
 
 #define SURVIVOR_DAMAGE_SCALE 160
-#define BOT_HEALTH_MULTIPLIER 161
-#define BOT_SPEED_MULTIPLIER 162
+
 #define BOT_RESPAWN_DELAY_MIN 163
 #define BOT_RESPAWN_DELAY_MAX 164
 
@@ -85,8 +81,6 @@ _difficulty_get_bot_profile_easy()
 
 	// Survival multipliers.
 	settings[SURVIVOR_DAMAGE_SCALE] = 0.8;
-	settings[BOT_HEALTH_MULTIPLIER] = 1;
-	settings[BOT_SPEED_MULTIPLIER] = 0.85;
 	settings[BOT_RESPAWN_DELAY_MIN] = 3;
 	settings[BOT_RESPAWN_DELAY_MAX] = 6;
 
@@ -134,8 +128,6 @@ _difficulty_get_bot_profile_normal()
 
 	// Survival multipliers.
 	settings[SURVIVOR_DAMAGE_SCALE] = 1;
-	settings[BOT_HEALTH_MULTIPLIER] = 1.1;
-	settings[BOT_SPEED_MULTIPLIER] = 1;
 	settings[BOT_RESPAWN_DELAY_MIN] = 1;
 	settings[BOT_RESPAWN_DELAY_MAX] = 3;
 
@@ -183,8 +175,6 @@ _difficulty_get_bot_profile_hard()
 
 	// Survival multipliers.
 	settings[SURVIVOR_DAMAGE_SCALE] = 1;
-	settings[BOT_HEALTH_MULTIPLIER] = 1.35;
-	settings[BOT_SPEED_MULTIPLIER] = 1.2;
 	settings[BOT_RESPAWN_DELAY_MIN] = 0;
 	settings[BOT_RESPAWN_DELAY_MAX] = 1;
 
@@ -329,15 +319,7 @@ difficulty_get_wave_loop_growth()
 	}
 }
 
-difficulty_get_waves_table()
-{
-	switch(difficulty_get_level())
-	{
-		case DIFFICULTY_NORMAL: return WAVES_TABLE_NORMAL;
-		case DIFFICULTY_HARD: return WAVES_TABLE_HARD;
-		default: return WAVES_TABLE_EASY;
-	}
-}
+
 
 difficulty_get_bot_settings()
 {

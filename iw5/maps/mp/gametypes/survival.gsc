@@ -143,16 +143,6 @@ onStartGametype()
 {
 	level_load_state();
     setclientnamemode("auto_change");
-
-	/*
-    maps\mp\_utility::setObjectiveText("allies", &"SURVIVAL_OBJECTIVE");
-    maps\mp\_utility::setObjectiveText("axis", &"OBJECTIVES_WAR");
-
-    maps\mp\_utility::setObjectiveScoreText("allies", &"SURVIVAL_OBJECTIVE");
-	maps\mp\_utility::setObjectiveScoreText("axis", &"OBJECTIVES_WAR_SCORE");
-
-    maps\mp\_utility::setObjectiveHintText("allies", &"SURVIVAL_OBJECTIVE");
-    maps\mp\_utility::setObjectiveHintText("axis", &"OBJECTIVES_WAR_HINT");*/
 	
     level.spawnmins = (0, 0, 0);
     level.spawnmaxs = (0, 0, 0);
@@ -266,6 +256,15 @@ onStartGametype()
     level.healthregendisabled = level.playerhealth_regularregendelay <= 0;
 	
 	level.difficulty = getDvarInt("survival_enemy_difficulty");
+
+	for (i = 1; true; i++)
+	{
+		if (!isDefined(getDvar("wave_" + i)) || getDvar("wave_" + i) == "")
+		{
+			level.waveLoopStart = i;
+			break;
+		}
+	}
 		
 	lethalbeats\survival\patch\globallogic::patch_callbacks();
 	lethalbeats\botactor\utility::bot_init();

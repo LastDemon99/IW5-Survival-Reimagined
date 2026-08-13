@@ -68,27 +68,16 @@
 
 #define CHALLENGES ["Headshot Kill", "Kill Streak", "Knife Kill", "Grenade Kill", "Pistol Kill", "Shotgun Kill", "Machine Pistol Kill", "Smg Kill", "Assault Kill", "Lmg Kill", "Sniper Kill", "Launcher Kill", "Double Kill", "Triple Kill", "Multi Kill"]
 
-#define WAVE_LOOP 26
-
 // LOADOUTS COLUMNS
-#define PRIMARY 1
-#define PRIMARY_ATTACH 2
-#define PRIMARY_ATTACH_2 3
-#define PRIMARY_BUFF 4
-#define SECONDARY 5
-#define SECONDARY_ATTACH 6
-#define SECONDARY_ATTACH_2 7
-#define SECONDARY_BUFF 8
-#define LETHAL 9
-#define TACTICAL 10
-#define PERK1 11
-#define PERK2 12
-#define PERK3 13
-#define HEALTH 14
-#define SPEED 15
-#define PRICE 16
-#define BODY_MODEL 17
-#define HEAD_MODEL 18
+#define PRIMARY 0
+#define SECONDARY 1
+#define LETHAL 2
+#define TACTICAL 3
+#define HEALTH 4
+#define SPEED 5
+#define PRICE 6
+#define BODY_MODEL 7
+#define HEAD_MODEL 8
 
 // BOTS SETTINGS
 #define SKILL_AIM_TIME 60
@@ -97,8 +86,6 @@
 #define BEHAVIOR_STRAFE 100
 #define BEHAVIOR_SPRINT 102
 #define BEHAVIOR_JUMP 104
-#define BOT_HEALTH_MULTIPLIER 161
-#define BOT_SPEED_MULTIPLIER 162
 #define BOT_RESPAWN_DELAY_MIN 163
 #define BOT_RESPAWN_DELAY_MAX 164
 
@@ -876,18 +863,18 @@ bot_set_loadout()
 	if(!isDefined(self bot_get_loadout(PRIMARY))) return;
 
     self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY] = self bot_get_loadout(PRIMARY);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_ATTACHMENT] =  self bot_get_loadout(PRIMARY_ATTACH);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_ATTACHMENT2] = self bot_get_loadout(PRIMARY_ATTACH_2);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_BUFF] = self bot_get_loadout(PRIMARY_BUFF);
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_ATTACHMENT] =  NONE;
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_ATTACHMENT2] = NONE;
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_BUFF] = SPECIALTY_NULL;
     self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY] = self bot_get_loadout(SECONDARY);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_ATTACHMENT] = self bot_get_loadout(SECONDARY_ATTACH);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_ATTACHMENT2] = self bot_get_loadout(SECONDARY_ATTACH_2);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_BUFF] = self bot_get_loadout(SECONDARY_BUFF);
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_ATTACHMENT] = NONE;
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_ATTACHMENT2] = NONE;
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_BUFF] = SPECIALTY_NULL;
     self.pers[GAME_MODE_LOADOUT][LOADOUT_LETHAL] = self bot_get_loadout(LETHAL);
     self.pers[GAME_MODE_LOADOUT][LOADOUT_TACTICAL] = self bot_get_loadout(TACTICAL);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK1] = self bot_get_loadout(PERK1);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK2] = self bot_get_loadout(PERK2);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK3] = self bot_get_loadout(PERK3);
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK1] = SPECIALTY_NULL;
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK2] = SPECIALTY_NULL;
+    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK3] = SPECIALTY_NULL;
 	
 	lethal = self.pers[GAME_MODE_LOADOUT][LOADOUT_LETHAL];
 	if (isDefined(lethal) && lethal != NONE && lethal != SPECIALTY_NULL)
@@ -958,31 +945,35 @@ summary: Retrieves a specific piece of loadout data for the bot from a `mp/survi
 */
 bot_get_loadout(column)
 {
-	value = tableLookup(TABLE, 0, self.botType, column);
-	if (value != "") return value;
-	if (!isSubStr(self.botType, "_")) return value;
+	dvarValue = getDvar("bot_" + self.botType);
 
-	abilities = strTok(self.botType, "_");
-	foreach (ability in abilities)
+	if (dvarValue == "" && isSubStr(self.botType, "_"))
 	{
-		if (!array_contains(BOTS_ABILITIES, ability)) continue;
-
-		value = tableLookup(TABLE, 0, ability, column);
-		if (value != "") return value;
+		abilities = strTok(self.botType, "_");
+		foreach (ability in abilities)
+		{
+			if (!array_contains(BOTS_ABILITIES, ability)) continue;
+			dvarValue = getDvar("bot_" + ability);
+			if (dvarValue != "") break;
+		}
 	}
 
-	return value;
+	if (dvarValue == "") return "";
+	
+	tokens = strTok(dvarValue, ",");
+	if (column < tokens.size) return tokens[column];
+	
+	return "";
 }
 
 bot_set_health()
 {
 	health = int(self bot_get_loadout(HEALTH));
-	if (level.wave_num > WAVE_LOOP)
+	if (level.wave_num >= level.waveLoopStart)
 	{
 		growth = difficulty_get_wave_loop_growth();
-		health = int(health * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP));
+		health = int(health * lethalbeats\math::math_pow(growth, level.wave_num - level.waveLoopStart + 1));
 	}
-	health = int(health * self.actor[BOT_HEALTH_MULTIPLIER]);
 	self.maxhealth = health;
 	self.health = health;
 }
@@ -990,8 +981,6 @@ bot_set_health()
 bot_set_speed()
 {
 	self.moveSpeedScaler = float(self bot_get_loadout(SPEED)); 
-	speedMultiplier = self.actor[BOT_SPEED_MULTIPLIER];
-	self.moveSpeedScaler *= speedMultiplier;
 	self maps\mp\gametypes\_weapons::updateMoveSpeedScale();
 }
 
@@ -2308,22 +2297,23 @@ get_botsTypes()
 {
 	bots = [];
 	totalCount = 0;
-	wave_num = min(level.wave_num, WAVE_LOOP);
+	wave_num = min(level.wave_num, level.waveLoopStart - 1);
 	scalePlayer = min(players_get_list("allies").size, 4);
 	scaleFactor = int(max(1, scalePlayer / 1.5));
 	scaleFactor *= getDvarFloat("survival_enemy_multiplier");
-	isWaveLoop = level.wave_num > WAVE_LOOP;
+	isWaveLoop = level.wave_num >= level.waveLoopStart;
 
-	for (i = 1; true; i++)
+	waveDvar = getDvar("wave_" + wave_num);
+	tokens = strTok(waveDvar, ",");
+
+	for (i = 0; i < tokens.size; i += 2)
 	{
-		if (!(i % 2)) continue;
+		bot = string_remove(tokens[i], " ");
+		if (i + 1 >= tokens.size) break;
+		botCountStr = string_remove(tokens[i+1], " ");
+		if (botCountStr == "") break;
 
-		botCount = tableLookup(difficulty_get_waves_table(), 0, wave_num, i + 1);
-		if (botCount == "") break;
-
-		bot = tableLookup(difficulty_get_waves_table(), 0, wave_num, i);
-		bot = string_remove(bot, " ");
-		botCount = int(int(botCount) * scaleFactor);
+		botCount = int(int(botCountStr) * scaleFactor);
 		totalCount += botCount;
 
 		if (isWaveLoop)
@@ -2340,7 +2330,7 @@ get_botsTypes()
 		bots[type] = count / totalCount;
 
 	growth = difficulty_get_wave_loop_growth();
-	newTotalCount = totalCount * lethalbeats\math::math_pow(growth, level.wave_num - WAVE_LOOP) * scaleFactor;
+	newTotalCount = totalCount * lethalbeats\math::math_pow(growth, level.wave_num - level.waveLoopStart + 1) * scaleFactor;
 	newBots = [];
 
 	foreach (type, percent in bots)
