@@ -198,6 +198,18 @@ _ims_handleDamage() // self == ims
 	{
 		self waittill("damage", damage, attacker, direction_vec, point, meansOfDeath, modelName, tagName, partName, iDFlags, weapon);
 
+        if (isDefined(weapon))
+		{
+			switch(weapon)
+			{
+                case "concussion_grenade_mp":
+                case "flash_grenade_mp":
+                case "smoke_grenade_mp":
+                case "ims_projectile_mp":
+                    continue;
+			}
+		}
+
 		owner = self.owner;
 		ownerTeam = owner.team;
 		if (!maps\mp\gametypes\_weapons::friendlyFireCheck(owner, attacker)) continue;
@@ -213,23 +225,6 @@ _ims_handleDamage() // self == ims
 			if (isplayer(attacker)) attacker maps\mp\gametypes\_damagefeedback::updateDamageFeedback("sentry");
 			self.damagetaken += self lethalbeats\survival\utility::equipmen_modified_damage(damage, attacker, weapon, meansOfDeath);
 		}
-
-		if(isDefined(weapon))
-		{
-			switch(weapon)
-			{
-                case "concussion_grenade_mp":
-                case "flash_grenade_mp":
-                case "smoke_grenade_mp":
-                case "ims_projectile_mp":
-                    continue;
-			}
-		}
-
-		if (!isDefined(self) || self.hidden) return;
-
-		self.wasDamaged = true;
-		self.damagetaken += self lethalbeats\survival\utility::equipmen_modified_damage(damage, attacker, weapon, meansOfDeath);
 		
 		if (self.damageTaken >= self.maxHealth)
 		{

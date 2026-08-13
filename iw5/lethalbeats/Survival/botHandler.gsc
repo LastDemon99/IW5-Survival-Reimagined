@@ -11,7 +11,6 @@
 #define SPECIALTY_NULL "specialty_null"
 
 #define INSTAKILL ["MOD_HEAD_SHOT", "MOD_MELEE", "MOD_RIFLE_BULLET"]
-#define EXPLOSIVE_DAMAGE ["MOD_EXPLOSIVE", "MOD_GRENADE", "MOD_GRENADE_SPLASH", "MOD_PROJECTILE", "MOD_PROJECTILE_SPLASH"]
 #define SHIELD_BULLET_DAMAGE ["MOD_PISTOL_BULLET", "MOD_RIFLE_BULLET", "MOD_EXPLOSIVE_BULLET"]
 
 #define DOG 0
@@ -214,7 +213,7 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 	if (self bot_is_jugger() && !self.isDropped) return;
 
 	self.bleedData = undefined;
-	isExplosiveDamage = array_contains(EXPLOSIVE_DAMAGE, sMeansOfDeath);
+	isExplosiveDamage = is_explosive_damage(sMeansOfDeath);
 
 	if (isDefined(eAttacker) && eAttacker player_is_survivor())
 	{
@@ -222,7 +221,7 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 		{
 			eAttacker.summary["hits"]++;
 			if (eAttacker.summary["hits"] <= eAttacker.summary["totalshots"]) eAttacker.summary["accuracy"] = clamp(eAttacker.summary["hits"] / eAttacker.summary["totalshots"], 0.0, 1.0) * 100;
-			iDamage = self weaponDamageModifier(sWeapon, iDamage, sMeansOfDeath, eAttacker, isExplosiveDamage);
+			iDamage += self bot_modified_damage(iDamage, eAttacker, sWeapon, sMeansOfDeath);
 
 			if (isDefined(sHitLoc) && sHitLoc == "shield" && array_contains(SHIELD_BULLET_DAMAGE, sMeansOfDeath) && eAttacker player_has_perk("specialty_bulletpenetration"))
 				sHitLoc = "torso_upper";
@@ -388,7 +387,7 @@ onStun(weapon, meansOfDeath)
 {
 	stunTime = 0;
 
-	if (array_contains(EXPLOSIVE_DAMAGE, meansOfDeath)) stunTime = 2;
+	if (is_explosive_damage(meansOfDeath)) stunTime = 2;
 	else if (isDefined(weapon))
 	{
 		switch(weapon)
@@ -450,23 +449,4 @@ onStunWatcher()
 	}
 
 	self.stuned = false;
-}
-
-weaponDamageModifier(weapon, damage, meansOfDeath, attacker, isExplosiveDamage)
-{
-	if (weapon == "artillery_mp" || isExplosiveDamage) return damage * 3;
-	if (meansOfDeath == "MOD_HEAD_SHOT") damage *= 1.5;
-
-	if (lethalbeats\string::string_starts_with(weapon, "alt_") && isSubStr(weapon, "shotgun"))
-		return damage * 4;
-
-	weaponBaseName = lethalbeats\weapon::weapon_get_baseName(weapon);
-	weaponMultiplier = (self bot_is_jugger() ? "dmg_jugg_wep_" : "dmg_wep_") + weaponBaseName;
-	if (getDvarFloat(weaponMultiplier)) return damage * getDvarFloat(weaponMultiplier);
-
-	weaponClass = lethalbeats\weapon::weapon_get_class(weapon);
-	classMultiplier = (self bot_is_jugger() ? "dmg_jugg_class_" : "dmg_class_") + weaponClass;
-	if (getDvarFloat(classMultiplier)) return damage * getDvarFloat(classMultiplier);
-
-	return damage;
 }

@@ -2135,6 +2135,31 @@ level_bots_give_ammo()
     }
 }
 
+is_explosive_damage(meansOfDeath)
+{
+	return meansOfDeath == "MOD_EXPLOSIVE" || meansOfDeath == "MOD_GRENADE" || meansOfDeath == "MOD_GRENADE_SPLASH" || meansOfDeath == "MOD_PROJECTILE" || meansOfDeath == "MOD_PROJECTILE_SPLASH";
+}
+
+bot_modified_damage(damage, attacker, weapon, meansOfDeath)
+{
+	if (meansOfDeath == "MOD_HEAD_SHOT") damage *= 1.5;
+
+	if (lethalbeats\string::string_starts_with(weapon, "alt_") && isSubStr(weapon, "shotgun"))
+		return damage * 4;
+
+	weaponBaseName = lethalbeats\weapon::weapon_get_baseName(weapon);
+	weaponMultiplier = (self bot_is_jugger() ? "dmg_jugg_wep_" : "dmg_bot_") + weaponBaseName;
+	if (getDvarFloat(weaponMultiplier)) return damage * getDvarFloat(weaponMultiplier);
+
+	weaponClass = lethalbeats\weapon::weapon_get_class(weapon);
+	classMultiplier = (self bot_is_jugger() ? "dmg_jugg_class_" : "dmg_class_") + weaponClass;
+	if (getDvarFloat(classMultiplier)) return damage * getDvarFloat(classMultiplier);
+
+	if (weapon == "artillery_mp" || is_explosive_damage(meansOfDeath)) return damage * 3;
+
+	return damage;
+}
+
 /*
 ///DocStringBegin
 detail: <Vehicle> heli_modified_damage(damage: <Int>, attacker: <Entity>, weapon: <String>, meansOfDeath: <String>): <Int>
@@ -2145,46 +2170,35 @@ heli_modified_damage(damage, attacker, weapon, meansOfDeath)
 {
 	if (isDefined(weapon))
 	{
-		littlebird = self.helitype == "littlebird" || self.helitype == "helicopter";
 		switch (weapon)
 		{
-			case "rpg_mp":
-				return littlebird ? self.customHealth : self.maxHealth / 4;
-			case "iw5_smaw_mp":
-			case "stinger_mp":
-				return littlebird ? self.customHealth : self.maxHealth / 2;
-			case "m320_mp":
-			case "xm25_mp":
-			case "c4_mp":
-				return littlebird ? self.customHealth / 3 : self.maxHealth / 8;
 			case "ac130_105mm_mp":
 			case "ac130_40mm_mp":
 			case "remotemissile_projectile_mp":
 			case "remote_mortar_missile_mp":
-			case "javelin_mp":
-				self.largeprojectiledamage = 1;
 				return self.maxhealth;
 			case "sam_projectile_mp":
-				self.largeprojectiledamage = 1;
-				return littlebird ? self.customHealth * 0.09 : self.maxHealth / 0.07;
+				return self.maxHealth / 2;
 			case "emp_grenade_mp":
 				self thread maps\mp\killstreaks\_helicopter::heli_empgrenaded();
-				return self.maxHealth;
+				return 0;
 			case "osprey_player_minigun_mp":
-				self.largeprojectiledamage = 0;
 				return damage * 2;
 		}
-	
-		if (isDefined(meansOfDeath) && (meansOfDeath == "MOD_EXPLOSIVE" || meansOfDeath == "MOD_GRENADE" || meansOfDeath == "MOD_GRENADE_SPLASH" || meansOfDeath == "MOD_PROJECTILE" || meansOfDeath == "MOD_PROJECTILE_SPLASH")) 
-			return damage * 2.5;
-	}
 
-	multiplier = 1;
-	if (attacker player_has_perk("specialty_bulletpenetration")) multiplier += 0.5;
-	if (attacker player_has_perk("specialty_armorpiercing")) multiplier += 0.5;
-	if (weapon_get_class(weapon) == "sniper") multiplier += 0.5;
-	if (multiplier > 1) return damage * multiplier;
-	return 0;
+		baseName = weapon_get_baseName(weapon);
+		weaponClass = weapon_get_class(weapon);
+
+		if (getDvarFloat("dmg_heli_" + baseName)) multiplier = getDvarFloat("dmg_heli_" + baseName);
+		else if (getDvarFloat("dmg_heli_class_" + weaponClass)) multiplier = getDvarFloat("dmg_heli_class_" + weaponClass);
+		else multiplier = 1;
+		
+		if (attacker player_has_perk("specialty_bulletpenetration")) multiplier += 0.5;
+		if (attacker player_has_perk("specialty_armorpiercing")) multiplier += 0.5;
+
+		return damage * multiplier;
+	}
+	return damage;
 }
 
 /*
@@ -2195,8 +2209,10 @@ summary: A damage callback for equipment. Modifies incoming damage, making them 
 */
 equipmen_modified_damage(damage, attacker, weapon, meansOfDeath)
 {
-	if (!isDefined(attacker) || !isPlayer(attacker) || self.team == attacker.team) return 0;
-	if (meansOfDeath == "MOD_MELEE") return self.maxHealth;
+	if (!isDefined(attacker) || !isPlayer(attacker) || self.team == attacker.team) return damage;
+	if (isDefined(meansOfDeath) && (meansOfDeath == "MOD_MELEE" || is_explosive_damage(meansOfDeath))) 
+		return self.maxHealth;
+
 	if (isDefined(weapon))
 	{
 		switch (weapon)
@@ -2212,16 +2228,13 @@ equipmen_modified_damage(damage, attacker, weapon, meansOfDeath)
 				return self.maxHealth;
 		}
 
-		if (isDefined(meansOfDeath) && (meansOfDeath == "MOD_EXPLOSIVE" || meansOfDeath == "MOD_GRENADE" || meansOfDeath == "MOD_GRENADE_SPLASH" || meansOfDeath == "MOD_PROJECTILE" || meansOfDeath == "MOD_PROJECTILE_SPLASH")) 
-			return self.maxHealth;
-
 		multiplier = 1;
 		if (attacker player_has_perk("specialty_bulletpenetration")) multiplier += 0.5;
 		if (attacker player_has_perk("specialty_armorpiercing")) multiplier += 0.5;
 		if (weapon_get_class(weapon) == "sniper") multiplier += 0.5;
 		if (multiplier > 1) return damage * multiplier;
 	}
-	return 0;
+	return damage;
 }
 
 /*

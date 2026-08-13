@@ -172,9 +172,8 @@ _heli_damage_monitor()
         if (attacker == self || !maps\mp\gametypes\_weapons::friendlyFireCheck(self.owner, attacker))
             continue;
 
-        modifiedDamage = self lethalbeats\survival\utility::heli_modified_damage(damage, attacker, weapon, meansOfDeath);
         self.attacker = attacker;
-        self.damagetaken += modifiedDamage;
+        self.damagetaken += self lethalbeats\survival\utility::heli_modified_damage(damage, attacker, weapon, meansOfDeath);
 
         if (isplayer(attacker)) attacker maps\mp\gametypes\_damagefeedback::updateDamageFeedback("");
 
