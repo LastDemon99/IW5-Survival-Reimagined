@@ -28,21 +28,19 @@ spawnShop(type, origin, angles)
 		case "weapon": 
 			hintString = "Weapon Armory";
 			wayPoint = "specops_ui_weaponstore";
-			waveTarget = 2;
 			break;
 		case "equipment": 
 			hintString = "Equipment Armory";
 			wayPoint = "specops_ui_equipmentstore";
-			waveTarget = 4;
 			break;
 		case "support": 
 			hintString = "Air Support";
 			wayPoint = "specops_ui_airsupport";
-			waveTarget = 6;
 			break;
 	}
-	
-	if (getDvarInt("survival_wait_shops") && lethalbeats\survival\utility::level_get_wave() < waveTarget)
+
+	waveTarget = getDvarInt("survival_armory_" + type + "_unlock");
+	if (waveTarget && lethalbeats\survival\utility::level_get_wave() < waveTarget)
 	{
 		for(;;)
 		{

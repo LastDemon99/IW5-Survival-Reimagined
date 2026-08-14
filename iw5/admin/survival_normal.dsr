@@ -3,7 +3,9 @@
 //////////////////////////////////////////////////
 
 set survival_dev_mode 					0
-set survival_wait_shops 				1
+set survival_armory_weapon_unlock 		2
+set survival_armory_equipment_unlock 	4
+set survival_armory_support_unlock 		6
 set survival_wave_start 				1
 set survival_wait_respawn 				1
 set survival_survivors_limit 			5
