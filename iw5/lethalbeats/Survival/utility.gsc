@@ -1179,13 +1179,15 @@ survivor_clear_perks()
 /*
 ///DocStringBegin
 detail: <Player> survivor_give_perk(perk: <String>): <Void>
-summary: Gives a survival perk to the player if they don't already have it and have a free slot (max 3).
+summary: Gives a survival perk to the player if they don't already have it and have a free slot.
 ///DocStringEnd
 */
 survivor_give_perk(perk)
 {
 	if (self player_has_perk(perk)) return;	
-	if(self.survivalPerks.size == 3) return;
+	maxPerks = getDvarInt("survival_perks_limit");
+	if (maxPerks <= 0) maxPerks = 9;
+	if (self.survivalPerks.size >= maxPerks) return;
 
 	// ui_perks -> player_perks
 	if(perk == "specialty_steadyaim") perk = "specialty_bulletaccuracy";
@@ -1241,18 +1243,11 @@ summary: Updates the perk UI DVars to reflect the player's current survival perk
 */
 _survivor_update_perks()
 {
-	self setClientDvar("ui_perk1", "");
-	self setClientDvar("ui_perk2", "");
-	self setClientDvar("ui_perk3", "");
+	for (i = 1; i <= 9; i++)
+		self setClientDvar("ui_perk" + i, "");
 	
-	if (self.survivalPerks.size < 1) return;
-	self setClientDvar("ui_perk1", self.survivalPerks[0]);
-	
-	if (self.survivalPerks.size < 2) return;
-	self setClientDvar("ui_perk2", self.survivalPerks[1]);
-	
-	if (self.survivalPerks.size < 3) return;
-	self setClientDvar("ui_perk3", self.survivalPerks[2]);
+	for (i = 0; i < self.survivalPerks.size && i < 9; i++)
+		self setClientDvar("ui_perk" + (i + 1), self.survivalPerks[i]);
 }
 
 /*

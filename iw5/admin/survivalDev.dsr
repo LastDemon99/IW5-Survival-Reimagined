@@ -6,6 +6,7 @@ set survival_dev_mode 					1
 set survival_armory_weapon_unlock 		0
 set survival_armory_equipment_unlock 	0
 set survival_armory_support_unlock 		0
+set survival_perks_limit				3
 set survival_wave_start 				1
 set survival_wait_respawn 				0
 set survival_survivors_limit 			5
