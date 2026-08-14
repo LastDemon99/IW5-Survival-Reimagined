@@ -595,12 +595,8 @@ onWeaponChange()
 
 		isGrenade = weaponClass(newWeapon) == "grenade";
 		if (isGrenade || self maps\mp\_utility::isKillstreakWeapon(newWeapon)) self.enableUse = false;
-		else
-		{
-			weapon = lethalbeats\weapon::weapon_get_baseName(newWeapon) + "_mp";
-			self.enableUse = maps\mp\gametypes\_class::isValidWeapon(weapon);
-		}
-
+		else self.enableUse = lethalbeats\weapon::weapon_is_valid(lethalbeats\weapon::weapon_get_baseName(newWeapon));
+		
 		if (!isDefined(newWeapon) || newWeapon == "none" || weaponClass(newWeapon) == "none") continue;
 		if (!isGrenade)
 		{
