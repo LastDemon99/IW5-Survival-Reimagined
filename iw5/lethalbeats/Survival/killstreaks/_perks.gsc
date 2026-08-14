@@ -54,6 +54,9 @@ _onScavengerBagPickup(weaponModel)
 		if (!player player_has_perk("specialty_scavenger")) continue;
 
 		currentWep = player getCurrentWeapon();
+		if (isDefined(currentWep) && lethalbeats\string::string_starts_with(currentWep, "alt_"))
+			currentWep = getSubStr(currentWep, 4);
+
 		foreach(weapon in player player_get_weapons())
 			if (weapon == currentWep || player player_has_max_ammo(currentWep) || lethalbeats\math::math_chance(50))
 				player player_give_random_ammo(weapon, 5, 15);
