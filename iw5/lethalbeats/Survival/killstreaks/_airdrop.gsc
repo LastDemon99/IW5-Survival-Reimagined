@@ -12,16 +12,6 @@ init()
 	
     level.killStreakFuncs["airdrop_assault"] = ::_tryUseAssaultAirdrop;
 
-    game["strings"]["specialty_quickdraw_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["specialty_bulletaccuracy_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["specialty_stalker_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["specialty_longersprint_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["specialty_fastreload_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["_specialty_blastshield_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["specialty_detectexplosive_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["specialty_scavenger_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-    game["strings"]["specialty_blindeye_ks_hint"] = &"PERK_CAREPACKAGE_PICKUP";
-
 	addCrateType("minigun_turret", "minigun_turret", 20, ::_killstreakCrateThink);
 	addCrateType("gl_turret", "gl_turret", 20, ::_killstreakCrateThink);
     addCrateType("perk_quickdraw", "specialty_quickdraw_ks", 20, ::_killstreakCrateThink);
@@ -285,71 +275,39 @@ _airDropCrateDeath()
 
 _killstreakCrateThink(dropType)
 {
-	self endon ("death");
-	
-	if (isDefined(game["strings"][self.crateType + "_hint"]))
-		crateHint = game["strings"][self.crateType + "_hint"];
-	else 
-		crateHint = &"PLATFORM_GET_KILLSTREAK";
-	
-	crateSetupForUse(crateHint, "all", maps\mp\killstreaks\_killstreaks::getKillstreakCrateIcon(self.crateType));
+    self lethalbeats\hud::hud_create_2d_objective("allies", "compass_objpoint_ammo_friendly");
+    self lethalbeats\hud::hud_create_3d_objective("allies", maps\mp\killstreaks\_killstreaks::getKillstreakCrateIcon(self.crateType));
 
-	self thread crateOtherCaptureThink();
-	self thread crateOwnerCaptureThink();
+    trigger = lethalbeats\trigger::trigger_create(self.origin, 70);
+    trigger.owner = self.owner;
+    trigger lethalbeats\trigger::trigger_set_use_hold(3, &"PERK_CAREPACKAGE_PICKUP", true, false);
+    trigger lethalbeats\trigger::trigger_set_enable_use_condition(::cratePickupCondition);
+    trigger lethalbeats\trigger::trigger_set_use_time_condition(::crateUseTimeCondition);
+    
+    self thread watchCrateTriggerDeath(trigger);
+    self thread onCaptured(trigger, dropType);
+}
 
-	for (;;)
-	{
-		self waittill("captured", player);
-		
-		if (isDefined(self.owner) && player != self.owner)
-		{
-			if (!level.teamBased || player.team != self.team)
-			{
-				switch(dropType)
-				{
-                    case "airdrop_assault":
-                    case "airdrop_support":
-                    case "airdrop_escort":
-                    case "airdrop_osprey_gunner":
-                        player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop");
-                        player thread hijackNotify(self, "airdrop");
-                        break;
-                    case "airdrop_sentry_minigun":
-                        player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop");
-                        player thread hijackNotify(self, "sentry");
-                        break;
-                    case "airdrop_remote_tank":
-                        player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop");
-                        player thread hijackNotify(self, "remote_tank");
-                        break;
-                    case "airdrop_mega":
-                        player thread maps\mp\gametypes\_missions::genericChallenge("hijacker_airdrop_mega");
-                        player thread hijackNotify(self, "emergency_airdrop");
-                        break;
-				}
-			}
-			else
-			{
-				self.owner thread maps\mp\gametypes\_rank::giveRankXP("killstreak_giveaway", Int((maps\mp\killstreaks\_killstreaks::getStreakCost(self.crateType) / 10) * 50));
-				self.owner thread maps\mp\gametypes\_hud_message::splashNotifyDelayed("sharepackage", Int((maps\mp\killstreaks\_killstreaks::getStreakCost(self.crateType) / 10) * 50));
-			}
-		}
+onCaptured(trigger, dropType)
+{
+    self endon("death");
 
-        self _clearSurvivorAirdrop();
-	
-        if (string_starts_with(dropType, "perk_")) 
-        {
-            perk = lethalbeats\survival\utility::getPerkFromKsPerk(self.crateType);
-		    player lethalbeats\survival\utility::survivor_give_perk(perk);
-            if (dropType == "perk_sitrep") level notify("update_bombsquad");
-        }
-		else player thread maps\mp\killstreaks\_killstreaks::giveKillstreak(self.crateType, false, false, self.owner);
-        player playLocalSound("ammo_crate_use");
+    trigger waittill("trigger_hold_complete", player);
+    trigger lethalbeats\trigger::trigger_delete();
 
-        player notify("weapon_change", player getCurrentWeapon());
+    self _clearSurvivorAirdrop();
 
-        self deleteCrate();
-	}
+    if (string_starts_with(dropType, "perk_")) 
+    {
+        perk = lethalbeats\survival\utility::getPerkFromKsPerk(self.crateType);
+        player lethalbeats\survival\utility::survivor_give_perk(perk);
+        if (dropType == "perk_sitrep") level notify("update_bombsquad");
+    }
+    else player thread maps\mp\killstreaks\_killstreaks::giveKillstreak(self.crateType, false, false, self.owner);
+    player playLocalSound("ammo_crate_use");
+    player notify("weapon_change", player getCurrentWeapon());
+
+    self delete();
 }
 
 /*
@@ -375,4 +333,24 @@ _clearSurvivorAirdrop()
     }
 
     if (isDefined(airdropIndex)) self.owner.airdrops = lethalbeats\array::array_remove_index(self.owner.airdrops, airdropIndex);
+}
+
+cratePickupCondition(player)
+{
+    if (player.team == "allies") return self lethalbeats\survival\utility::survivor_trigger_filter(player);
+    return true;
+}
+
+watchCrateTriggerDeath(trigger)
+{
+    self waittill("death");
+    if (isDefined(trigger)) trigger lethalbeats\trigger::trigger_delete();
+    self lethalbeats\hud::hud_delete_2d_objective();
+    self lethalbeats\hud::hud_delete_3d_objective();
+}
+
+
+crateUseTimeCondition(player)
+{
+    return isDefined(self.owner) && player == self.owner ? 0.35 : 3;
 }

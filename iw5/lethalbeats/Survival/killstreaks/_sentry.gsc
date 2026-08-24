@@ -173,7 +173,7 @@ _sentry_initSentry(sentryType, owner)
 	self.id = self getentitynumber();	
 	self makeTurretInoperable();	
 	self setTurretModeChangeWait(true);
-	self sentry_setInactive();	
+	self _sentry_setinactive();	
 	self sentry_setOwner(owner);
 	self thread _sentry_handleDamage();
 	self thread _sentry_handleDeath();
@@ -189,16 +189,13 @@ _sentry_initSentry(sentryType, owner)
             self.heatlevel = 0;
             self.cooldownwaittime = 0;
             self.overheated = false;
-            thread sentry_handleuse();
             thread _sentry_attackTargets();
             thread sentry_beepsounds();
             break;
-		case "sam_turret":
-            thread sentry_handleuse();
+		case "sam_turret":            
             thread sentry_beepsounds();
             break;
-        default:
-            thread sentry_handleuse();
+        default:            
             thread _sentry_attackTargets();
             thread sentry_beepsounds();
             break;
@@ -288,7 +285,8 @@ _sentry_setplaced()
     self.carriedby forceusehintoff();
     self.carriedby = undefined;
 
-	sentry_setactive();
+	owner = self.owner;
+	self _sentry_setactive();    
     self playsound("sentry_gun_plant");
     self notify("placed");
 
@@ -375,7 +373,7 @@ _sentry_handleDeath()
 	}
 
     self setmodel(level.sentrysettings[self.sentrytype].modeldestroyed);
-    sentry_setinactive();
+    self _sentry_setinactive();
     self setdefaultdroppitch(40);
     self setsentryowner(undefined);
     self setturretminimapvisible(0);
@@ -489,4 +487,46 @@ spawnSentryAtLocation(sentryType, origin, angles, owner)
 	sentry.sentrytype = sentryType;
 	sentry _sentry_setplaced();
 	return sentry;
+}
+
+_sentry_setactive()
+{
+    self setmode(level.sentrysettings[self.sentrytype].sentrymodeon);
+    if (!isDefined(self.owner) || !self.owner lethalbeats\survival\utility::player_is_survivor()) return;
+
+	trigger = lethalbeats\trigger::trigger_create(self.origin + (0, 0, 1), 70);
+	trigger lethalbeats\trigger::trigger_set_use("Press ^3[{+activate}] ^7to pick up Sentry");
+	trigger lethalbeats\trigger::trigger_set_enable_use_condition(::sentryPickupCondition);
+	trigger.owner = self.owner;
+	self.trigger = trigger;		
+	self thread watchSentryTriggerUse(trigger);
+	self thread watchSentryTriggerDeath(trigger);
+}
+
+_sentry_setinactive()
+{
+    self setmode(level.sentrysettings[self.sentrytype].sentrymodeoff);
+}
+
+sentryPickupCondition(player)
+{
+    if (isDefined(self.owner) && self.owner == player) return self lethalbeats\survival\utility::survivor_trigger_filter(player);
+    return false;
+}
+
+watchSentryTriggerUse(trigger)
+{
+    self endon("death");
+    self endon("carried");
+    for (;;)
+    {
+        trigger waittill("trigger_use", player);
+        player thread _setcarryingsentry(self, false);
+    }
+}
+
+watchSentryTriggerDeath(trigger)
+{
+    self waittill_any("death", "carried");
+    if (isDefined(trigger)) trigger lethalbeats\trigger::trigger_delete();
 }
