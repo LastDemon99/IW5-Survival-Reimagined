@@ -141,7 +141,7 @@ _ims_setActive() // self == ims
 	self.attackMoveTime = distance(self.origin, self.attackHeightPos) / 200;
 
 	self thread ims_blinky_light();
-	self thread ims_attackTargets();
+	self thread _ims_attacktargets();
 	self thread ims_playerConnected();
 }
 
@@ -270,3 +270,66 @@ _ims_handleDeath()
 
 	self delete();
 }
+
+_ims_attacktargets()
+{
+    level endon("game_ended");
+    self endon("death");
+
+    for (;;)
+    {
+        if (!isdefined(self.attacktrigger)) break;
+
+        self.attacktrigger waittill("trigger", target);
+
+        if (isplayer(target))
+        {
+            if (isdefined(self.owner) && target == self.owner) continue;
+            if (level.teambased && target.pers["team"] == self.team) continue;
+            if (!maps\mp\_utility::isreallyalive(target)) continue;
+        }
+        else if (isdefined(target.owner))
+        {
+            if (isdefined(self.owner) && target.owner == self.owner) continue;
+            if (level.teambased && target.owner.pers["team"] == self.team) continue;
+        }
+
+        if (!sighttracepassed(self.attackheightpos, target.origin + (0, 0, 50), 0, self) || !sighttracepassed(self gettagorigin(level.imssettings[self.imstype].taglid1) + (0, 0, 5), target.origin + (0, 0, 50), 0, self) && !sighttracepassed(self gettagorigin(level.imssettings[self.imstype].taglid2) + (0, 0, 5), target.origin + (0, 0, 50), 0, self) && !sighttracepassed(self gettagorigin(level.imssettings[self.imstype].taglid3) + (0, 0, 5), target.origin + (0, 0, 50), 0, self) && !sighttracepassed(self gettagorigin(level.imssettings[self.imstype].taglid4) + (0, 0, 5), target.origin + (0, 0, 50), 0, self))
+            continue;
+
+        self playsound("ims_trigger");
+
+        if (isplayer(target) && target maps\mp\_utility::_hasperk("specialty_delaymine"))
+        {
+            target notify("triggered_ims");
+            wait(level.delayminetime);
+            if (!isdefined(self.attacktrigger)) break;
+        }
+        else wait(level.imssettings[self.imstype].graceperiod);
+
+        if (isdefined(self.explosive1) && !isdefined(self.explosive1.fired))
+            fire_sensor(target, self.explosive1, self.lid1);
+        else if (isdefined(self.explosive2) && !isdefined(self.explosive2.fired))
+            fire_sensor(target, self.explosive2, self.lid2);
+        else if (isdefined(self.explosive3) && !isdefined(self.explosive3.fired))
+            fire_sensor(target, self.explosive3, self.lid3);
+        else if (isdefined(self.explosive4) && !isdefined(self.explosive4.fired))
+            fire_sensor(target, self.explosive4, self.lid4);
+
+        self.attacks--;
+
+        if (self.attacks <= 0)
+            break;
+
+        wait 2.0;
+
+        if (!isdefined(self.owner))
+            break;
+    }
+
+    if (isdefined(self.carriedby) && isdefined(self.owner) && self.carriedby == self.owner)
+        return;
+
+    self notify("death");
+}
+
