@@ -65,13 +65,18 @@ onInit()
 {
     player = self.owner;
     weapon = player getCurrentWeapon();
-    weaponClass =  weapon_get_class(weapon);
 
-    if (weapon == "none" || weaponClass == "explosive" || weaponClass == "killstreak")
+    if (!isDefined(player player_get_weapon_index(weapon)))
     {
         weapon = player.prevWeapon;
+        if (!isDefined(weapon) || weapon == "none" || !isDefined(player player_get_weapon_index(weapon)))
+        {
+            primaries = player getWeaponsListPrimaries();
+            if (primaries.size > 0) weapon = primaries[0];
+        }
         player switchToWeaponImmediate(weapon);
         player waittill("weapon_change");
+        waittillframeend;
     }
 
     self.weaponData = player getWeaponData(weapon);

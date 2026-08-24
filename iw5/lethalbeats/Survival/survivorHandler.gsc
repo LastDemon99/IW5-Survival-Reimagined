@@ -65,7 +65,6 @@ onPlayerSpawn()
 		self.currMenu = undefined;
 		self.iscarrying = false;
 		self.dropWeapon = true;
-		self.enableUse = true;
 		self.dogKnockdown = false;
 
 		if (!self survivor_load_state())
@@ -559,12 +558,7 @@ onWeaponSwitchStarted()
 		self waittill("weapon_switch_started", newWeapon);
 
 		currWeapon = self getCurrentWeapon();
-
-		validCurrWep = isDefined(currWeapon) && currWeapon != "none" && !isDefined(self.lastStand) && lethalbeats\weapon::weapon_get_class(currWeapon) != "explosive";
-		validNewWep = isDefined(newWeapon) && newWeapon != "none";
-
-		self.enableUse = false;
-		if(validCurrWep && validNewWep)
+		if(isDefined(self player_get_weapon_index(currWeapon)))
 		{
 			self.prevWeapon = currWeapon;
 			self.saved_lastweapon = currWeapon;
@@ -593,12 +587,7 @@ onWeaponChange()
 	{
 		self waittill("weapon_change", newWeapon);
 
-		isGrenade = weaponClass(newWeapon) == "grenade";
-		if (isGrenade || self maps\mp\_utility::isKillstreakWeapon(newWeapon)) self.enableUse = false;
-		else self.enableUse = lethalbeats\weapon::weapon_is_valid(lethalbeats\weapon::weapon_get_baseName(newWeapon));
-		
-		if (!isDefined(newWeapon) || newWeapon == "none" || weaponClass(newWeapon) == "none") continue;
-		if (!isGrenade)
+		if (isDefined(self lethalbeats\player::player_get_weapon_index(newWeapon)))
 		{
 			self player_take_all_weapon_buffs();
 			weaponData = self player_get_weapon_data(newWeapon);
@@ -728,7 +717,7 @@ dropWeaponMonitor()
 	{
 		self waittill("drop_weapon");
 
-		if (self player_get_weapons().size < 2 || self.inLastStand || !self.enableUse) continue;
+		if (self player_get_weapons().size < 2 || self.inLastStand || !isDefined(self lethalbeats\player::player_get_weapon_index(self getCurrentWeapon()))) continue;
 		if (is_shop_near(self.origin))
 		{
 			self hud_set_lower_message("fail_drop_weapon", "You cannot drop a weapon while near the terminals.", 2, 1);
