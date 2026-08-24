@@ -8,9 +8,9 @@
 
 grenadeWatchUsage()
 {
-    self endon("death");
     self endon("disconnect");
     self endon("faux_spawn");
+    self endon("spawned_player");
     
     if (!isDefined(self.mines)) self.mines = [];
 
@@ -92,7 +92,7 @@ c4Watch(item, weaponName)
     }
     else if (self.mines[C4].size > level.maxperplayerexplosives)
     {
-        result = array_pop(self.mines[C4]);
+        result = array_shift(self.mines[C4]);
         self.mines[C4] = result[0];
         result[1] detonate();
     }
@@ -103,20 +103,15 @@ c4Watch(item, weaponName)
     item.team = self.team;
     item.activated = true;
     item.weaponname = weaponName;
-
-    item thread mineDamage();
-    //item thread c4empdamage();
-    ///item thread c4empkillstreakwait();
     item thread c4WatchStuck();
 }
 
 c4WatchStuck()
 {
-    self.owner endon("spawned_player");
-    self.owner endon("disconnect");
     self endon("death");
-
-    self waittill("missile_stuck");    
+    self waittill("missile_stuck");
+    
+    self thread mineDamage();
     if (self.owner.team == "axis") return;
 
     trigger = trigger_create(self.origin, 70);
@@ -192,7 +187,7 @@ claymoreWatchStuck(owner, weaponName)
     if (!isDefined(owner.mines[CLAYMORE])) owner.mines[CLAYMORE] = [];
     else if (owner.mines[CLAYMORE].size > level.maxperplayerexplosives)
     {
-        result = array_pop(owner.mines[CLAYMORE]);
+        result = array_shift(owner.mines[CLAYMORE]);
         owner.mines[CLAYMORE] = result[0];
         result[1] detonate();
     }
@@ -249,7 +244,6 @@ claymoreWatchProximity()
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
         self.trigger trigger_delete();
-        if (isdefined(self.bombSquad)) self.bombSquad delete();
         self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
     }
 
@@ -261,7 +255,7 @@ bouncingbettyWatch(item, weaponName)
     if (!isDefined(self.mines[BOUNCINGBETTY])) self.mines[BOUNCINGBETTY] = [];
     else if (self.mines[BOUNCINGBETTY].size > level.maxperplayerexplosives)
     {
-        result = array_pop(self.mines[BOUNCINGBETTY]);
+        result = array_shift(self.mines[BOUNCINGBETTY]);
         self.mines[BOUNCINGBETTY] = result[0];
         result[1] detonate();
     }
@@ -350,7 +344,6 @@ bouncingbettyWatchProximity()
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
         self.trigger trigger_delete();
-        if (isdefined(self.bombSquad)) self.bombSquad delete();
         self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
     }
 
@@ -411,7 +404,6 @@ minePickupCondition(player)
 
 mineDamage()
 {
-    self endon("mine_triggered");
     self endon("death");
     self setcandamage(1);
     self.maxhealth = 100000;
@@ -421,8 +413,7 @@ mineDamage()
     for (;;)
     {
         self waittill("damage", damage, attacker, direction_vec, point, type, modelName, tagName, partName, iDFlags, weapon);
-        if (!isplayer(attacker)) continue;
-        if (!friendlyFireCheck(self.owner, attacker)) continue;
+        if (!isplayer(attacker) || (self.owner != attacker && self.owner.team == attacker.team )) continue;
         if (isdefined(weapon))
         {
             switch (weapon)
@@ -468,9 +459,7 @@ mineDamage()
     if (isdefined(self.trigger))
     {
         if (isdefined(self.damageArea)) self.damageArea trigger_delete();
-        self.trigger trigger_delete();
-        if (isdefined(self.bombSquad)) self.bombSquad delete();
-        
+        self.trigger trigger_delete();        
         if (isDefined(self.owner) && isDefined(self.owner.mines[self.weaponname]))
             self.owner.mines[self.weaponname] = array_remove(self.owner.mines[self.weaponname], self);
     }
