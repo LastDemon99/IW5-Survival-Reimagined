@@ -69,15 +69,12 @@ onPlayerSpawn()
 
 		if (!self survivor_load_state())
 		{
-			self.prevWeapon = self getCurrentWeapon();
-			self.weaponData = [self player_create_weapon_data(self.prevWeapon), undefined];
+			self takeAllWeapons();
+			self survivor_give_default_loadout();
 			self survivor_clear_perks();
 			self survivor_set_score(getDvarInt("survival_start_money"));
 			self survivor_give_body_armor();
 			self survivor_give_last_stand();
-			self player_clear_nades();
-			self player_set_nades(FLASH, 2);
-			self player_set_nades(FRAG, 2);
 
 			if (getDvarInt("survival_wait_respawn") && (isDefined(level.survivors_deaths[self.guid]) || isDefined(level.survivors_bleedout[self.guid])))
 			{
@@ -98,6 +95,15 @@ onPlayerSpawn()
 			self.weaponData = [self player_create_weapon_data(fallbackWeapon), undefined];
 			self setSpawnWeapon(fallbackWeapon);
 			self switchToWeaponImmediate(fallbackWeapon);
+		}
+		else
+		{
+			if (!isDefined(self.weaponData)) self.weaponData = [undefined, undefined];
+			for (i = 0; i < weaponsAfterSpawn.size; i++)
+			{
+				if (i < 2 && !isDefined(self.weaponData[i]))
+					self.weaponData[i] = self player_create_weapon_data(weaponsAfterSpawn[i]);
+			}
 		}
 		
 		self setClientDvar(UI_USE_SLOT, "none");

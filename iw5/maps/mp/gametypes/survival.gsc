@@ -56,6 +56,7 @@ main()
 	setDvarIfUninitialized("survival_perks_limit", 9);
 	setDvarIfUninitialized("survival_revive_time", 4);
 	setDvarIfUninitialized("survival_revive_time_per_player", 1);
+	setDvarIfUninitialized("survivor_loadout", "iw5_fnfiveseven_mp,none,frag_grenade_mp,flash_grenade_mp");
 	setDvarIfUninitialized("sv_mapRotation", "dsr survival map mp_dome map mp_mogadishu map mp_bootleg map mp_lambeth map mp_hardhat map mp_interchange map mp_alpha map mp_bravo map mp_plaza2 map mp_exchange map mp_carbon map mp_paris map mp_radar map mp_seatown map mp_underground map mp_village map mp_favela map mp_highrise map mp_nightshift map mp_nuked map mp_rust");
 
 	setDvar("sv_cheats", 1);	
@@ -223,7 +224,7 @@ onStartGametype()
 	lethalbeats\utility::clear_score_info();
 	
 	level.startTime = gettime();
-	level.defaultLoadout = lethalbeats\utility::get_loadout_blank("iw5_fnfiveseven");
+	level.defaultLoadout = lethalbeats\utility::get_loadout_blank();
 	level.wave_num = 0;
 	level.axisTarget = undefined;
 	

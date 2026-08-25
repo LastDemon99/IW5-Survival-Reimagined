@@ -126,6 +126,7 @@ player_set_nades(nade, value)
 	switch(nade)
 	{
 		case FRAG:
+		case SEMTEX:
 			ui_dvar = UI_LETHAL;
 			self setOffhandPrimaryClass("frag");
 			self _player_take_nades(THROWING_KNIFE);
@@ -141,9 +142,18 @@ player_set_nades(nade, value)
 			self _player_take_nades(CONCUSSION);
 			break;
 		case CONCUSSION:
+		case SMOKE:
 			ui_dvar = UI_TACTICAL;
 			self setOffhandSecondaryClass("smoke");
 			self _player_take_nades(FLASH);
+			break;
+		case CLAYMORE:
+			ui_dvar = "ui_claymore";
+			self lethalbeats\player::player_set_action_slot(1, "weapon", nade);
+			break;
+		case C4:
+			ui_dvar = "ui_c4";
+			self lethalbeats\player::player_set_action_slot(5, "weapon", nade);
 			break;
 		default:
 			ui_dvar = "ui_" + strTok(nade, "_")[0];
@@ -2262,37 +2272,45 @@ get_max_armor()
 
 /*
 ///DocStringBegin
-detail: get_default_loadout(): <Array>
-summary: Returns a default loadout structure, used for players when they first join.
+detail: <Player> survivor_give_default_loadout(): <Void>
+summary: Delivers the initial loadout to the survivor directly using lethalbeats weapon functions.
 ///DocStringEnd
 */
-get_default_loadout()
+survivor_give_default_loadout()
 {
-	// temporal
-	loadout[LOADOUT_PRIMARY] = "iw5_fnfiveseven";
-	loadout[LOADOUT_PRIMARY_ATTACHMENT] = NONE;
-	loadout[LOADOUT_PRIMARY_ATTACHMENT2] = NONE;
-	loadout[LOADOUT_PRIMARY_BUFF] = SPECIALTY_NULL;
-	loadout[LOADOUT_PRIMARY_CAMO] = NONE;
-	loadout[LOADOUT_PRIMARY_RETICLE] = NONE;
-	loadout[LOADOUT_SECONDARY] = NONE;
-	loadout[LOADOUT_SECONDARY_ATTACHMENT] = NONE;
-	loadout[LOADOUT_SECONDARY_ATTACHMENT2] = NONE;
-	loadout[LOADOUT_SECONDARY_BUFF] = SPECIALTY_NULL;
-	loadout[LOADOUT_SECONDARY_CAMO] = NONE;
-	loadout[LOADOUT_SECONDARY_RETICLE] = NONE;
-	loadout[LOADOUT_LETHAL] = FRAG;
-	loadout[LOADOUT_TACTICAL] = FLASH;
-	loadout[LOADOUT_PERK1] = SPECIALTY_NULL;
-	loadout[LOADOUT_PERK2] = SPECIALTY_NULL;
-	loadout[LOADOUT_PERK3] = SPECIALTY_NULL;
-	loadout[LOADOUT_STREAK_TYPE] = SPECIALTY_NULL;
-	loadout[LOADOUT_KILLSTREAK1] = NONE;
-	loadout[LOADOUT_KILLSTREAK2] = NONE;
-	loadout[LOADOUT_KILLSTREAK3] = NONE;
-	loadout[LOADOUT_DEATHSTREAK] = SPECIALTY_NULL;
-	loadout[LOADOUT_JUGGERNAUT] = false;
-	return loadout;
+	dvarValue = string_trim(getDvar("survivor_loadout"));
+	tokens = strTok(dvarValue, ",");
+
+	primary = tokens.size > PRIMARY && tokens[PRIMARY] != "" ? tokens[PRIMARY] : "iw5_fnfiveseven";
+	secondary = tokens.size > SECONDARY && tokens[SECONDARY] != "" ? tokens[SECONDARY] : NONE;
+	lethal = tokens.size > LETHAL && tokens[LETHAL] != "" ? tokens[LETHAL] : FRAG;
+	tactical = tokens.size > TACTICAL && tokens[TACTICAL] != "" ? tokens[TACTICAL] : FLASH;
+
+	self.weaponData = [undefined, undefined];
+
+	if (primary != NONE)
+	{
+		buildPrimary = string_contains(primary, "_mp") ? primary : weapon_build(primary);
+		self player_give_weapon(buildPrimary, true, false, true);
+		self.weaponData[0] = self player_create_weapon_data(buildPrimary);
+		self.prevWeapon = buildPrimary;
+		self setSpawnWeapon(buildPrimary);
+		self survivor_switch_to_weapon(buildPrimary);
+	}
+
+	if (secondary != NONE)
+	{
+		buildSecondary = string_contains(secondary, "_mp") ? secondary : weapon_build(secondary);
+		self player_give_weapon(buildSecondary);
+		self.weaponData[1] = self player_create_weapon_data(buildSecondary);
+	}
+
+	self player_clear_nades();
+	if (lethal != NONE && lethal != SPECIALTY_NULL)
+		self player_set_nades(lethal, 2);
+
+	if (tactical != NONE && tactical != SPECIALTY_NULL)
+		self player_set_nades(tactical, 2);
 }
 
 /*
