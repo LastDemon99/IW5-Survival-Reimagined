@@ -869,32 +869,45 @@ summary: Sets the bot's loadout based on the current wave's bot pool, assigning 
 */
 bot_set_loadout()
 {	
+	self takeAllWeapons();
 	if(!isDefined(self.botType)) return;
-	if(!isDefined(self bot_get_loadout(PRIMARY))) return;
 
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY] = self bot_get_loadout(PRIMARY);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_ATTACHMENT] =  NONE;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_ATTACHMENT2] = NONE;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PRIMARY_BUFF] = SPECIALTY_NULL;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY] = self bot_get_loadout(SECONDARY);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_ATTACHMENT] = NONE;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_ATTACHMENT2] = NONE;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_SECONDARY_BUFF] = SPECIALTY_NULL;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_LETHAL] = self bot_get_loadout(LETHAL);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_TACTICAL] = self bot_get_loadout(TACTICAL);
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK1] = SPECIALTY_NULL;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK2] = SPECIALTY_NULL;
-    self.pers[GAME_MODE_LOADOUT][LOADOUT_PERK3] = SPECIALTY_NULL;
-	
-	lethal = self.pers[GAME_MODE_LOADOUT][LOADOUT_LETHAL];
-	if (isDefined(lethal) && lethal != NONE && lethal != SPECIALTY_NULL)
+	primary = self bot_get_loadout(PRIMARY);
+	secondary = self bot_get_loadout(SECONDARY);
+	lethal = self bot_get_loadout(LETHAL);
+	tactical = self bot_get_loadout(TACTICAL);
+	hasWeaponData = array_contains_key(level.bots_weapons_data, self.botType);
+
+	if (isDefined(primary) && primary != NONE && primary != "")
+	{
+		buildPrimary = string_contains(primary, "_mp") ? primary : weapon_build(primary);
+		self player_give_weapon(buildPrimary, true, false, true);
+
+		if (!hasWeaponData)
+		{
+			level.bots_weapons_data[self.botType] = true;
+			level.bots_weapons_data[buildPrimary] = self player_create_weapon_data(buildPrimary, []);
+		}
+	}
+
+	if (isDefined(secondary) && secondary != NONE && secondary != "")
+	{
+		buildSecondary = string_contains(secondary, "_mp") ? secondary : weapon_build(secondary);
+		self player_give_weapon(buildSecondary);
+
+		if (!hasWeaponData)
+		{
+			buildSec = string_contains(secondary, "_mp") ? secondary : weapon_build(secondary);
+			level.bots_weapons_data[buildSec] = self player_create_weapon_data(buildSec, []);
+		}
+	}
+
+	if (isDefined(lethal) && lethal != NONE && lethal != SPECIALTY_NULL && lethal != "")
 	 	self player_set_nades(lethal, 4);
 	
-	tactical = self.pers[GAME_MODE_LOADOUT][LOADOUT_TACTICAL];
-	if (isDefined(tactical) && tactical != NONE && tactical != SPECIALTY_NULL)
+	if (isDefined(tactical) && tactical != NONE && tactical != SPECIALTY_NULL && tactical != "")
 		self player_set_nades(tactical, 4);
-	
-	self player_give_loadout(self.team, "gamemode", false, true);
+
 	self maps\mp\killstreaks\_killstreaks::clearKillstreaks();
 	
 	self.botPrice = int(self bot_get_loadout(PRICE));
@@ -911,27 +924,7 @@ bot_set_loadout()
 	{
 		bodyModel = self bot_get_loadout(BODY_MODEL);
 		headModel = self bot_get_loadout(HEAD_MODEL);
-	}
-
-	if (!array_contains_key(level.bots_weapons_data, self.botType))
-	{
-		level.bots_weapons_data[self.botType] = true;		
-		loadout = self.pers[GAME_MODE_LOADOUT];
-
-		if (loadout[LOADOUT_PRIMARY] != "none")
-		{
-			primaryWep = weapon_build(loadout[LOADOUT_PRIMARY], [loadout[LOADOUT_PRIMARY_ATTACHMENT], loadout[LOADOUT_PRIMARY_ATTACHMENT2]]);
-			primaryBuff = loadout[LOADOUT_PRIMARY_BUFF] == SPECIALTY_NULL ? [] : [loadout[LOADOUT_PRIMARY_BUFF]];
-			level.bots_weapons_data[primaryWep] = self player_create_weapon_data(primaryWep, primaryBuff);
-		}
-
-		if (loadout[LOADOUT_SECONDARY] != "none")
-		{
-			secondaryWep = weapon_build(loadout[LOADOUT_SECONDARY], [loadout[LOADOUT_SECONDARY_ATTACHMENT], loadout[LOADOUT_SECONDARY_ATTACHMENT2]]);
-			secondaryBuff = loadout[LOADOUT_SECONDARY_BUFF] == SPECIALTY_NULL ? [] : [loadout[LOADOUT_SECONDARY_BUFF]];
-			level.bots_weapons_data[secondaryWep] = self player_create_weapon_data(secondaryWep, secondaryBuff);
-		}
-	}
+	};
 
 	if (game[self.team] == "opforce_africa" && self bot_has_ability("easy"))
 	{
@@ -1021,7 +1014,7 @@ bot_set_difficulty()
 		self.actor[BEHAVIOR_STRAFE] = 0;
 	}
 
-	switch(weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]))
+	switch(weapon_get_class(self.primaryweapon))
 	{
 		case "projectile":
 		case "sniper":
