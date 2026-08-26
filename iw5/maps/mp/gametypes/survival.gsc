@@ -179,6 +179,7 @@ onStartGametype()
     lethalbeats\survival\killstreaks\_sentry::init();
 	lethalbeats\survival\killstreaks\_ims::init();
     level thread lethalbeats\survival\killstreaks\_uav::init();
+    lethalbeats\survival\killstreaks\_remotemissile::init();
 
     lethalbeats\survival\abilities\_chemical::init();
     lethalbeats\survival\abilities\_dog::init();

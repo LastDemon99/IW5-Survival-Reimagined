@@ -721,63 +721,6 @@ _teamPlayerCardSplash(splash, owner, team)
 	}
 }
 
-patch_missileeyes(player, rocket)
-{
-    player endon("joined_team");
-    player endon("joined_spectators");
-
-    rocket thread maps\mp\killstreaks\_remotemissile::rocket_cleanupondeath();
-    player thread maps\mp\killstreaks\_remotemissile::player_cleanupongameended(rocket);
-    player thread maps\mp\killstreaks\_remotemissile::player_cleanuponteamchange(rocket);
-
-    player visionsetmissilecamforplayer("black_bw", 0);
-    player endon("disconnect");
-
-    if (isdefined(rocket))
-    {
-        player visionsetmissilecamforplayer(game["thermal_vision"], 1.0);
-        //player thermalvisionon();
-        player thread maps\mp\killstreaks\_remotemissile::delayedfofoverlay();
-        player cameralinkto(rocket, "tag_origin");
-        player controlslinkto(rocket);
-
-        // _bot_utility.gsc additions
-        player.rocket = rocket;
-		rocket.owner = player;
-
-        if (getdvarint("camera_thirdPerson"))
-            player maps\mp\_utility::setThirdPersonDOF(0);
-
-        rocket waittill("death");
-        //player thermalvisionoff();
-
-        // is defined check required because remote missile doesnt handle lifetime explosion gracefully
-		// instantly deletes its self after an explode and death notify
-        if (isdefined(rocket))
-            player maps\mp\_matchdata::logKillstreakEvent("predator_missile", rocket.origin);
-
-        player controlsunlink();
-        player maps\mp\_utility::freezeControlsWrapper(1);
-        player.rocket = undefined; // _bot_utility.gsc additions
-
-        // If a player gets the final kill with a hellfire, level.gameEnded will already be true at this point
-        if (!level.gameended || isdefined(player.finalkill))
-            player thread maps\mp\killstreaks\_remotemissile::staticeffect(0.5);
-
-        wait 0.5;
-        player thermalvisionfofoverlayoff();
-        player cameraunlink();
-
-        if (getdvarint("camera_thirdPerson"))
-            player maps\mp\_utility::setThirdPersonDOF(1);
-
-        if (player lethalbeats\survival\utility::player_is_bot())
-            player lethalbeats\survival\utility::bot_kill();
-    }
-
-    player maps\mp\_utility::clearUsingRemote();
-}
-
 patch_saylocalsound(player, soundType)
 {
     if (player.team == "allies" || player.team == "spectator" || player bot_is_dog() || (!isEndStr(soundType, "incoming") && randomInt(100) >= 65)) return;

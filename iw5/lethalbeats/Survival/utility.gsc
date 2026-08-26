@@ -1659,7 +1659,7 @@ summary: Returns true if a player can use the trigger.
 */
 survivor_trigger_filter(survivor)
 {
-	if (!survivor_filter(survivor) || survivor.iscarrying) return false;
+	if (!survivor_filter(survivor) || survivor.iscarrying || isDefined(survivor.usingremote)) return false;
 
 	// triggers priority, disable other nearby triggers
 	if (self.tag != "revive")
