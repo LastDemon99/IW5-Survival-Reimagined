@@ -593,16 +593,18 @@ onWeaponChange()
 	{
 		self waittill("weapon_change", newWeapon);
 
-		if (isDefined(self lethalbeats\player::player_get_weapon_index(newWeapon)))
+		if (isDefined(newWeapon) && newWeapon != "none" && newWeapon != "" && isDefined(self lethalbeats\player::player_get_weapon_index(newWeapon)))
 		{
 			self player_take_all_weapon_buffs();
 			weaponData = self player_get_weapon_data(newWeapon);
-			if (!isDefined(weaponData) || !isDefined(weaponData[3])) continue;
-			foreach(buff in weaponData[3]) self player_give_perk(buff, true);
+			if (isDefined(weaponData) && isDefined(weaponData[3]))
+			{
+				foreach(buff in weaponData[3]) self player_give_perk(buff, true);
+			}
 		}
 		
 		self setClientDvar(UI_USE_SLOT, "none");
-		if (player_has_nades(newWeapon)) self setClientDvar(UI_USE_SLOT, strtok(newWeapon, "_")[0]);
+		if (isDefined(newWeapon) && newWeapon != "none" && newWeapon != "" && player_has_nades(newWeapon)) self setClientDvar(UI_USE_SLOT, strtok(newWeapon, "_")[0]);
 	}
 }
 

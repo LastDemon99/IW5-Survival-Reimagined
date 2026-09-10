@@ -424,6 +424,9 @@ summary: Retrieves custom weapon data. It checks the player's cache, then a glob
 */
 player_get_weapon_data(weapon)
 {
+	if (!isDefined(weapon) || weapon == "" || weapon == "none")
+		return undefined;
+
     return self lethalbeats\survival\armories\weapons::getWeaponData(weapon);
 }
 

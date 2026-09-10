@@ -393,38 +393,51 @@ newWeaponData(weapon, weapon_buffs)
 
 setWeaponData(weapon, data)
 {
+    if (!isDefined(weapon) || weapon == "" || weapon == "none")
+        return;
+
     weaponIndex = self player_get_weapon_index(weapon);
+    if (!isDefined(weaponIndex))
+        return;
+
+    if (!isDefined(self.weaponData))
+        self.weaponData = [undefined, undefined];
+
     self.weaponData[weaponIndex] = data;
     self.weaponData[weaponIndex][IS_PRIMARY] = self player_is_weapon_primary(weapon);
 }
 
 getWeaponData(weapon)
 {
+    if (!isDefined(weapon) || weapon == "" || weapon == "none")
+        return undefined;
+
     if (!isPlayer(self) || self lethalbeats\survival\utility::player_is_bot())
         return array_contains_key(level.bots_weapons_data, weapon) ? level.bots_weapons_data[weapon] : self newWeaponData(weapon, []);
 
-    while(weapon == "none")
-        wait 0.15;
-
-    waittillframeend;
-
     weaponIndex = self player_get_weapon_index(weapon);
+    if (!isDefined(weaponIndex))
+        return array_contains_key(level.bots_weapons_data, weapon) ? level.bots_weapons_data[weapon] : self newWeaponData(weapon, []);
+
+    if (!isDefined(self.weaponData))
+        self.weaponData = [undefined, undefined];
+
     weaponData = self.weaponData[weaponIndex];
     purchasedAttachSlots = undefined;
     purchasedBuffSlots = undefined;
 
     if (isDefined(weaponData)) 
     {
-        if (weaponData[BUILD_NAME] == weapon) return weaponData;
+        if (isDefined(weaponData[BUILD_NAME]) && weaponData[BUILD_NAME] == weapon) return weaponData;
         else
         {
             wepBase = weapon_get_baseName(weapon);
-            if (self.weaponData[0][BASENAME] == wepBase)
+            if (isDefined(self.weaponData[0]) && isDefined(self.weaponData[0][BASENAME]) && self.weaponData[0][BASENAME] == wepBase)
             {
                 purchasedAttachslots = self.weaponData[0][ATTACH_SLOTS];
                 purchasedBuffSlots = self.weaponData[0][BUFF_SLOTS];
             }
-            else if (self.weaponData[1][BASENAME] == wepBase)
+            else if (isDefined(self.weaponData[1]) && isDefined(self.weaponData[1][BASENAME]) && self.weaponData[1][BASENAME] == wepBase)
             {
                 purchasedAttachslots = self.weaponData[1][ATTACH_SLOTS];
                 purchasedBuffSlots = self.weaponData[1][BUFF_SLOTS];
