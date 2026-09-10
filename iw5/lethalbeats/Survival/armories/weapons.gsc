@@ -35,11 +35,6 @@
 #define INDEX_REMOVE_ATTACH 5
 #define INDEX_REMOVE_BUFF 6
 
-// TABLE DATA
-#define SHOP_TABLE "mp/dynamic_shop.csv"
-#define SHOP_ITEM_COLUMN 6
-#define SHOP_DISPLAY_COLUMN 2
-
 // WEAPON DATA INDEX
 #define BUILD_NAME 0
 #define BASENAME 1
@@ -248,7 +243,10 @@ onUpdateOption(index, item, option_label, price_label)
             return;
         }
         weapon = wepList[index];
-        player setOption(index, tablelookup(SHOP_TABLE, SHOP_ITEM_COLUMN, weapon_get_baseName(weapon), SHOP_DISPLAY_COLUMN));
+        label = shop_get_item_label(weapon_get_baseName(weapon));
+        if (!isDefined(label) || label == "") label = lethalbeats\weapon::weapon_get_display_name(weapon_get_baseName(weapon));
+        if (!isDefined(label) || label == "") label = weapon_get_baseName(weapon);
+        player setOption(index, label);
         if (price_label != OPTION_DISABLE) price_label = player getAmmoPrice(weapon);
         player setPrice(index, price_label);
         return;
