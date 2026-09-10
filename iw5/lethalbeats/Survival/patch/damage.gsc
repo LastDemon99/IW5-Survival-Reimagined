@@ -205,8 +205,10 @@ playerKilled_internal(eInflictor, attacker, victim, iDamage, sMeansOfDeath, sWea
             addAttacker(victim, attacker, eInflictor, sWeapon, iDamage, (0.0, 0.0, 0.0), vDir, sHitLoc, psOffsetTime, sMeansOfDeath);
 
         doKillcam = 0;
+        victim.deathtime = gettime();
         handleNormalDeath(lifeId, attacker, eInflictor, sWeapon, sMeansOfDeath);
-        victim thread maps\mp\gametypes\_missions::playerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, sPrimaryWeapon, sHitLoc, attacker.modifiers);
+        if (isplayer(attacker) && !attacker lethalbeats\survival\utility::player_is_bot() && isdefined(attacker.modifiers))
+            victim thread maps\mp\gametypes\_missions::playerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, sPrimaryWeapon, sHitLoc, attacker.modifiers);
         victim.pers["cur_death_streak"]++;
 
         if (!maps\mp\_utility::getGametypeNumLives() && !maps\mp\_utility::matchMakingGame())
@@ -365,75 +367,89 @@ playerKilled_internal(eInflictor, attacker, victim, iDamage, sMeansOfDeath, sWea
 
 handleNormalDeath(lifeId, attacker, eInflictor, sWeapon, sMeansOfDeath)
 {
-    attacker thread maps\mp\_events::killedPlayer(lifeId, self, sWeapon, sMeansOfDeath);
-    attacker setcarddisplayslot(self, 8);
-    self setcarddisplayslot(attacker, 7);
+    if (!isdefined(attacker) || !isplayer(attacker))
+        return;
 
-    if (sMeansOfDeath == "MOD_HEAD_SHOT")
+    isAttackerBot = attacker lethalbeats\survival\utility::player_is_bot();
+    isVictimBot = self lethalbeats\survival\utility::player_is_bot();
+
+    if (!isAttackerBot)
     {
-        attacker maps\mp\_utility::incPersStat("headshots", 1);
-        attacker.headshots = attacker maps\mp\_utility::getPersStat("headshots");
-        attacker maps\mp\_utility::incPlayerStat("headshots", 1);
-        value = isdefined(attacker.laststand) ? maps\mp\gametypes\_rank::getScoreInfoValue("kill") * 2 : undefined;
-        attacker playlocalsound("bullet_impact_headshot_2");
+        attacker thread maps\mp\_events::killedPlayer(lifeId, self, sWeapon, sMeansOfDeath);
+        if (!isVictimBot) attacker setcarddisplayslot(self, 8);
     }
-    else if (isdefined(attacker.laststand)) value = maps\mp\gametypes\_rank::getScoreInfoValue("kill") * 2;
-    else value = undefined;
+    if (!isVictimBot && !isAttackerBot)
+        self setcarddisplayslot(attacker, 7);
 
-    attacker thread maps\mp\gametypes\_rank::giveRankXP("kill", value, sWeapon, sMeansOfDeath);
-    attacker maps\mp\_utility::incPersStat("kills", 1);
-    attacker.kills = attacker maps\mp\_utility::getPersStat("kills");
-    attacker maps\mp\_utility::updatePersRatio("kdRatio", "kills", "deaths");
-    attacker maps\mp\gametypes\_persistence::statSetChild("round", "kills", attacker.kills);
-    attacker maps\mp\_utility::incPlayerStat("kills", 1);
-
-    if (isFlankKill(self, attacker))
+    if (!isAttackerBot)
     {
-        attacker maps\mp\_utility::incPlayerStat("flankkills", 1);
-        maps\mp\_utility::incPlayerStat("flankdeaths", 1);
-    }
-
-    lastKillStreak = attacker.pers["cur_kill_streak"];
-    self.pers["copyCatLoadout"] = undefined;
-
-    if (maps\mp\_utility::_hasPerk("specialty_copycat"))
-        self.pers["copyCatLoadout"] = attacker maps\mp\gametypes\_class::cloneLoadout();
-
-    if (isalive(attacker) || attacker.streaktype == "support")
-    {
-        if (attacker maps\mp\_utility::killShouldAddToKillstreak(sWeapon))
+        if (sMeansOfDeath == "MOD_HEAD_SHOT")
         {
-            attacker thread maps\mp\killstreaks\_killstreaks::giveadrenaline("kill");
-            attacker.pers["cur_kill_streak"]++;
+            attacker maps\mp\_utility::incPersStat("headshots", 1);
+            attacker.headshots = attacker maps\mp\_utility::getPersStat("headshots");
+            attacker maps\mp\_utility::incPlayerStat("headshots", 1);
+            value = isdefined(attacker.laststand) ? maps\mp\gametypes\_rank::getScoreInfoValue("kill") * 2 : undefined;
+            attacker playlocalsound("bullet_impact_headshot_2");
+        }
+        else if (isdefined(attacker.laststand)) value = maps\mp\gametypes\_rank::getScoreInfoValue("kill") * 2;
+        else value = undefined;
+
+        attacker thread maps\mp\gametypes\_rank::giveRankXP("kill", value, sWeapon, sMeansOfDeath);
+        attacker maps\mp\_utility::incPersStat("kills", 1);
+        attacker.kills = attacker maps\mp\_utility::getPersStat("kills");
+        attacker maps\mp\_utility::updatePersRatio("kdRatio", "kills", "deaths");
+        attacker maps\mp\gametypes\_persistence::statSetChild("round", "kills", attacker.kills);
+        attacker maps\mp\_utility::incPlayerStat("kills", 1);
+
+        if (isFlankKill(self, attacker))
+        {
+            attacker maps\mp\_utility::incPlayerStat("flankkills", 1);
+            maps\mp\_utility::incPlayerStat("flankdeaths", 1);
         }
 
-        attacker maps\mp\_utility::setPlayerStatIfGreater("killstreak", attacker.pers["cur_kill_streak"]);
+        if (isdefined(attacker.pers["cur_kill_streak"]))
+        {
+            if (isalive(attacker) || (isdefined(attacker.streaktype) && attacker.streaktype == "support"))
+            {
+                if (attacker maps\mp\_utility::killShouldAddToKillstreak(sWeapon))
+                {
+                    attacker thread maps\mp\killstreaks\_killstreaks::giveadrenaline("kill");
+                    attacker.pers["cur_kill_streak"]++;
+                }
 
-        if (attacker.pers["cur_kill_streak"] > attacker maps\mp\_utility::getPersStat("longestStreak"))
-            attacker maps\mp\_utility::setPersStat("longestStreak", attacker.pers["cur_kill_streak"]);
+                attacker maps\mp\_utility::setPlayerStatIfGreater("killstreak", attacker.pers["cur_kill_streak"]);
+
+                if (attacker.pers["cur_kill_streak"] > attacker maps\mp\_utility::getPersStat("longestStreak"))
+                    attacker maps\mp\_utility::setPersStat("longestStreak", attacker.pers["cur_kill_streak"]);
+            }
+
+            attacker.pers["cur_death_streak"] = 0;
+
+            if (attacker.pers["cur_kill_streak"] > attacker maps\mp\gametypes\_persistence::statGetChild("round", "killStreak"))
+                attacker maps\mp\gametypes\_persistence::statSetChild("round", "killStreak", attacker.pers["cur_kill_streak"]);
+
+            if (isdefined(attacker.kill_streak) && attacker.pers["cur_kill_streak"] > attacker.kill_streak)
+            {
+                attacker maps\mp\gametypes\_persistence::statSet("killStreak", attacker.pers["cur_kill_streak"]);
+                attacker.kill_streak = attacker.pers["cur_kill_streak"];
+            }
+
+            level notify("player_got_killstreak_" + attacker.pers["cur_kill_streak"], attacker);
+            attacker notify("got_killstreak", attacker.pers["cur_kill_streak"]);
+        }
+
+        maps\mp\gametypes\_gamescore::givePlayerScore("kill", attacker, self);
+        attacker notify("killed_enemy");
     }
 
-    attacker.pers["cur_death_streak"] = 0;
-
-    if (attacker.pers["cur_kill_streak"] > attacker maps\mp\gametypes\_persistence::statGetChild("round", "killStreak"))
-        attacker maps\mp\gametypes\_persistence::statSetChild("round", "killStreak", attacker.pers["cur_kill_streak"]);
-
-    if (attacker.pers["cur_kill_streak"] > attacker.kill_streak)
+    if (!isVictimBot)
     {
-        attacker maps\mp\gametypes\_persistence::statSet("killStreak", attacker.pers["cur_kill_streak"]);
-        attacker.kill_streak = attacker.pers["cur_kill_streak"];
+        scoreSub = maps\mp\gametypes\_tweakables::getTweakableValue("game", "deathpointloss");
+        maps\mp\gametypes\_gamescore::_getPlayerScore(self, maps\mp\gametypes\_gamescore::_setPlayerScore(self) - scoreSub);
     }
-
-    maps\mp\gametypes\_gamescore::givePlayerScore("kill", attacker, self);
-    scoreSub = maps\mp\gametypes\_tweakables::getTweakableValue("game", "deathpointloss");
-    maps\mp\gametypes\_gamescore::_getPlayerScore(self, maps\mp\gametypes\_gamescore::_setPlayerScore(self) - scoreSub);
 
     if (isdefined(level.ac130player) && level.ac130player == attacker)
         level notify("ai_killed", self);
-
-    level notify("player_got_killstreak_" + attacker.pers["cur_kill_streak"], attacker);
-    attacker notify("got_killstreak", attacker.pers["cur_kill_streak"]);
-    attacker notify("killed_enemy");
 
     if (isdefined(self.uavremotemarkedby))
     {
@@ -443,7 +459,7 @@ handleNormalDeath(lifeId, attacker, eInflictor, sWeapon, sMeansOfDeath)
         self.uavremotemarkedby = undefined;
     }
 
-    if (isdefined(level.onnormaldeath) && attacker.pers["team"] != "spectator")
+    if (!isAttackerBot && isdefined(level.onnormaldeath) && isdefined(attacker.pers["team"]) && attacker.pers["team"] != "spectator")
         [[level.onnormaldeath]](self, attacker, lifeId);
 
     if (!level.teambased)
@@ -452,7 +468,8 @@ handleNormalDeath(lifeId, attacker, eInflictor, sWeapon, sMeansOfDeath)
         return;
     }
 
-    level thread maps\mp\gametypes\_battlechatter_mp::sayLocalSoundDelayed(attacker, "kill", 0.75);
+    if (!isAttackerBot)
+        level thread maps\mp\gametypes\_battlechatter_mp::sayLocalSoundDelayed(attacker, "kill", 0.75);
 
     if (isdefined(self.lastattackedshieldplayer) && isdefined(self.lastattackedshieldtime) && self.lastattackedshieldplayer != attacker)
     {

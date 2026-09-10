@@ -31,6 +31,7 @@ init()
     replaceFunc(maps\mp\_stinger::stingerUsageLoop, ::patch_stingerUsageLoop);
     
     // GAME
+    replacefunc(maps\mp\_events::killedPlayer, ::patch_killedPlayer);
     replacefunc(maps\mp\_events::multiKill, ::patch_multiKill); // update challenges, double, triple, multi
     replacefunc(maps\mp\_utility::playDeathSound, ::patch_playDeathSound); // modifies deaths sound
     replacefunc(maps\mp\_utility::waitForTimeOrNotify, ::patch_waitRespawn); // set custom wait respawn
@@ -254,7 +255,8 @@ patch_xpeventpopupfinalize(event, hudColor, glowAlpha)
     if (!isdefined(self)) return;
 
 	self.hud_xpeventpopup moveOverTime(0.5);
-	score_str = "" + self.pers["score"];
+	scoreVal = (isDefined(self.pers) && isDefined(self.pers["score"])) ? self.pers["score"] : 0;
+	score_str = "" + scoreVal;
 	self.hud_xpeventpopup.x -= 400 - score_str.size * 20;
 	self.hud_xpeventpopup.y += 270;
 	
@@ -321,7 +323,8 @@ patch_xppointspopupfinalize(amount, bonus, hudColor, glowAlpha)
     else wait 1.0;
 
 	self.hud_xpPointsPopup moveOverTime(0.5);
-	score_str = "" + self.pers["score"];
+	scoreVal = (isDefined(self.pers) && isDefined(self.pers["score"])) ? self.pers["score"] : 0;
+	score_str = "" + scoreVal;
 	self.hud_xpPointsPopup.x -= 400 - score_str.size * 20;
 	self.hud_xpPointsPopup.y += 275;
     self.xpupdatetotal = 0;
@@ -329,7 +332,7 @@ patch_xppointspopupfinalize(amount, bonus, hudColor, glowAlpha)
 	wait 0.75;
 	self.hud_xppointspopup fadeovertime(0.75);
     self.hud_xppointspopup.alpha = 0;
-	self setClientDvar("ui_money", self.pers["score"]);
+	self setClientDvar("ui_money", scoreVal);
 	self survivor_display_hud("animate_money");
 	
 	self notify("ScorePopComplete");
@@ -381,6 +384,9 @@ summary: Update money hud animation on player score.
 patch_giveplayerscore(type, player, victim, custom_amount, var_4)
 {
 	if (type != "survival" || !isPlayer(player) || player.team != "allies") return;
+	if (!isDefined(custom_amount) || custom_amount <= 0) return;
+	if (!isDefined(player.pers["score"])) player.pers["score"] = 0;
+	if (!isDefined(player.score)) player.score = 0;
 
     score = player.pers["score"];
 	player setClientDvar("ui_old_money", score);
@@ -607,6 +613,37 @@ patch_multiKill(killId, killCount)
 	self thread maps\mp\_matchdata::logMultiKill(killId, killCount);
 	self setPlayerStatIfGreater("multikill", killCount);
 	self initPlayerStat("mostmultikills", 1);
+}
+
+/*
+///DocStringBegin
+detail: patch_killedPlayer()
+summary: Safe replacement for maps\mp\_events::killedPlayer in Survival mode.
+///DocStringEnd
+*/
+patch_killedPlayer(killId, victim, weapon, meansOfDeath)
+{
+	if (!isDefined(self) || !isPlayer(self)) return;
+	if (self player_is_bot()) return;
+
+	if (!isDefined(self.recentkillcount)) self.recentkillcount = 0;
+	self thread maps\mp\_events::updaterecentkills(killId);
+
+	self.lastkilltime = gettime();
+	self.lastkilledplayer = victim;
+	self.modifiers = [];
+	if (!isDefined(level.numkills)) level.numkills = 0;
+	level.numkills++;
+
+	if (isDefined(victim) && isPlayer(victim) && isDefined(victim.guid) && isDefined(self.damagedplayers))
+		self.damagedplayers[victim.guid] = undefined;
+
+	if (isDefined(meansOfDeath) && meansOfDeath == "MOD_HEAD_SHOT")
+	{
+		self.modifiers["headshot"] = 1;
+		self thread maps\mp\gametypes\_rank::xpEventPopup(&"SPLASHES_HEADSHOT");
+		self notify("headshot");
+	}
 }
 
 /*
