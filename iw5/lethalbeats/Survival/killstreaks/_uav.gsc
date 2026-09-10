@@ -2,8 +2,8 @@
 #include common_scripts\utility;
 #include maps\mp\killstreaks\_uav;
 
-#define HEALTH 14
-#define PRICE 16
+#define HEALTH 4
+#define PRICE 6
 
 init()
 {
@@ -60,6 +60,8 @@ _damageTracker(isCounterUAV, isAdvanced)
     self setcandamage(1);
     self.health = 999999;
     self.maxhealth = getBotData(HEALTH);
+    if (!isDefined(self.maxhealth) || self.maxhealth <= 0)
+        self.maxhealth = 1200;
     self.damagetaken = 0;
     self thread lethalbeats\survival\patch\mines::mineCreateBombSquadModel("vehicle_uav_bombsquad", self);
 
@@ -133,7 +135,10 @@ _damageTracker(isCounterUAV, isAdvanced)
                     if (isdefined(self.uavremotemarkedby) && self.uavremotemarkedby != attacker)
                         self.uavremotemarkedby thread maps\mp\killstreaks\_remoteuav::remoteuav_processtaggedassist();
 
-                    attacker lethalbeats\survival\utility::survivor_give_score(getBotData(PRICE));
+                    rewardScore = getBotData(PRICE);
+                    if (!isDefined(rewardScore) || rewardScore <= 0)
+                        rewardScore = 800;
+                    attacker lethalbeats\survival\utility::survivor_give_score(rewardScore);
                 }
 
                 self notify("death");
@@ -148,5 +153,14 @@ _damageTracker(isCounterUAV, isAdvanced)
 
 getBotData(column)
 {
-    return int(tableLookup("mp/survival_bots.csv", 0, "counteruav", column));
+    dvarValue = getDvar("bot_counteruav");
+    if (dvarValue != "")
+    {
+        tokens = strTok(dvarValue, ",");
+        if (column < tokens.size && isDefined(tokens[column]) && tokens[column] != "")
+            return int(tokens[column]);
+    }
+    if (column == HEALTH) return 1200;
+    if (column == PRICE) return 800;
+    return 0;
 }

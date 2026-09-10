@@ -50,7 +50,6 @@
 
 #define BOTS_ABILITIES ["dog", "martyrdom", "chemical", "chopper", "jugger", "pavelow", "reaper", "tank", "airstrike", "predator", "counteruav", "emp", "ims", "sentry", "riotshield"]
 #define BOTS_ABILITIES_KS ["chopper", "pavelow", "reaper", "tank", "airstrike", "predator", "counteruav", "emp"]
-#define TABLE "mp/survival_bots.csv"
 
 #define CHOPPER "chopper"
 #define JUGGER "jugger"
@@ -60,10 +59,6 @@
 #define DOG_SPLODE "dog_splode"
 #define GENERIC "generic"
 
-#define WAVES_TABLE "mp/survival_waves.csv"
-#define WAVES_TABLE_EASY "mp/survival_wave_easy.csv"
-#define WAVES_TABLE_NORMAL "mp/survival_wave_normal.csv"
-#define WAVES_TABLE_HARD "mp/survival_wave_hard.csv"
 #define INTEL_DIALOG ["boss_transport_many", "boss_transport", "chopper_many", "chopper", "chemical", "claymore", "dog_splode", "martyrdom", "dog_reg", "generic"]
 
 #define CHALLENGES ["Headshot Kill", "Kill Streak", "Knife Kill", "Grenade Kill", "Pistol Kill", "Shotgun Kill", "Machine Pistol Kill", "Smg Kill", "Assault Kill", "Lmg Kill", "Sniper Kill", "Launcher Kill", "Double Kill", "Triple Kill", "Multi Kill"]
@@ -946,7 +941,7 @@ bot_set_loadout()
 /*
 ///DocStringBegin
 detail: <Player> bot_get_loadout(column: <Int>): <Any>
-summary: Retrieves a specific piece of loadout data for the bot from a `mp/survival_bots.csv` table based on its type.
+summary: Retrieves a specific piece of loadout data for the bot from its `bot_<type>` Dvar configuration.
 ///DocStringEnd
 */
 bot_get_loadout(column)

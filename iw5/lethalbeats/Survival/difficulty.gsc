@@ -47,45 +47,40 @@ _difficulty_get_bot_profile_easy()
 {
 	settings = [];
 
-	// Target acquisition and tracking (botActor).
-	settings[SKILL_AIM_TIME] = 0.5;
-	settings[SKILL_INIT_REACT_TIME] = 1.0;
-	settings[SKILL_REACTION_TIME] = 1.0;
+	settings[SKILL_AIM_TIME] = 0.9;
+	settings[SKILL_INIT_REACT_TIME] = 1.5;
+	settings[SKILL_REACTION_TIME] = 1.5;
 	settings[SKILL_REMEMBER_TIME] = undefined;
 	settings[SKILL_NO_TRACE_ADS_TIME] = 0;
 	settings[SKILL_NO_TRACE_LOOK_TIME] = 0;
-	settings[SKILL_FOV] = 0.65;
+	settings[SKILL_FOV] = 0.70;
 
-	// Aim correction / post-LOS (botActor).
-	settings[SKILL_SEMI_TIME] = 1;
-	settings[SKILL_SHOOT_AFTER_TIME] = 1.65;
-	settings[SKILL_AIM_OFFSET_TIME] = 2;
-	settings[SKILL_AIM_OFFSET_AMOUNT] = 5.25;
-	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.5;
+	settings[SKILL_SEMI_TIME] = 1.5;
+	settings[SKILL_SHOOT_AFTER_TIME] = 2.0;
+	settings[SKILL_AIM_OFFSET_TIME] = 2.5;
+	settings[SKILL_AIM_OFFSET_AMOUNT] = 7.50;
+	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.6;
 
-	// Human behavior (botActor).
-	settings[BEHAVIOR_STRAFE] = 20;
-	settings[BEHAVIOR_NADE] = 30;
-	settings[BEHAVIOR_SPRINT] = 30;
+	settings[BEHAVIOR_STRAFE] = 10;
+	settings[BEHAVIOR_NADE] = 10;
+	settings[BEHAVIOR_SPRINT] = 15;
 	settings[BEHAVIOR_CROUCH] = 0;
-	settings[BEHAVIOR_JUMP] = 5;
+	settings[BEHAVIOR_JUMP] = 0;
 	settings[BEHAVIOR_QUICKSCOPE] = 0;
 
-	// Fire cycle (botActor).
-	settings[FIRE_TIME] = 0.35;
-	settings[MIN_SHOTS] = 10;
-	settings[MAX_SHOTS] = 15;
-	settings[MIN_PAUSE] = 3;
-	settings[MAX_PAUSE] = 5;
-	settings[WIND_UP_TIME] = 0.8;
+	settings[FIRE_TIME] = 0.45;
+	settings[MIN_SHOTS] = 4;
+	settings[MAX_SHOTS] = 6;
+	settings[MIN_PAUSE] = 4.0;
+	settings[MAX_PAUSE] = 6.0;
+	settings[WIND_UP_TIME] = 1.30;
 
-	// Survival multipliers.
-	settings[SURVIVOR_DAMAGE_SCALE] = 0.8;
-	settings[BOT_RESPAWN_DELAY_MIN] = 3;
-	settings[BOT_RESPAWN_DELAY_MAX] = 6;
+	settings[SURVIVOR_DAMAGE_SCALE] = 0.65;
+	settings[BOT_RESPAWN_DELAY_MIN] = 4;
+	settings[BOT_RESPAWN_DELAY_MAX] = 8;
 
 	weaponClass = lethalbeats\weapon::weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]);
-	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 4;
+	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 4.5;
 
 	return settings;
 }
@@ -94,45 +89,40 @@ _difficulty_get_bot_profile_normal()
 {
 	settings = [];
 
-	// Target acquisition and tracking (botActor).
-	settings[SKILL_AIM_TIME] = 0.35;
-	settings[SKILL_INIT_REACT_TIME] = 0.8;
-	settings[SKILL_REACTION_TIME] = 0.8;
+	settings[SKILL_AIM_TIME] = 0.50;
+	settings[SKILL_INIT_REACT_TIME] = 1.00;
+	settings[SKILL_REACTION_TIME] = 1.00;
 	settings[SKILL_REMEMBER_TIME] = undefined;
-	settings[SKILL_NO_TRACE_ADS_TIME] = 0.35;
-	settings[SKILL_NO_TRACE_LOOK_TIME] = 0.35;
-	settings[SKILL_FOV] = 0.6;
+	settings[SKILL_NO_TRACE_ADS_TIME] = 0.25;
+	settings[SKILL_NO_TRACE_LOOK_TIME] = 0.25;
+	settings[SKILL_FOV] = 0.62;
 
-	// Aim correction / post-LOS (botActor).
-	settings[SKILL_SEMI_TIME] = 0.85;
-	settings[SKILL_SHOOT_AFTER_TIME] = 1.2;
-	settings[SKILL_AIM_OFFSET_TIME] = 1.5;
-	settings[SKILL_AIM_OFFSET_AMOUNT] = 4;
-	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.3;
+	settings[SKILL_SEMI_TIME] = 1.00;
+	settings[SKILL_SHOOT_AFTER_TIME] = 1.50;
+	settings[SKILL_AIM_OFFSET_TIME] = 1.80;
+	settings[SKILL_AIM_OFFSET_AMOUNT] = 5.00;
+	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.4;
 
-	// Human behavior (botActor).
-	settings[BEHAVIOR_STRAFE] = 35;
-	settings[BEHAVIOR_NADE] = 45;
-	settings[BEHAVIOR_SPRINT] = 45;
+	settings[BEHAVIOR_STRAFE] = 25;
+	settings[BEHAVIOR_NADE] = 30;
+	settings[BEHAVIOR_SPRINT] = 35;
 	settings[BEHAVIOR_CROUCH] = 0;
-	settings[BEHAVIOR_JUMP] = 12;
+	settings[BEHAVIOR_JUMP] = 5;
 	settings[BEHAVIOR_QUICKSCOPE] = 0;
 
-	// Fire cycle (botActor).
-	settings[FIRE_TIME] = 0.22;
-	settings[MIN_SHOTS] = 16;
-	settings[MAX_SHOTS] = 26;
-	settings[MIN_PAUSE] = 2;
-	settings[MAX_PAUSE] = 3.5;
-	settings[WIND_UP_TIME] = 0.55;
+	settings[FIRE_TIME] = 0.28;
+	settings[MIN_SHOTS] = 10;
+	settings[MAX_SHOTS] = 16;
+	settings[MIN_PAUSE] = 2.5;
+	settings[MAX_PAUSE] = 4.0;
+	settings[WIND_UP_TIME] = 0.75;
 
-	// Survival multipliers.
-	settings[SURVIVOR_DAMAGE_SCALE] = 1;
-	settings[BOT_RESPAWN_DELAY_MIN] = 1;
-	settings[BOT_RESPAWN_DELAY_MAX] = 3;
+	settings[SURVIVOR_DAMAGE_SCALE] = 0.90;
+	settings[BOT_RESPAWN_DELAY_MIN] = 2;
+	settings[BOT_RESPAWN_DELAY_MAX] = 4;
 
 	weaponClass = lethalbeats\weapon::weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]);
-	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 2.4;
+	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 2.8;
 
 	return settings;
 }
@@ -141,45 +131,68 @@ _difficulty_get_bot_profile_hard()
 {
 	settings = [];
 
-	// Target acquisition and tracking (botActor).
-	settings[SKILL_AIM_TIME] = 0.1;
-	settings[SKILL_INIT_REACT_TIME] = 0.4;
-	settings[SKILL_REACTION_TIME] = 0.4;
+	settings[SKILL_AIM_TIME] = 0.30;
+	settings[SKILL_INIT_REACT_TIME] = 0.60;
+	settings[SKILL_REACTION_TIME] = 0.60;
 	settings[SKILL_REMEMBER_TIME] = undefined;
-	settings[SKILL_NO_TRACE_ADS_TIME] = 0.7;
-	settings[SKILL_NO_TRACE_LOOK_TIME] = 0.7;
-	settings[SKILL_FOV] = 0.5;
+	settings[SKILL_NO_TRACE_ADS_TIME] = 0.50;
+	settings[SKILL_NO_TRACE_LOOK_TIME] = 0.50;
+	settings[SKILL_FOV] = 0.55;
 
-	// Aim correction / post-LOS (botActor).
-	settings[SKILL_SEMI_TIME] = 0.55;
-	settings[SKILL_SHOOT_AFTER_TIME] = 0.8;
-	settings[SKILL_AIM_OFFSET_TIME] = 0.9;
-	settings[SKILL_AIM_OFFSET_AMOUNT] = 2.75;
-	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.1;
+	settings[SKILL_SEMI_TIME] = 0.70;
+	settings[SKILL_SHOOT_AFTER_TIME] = 1.00;
+	settings[SKILL_AIM_OFFSET_TIME] = 1.30;
+	settings[SKILL_AIM_OFFSET_AMOUNT] = 3.80;
+	settings[SKILL_BONE_UPDATE_INTERVAL] = 0.2;
 
-	// Human behavior (botActor).
-	settings[BEHAVIOR_STRAFE] = 50;
-	settings[BEHAVIOR_NADE] = 70;
-	settings[BEHAVIOR_SPRINT] = 60;
+	settings[BEHAVIOR_STRAFE] = 40;
+	settings[BEHAVIOR_NADE] = 50;
+	settings[BEHAVIOR_SPRINT] = 50;
 	settings[BEHAVIOR_CROUCH] = 0;
-	settings[BEHAVIOR_JUMP] = 20;
+	settings[BEHAVIOR_JUMP] = 15;
 	settings[BEHAVIOR_QUICKSCOPE] = 0;
 
-	// Fire cycle (botActor).
-	settings[FIRE_TIME] = 0.12;
-	settings[MIN_SHOTS] = 28;
-	settings[MAX_SHOTS] = 45;
-	settings[MIN_PAUSE] = 1;
-	settings[MAX_PAUSE] = 2;
-	settings[WIND_UP_TIME] = 0.25;
+	settings[FIRE_TIME] = 0.18;
+	settings[MIN_SHOTS] = 16;
+	settings[MAX_SHOTS] = 26;
+	settings[MIN_PAUSE] = 1.8;
+	settings[MAX_PAUSE] = 3.0;
+	settings[WIND_UP_TIME] = 0.45;
 
-	// Survival multipliers.
 	settings[SURVIVOR_DAMAGE_SCALE] = 1;
 	settings[BOT_RESPAWN_DELAY_MIN] = 0;
 	settings[BOT_RESPAWN_DELAY_MAX] = 1;
 
 	weaponClass = lethalbeats\weapon::weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]);
-	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 1.4;
+	if (weaponClass == "sniper") settings[SKILL_SEMI_TIME] = 1.6;
+
+	return settings;
+}
+
+difficulty_parse_skill_profile(profileStr, settings)
+{
+	tokens = strTok(profileStr, ",");
+	if (tokens.size == 0) return settings;
+
+	if (tokens.size > 0 && tokens[0] != "") settings[SKILL_AIM_TIME] = float(tokens[0]);
+	if (tokens.size > 1 && tokens[1] != "")
+	{
+		settings[SKILL_REACTION_TIME] = float(tokens[1]);
+		settings[SKILL_INIT_REACT_TIME] = float(tokens[1]);
+	}
+	if (tokens.size > 2 && tokens[2] != "") settings[WIND_UP_TIME] = float(tokens[2]);
+	if (tokens.size > 3 && tokens[3] != "") settings[FIRE_TIME] = float(tokens[3]);
+	if (tokens.size > 4 && tokens[4] != "") settings[MIN_SHOTS] = int(tokens[4]);
+	if (tokens.size > 5 && tokens[5] != "") settings[MAX_SHOTS] = int(tokens[5]);
+	if (tokens.size > 6 && tokens[6] != "") settings[MIN_PAUSE] = float(tokens[6]);
+	if (tokens.size > 7 && tokens[7] != "") settings[MAX_PAUSE] = float(tokens[7]);
+	if (tokens.size > 8 && tokens[8] != "") settings[SKILL_AIM_OFFSET_AMOUNT] = float(tokens[8]);
+	if (tokens.size > 9 && tokens[9] != "") settings[SKILL_AIM_OFFSET_TIME] = float(tokens[9]);
+	if (tokens.size > 10 && tokens[10] != "") settings[SURVIVOR_DAMAGE_SCALE] = float(tokens[10]);
+	if (tokens.size > 11 && tokens[11] != "") settings[BEHAVIOR_STRAFE] = int(tokens[11]);
+	if (tokens.size > 12 && tokens[12] != "") settings[BEHAVIOR_NADE] = int(tokens[12]);
+	if (tokens.size > 13 && tokens[13] != "") settings[BEHAVIOR_SPRINT] = int(tokens[13]);
+	if (tokens.size > 14 && tokens[14] != "") settings[BEHAVIOR_JUMP] = int(tokens[14]);
 
 	return settings;
 }
@@ -190,8 +203,24 @@ _difficulty_get_bot_profile_hard()
 
 difficulty_get_h6_burst_settings()
 {
-	settings = [];
+	dvarVal = getDvar("heli_skill_burst");
+	if (dvarVal != "")
+	{
+		tokens = strTok(dvarVal, ",");
+		if (tokens.size >= 6)
+		{
+			settings = [];
+			settings["fireTime"] = float(tokens[0]);
+			settings["minShots"] = int(tokens[1]);
+			settings["maxShots"] = int(tokens[2]);
+			settings["minPause"] = float(tokens[3]);
+			settings["maxPause"] = float(tokens[4]);
+			settings["windUpTime"] = float(tokens[5]);
+			return settings;
+		}
+	}
 
+	settings = [];
 	switch(difficulty_get_level())
 	{
 		case DIFFICULTY_HARD:
@@ -225,8 +254,24 @@ difficulty_get_h6_burst_settings()
 
 difficulty_get_pavelow_burst_settings()
 {
-	settings = [];
+	dvarVal = getDvar("pavelow_skill_burst");
+	if (dvarVal != "")
+	{
+		tokens = strTok(dvarVal, ",");
+		if (tokens.size >= 6)
+		{
+			settings = [];
+			settings["fireTime"] = float(tokens[0]);
+			settings["minShots"] = int(tokens[1]);
+			settings["maxShots"] = int(tokens[2]);
+			settings["minPause"] = float(tokens[3]);
+			settings["maxPause"] = float(tokens[4]);
+			settings["windUpTime"] = float(tokens[5]);
+			return settings;
+		}
+	}
 
+	settings = [];
 	switch(difficulty_get_level())
 	{
 		case DIFFICULTY_HARD:
@@ -260,8 +305,21 @@ difficulty_get_pavelow_burst_settings()
 
 difficulty_get_reaper_burst_settings()
 {
-	settings = [];
+	dvarVal = getDvar("reaper_skill_burst");
+	if (dvarVal != "")
+	{
+		tokens = strTok(dvarVal, ",");
+		if (tokens.size >= 3)
+		{
+			settings = [];
+			settings["fireTime"] = float(tokens[0]);
+			settings["windUpTime"] = float(tokens[1]);
+			settings["trackingFactor"] = float(tokens[2]);
+			return settings;
+		}
+	}
 
+	settings = [];
 	switch(difficulty_get_level())
 	{
 		case DIFFICULTY_HARD:
@@ -319,14 +377,68 @@ difficulty_get_wave_loop_growth()
 	}
 }
 
-
-
 difficulty_get_bot_settings()
 {
+	settings = [];
 	switch(difficulty_get_level())
 	{
-		case DIFFICULTY_HARD: return self _difficulty_get_bot_profile_hard();
-		case DIFFICULTY_NORMAL: return self _difficulty_get_bot_profile_normal();
-		default: return self _difficulty_get_bot_profile_easy();
+		case DIFFICULTY_HARD: settings = self _difficulty_get_bot_profile_hard(); break;
+		case DIFFICULTY_NORMAL: settings = self _difficulty_get_bot_profile_normal(); break;
+		default: settings = self _difficulty_get_bot_profile_easy(); break;
 	}
+
+	profileStr = "";
+	if (isDefined(self.botType))
+	{
+		profileStr = getDvar("bot_skill_" + self.botType);
+		if (profileStr == "" && isSubStr(self.botType, "_"))
+		{
+			tier = strTok(self.botType, "_")[0];
+			profileStr = getDvar("bot_skill_" + tier);
+		}
+	}
+
+	if (profileStr == "")
+	{
+		profileStr = getDvar("bot_skill_global");
+		if (profileStr == "") profileStr = getDvar("bot_skill_default");
+	}
+
+	if (profileStr != "")
+	{
+		settings = difficulty_parse_skill_profile(profileStr, settings);
+	}
+
+	if (getDvar("bot_skill_aim_time") != "") settings[SKILL_AIM_TIME] = getDvarFloat("bot_skill_aim_time");
+	if (getDvar("bot_skill_reaction_time") != "")
+	{
+		settings[SKILL_REACTION_TIME] = getDvarFloat("bot_skill_reaction_time");
+		settings[SKILL_INIT_REACT_TIME] = getDvarFloat("bot_skill_reaction_time");
+	}
+	if (getDvar("bot_skill_wind_up_time") != "") settings[WIND_UP_TIME] = getDvarFloat("bot_skill_wind_up_time");
+	if (getDvar("bot_skill_fire_time") != "") settings[FIRE_TIME] = getDvarFloat("bot_skill_fire_time");
+	if (getDvar("bot_skill_min_shots") != "") settings[MIN_SHOTS] = getDvarInt("bot_skill_min_shots");
+	if (getDvar("bot_skill_max_shots") != "") settings[MAX_SHOTS] = getDvarInt("bot_skill_max_shots");
+	if (getDvar("bot_skill_min_pause") != "") settings[MIN_PAUSE] = getDvarFloat("bot_skill_min_pause");
+	if (getDvar("bot_skill_max_pause") != "") settings[MAX_PAUSE] = getDvarFloat("bot_skill_max_pause");
+	if (getDvar("bot_skill_aim_offset_amount") != "") settings[SKILL_AIM_OFFSET_AMOUNT] = getDvarFloat("bot_skill_aim_offset_amount");
+	if (getDvar("bot_skill_aim_offset_time") != "") settings[SKILL_AIM_OFFSET_TIME] = getDvarFloat("bot_skill_aim_offset_time");
+	if (getDvar("bot_skill_damage_scale") != "") settings[SURVIVOR_DAMAGE_SCALE] = getDvarFloat("bot_skill_damage_scale");
+	if (getDvar("bot_behavior_strafe") != "") settings[BEHAVIOR_STRAFE] = getDvarInt("bot_behavior_strafe");
+	if (getDvar("bot_behavior_nade") != "") settings[BEHAVIOR_NADE] = getDvarInt("bot_behavior_nade");
+	if (getDvar("bot_behavior_sprint") != "") settings[BEHAVIOR_SPRINT] = getDvarInt("bot_behavior_sprint");
+	if (getDvar("bot_behavior_jump") != "") settings[BEHAVIOR_JUMP] = getDvarInt("bot_behavior_jump");
+	if (getDvar("bot_respawn_delay_min") != "") settings[BOT_RESPAWN_DELAY_MIN] = getDvarFloat("bot_respawn_delay_min");
+	if (getDvar("bot_respawn_delay_max") != "") settings[BOT_RESPAWN_DELAY_MAX] = getDvarFloat("bot_respawn_delay_max");
+
+	if (isDefined(self.pers) && isDefined(self.pers["gamemodeLoadout"]) && isDefined(self.pers["gamemodeLoadout"]["loadoutPrimary"]))
+	{
+		weaponClass = lethalbeats\weapon::weapon_get_class(self.pers["gamemodeLoadout"]["loadoutPrimary"]);
+		if (weaponClass == "sniper")
+		{
+			if (isDefined(settings[FIRE_TIME])) settings[SKILL_SEMI_TIME] = max(1.0, settings[FIRE_TIME] * 8);
+		}
+	}
+
+	return settings;
 }
