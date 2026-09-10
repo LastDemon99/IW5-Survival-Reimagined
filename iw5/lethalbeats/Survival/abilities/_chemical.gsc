@@ -44,23 +44,29 @@ detonateMonitor(tank)
 
 detonation(tank, origin)
 {
-	tank playsound("detpack_explo_main");
+	if (isDefined(tank))
+	{
+		tank playsound("detpack_explo_main");
+		tank unlink();
+	}
 	earthquake(0.2, 0.4, origin, 600);
 	playfx(level._effect["chemical_tank_explosion"], origin);
-	tank unlink();
 	wait 0.05;
-	tank delete();
+	if (isDefined(tank)) tank delete();
+
+	attacker = isDefined(self) && isPlayer(self) ? self : undefined;
 
 	for(i = 0; i < 10; i++)
 	{
-		foreach(player in level.players)
+		foreach(player in lethalbeats\survival\utility::survivors(true))
+		{
 			if (lethalbeats\collider::pointInSphere(player.origin, origin, 70))
 			{
 				player shellshock("radiation_low", 0.45);
 				player viewKick(3, origin);
 			}
-
-		radiusdamage(origin, 70, 200, 20, self, "MOD_TRIGGER_HURT");
+		}
+		radiusdamage(origin, 70, 200, 20, attacker, "MOD_TRIGGER_HURT");
         wait 0.5;
 	}
 }
@@ -93,6 +99,6 @@ mineMonitor()
 mineDeathMonitor(claymore, mine, fxEnt)
 {
 	claymore waittill("death");
-	fxEnt delete();
-	self detonation(mine, mine.origin);
+	if (isDefined(fxEnt)) fxEnt delete();
+	if (isDefined(mine) && isDefined(mine.origin)) self detonation(mine, mine.origin);
 }
