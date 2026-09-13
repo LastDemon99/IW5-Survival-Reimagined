@@ -52,11 +52,21 @@ onPlayerSpawn()
 
 	self thread maps\mp\gametypes\_weapons::watchMissileUsage();
 
+	self.deathtime = 0;
+	self.lastkilltime = 0;
+	self.pers["kills"] = 0;
+	self.pers["deaths"] = 0;
+	self.pers["revives"] = 0;
+	self.pers["downs"] = 0;
+	self.pers["money_earned"] = getDvarInt("survival_start_money");
+	self lethalbeats\Survival\playerProgression::survivor_init_match_summary();
+	self thread lethalbeats\Survival\playerProgression::survivor_progression_monitor();
+
 	for(;;)
 	{
 		self waittill("spawned_player");
 
-		self survivor_init_summary();
+		self survivor_init_wave_summary();
 		self.survivalPerks = [];
 		self.grenades = [];
 		self.turrets = [];
@@ -260,7 +270,7 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 	if (sWeapon == "remote_mortar_missile_mp" && !self.bodyArmor) iDamage = self.maxHealth / 2;
 	else iDamage /= 20;
 
-	self.summary["damagetaken"] += iDamage;
+	self.wave_summary["damagetaken"] += iDamage;
 	
 	if (self.inLastStand)
 	{
@@ -323,7 +333,7 @@ onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 		if (meansOfDeath == "MOD_HEAD_SHOT")
 		{
 			self survivor_update_challenge(CH_HEADSHOT);
-			self.summary["headshots"]++;
+			self.wave_summary["headshots"]++;
 		}
 
 		ch_index = get_ch_index_byWeapon(weapon);
@@ -333,6 +343,8 @@ onPlayerBotKilled(bot, damage, meansOfDeath, weapon)
 
 onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, psOffsetTime, deathAnimDuration)
 {
+	self.pers["downs"]++;
+
 	self notify("last_stand");
 
 	if (isDefined(self.currMenu)) self lethalbeats\DynamicMenus\dynamic_shop::closeShop();
@@ -491,6 +503,7 @@ reviveMonitor(player)
     player endon("disconnect");
     player endon("death");
 
+	savior = undefined;
 	for(;;)
 	{
 		self waittill("trigger_use_hold", savior);
@@ -499,6 +512,7 @@ reviveMonitor(player)
 		reviveSpot.angles = player.angles;
 		reviveSpot hide();
 		level.survivors_bleedout[player.guid][2] = reviveSpot;
+		player.is_being_revived = true;
 
 		player playerLinkTo(reviveSpot);
 		player playerLinkedOffsetEnable();
@@ -506,6 +520,7 @@ reviveMonitor(player)
 
 		result = savior lethalbeats\utility::waittill_any_return("death", "disconnect", "last_stand", "trigger_hold_interrump", "trigger_hold_complete");
 		
+		player.is_being_revived = false;
 		player unlink();
 		reviveSpot delete();
 		level.survivors_bleedout[player.guid][2] = undefined;
@@ -513,6 +528,7 @@ reviveMonitor(player)
 		if (result != "trigger_hold_complete") continue;
 		
 		savior playLocalSound("mp_killconfirm_tags_pickup");
+		savior.pers["revives"]++;
 		player survivor_revive();
 		break;
 	}
@@ -598,9 +614,7 @@ onWeaponChange()
 			self player_take_all_weapon_buffs();
 			weaponData = self player_get_weapon_data(newWeapon);
 			if (isDefined(weaponData) && isDefined(weaponData[3]))
-			{
 				foreach(buff in weaponData[3]) self player_give_perk(buff, true);
-			}
 		}
 		
 		self setClientDvar(UI_USE_SLOT, "none");
@@ -638,7 +652,7 @@ onWeaponFire()
 			case "mg":
 			case "smg":
 			case "spread":
-				self.summary["totalshots"]++;
+				self.wave_summary["totalshots"]++;
 				break;
 		}
 	}

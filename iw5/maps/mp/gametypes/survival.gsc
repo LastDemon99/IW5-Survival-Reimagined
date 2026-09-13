@@ -174,6 +174,7 @@ onStartGametype()
 	level.setMoney = ::survivor_set_score; // `level.setMoney` for dynamic shop
     level thread lethalbeats\dynamicmenus\dynamic_shop::init();
 	lethalbeats\Survival\armories\_armories::init();
+	lethalbeats\Survival\playerProgression::init();
 
     lethalbeats\survival\killstreaks\_airdrop::init();
     lethalbeats\Survival\abilities\_chopper::init();

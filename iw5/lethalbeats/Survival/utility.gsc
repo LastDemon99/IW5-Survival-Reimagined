@@ -5,6 +5,8 @@
 #include lethalbeats\weapon;
 #include lethalbeats\survival\difficulty;
 
+#define PLAYERS_FILTER_REAL 1
+
 #define AFRICA_MILITIA_CLASS ["SMG", "ASSAULT", "LMG", "RIOT", "SHOTGUN"]
 
 #define LOADOUT_PRIMARY "loadoutPrimary"
@@ -299,6 +301,7 @@ player_clear_last_stand()
 	self.health = self.maxhealth;
 	self.inFinalStand = false;
 	self.lastStand = undefined;
+	self.is_being_revived = false;
 	
 	self maps\mp\_utility::clearLowerMessage("last_stand");
 
@@ -1061,22 +1064,25 @@ bot_kill(attacker)
 {
 	if (isDefined(attacker) && isDefined(attacker.team) && attacker.team == "allies")
 	{
+		price = isDefined(self.botPrice) ? self.botPrice : 100;
+		if (price <= 0) price = 100;
+
 		if (isDefined(attacker.owner))
 		{
 			attacker = attacker.owner;
 			if (self bot_is_killstreak())
 			{
-				attacker.summary["kills"]++;
+				attacker.wave_summary["kills"]++;
 				attacker.pers["kills"]++;
-				attacker survivor_give_score(self.botPrice);
+				attacker survivor_give_score(price);
 			}
-			else attacker survivor_give_score(int(self.botPrice / 2));
+			else attacker survivor_give_score(int(price / 2));
 		}
 		else
 		{
-			attacker.summary["kills"]++;
+			attacker.wave_summary["kills"]++;
 			attacker.pers["kills"]++;
-			attacker survivor_give_score(self.botPrice);
+			attacker survivor_give_score(price);
 		}
 	}
 	if (isPlayer(self) && isAlive(self)) self suicide();
@@ -1104,7 +1110,7 @@ summary: Returns an array of survivors optionally filtered by alive status.
 */
 survivors(alives)
 {
-	survivors = players_get_list("allies");
+	survivors = players_get_list("allies", undefined, PLAYERS_FILTER_REAL);
 	if (!isDefined(alives)) return survivors;
 
 	result = [];
@@ -1160,7 +1166,9 @@ summary: Gives score to the survivor using the gametype's score-giving function.
 */
 survivor_give_score(score, type)
 {
+	if (!isDefined(score) || int(score) <= 0) return;
 	if (!isDefined(type)) type = undefined;
+	self.pers["money_earned"] += int(score);
 	maps\mp\gametypes\_gamescore::givePlayerScore("survival", self, undefined, int(score), type);
 }
 
@@ -1411,15 +1419,15 @@ detail: <Player> survivor_init_summary(): <Void>
 summary: Resets the player's end-of-wave summary stats.
 ///DocStringEnd
 */
-survivor_init_summary()
+survivor_init_wave_summary()
 {
-	self.summary = [];
-	self.summary["kills"] = 0;
-	self.summary["headshots"] = 0;
-	self.summary["accuracy"] = 0;
-	self.summary["damagetaken"] = 0;
-	self.summary["totalshots"] = 0;
-	self.summary["hits"] = 0;
+	self.wave_summary = [];
+	self.wave_summary["kills"] = 0;
+	self.wave_summary["headshots"] = 0;
+	self.wave_summary["accuracy"] = 0;
+	self.wave_summary["damagetaken"] = 0;
+	self.wave_summary["totalshots"] = 0;
+	self.wave_summary["hits"] = 0;
 }
 
 /*
@@ -1433,12 +1441,12 @@ survivor_display_summary()
 	time = int(int((gettime() - level.waveStartTime) / 1000) + "." + int(int((gettime() - level.waveStartTime) / 100) % 10));			
 	self setClientDvar("ui_wave_time", time);
 	self setClientDvar("ui_wave_time_bonus", int(level.score_base / time));
-	self setClientDvar("ui_wave_kills", self.summary["kills"]);
-	self setClientDvar("ui_wave_headshots", self.summary["headshots"]);
-	self setClientDvar("ui_wave_accuracy", self.summary["accuracy"]);
-	self setClientDvar("ui_wave_damagetaken", self.summary["damagetaken"]);			
+	self setClientDvar("ui_wave_kills", self.wave_summary["kills"]);
+	self setClientDvar("ui_wave_headshots", self.wave_summary["headshots"]);
+	self setClientDvar("ui_wave_accuracy", self.wave_summary["accuracy"]);
+	self setClientDvar("ui_wave_damagetaken", self.wave_summary["damagetaken"]);			
 	self survivor_display_hud("wave_summary");
-	self survivor_give_score(int(level.score_base / time) + (level.wave_num * 30) + (self.summary["kills"] * 10) + (self.summary["headshots"] * 20) + (self.summary["accuracy"] * 3));
+	self survivor_give_score(int(level.score_base / time) + (level.wave_num * 30) + (self.wave_summary["kills"] * 10) + (self.wave_summary["headshots"] * 20) + (self.wave_summary["accuracy"] * 3));
 	self thread survivor_init_challenge();
 }
 
@@ -1463,7 +1471,7 @@ survivor_wave_init()
 {
 	self survivor_skip_hud_clear();
 	self setClientDvar("ui_wave", level_get_wave());
-	self survivor_init_summary();
+	self survivor_init_wave_summary();
 }
 
 /*

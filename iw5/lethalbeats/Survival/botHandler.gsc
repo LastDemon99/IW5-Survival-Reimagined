@@ -63,6 +63,9 @@ onBotSpawn()
 
 		self.targetGuid = undefined;
 		self.isHuman = true;
+		self.deathtime = 0;
+		self.lastkilltime = 0;
+		self.spawntime = gettime();
 		abilities = self bot_get_abilities(true);
 
 		foreach(ability in abilities)
@@ -219,8 +222,8 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 	{
 		if (isDefined(sWeapon))
 		{
-			eAttacker.summary["hits"]++;
-			if (eAttacker.summary["hits"] <= eAttacker.summary["totalshots"]) eAttacker.summary["accuracy"] = clamp(eAttacker.summary["hits"] / eAttacker.summary["totalshots"], 0.0, 1.0) * 100;
+			eAttacker.wave_summary["hits"]++;
+			if (eAttacker.wave_summary["hits"] <= eAttacker.wave_summary["totalshots"]) eAttacker.wave_summary["accuracy"] = clamp(eAttacker.wave_summary["hits"] / eAttacker.wave_summary["totalshots"], 0.0, 1.0) * 100;
 			iDamage += self bot_modified_damage(iDamage, eAttacker, sWeapon, sMeansOfDeath);
 
 			if (isDefined(sHitLoc) && sHitLoc == "shield" && array_contains(SHIELD_BULLET_DAMAGE, sMeansOfDeath) && eAttacker player_has_perk("specialty_bulletpenetration"))

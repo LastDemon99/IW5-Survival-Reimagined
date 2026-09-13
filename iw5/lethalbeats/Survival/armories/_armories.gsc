@@ -440,7 +440,7 @@ isUpgradeOption(page, item, index)
 
 isLevelUnlockedOption(page, index, player)
 {
-    if (getDvarInt("survival_casual")) return true;
+    if (!getDvarInt("survival_ladder")) return true;
     if (!isDefined(level.dynamicShopPages) || !isDefined(level.dynamicShopPages[page])) return true;
 
     pageData = level.dynamicShopPages[page];
