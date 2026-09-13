@@ -34,6 +34,7 @@ main()
     level.onNormalDeath = ::onNormalDeath;
 
     makeDvarServerInfo("cg_drawCrosshairNames", 0);	
+	level.botLimit = MAX_CLIENT_SLOTS - 1;
 	setDvarIfUninitialized("survival_survivors_limit", 4);
 	setDvarIfUninitialized("survival_dev_mode", 0);
 	setDvarIfUninitialized("survival_wait_shops", 1);
@@ -229,7 +230,7 @@ onStartGametype()
 	level.wave_num = 0;
 	level.axisTarget = undefined;
 	
-	level.bots_slots = getBotSlotsTarget();
+	updateBotLimit();
 	level.bots_wave = [];
 	level.bots_total_count = 0;
 	level.bots_deaths = 0;
@@ -280,10 +281,10 @@ onStartGametype()
 	lethalbeats\botactor\config::bot_config_set("grenade_windup_max_ms", 0);
 	lethalbeats\botactor\config::bot_config_set("path_searches_per_tick", 8);
 
+	print("[Survival]: Gametype has been started.");
 	if (!getDvarInt("survival_wave_start")) return;
 
 	level thread waitPlayers();
-	level thread addBots();
 	
 	level thread onWaveStart();
 	level thread onWaveEnd();
@@ -442,73 +443,44 @@ onNormalDeath(victim, attacker, lifeId)
 		attacker.finalKill = true;
 }
 
-addBots()
+updateBotLimit(player)
 {
-	level endon("game_ended");
-	level waittill("player_spawned");
-	botSlotsUpdate();
-	level notify("bots_connected");
-}
+	survivorCount = survivors().size;
+	hasOpenSlot = survivorCount < getDvarInt("survival_survivors_limit");
+	level.botLimit = (MAX_CLIENT_SLOTS - hasOpenSlot) - survivorCount;
+	if (level.botLimit < 0) level.botLimit = 0;
 
-botSlotsUpdate(player)
-{
-	if (isDefined(level.bots_slot_syncing) && level.bots_slot_syncing) return;
-	level.bots_slot_syncing = true;
-
-	targetSlots = getBotSlotsTarget();
-	level.bots_slots = targetSlots;
-
-	slotBots = bots();
-	while (slotBots.size > targetSlots)
+	while (bots().size > level.botLimit)
 	{
-		bot = getBotSlotKickCandidate(slotBots, player);
-		if (!isDefined(bot)) break;
-
-		if (isDefined(bot) && isAlive(bot) && isDefined(bot.botType) && isDefined(level.bots_total_count) && level.bots_total_count > level.bots_deaths)
+		aliveBots = bots(undefined, true);
+		if (aliveBots.size > level.botLimit)
 		{
-			level.bots_total_count--;
-			if (level.bots_total_count == level.bots_deaths) level notify("wave_end");
+			candidate = getBotSlotKickCandidate(aliveBots, player);
+			if (isDefined(candidate))
+			{
+				candidate lethalbeats\survival\utility::bot_kill();
+				candidate lethalbeats\botactor\utility::bot_kick();
+			}
+			else break;
 		}
-
-		bot lethalbeats\botactor\utility::bot_kick();
+		else
+		{
+			allBots = bots();
+			candidate = undefined;
+			for (i = allBots.size - 1; i >= 0; i--)
+			{
+				b = allBots[i];
+				if (isDefined(b) && !isAlive(b))
+				{
+					candidate = b;
+					break;
+				}
+			}
+			if (isDefined(candidate)) candidate lethalbeats\botactor\utility::bot_kick();
+			else break;
+		}
 		waittillframeend;
-
-		slotBots = bots();
 	}
-
-	slotBots = bots();
-	while (slotBots.size < targetSlots)
-	{
-		bot = lethalbeats\botactor\utility::bot_add("axis");
-		if (!isDefined(bot)) break;
-
-		bot.pers["isBot"] = true;
-		bot.pers["score"] = 0;
-
-		bot thread lethalbeats\Survival\botHandler::onBotSpawn();
-		bot thread lethalbeats\Survival\botHandler::botWaitRespawn();
-
-		if (level.wave_num && level.bots_awaits)
-			bot notify("release_bot");
-
-		waittillframeend;
-		slotBots = bots();
-	}
-
-	level.bots_slot_syncing = false;
-}
-
-getBotSlotsTarget()
-{
-	survivorLimit = getDvarInt("survival_survivors_limit");
-	if (survivorLimit < 1) survivorLimit = 1;
-	if (survivorLimit > MAX_CLIENT_SLOTS) survivorLimit = MAX_CLIENT_SLOTS;
-
-	realPlayers = lethalbeats\utility::get_players("allies", undefined, 1).size;
-	if (realPlayers > survivorLimit) realPlayers = survivorLimit;
-	if (realPlayers > MAX_CLIENT_SLOTS) realPlayers = MAX_CLIENT_SLOTS;
-
-	return MAX_CLIENT_SLOTS - realPlayers;
 }
 
 getBotSlotKickCandidate(slotBots, player)
@@ -542,11 +514,10 @@ getAxisActorSpawnPoint()
 
 onAddSurvivor()
 {
+	if (!isDefined(self) || self isTestClient()) return;
 	level notify("survivor_connected");
-	waittillframeend;
-    if (!isdefined(self) || self isTestClient()) return;
 
-	level thread botSlotsUpdate(self);
+	updateBotLimit(self);
 
 	if (isDefined(level.waitingLabel)) self thread onSurvivorSkipWaitPlayers();
 	if (isDefined(level.timerHud)) self thread onSurvivorSkipIntermission();
@@ -573,12 +544,22 @@ onAddSurvivor()
 waitPlayers()
 {
 	level endon("game_ended");
-	level waittill("bots_connected");
 
-	for(;;) 
-	{ 
-		if (survivors(true).size) break;
-		wait 0.35;
+	while (!survivors(true).size) wait 0.2;
+
+	updateBotLimit();
+	while (bots().size < level.botLimit)
+	{
+		bot = lethalbeats\botactor\utility::bot_add("axis");
+		if (!isDefined(bot)) break;
+
+		bot.pers["isBot"] = true;
+		bot.pers["score"] = 0;
+
+		bot thread lethalbeats\Survival\botHandler::onBotSpawn();
+		bot thread lethalbeats\Survival\botHandler::botWaitRespawn();
+
+		waittillframeend;
 	}
 
 	level notify("callback_init");

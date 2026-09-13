@@ -19,7 +19,7 @@ onPlayerDisconnect()
     {
         self waittill("disconnect");
 
-		level thread maps\mp\gametypes\survival::botSlotsUpdate();
+		level thread maps\mp\gametypes\survival::updateBotLimit();
 
 		bleedoutObjects = level.survivors_bleedout[self.guid];
 		if (isDefined(bleedoutObjects))
