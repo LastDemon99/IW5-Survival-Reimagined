@@ -122,4 +122,14 @@ init()
 
     level.armories["mp_nola"] = [["equipment", (-628.806, -225.656, 22.999), (0, 100.37, 0)], ["weapon", (-1582.88, 1288.9, 47.124), (0, -90.001, 0)], ["support", (316.342, 1087.75, 43), (0, 10.798, 0)]];
     level.juggDrop["mp_nola"] = [(-936.123, 1397.73, 24), (-2153.14, 1435.57, 10.579), (-2070.05, -11.849, 11.999), (-1772.45, -240.602, 8), (-1376.75, -539.638, 70.572), (-7.756, -86.408, 34.858), (-375.738, -170.048, 3.205)];
+
+    lethalbeats\botActor\stuckzones::stuckzone_add("mp_dome", (342, 1597, -254), (562, 1913, -236), "2d");
+    lethalbeats\botActor\stuckzones::stuckzone_route("mp_dome", (440, 1875, -254), (447, 1966, -253));
+    lethalbeats\botActor\stuckzones::stuckzone_route("mp_dome", (506, 1740, -254), (606, 1729, -251));
+    lethalbeats\botActor\stuckzones::stuckzone_add("mp_dome", (342, 1597, -254), (562, 1913, -236), "2d");
+    lethalbeats\botActor\stuckzones::stuckzone_route("mp_dome", (440, 1875, -254), (447, 1966, -253));
+    lethalbeats\botActor\stuckzones::stuckzone_route("mp_dome", (506, 1740, -254), (606, 1729, -251));
+    lethalbeats\botActor\stuckzones::stuckzone_ignore("mp_dome", (1285, 947, -317), (1450, 1139, -254), "2d");
+    lethalbeats\botActor\stuckzones::stuckzone_ignore("mp_dome", (26, 225, -390), (212, 252, -388), "2d");
+    lethalbeats\botActor\stuckzones::stuckzone_ignore("mp_dome", (356, 138, -395), (492, 139, -292), "3d");
 }
