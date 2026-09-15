@@ -581,7 +581,7 @@ callback_playerDamage_internal( eInflictor, eAttacker, victim, iDamage, iDFlags,
     if ( sWeapon == "killstreak_emp_mp" )
         return;
 
-    if ( sWeapon == "bouncingbetty_mp" && !maps\mp\gametypes\_weapons::mineDamageHeightPassed( eInflictor, victim ) )
+    if (sWeapon == "bouncingbetty_mp" && isDefined(eInflictor) && isDefined(eInflictor.origin) && !maps\mp\gametypes\_weapons::mineDamageHeightPassed(eInflictor, victim))
         return;
 
     if ( sWeapon == "bouncingbetty_mp" && ( victim getstance() == "crouch" || victim getstance() == "prone" ) )

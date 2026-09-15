@@ -337,7 +337,7 @@ bouncingbettyWatchProximity()
     fx = mine gettagorigin("tag_fx");
     playfx(level.mine_explode, fx);
 
-    self.owner radiusdamage(mine.origin, level.minedamageradius, level.minedamagemax, level.minedamagemin, self.owner, "MOD_EXPLOSIVE", "bouncingbetty_mp");
+    mine radiusdamage(mine.origin, level.minedamageradius, level.minedamagemax, level.minedamagemin, isDefined(self.owner) ? self.owner : mine, "MOD_EXPLOSIVE", "bouncingbetty_mp");
     wait 0.05;
 
     if (isdefined(self.trigger))
