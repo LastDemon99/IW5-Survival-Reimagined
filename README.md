@@ -60,8 +60,8 @@ If you enter a dedicated server that has the mod you will not have to do anythin
 **To report bugs, make suggestions or need help, visit our discord: [LethalBeats](https://discord.gg/R7TXwSP9kq)**
 
 # <a name="download"></a>Download
-- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v3.1.5/IW5-Survival-Reimagined.rar)
-- Survival Loader (Installer and loader): [IW5_SurvivalLoader.exe](https://github.com/LethalBeats/IW5-Survival-Loader/releases/download/iw5-survival-loader-v1.0/IW5_SurvivalLoader.exe)
+- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v4.0.0/IW5-Survival-Reimagined.rar)
+- Survival Loader (Installer and loader): [IW5_SurvivalLoader.exe](`Temporarily disabled for maintenance`)
 
 # <a name="credits"></a>Credits
 - [Master-64](https://github.com/Master-64) for Sponsor this project.
