@@ -19,22 +19,22 @@ spawnShop(type, origin, angles)
 	
 	shopModel = spawnShopModel(origin, angles);
 	
-	hintString = "";
+	hintKey = "";
 	wayPoint = "";
 	waveTarget = 0;
 	
 	switch(type)
 	{
 		case "weapon": 
-			hintString = "Weapon Armory";
+			hintKey = "HINT_USE_WEAPON_ARMORY";
 			wayPoint = "specops_ui_weaponstore";
 			break;
 		case "equipment": 
-			hintString = "Equipment Armory";
+			hintKey = "HINT_USE_EQUIPMENT_ARMORY";
 			wayPoint = "specops_ui_equipmentstore";
 			break;
 		case "support": 
-			hintString = "Air Support";
+			hintKey = "HINT_USE_AIR_SUPPORT";
 			wayPoint = "specops_ui_airsupport";
 			break;
 	}
@@ -52,7 +52,7 @@ spawnShop(type, origin, angles)
 	shopModel[0] lethalbeats\hud::hud_create_3d_objective("allies", wayPoint, 12, 12);
 	shopModel[1] setModel("com_laptop_2_open");
 	trigger = lethalbeats\trigger::trigger_create(origin, 55);
-	trigger lethalbeats\trigger::trigger_set_use("Press ^3[{+activate}] ^7to use " + hintString);
+	trigger lethalbeats\trigger::trigger_set_use(hintKey);
 	trigger lethalbeats\trigger::trigger_set_enable_condition(lethalbeats\survival\utility::survivor_trigger_filter);
 	trigger.tag = type;
 

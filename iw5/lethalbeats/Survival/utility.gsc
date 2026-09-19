@@ -532,7 +532,7 @@ _dropWeapon(weapon, ammoData, weaponData, throw, slot)
 
     trigger.owner = self;
 	trigger.weapon = weapon;
-    trigger lethalbeats\trigger::trigger_set_use("Hold ^3[{+activate}] ^7to pick up " + displayName);
+    trigger lethalbeats\trigger::trigger_set_use(get_localized_string_format("HINT_HOLD_TO_PICKUP", displayName));
     trigger lethalbeats\trigger::trigger_set_enable_condition(::_weaponPickupFilter);
     trigger thread _weaponPickupMonitor(weapon, ammoData, weaponData, weaponModel);
     trigger thread _ammoPickupMonitor(weapon, ammoData, weaponModel);
@@ -2552,4 +2552,32 @@ heli_custom_targeting()
         }
         wait 0.5;
     }
+}
+
+/*
+///DocStringBegin
+detail: get_localized_string(key: <String>, defaultVal?: <String>): <String>
+summary: Returns the localized string from mp/languageLocalize.csv based on ui_language.
+///DocStringEnd
+*/
+get_localized_string(key, defaultVal)
+{
+    if (!isDefined(key) || key == "") return "";
+    col = (getDvarInt("ui_language") == 1) ? 2 : 1;
+    localized = tablelookup("mp/languageLocalize.csv", 0, key, col);
+    if (isDefined(localized) && localized != "") return localized;
+    return isDefined(defaultVal) ? defaultVal : key;
+}
+
+/*
+///DocStringBegin
+detail: get_localized_string_format(key: <String>, arg1: <String | Int>, defaultVal?: <String>): <String>
+summary: Returns the localized string from mp/languageLocalize.csv replacing &&1 with arg1.
+///DocStringEnd
+*/
+get_localized_string_format(key, arg1, defaultVal)
+{
+    str = get_localized_string(key, defaultVal);
+    if (isDefined(arg1)) str = lethalbeats\string::string_replace(str, "&&1", "" + arg1);
+    return str;
 }

@@ -495,7 +495,7 @@ _sentry_setactive()
     if (!isDefined(self.owner) || !self.owner lethalbeats\survival\utility::player_is_survivor()) return;
 
 	trigger = lethalbeats\trigger::trigger_create(self.origin + (0, 0, 1), 70);
-	trigger lethalbeats\trigger::trigger_set_use("Press ^3[{+activate}] ^7to pick up Sentry");
+	trigger lethalbeats\trigger::trigger_set_use("HINT_PICKUP_SENTRY");
 	trigger lethalbeats\trigger::trigger_set_enable_use_condition(::sentryPickupCondition);
 	trigger.owner = self.owner;
 	self.trigger = trigger;		

@@ -98,10 +98,10 @@ init_vote_data()
 	level.vote_maps[15] = create_vote_item("mp_park", "DOWNTURN");
 
 	level.vote_diffs = [];
-	level.vote_diffs[0] = create_vote_item("survival_easy", "RECRUIT");
-	level.vote_diffs[1] = create_vote_item("survival_normal", "REGULAR");
-	level.vote_diffs[2] = create_vote_item("survival_hard", "HARDENED");
-	level.vote_diffs[3] = create_vote_item("survival_insane", "VETERAN");
+	level.vote_diffs[0] = create_vote_item("survival_easy", get_localized_string("MENU_RECRUIT_CAPS", "RECRUIT"));
+	level.vote_diffs[1] = create_vote_item("survival_normal", get_localized_string("MENU_REGULAR_CAPS", "REGULAR"));
+	level.vote_diffs[2] = create_vote_item("survival_hard", get_localized_string("MENU_HARDENED_CAPS", "HARDENED"));
+	level.vote_diffs[3] = create_vote_item("survival_insane", get_localized_string("MENU_VETERAN_CAPS", "VETERAN"));
 
 	level.vote_phase = 1;
 	level.vote_timer = 10;

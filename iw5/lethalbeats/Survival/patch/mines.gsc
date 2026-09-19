@@ -115,7 +115,7 @@ c4WatchStuck()
     if (self.owner.team == "axis") return;
 
     trigger = trigger_create(self.origin, 70);
-    trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up C4");
+    trigger trigger_set_use("HINT_PICKUP_C4");
     trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = self.owner;
     self.trigger = trigger;
@@ -202,7 +202,7 @@ claymoreWatchStuck(owner, weaponName)
     if (self.owner.team == "axis") return;
 
     trigger = trigger_create(self.origin, 70);
-    trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up Claymore");
+    trigger trigger_set_use("HINT_PICKUP_CLAYMORE");
     trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = owner;
     self.trigger = trigger;
@@ -284,7 +284,7 @@ bouncingbettyWatchStuck(owner)
     if (self.owner.team == "axis") return;
 
     trigger = trigger_create(self.origin + (0, 0, 25), 70);
-    trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up Bouncing Betty");
+    trigger trigger_set_use("HINT_PICKUP_BETTY");
     trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = owner;
     self.trigger = trigger;
@@ -385,7 +385,7 @@ throwingKnifeWatchStuck(owner, weaponName)
     if (self.owner.team == "axis") return;
 
     trigger = trigger_create(self.origin, 90);
-    trigger trigger_set_use("Press ^3[{+activate}] ^7to pick up ThrowingKnife");
+    trigger trigger_set_use("HINT_PICKUP_KNIFE");
     trigger trigger_set_enable_use_condition(::minePickupCondition);
     trigger.owner = owner;
     trigger.tag = "throwingKnife";

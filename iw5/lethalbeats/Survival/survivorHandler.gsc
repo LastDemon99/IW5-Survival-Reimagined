@@ -405,7 +405,7 @@ onPlayerLastStand(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, s
 
 		reviveTime = getDvarFloat("survival_revive_time") + (getDvarFloat("survival_revive_time_per_player") * survivors(true).size);
 		trigger = lethalbeats\trigger::trigger_create(self.origin, 60);
-		trigger lethalbeats\trigger::trigger_set_use_hold(reviveTime, "Hold ^3[{+activate}] ^7to revive the player", true, false);
+		trigger lethalbeats\trigger::trigger_set_use_hold(reviveTime, "HINT_REVIVE_PLAYER", true, false);
 		trigger lethalbeats\trigger::trigger_set_enable_condition(::survivor_trigger_filter);
 		trigger lethalbeats\trigger::trigger_link_to(self);
 		trigger.tag = "revive";
