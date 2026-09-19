@@ -62,6 +62,14 @@ onPlayerSpawn()
 	self lethalbeats\Survival\playerProgression::survivor_init_match_summary();
 	self thread lethalbeats\Survival\playerProgression::survivor_progression_monitor();
 
+	if (isDefined(level.vote_in_progress) && level.vote_in_progress)
+	{
+		self thread lethalbeats\Survival\voteSystem::vote_sync_player(self);
+		self openpopupmenu("survival_map_vote");
+		self thread lethalbeats\Survival\voteSystem::player_vote_listener();
+		self thread lethalbeats\Survival\voteSystem::player_disconnect_vote_cleanup();
+	}
+
 	for(;;)
 	{
 		self waittill("spawned_player");
@@ -169,12 +177,13 @@ playerWaitRespawn()
 	// (つ◉益◉)つ previously, I iterated through level.players and checked with isAlive, but for some fcking reason, isAlive now returns true in this respawndelay section, wtf pluto r4906!!!
 	if (!survivors(true).size)
 	{
-		rotate_wait = 15;
+		isVote = getDvarInt("survival_map_vote");
+		rotate_wait = isVote ? 25 : getDvarInt("survival_rotate_wait", 15);
 		foreach(player in survivors())
 		{
 			player suicide();
 			player hud_clear_lower_message("spawn_info");
-			player hud_set_lower_message("spawn_info", "All survivors death waiting to rotate map", rotate_wait, 1, 1);
+			if (!isVote) player hud_set_lower_message("spawn_info", "All survivors death waiting to rotate map", rotate_wait, 1, 1);
 		}
 		level notify("all_survivors_death", rotate_wait);
 	}
