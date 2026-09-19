@@ -158,10 +158,11 @@ _survivor_alives() { return survivors(true); }
 
 menuInit()
 {
-    game["menu_team"] = "class";
-    game["menu_class_axis"] = "class";
-    game["menu_class_allies"] = "class";
-	precacheMenu("class");
+    game["menu_class"] = "custom_options";
+    game["menu_team"] = "custom_options";
+    game["menu_class_axis"] = "custom_options";
+    game["menu_class_allies"] = "custom_options";
+	precacheMenu("custom_options");
     precacheMenu("team_marinesopfor");
 }
 
