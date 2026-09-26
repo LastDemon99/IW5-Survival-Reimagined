@@ -156,17 +156,16 @@ onBuy(page, item, price, index)
         case WEAPON_UPGRADES:
             if (index == INDEX_ATTACH_SLOT)
             {
-                player buyItem(self getAttachSlotPrice(price));
                 self.weaponData[ATTACH_SLOTS]++;
+                player setWeaponData(self.weaponData[BUILD_NAME], self.weaponData);
+                player buyItem(self getAttachSlotPrice(price));
             }
             else if (index == INDEX_BUFF_SLOT)
             {
-                player buyItem(self getBuffSlotPrice(price));
                 self.weaponData[BUFF_SLOTS]++;
+                player setWeaponData(self.weaponData[BUILD_NAME], self.weaponData);
+                player buyItem(self getBuffSlotPrice(price));
             }
-
-            player setWeaponData(self.weaponData[BUILD_NAME], self.weaponData);
-            player updateLabels(page);
             return;
     }
 
@@ -193,9 +192,8 @@ onResponse(page, item, index)
     if (self.page == WEAPON_AMMO)
     {
         weapon = player player_get_weapons()[int(item)];
-        player buyItem(player getAmmoPrice(weapon));
         player player_give_max_ammo(weapon);
-        player updateLabels(page);
+        player buyItem(player getAmmoPrice(weapon));
         return;
     }
     

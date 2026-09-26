@@ -101,7 +101,7 @@ init_weapon_armory()
     page shop_create_item("iw5_m9", 1500, "WEAPON_PM9", "PERKS_SMG", "weapon_mini_uzi", undefined, 22);
     page shop_create_item("iw5_mp7", 1500, "WEAPON_MP7", "PERKS_MP7", "weapon_mp7", undefined, 12);
     page shop_create_item("iw5_ak74u", 1500, "AK-74u", "PERKS_SMG", "weapon_aks74u", undefined, 27);
-    page shop_create_item("iw5_iw4mp5k", 1500, "WEAPON_IW4_MP5K", "PERKS_SMG", "weapon_mp5k", undefined, 8);
+    page shop_create_item("iw5_iw4mp5k", 1500, "WEAPON_IW4_MP5K", "PERKS_SMG", "weapon_mp5k_iw4", undefined, 8);
     page shop_create_item("iw5_iw4uzi", 1500, "WEAPON_MINI_UZI", "PERKS_SMG", "weapon_uzi", undefined, 24);
     page shop_create_item("iw5_iw4kriss", 1500, "WEAPON_KRISS", "PERKS_SMG", "weapon_kriss", undefined, 14);
 
@@ -118,7 +118,7 @@ init_weapon_armory()
     page shop_create_item("iw5_ak47", 2000, "WEAPON_AK47", "PERKS_AR_FULLAUTO", "weapon_ak47", undefined, 23);
     page shop_create_item("iw5_fad", 2000, "WEAPON_FAD", "PERKS_AR_FULLAUTO", "weapon_fad", undefined, 31);
     page shop_create_item("iw5_iw4fal", 2000, "WEAPON_FAL", "PERKS_AR_SEMIAUTO", "weapon_fnfal", undefined, 46);
-    page shop_create_item("iw5_iw4famas", 2000, "WEAPON_FAMAS", "PERKS_AR_SEMIAUTO", "weapon_famas", undefined, 20);
+    page shop_create_item("iw5_iw4famas", 2000, "WEAPON_FAMAS", "PERKS_AR_THREEROUND", "weapon_famas", undefined, 20);
     page shop_create_item("iw5_iw4fn2000", 2000, "WEAPON_FN2000", "PERKS_AR_FULLAUTO", "weapon_fn2000", undefined, 32);
     page shop_create_item("iw5_iw4tavor", 2000, "WEAPON_TAVOR", "PERKS_AR_FULLAUTO", "weapon_tavor", undefined, 6);
 
@@ -168,35 +168,35 @@ init_weapon_armory()
 
     // Proficiencies / Buffs
     page = menu shop_create_page("assault_buff", "MENU_PROFICIENCY_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("specialty_marksman", 2000, "PERKS_MARKSMAN", "PERKS_DESC_MARKSMAN", undefined, "specialty_marksman", 4);
+    page shop_create_item("specialty_marksman", 2000, "PERKS_KICK", "PERKS_DESC_KICK", undefined, "specialty_marksman", 4);
     page shop_create_item("specialty_bulletpenetration", 2000, "PERKS_DEEP_IMPACT", "PERKS_DESC_DEEP_IMPACT", undefined, "specialty_bulletpenetration", 10);
     page shop_create_item("specialty_sharp_focus", 2000, "PERKS_SHARPFOCUS", "PERKS_DESC_SHARPFOCUS", undefined, "specialty_sharp_focus", 18);
     page shop_create_item("specialty_holdbreathwhileads", 2000, "PERKS_HOLDBREATHWHILEADS", "PERKS_DESC_HOLDBREATHWHILEADS", undefined, "specialty_holdbreathwhileads", 24);
     page shop_create_item("specialty_reducedsway", 2000, "PERKS_REDUCEDSWAY", "PERKS_DESC_REDUCEDSWAY", undefined, "specialty_reducedsway", 30);
 
     page = menu shop_create_page("smg_buff", "MENU_PROFICIENCY_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("specialty_marksman", 2000, "PERKS_MARKSMAN", "PERKS_DESC_MARKSMAN", undefined, "specialty_marksman", 4);
+    page shop_create_item("specialty_marksman", 2000, "PERKS_KICK", "PERKS_DESC_KICK", undefined, "specialty_marksman", 4);
     page shop_create_item("specialty_longerrange", 2000, "PERKS_LONGERRANGE", "PERKS_DESC_LONGERRANGE", undefined, "specialty_longerrange", 36);
     page shop_create_item("specialty_sharp_focus", 2000, "PERKS_SHARPFOCUS", "PERKS_DESC_SHARPFOCUS", undefined, "specialty_sharp_focus", 18);
     page shop_create_item("specialty_fastermelee", 3000, "PERKS_FASTERMELEE", "PERKS_DESC_FASTERMELEE", undefined, "specialty_fastmeleerecovery", 42);
     page shop_create_item("specialty_reducedsway", 2000, "PERKS_REDUCEDSWAY", "PERKS_DESC_REDUCEDSWAY", undefined, "specialty_reducedsway", 30);
 
     page = menu shop_create_page("lmg_buff", "MENU_PROFICIENCY_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("specialty_marksman", 2000, "PERKS_MARKSMAN", "PERKS_DESC_MARKSMAN", undefined, "specialty_marksman", 4);
+    page shop_create_item("specialty_marksman", 2000, "PERKS_KICK", "PERKS_DESC_KICK", undefined, "specialty_marksman", 4);
     page shop_create_item("specialty_bulletpenetration", 2000, "PERKS_DEEP_IMPACT", "PERKS_DESC_DEEP_IMPACT", undefined, "specialty_bulletpenetration", 10);
     page shop_create_item("specialty_sharp_focus", 2000, "PERKS_SHARPFOCUS", "PERKS_DESC_SHARPFOCUS", undefined, "specialty_sharp_focus", 18);
     page shop_create_item("specialty_lightweight", 3000, "PERKS_LIGHTWEIGHT", "PERKS_DESC_LIGHTWEIGHT", undefined, "specialty_lightweight", 46);
     page shop_create_item("specialty_reducedsway", 2000, "PERKS_REDUCEDSWAY", "PERKS_DESC_REDUCEDSWAY", undefined, "specialty_reducedsway", 30);
 
     page = menu shop_create_page("sniper_buff", "MENU_PROFICIENCY_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("specialty_marksman", 2000, "PERKS_MARKSMAN", "PERKS_DESC_MARKSMAN", undefined, "specialty_marksman", 4);
+    page shop_create_item("specialty_marksman", 2000, "PERKS_KICK", "PERKS_DESC_KICK", undefined, "specialty_marksman", 4);
     page shop_create_item("specialty_bulletpenetration", 2000, "PERKS_DEEP_IMPACT", "PERKS_DESC_DEEP_IMPACT", undefined, "specialty_bulletpenetration", 10);
     page shop_create_item("specialty_sharp_focus", 2000, "PERKS_SHARPFOCUS", "PERKS_DESC_SHARPFOCUS", undefined, "specialty_sharp_focus", 18);
     page shop_create_item("specialty_lightweight", 3000, "PERKS_LIGHTWEIGHT", "PERKS_DESC_LIGHTWEIGHT", undefined, "specialty_lightweight", 46);
     page shop_create_item("specialty_reducedsway", 2000, "PERKS_REDUCEDSWAY", "PERKS_DESC_REDUCEDSWAY", undefined, "specialty_reducedsway", 30);
 
     page = menu shop_create_page("shotgun_buff", "MENU_PROFICIENCY_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("specialty_marksman", 2000, "PERKS_MARKSMAN", "PERKS_DESC_MARKSMAN", undefined, "specialty_marksman", 4);
+    page shop_create_item("specialty_marksman", 2000, "PERKS_KICK", "PERKS_DESC_KICK", undefined, "specialty_marksman", 4);
     page shop_create_item("specialty_sharp_focus", 2000, "PERKS_SHARPFOCUS", "PERKS_DESC_SHARPFOCUS", undefined, "specialty_sharp_focus", 18);
     page shop_create_item("specialty_fastermelee", 3000, "PERKS_FASTERMELEE", "PERKS_DESC_FASTERMELEE", undefined, "specialty_fastmeleerecovery", 42);
     page shop_create_item("specialty_longerrange", 2000, "PERKS_LONGERRANGE", "PERKS_DESC_LONGERRANGE", undefined, "specialty_longerrange", 36);
@@ -208,68 +208,68 @@ init_weapon_armory()
 
     // Attachments
     page = menu shop_create_page("pistol_attach", "MENU_ATTACHMENT_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", "weapon_attachment_suppressor", undefined, 24);
-    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", "weapon_attachment_akimbo", undefined, 8);
-    page shop_create_item("tactical", 1000, "MPUI_TACTICAL", "PERKS_DESC_TACTICAL", "weapon_attachment_tactical", undefined, 14);
-    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", "weapon_attachment_xmags", undefined, 35);
+    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", undefined, "weapon_attachment_suppressor", 24);
+    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", undefined, "weapon_attachment_akimbo", 8);
+    page shop_create_item("tactical", 1000, "MPUI_TACTICAL", "PERKS_DESC_TACTICAL", undefined, "weapon_attachment_tactical", 14);
+    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", undefined, "weapon_attachment_xmags", 35);
 
     page = menu shop_create_page("shotgun_attach", "MENU_ATTACHMENT_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("grip", 2000, "MPUI_GRIP", "PERKS_VERTICAL_FOREGRIP_FOR", "weapon_attachment_grip", undefined, 18);
-    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", "weapon_attachment_suppressor", undefined, 24);
-    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", "weapon_attachment_reflex", undefined, 7);
-    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", "weapon_attachment_eotech", undefined, 1);
-    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", "weapon_attachment_xmags", undefined, 35);
-    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", "weapon_attachment_akimbo", undefined, 8);
+    page shop_create_item("grip", 2000, "MPUI_GRIP", "PERKS_VERTICAL_FOREGRIP_FOR", undefined, "weapon_attachment_grip", 18);
+    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", undefined, "weapon_attachment_suppressor", 24);
+    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", undefined, "weapon_attachment_reflex", 7);
+    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", undefined, "weapon_attachment_eotech", 1);
+    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", undefined, "weapon_attachment_xmags", 35);
+    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", undefined, "weapon_attachment_akimbo", 8);
 
     page = menu shop_create_page("machine_pistol_attach", "MENU_ATTACHMENT_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", "weapon_attachment_suppressor", undefined, 24);
-    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", "weapon_attachment_akimbo", undefined, 8);
-    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", "weapon_attachment_reflex", undefined, 7);
-    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", "weapon_attachment_eotech", undefined, 1);
-    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", "weapon_attachment_xmags", undefined, 35);
+    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", undefined, "weapon_attachment_suppressor", 24);
+    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", undefined, "weapon_attachment_akimbo", 8);
+    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", undefined, "weapon_attachment_reflex", 7);
+    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", undefined, "weapon_attachment_eotech", 1);
+    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", undefined, "weapon_attachment_xmags", 35);
 
     page = menu shop_create_page("smg_attach", "MENU_ATTACHMENT_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", "weapon_attachment_reflex", undefined, 7);
-    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", "weapon_attachment_suppressor", undefined, 24);
-    page shop_create_item("rof", 3000, "MPUI_ROF", "PERKS_DESC_ROF", "weapon_attachment_rof", undefined, 44);
-    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", "weapon_attachment_acog", undefined, 30);
-    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", "weapon_attachment_eotech", undefined, 1);
-    page shop_create_item("hamrhybrid", 1700, "MPUI_HAMRHYBRID", "PERKS_HAMRHYBRID", "weapon_attachment_hamrhybrid", undefined, 38);
-    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", "weapon_attachment_xmags", undefined, 35);
-    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", "weapon_attachment_thermal", undefined, 45);
-    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", "weapon_attachment_akimbo", undefined, 8);
+    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", undefined, "weapon_attachment_reflex", 7);
+    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", undefined, "weapon_attachment_suppressor", 24);
+    page shop_create_item("rof", 3000, "MPUI_ROF", "PERKS_DESC_ROF", undefined, "weapon_attachment_rof", 44);
+    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", undefined, "weapon_attachment_acog", 30);
+    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", undefined, "weapon_attachment_eotech", 1);
+    page shop_create_item("hamrhybrid", 1700, "MPUI_HAMRHYBRID", "PERKS_HAMRHYBRID", undefined, "weapon_attachment_hamrhybrid", 38);
+    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", undefined, "weapon_attachment_xmags", 35);
+    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", undefined, "weapon_attachment_thermal", 45);
+    page shop_create_item("akimbo", 2000, "MPUI_AKIMBO", "PERKS_DESC_AKIMBO", undefined, "weapon_attachment_akimbo", 8);
 
     page = menu shop_create_page("assault_attach", "MENU_ATTACHMENT_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", "weapon_attachment_reflex", undefined, 7);
-    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", "weapon_attachment_suppressor", undefined, 24);
-    page shop_create_item("gl", 2000, "MPUI_GRENADE_LAUNCHER", "PERKS_GRENADE_LAUNCHER_ATTACHMENT2", "weapon_attachment_m203", undefined, 28);
-    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", "weapon_attachment_acog", undefined, 30);
-    page shop_create_item("rof", 3000, "MPUI_ROF", "PERKS_DESC_ROF", "weapon_attachment_rof", undefined, 44);
-    page shop_create_item("heartbeat", 1500, "MPUI_HEARTBEAT", "PERKS_DESC_HEARTBEAT", "weapon_attachment_heartbeat", undefined, 47);
-    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", "weapon_attachment_eotech", undefined, 1);
-    page shop_create_item("shotgun", 1000, "MPUI_SHOTGUN", "PERKS_DESC_SHOTGUN", "weapon_attachment_shotgun", undefined, 40);
-    page shop_create_item("hybrid", 1700, "MPUI_HYBRID", "PERKS_HYBRID", "weapon_attachment_hybrid", undefined, 38);
-    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", "weapon_attachment_xmags", undefined, 35);
-    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", "weapon_attachment_thermal", undefined, 45);
+    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", undefined, "weapon_attachment_reflex", 7);
+    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", undefined, "weapon_attachment_suppressor", 24);
+    page shop_create_item("gl", 2000, "MPUI_GRENADE_LAUNCHER", "PERKS_GRENADE_LAUNCHER_ATTACHMENT2", undefined, "weapon_attachment_m203", 28);
+    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", undefined, "weapon_attachment_acog", 30);
+    page shop_create_item("rof", 3000, "MPUI_ROF", "PERKS_DESC_ROF", undefined, "weapon_attachment_rof", 44);
+    page shop_create_item("heartbeat", 1500, "MPUI_HEARTBEAT", "PERKS_DESC_HEARTBEAT", undefined, "weapon_attachment_heartbeat", 47);
+    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", undefined, "weapon_attachment_eotech", 1);
+    page shop_create_item("shotgun", 1000, "MPUI_SHOTGUN", "PERKS_DESC_SHOTGUN", undefined, "weapon_attachment_shotgun", 40);
+    page shop_create_item("hybrid", 1700, "MPUI_HYBRID", "PERKS_HYBRID", undefined, "weapon_attachment_hybrid", 38);
+    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", undefined, "weapon_attachment_xmags", 35);
+    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", undefined, "weapon_attachment_thermal", 45);
 
     page = menu shop_create_page("lmg_attach", "MENU_ATTACHMENT_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", "weapon_attachment_reflex", undefined, 7);
-    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", "weapon_attachment_suppressor", undefined, 24);
-    page shop_create_item("grip", 2000, "MPUI_GRIP", "PERKS_VERTICAL_FOREGRIP_FOR", "weapon_attachment_grip", undefined, 18);
-    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", "weapon_attachment_acog", undefined, 30);
-    page shop_create_item("rof", 3000, "MPUI_ROF", "PERKS_DESC_ROF", "weapon_attachment_rof", undefined, 44);
-    page shop_create_item("heartbeat", 1500, "MPUI_HEARTBEAT", "PERKS_DESC_HEARTBEAT", "weapon_attachment_heartbeat", undefined, 47);
-    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", "weapon_attachment_eotech", undefined, 1);
-    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", "weapon_attachment_xmags", undefined, 35);
-    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", "weapon_attachment_thermal", undefined, 45);
+    page shop_create_item("reflex", 1250, "MPUI_RED_DOT_SIGHT", "PERKS_REPLACE_THE_IRON_SIGHTS", undefined, "weapon_attachment_reflex", 7);
+    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", undefined, "weapon_attachment_suppressor", 24);
+    page shop_create_item("grip", 2000, "MPUI_GRIP", "PERKS_VERTICAL_FOREGRIP_FOR", undefined, "weapon_attachment_grip", 18);
+    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", undefined, "weapon_attachment_acog", 30);
+    page shop_create_item("rof", 3000, "MPUI_ROF", "PERKS_DESC_ROF", undefined, "weapon_attachment_rof", 44);
+    page shop_create_item("heartbeat", 1500, "MPUI_HEARTBEAT", "PERKS_DESC_HEARTBEAT", undefined, "weapon_attachment_heartbeat", 47);
+    page shop_create_item("eotech", 750, "MPUI_EOTECH", "PERKS_DESC_EOTECH", undefined, "weapon_attachment_eotech", 1);
+    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", undefined, "weapon_attachment_xmags", 35);
+    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", undefined, "weapon_attachment_thermal", 45);
 
     page = menu shop_create_page("sniper_attach", "MENU_ATTACHMENT_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
-    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", "weapon_attachment_acog", undefined, 30);
-    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", "weapon_attachment_suppressor", undefined, 24);
-    page shop_create_item("heartbeat", 1500, "MPUI_HEARTBEAT", "PERKS_DESC_HEARTBEAT", "weapon_attachment_heartbeat", undefined, 47);
-    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", "weapon_attachment_xmags", undefined, 35);
-    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", "weapon_attachment_thermal", undefined, 45);
-    page shop_create_item("vzscope", 1000, "MPUI_VZSCOPE", "PERKS_DESC_VARIABLE_ZOOM_SCOPE", "weapon_attachment_zoomscope", undefined, 20);
+    page shop_create_item("acog", 1500, "MPUI_ACOG_SCOPE", "PERKS_ENHANCED_ZOOM_ACOG_SCOPE", undefined, "weapon_attachment_acog", 30);
+    page shop_create_item("silencer", 2000, "MPUI_SILENCER", "PERKS_INVISIBLE_ON_GPS_WHEN", undefined, "weapon_attachment_suppressor", 24);
+    page shop_create_item("heartbeat", 1500, "MPUI_HEARTBEAT", "PERKS_DESC_HEARTBEAT", undefined, "weapon_attachment_heartbeat", 47);
+    page shop_create_item("xmags", 3000, "MPUI_XMAGS", "PERKS_DESC_EXTENDEDMAGS", undefined, "weapon_attachment_xmags", 35);
+    page shop_create_item("thermal", 2000, "MPUI_THERMAL", "PERKS_DESC_THERMAL", undefined, "weapon_attachment_thermal", 45);
+    page shop_create_item("vzscope", 1000, "MPUI_VZSCOPE", "PERKS_DESC_VARIABLE_ZOOM_SCOPE", undefined, "weapon_attachment_zoomscope", 20);
 
     // Camouflages
     page = menu shop_create_page("weapon_camo", "MENU_CAMO_CAPS", "SO_SURVIVAL_ARMORY_WEAPON_DESC");
