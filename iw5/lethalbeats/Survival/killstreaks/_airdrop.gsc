@@ -278,9 +278,19 @@ _killstreakCrateThink(dropType)
     self lethalbeats\hud::hud_create_2d_objective("allies", "compass_objpoint_ammo_friendly");
     self lethalbeats\hud::hud_create_3d_objective("allies", maps\mp\killstreaks\_killstreaks::getKillstreakCrateIcon(self.crateType));
 
+    hintText = "PERK_CAREPACKAGE_PICKUP";
+    if (string_starts_with(dropType, "perk_"))
+    {
+        perk = lethalbeats\survival\utility::getPerkFromKsPerk(self.crateType);
+        perkName = lethalbeats\perk::perk_get_display_name(perk);
+        hintText = lethalbeats\survival\utility::get_localized_string_format("HINT_HOLD_TO_PICKUP", perkName);
+    }
+    else if (dropType == "minigun_turret" || dropType == "gl_turret")
+        hintText = "HINT_PICKUP_SENTRY";
+
     trigger = lethalbeats\trigger::trigger_create(self.origin, 70);
     trigger.owner = self.owner;
-    trigger lethalbeats\trigger::trigger_set_use_hold(3, &"PERK_CAREPACKAGE_PICKUP", true, false);
+    trigger lethalbeats\trigger::trigger_set_use_hold(3, hintText, true, false);
     trigger lethalbeats\trigger::trigger_set_enable_use_condition(::cratePickupCondition);
     trigger lethalbeats\trigger::trigger_set_use_time_condition(::crateUseTimeCondition);
     
