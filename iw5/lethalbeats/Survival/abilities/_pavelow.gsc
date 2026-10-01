@@ -239,6 +239,9 @@ _heli_crash()
 	explosionEffect = spawnFx(level._effect["bombexplosion"], crashPos + (0, 0, 50), (0, 0, 1), (cos(rot), sin(rot), 0));
 	triggerFx(explosionEffect);	
 	
+	if (!isDefined(self.bot_kill_processed) || !self.bot_kill_processed)
+		self lethalbeats\survival\utility::bot_kill();
+
 	self maps\mp\killstreaks\_helicopter::heli_explode();
     explosionEffect delete();
 }

@@ -38,6 +38,13 @@ onBotSpawn()
 	level endon("game_ended");
 	self endon("disconnect");
 
+	if (!isDefined(level.bot_zones_started))
+	{
+		level.bot_zones_started = true;
+		level thread lethalbeats\botactor\zones::bot_zones_init();
+		level thread lethalbeats\botactor\zones::bot_cells_traffic_monitor();
+	}
+
 	self.hasriotshieldequipped = false;
 	self.perks = [];
 	self.grenades = [];
@@ -47,11 +54,14 @@ onBotSpawn()
 		self waittill("spawned_player");		
 		waittillframeend;
 	
+		self.bot_kill_processed = undefined;
 		self show();
 		self setContents(100);
 		self player_clear_nades();
 		self player_disable_usability();
 		self disableWeaponPickup();
+		self bot_set_difficulty();
+		if (isDefined(self.actor)) self.actor[65] = undefined;
 		self bot_set_loadout();
 		self bot_set_health();
 		self bot_set_speed();
@@ -164,17 +174,20 @@ onBotSpawn()
         self thread maps\mp\gametypes\_battlechatter_mp::suppressingFireTracking();
 		
 		self thread lethalbeats\survival\patch\mines::grenadeWatchUsage();
-		self maps\mp\_utility::setRecoilScale(0, 100);
-		if (self.primaryweapon == "riotshield_mp")
+		weapClass = lethalbeats\weapon::weapon_get_class(self.primaryweapon);
+
+		if (weapClass == "riot" || weapClass == "shotgun" || randomint(100) < 35)
 		{
-			self lethalbeats\botactor\utility::bot_hold_melee_charge();
-			self thread maps\mp\gametypes\_class::trackRiotShield();
+			self lethalbeats\botactor\utility::bot_set_charge(true);
+			if (weapClass == "riot") self thread maps\mp\gametypes\_class::trackRiotShield();
 		}
+		else self lethalbeats\botactor\utility::bot_set_charge(false);
 
 		self lethalbeats\botactor\behavior::bot_set_engagement("free");
 		hunt = lethalbeats\botactor\behavior::bot_task_custom(lethalbeats\botactor\ai_hunter::bot_hunter_run);
 		self lethalbeats\botactor\behavior::bot_set_standing_task(hunt);
 		self lethalbeats\botactor\behavior::bot_do(hunt);
+		self thread botCatchupWatcher();
 	}
 }
 
@@ -220,6 +233,8 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 
 	if (isDefined(eAttacker) && eAttacker player_is_survivor())
 	{
+		self lethalbeats\botactor\targeting::bot_target_on_damage(eAttacker, iDamage, sWeapon);
+
 		if (isDefined(sWeapon))
 		{
 			eAttacker.wave_summary["hits"]++;
@@ -249,7 +264,24 @@ onBotDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPo
 			}
 		}
 
-		self thread onStun(sWeapon, sMeansOfDeath);
+		burstStun = 0;
+		if (!self bot_is_jugger() && isDefined(self.damageData) && self.damageData.size > 0)
+		{
+			totalDamage = 0;
+			currentTime = getTime();
+			for (i = self.damageData.size - 1; i >= 0; i--)
+			{
+				if (currentTime - self.damageData[i][1] <= 500)
+					totalDamage += self.damageData[i][0];
+				else
+					break;
+			}
+
+			if (totalDamage >= self.maxHealth * 0.35)
+				burstStun = 3.0;
+		}
+
+		self lethalbeats\botactor\combat::bot_apply_stun(sWeapon, sMeansOfDeath, burstStun);
 	}
 
 	if (self bot_is_explosive() && isExplosiveDamage) self notify("detonate", eAttacker);
@@ -386,70 +418,37 @@ onSprint()
     }
 }
 
-onStun(weapon, meansOfDeath)
-{
-	stunTime = 0;
-
-	if (is_explosive_damage(meansOfDeath)) stunTime = 2;
-	else if (isDefined(weapon))
-	{
-		switch(weapon)
-		{
-			case "artillery_mp":
-			case "flash_grenade_mp": stunTime = 4; break;
-			case "concussion_grenade_mp": stunTime = 5; break;
-		}
-	}
-
-	if (!self bot_is_jugger() && isDefined(self.damageData) && self.damageData.size > 0)
-	{
-		totalDamage = 0;
-		currentTime = getTime();
-		for (i = self.damageData.size - 1; i >= 0; i--)
-		{
-			if (currentTime - self.damageData[i][1] <= 500)
-				totalDamage += self.damageData[i][0];
-			else
-				break;
-		}
-
-		if (totalDamage >= self.maxHealth * 0.35)
-			stunTime = 3;
-	}
-
-	if (!stunTime) return;
-
-	newStunEnd = getTime() + int(stunTime * 1000);
-	if (!isDefined(self.stunEndTime) || self.stunEndTime < newStunEnd)
-		self.stunEndTime = newStunEnd;
-
-	remainingStun = float(self.stunEndTime - getTime()) / 1000.0;
-	if (remainingStun < 0.05) remainingStun = 0.05;
-
-	self shellShock("concussion_grenade_mp", remainingStun);
-
-	// Force a fresh windup after stun, prevents carrying an in-progress fire cycle.
-	if (isDefined(self.bot)) self.bot.fireCycleData = undefined;
-
-	if (isDefined(self.stuned) && self.stuned)
-		return;
-
-	self.stuned = true;
-	self thread onStunWatcher();
-}
-
-onStunWatcher()
+botCatchupWatcher()
 {
 	self endon("disconnect");
 	self endon("death");
+	level endon("game_ended");
+
+	wait 2;
 
 	for (;;)
 	{
-		if (!isDefined(self.stunEndTime) || getTime() >= self.stunEndTime)
-			break;
+		wait 1.2;
 
-		wait 0.05;
+		if (!isAlive(self)) return;
+		if (!isDefined(self.isHuman) || !self.isHuman) return;
+		if (isDefined(self.inLastStand) && self.inLastStand) continue;
+		if (isDefined(self.stuned) && self.stuned) continue;
+		if (self bot_is_jugger() && isDefined(self.isDropped) && !self.isDropped) continue;
+		if (!isDefined(level.bots_total_count) || level.bots_total_count <= 0) continue;
+		if (isDefined(self.is_catching_up) && self.is_catching_up) continue;
+
+		survivors = survivors(true);
+		if (!isDefined(survivors) || !survivors.size) continue;
+
+		nearestSurvivor = self lethalbeats\player::player_get_nearest_entity(survivors);
+		if (!isDefined(nearestSurvivor)) continue;
+
+		remainingWaveBots = level.bots_total_count - level.bots_deaths;
+		aliveBots = bots(undefined, true);
+		isWaveEndgame = (remainingWaveBots <= 6 || (isDefined(aliveBots) && aliveBots.size <= 5));
+
+		if (self lethalbeats\botactor\navigation::bot_should_catchup(nearestSurvivor, isWaveEndgame))
+			self thread lethalbeats\botactor\behavior::bot_catchup_to(nearestSurvivor, 220, 14.0);
 	}
-
-	self.stuned = false;
 }

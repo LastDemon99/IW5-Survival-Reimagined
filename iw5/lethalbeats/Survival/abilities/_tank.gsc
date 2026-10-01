@@ -99,15 +99,16 @@ _handleDamage(inflictor, attacker, damage, iDFlags, meansOfDeath, weapon, point,
 
 	if (vehicle.damagetaken < vehicle.maxhealth) return;
 
-    if (isplayer(attacker) && (!isdefined(vehicle.owner) || attacker != vehicle.owner))
+	vehicle.alreadydead = 1;
+	if (isplayer(attacker) && (!isdefined(vehicle.owner) || attacker != vehicle.owner))
 	{
-		vehicle.alreadydead = 1;
 		attacker notify("destroyed_killstreak", weapon);
-		vehicle.owner lethalbeats\survival\utility::bot_kill(attacker);
 		thread maps\mp\_utility::teamPlayerCardSplash("callout_destroyed_remote_tank", attacker);
 		attacker thread maps\mp\gametypes\_rank::xpEventPopup(&"SPLASHES_DESTROYED_REMOTE_TANK");
 		thread maps\mp\gametypes\_missions::vehicleKilled(vehicle.owner, vehicle, undefined, attacker, damage, meansOfDeath, weapon);
 	}
 
+	if (isDefined(vehicle.owner)) vehicle.owner lethalbeats\survival\utility::bot_kill(attacker);
+	else vehicle lethalbeats\survival\utility::bot_kill(attacker);
 	vehicle notify("death");
 }

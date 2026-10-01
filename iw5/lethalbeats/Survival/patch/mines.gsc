@@ -518,7 +518,7 @@ mineWatchPickup(owner, trigger)
 mineCreateBombSquadModel(model, owner)
 {
     if (!isDefined(owner)) owner = self.owner;
-    if (owner lethalbeats\survival\utility::player_is_survivor()) return;
+    if (!isDefined(owner) || owner lethalbeats\survival\utility::player_is_survivor()) return;
     bombSquadModel = spawn("script_model", self.origin);
     bombSquadModel.angles = self.angles;
     bombSquadModel hide();

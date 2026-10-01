@@ -261,8 +261,8 @@ playerKilled_internal(eInflictor, attacker, victim, iDamage, sMeansOfDeath, sWea
 
 	if (level.wave_num && ((victim lethalbeats\survival\utility::player_is_survivor() && !victim.dogKnockdown) || (isDefined(victim.isHuman) && victim.isHuman)))
 	{
-        victim.body = victim cloneplayer(deathAnimDuration);
-        lethalbeats\survival\utility::add_corpse(victim.body);
+		victim.body = victim cloneplayer(deathAnimDuration);
+		lethalbeats\survival\utility::add_corpse(victim.body);
 
 		if (victim isonladder() || victim ismantling() || !victim isonground() || isdefined(victim.nuked))
 			victim.body startragdoll();

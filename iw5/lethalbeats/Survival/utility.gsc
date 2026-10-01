@@ -929,6 +929,7 @@ bot_set_loadout()
 
 	if (game[self.team] == "opforce_africa" && self bot_has_ability("easy"))
 	{
+		self detachall();
 		self [[game[self.team + "_model"][array_random(AFRICA_MILITIA_CLASS)]]]();
 		return;
 	}
@@ -1062,6 +1063,9 @@ summary: Handles bot kill logic, awarding score, incrementing death counter, and
 */
 bot_kill(attacker)
 {
+	if (isDefined(self.bot_kill_processed) && self.bot_kill_processed) return;
+	self.bot_kill_processed = true;
+
 	if (isDefined(attacker) && isDefined(attacker.team) && attacker.team == "allies")
 	{
 		price = isDefined(self.botPrice) ? self.botPrice : 100;
@@ -1087,7 +1091,7 @@ bot_kill(attacker)
 	}
 	if (isPlayer(self) && isAlive(self)) self suicide();
 	level.bots_deaths++;
-	if (level.bots_total_count == level.bots_deaths) level notify("wave_end");
+	if (level.bots_total_count > 0 && level.bots_deaths >= level.bots_total_count) level notify("wave_end");
 	if (level.corpses.size > getDvarInt("survival_corpses_limit")) delete_corpse();
 	if (level.droppedWeapons.size > getDvarInt("survival_dropped_weapons_limit")) delete_dropped_weapon();
 	if (level.scavengerBags.size > getDvarInt("survival_scavenger_bags_limit")) delete_scavenger_bag();

@@ -15,22 +15,22 @@
 
 onPlayerDisconnect()
 {
-	for (;;)
-    {
-        self waittill("disconnect");
+	self waittill("disconnect");
 
-		level thread maps\mp\gametypes\survival::updateBotLimit();
+	guid = self.guid;
+	bleedoutObjects = level.survivors_bleedout[guid];
+	if (isDefined(bleedoutObjects))
+	{
+		bleedoutObjects[0] lethalbeats\trigger::trigger_delete();
+		bleedoutObjects[1] hud_destroy();
+		if (isDefined(bleedoutObjects[2])) bleedoutObjects[2] delete();
+	}
 
-		bleedoutObjects = level.survivors_bleedout[self.guid];
-		if (isDefined(bleedoutObjects))
-		{
-			bleedoutObjects[0] lethalbeats\trigger::trigger_delete();
-			bleedoutObjects[1] hud_destroy();
-			if (isDefined(bleedoutObjects[2])) bleedoutObjects[2] delete();
-		}
+	waittillframeend;
 
-		if (!survivors(true).size) kill_all_survivors();
-    }
+	level thread maps\mp\gametypes\survival::updateBotLimit();
+
+	if (!survivors(true).size) kill_all_survivors();
 }
 
 onPlayerSpawn()

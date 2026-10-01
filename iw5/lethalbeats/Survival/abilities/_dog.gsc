@@ -142,6 +142,7 @@ spawnDog(owner)
 	hitBox.damageTaken = 0;
 	hitBox linkTo(dog);
 	dog.hitBox = hitBox;
+	dog lethalbeats\botactor\model_navigation::model_nav_init(DOG_SPEED, DOG_TICK, hitBox);
 
 	compassIcon = spawnPlane(owner, "script_model", dog.origin, "compassping_enemyyelling", "compassping_enemyyelling");
 	compassIcon notSolid();
@@ -680,41 +681,30 @@ playerAttackEffectLoop(spot, duration, intensityYaw)
 
 dogShouldRepath(target)
 {
-	if (!isDefined(self.path) || !self.path.size) return true;
-	if (self.pathIndex >= self.path.size) return true;
-	if ((getTime() - self.lastPathTime) >= DOG_REPATH_TIME) return true;
-	if (isDefined(target) && isDefined(self.lastTargetOrigin) && distanceSquared(self.lastTargetOrigin, target.origin) >= DOG_REPATH_DIST_SQ) return true;
-	if (self.stuckTime >= 1.2) return true;
-	return false;
+	targetPos = isDefined(target) ? target.origin : undefined;
+	return self lethalbeats\botactor\model_navigation::model_nav_should_repath(targetPos, DOG_REPATH_TIME, DOG_REPATH_DIST_SQ, 1.2);
 }
 
 dogBuildPath(victim)
 {
-	if (!isDefined(level.waypoints) || !level.waypoints.size) return false;
-	if (!lethalbeats\botactor\navigation::_botNavigationUsePathBudget(getTime())) return false;
+	if (!isDefined(victim) || !isDefined(victim.origin))
+		return false;
 
-	rawPath = self lethalbeats\botactor\navigation::bot_astar_search(self.origin, victim.origin, "axis", false);
-	if (!isDefined(rawPath) || !rawPath.size)
+	ok = self lethalbeats\botactor\model_navigation::model_nav_build_path(victim.origin, "axis");
+	if (ok)
+	{
+		self.path = self.model_nav.path;
+		self.pathIndex = self.model_nav.path_idx;
+		self.lastPathTime = self.model_nav.last_path_time;
+		self.lastTargetOrigin = self.model_nav.last_target_origin;
+		self.stuckTime = 0;
+	}
+	else
 	{
 		self dogResetPath();
-		return false;
 	}
 
-	positions = [];
-	for (i = rawPath.size - 1; i >= 0; i--)
-	{
-		idx = rawPath[i];
-		if (!isDefined(level.waypoints[idx])) continue;
-		positions[positions.size] = level.waypoints[idx].origin;
-	}
-	positions[positions.size] = victim.origin;
-
-	self.path = positions;
-	self.pathIndex = 1;
-	self.lastPathTime = getTime();
-	self.lastTargetOrigin = victim.origin;
-	self.stuckTime = 0;
-	return (positions.size > 1);
+	return ok;
 }
 
 dogFollowPath(target)
@@ -733,9 +723,6 @@ dogFollowPath(target)
 
 dogMoveTowards(dest, target)
 {
-	prevPos = self.origin;
-	blocked = 0;
-
 	for (;;)
 	{
 		if (self.isInPain || self.isConcussed || isDefined(self.knockdownState))
@@ -746,77 +733,28 @@ dogMoveTowards(dest, target)
 
 		if (isDefined(target) && !lethalbeats\survival\utility::survivor_filter(target)) return false;
 
-		delta = (dest[0] - self.origin[0], dest[1] - self.origin[1], 0);
-		distSq = lengthsquared(delta);
+		step = self lethalbeats\botactor\model_navigation::model_nav_step_towards(dest, target, level.dogs);
 
-		if (distSq <= DOG_GOAL_REACHED_SQ) return true;
+		if (step.result == "reached") return true;
+		if (step.result == "blocked" || step.result == "stuck") return false;
 
-		targetYaw = vectortoyaw(delta);
-		yawDelta = angleClamp180(targetYaw - self.angles[1]);
-
-		if (abs(yawDelta) > 135)
+		if (step.result == "turn180")
 		{
-			self dogTurn180(targetYaw);
+			self dogTurn180(step.target_yaw);
 			wait DOG_TICK;
-			prevPos = self.origin;
 			continue;
 		}
 
-		if (yawDelta > 18) self dogSetAnim(RUN_LEAN_L);
-		else if (yawDelta < -18) self dogSetAnim(RUN_LEAN_R);
+		if (step.result == "waiting")
+		{
+			self dogSetAnim(IDLE);
+			wait DOG_TICK;
+			continue;
+		}
+
+		if (step.yaw_delta > 18) self dogSetAnim(RUN_LEAN_L);
+		else if (step.yaw_delta < -18) self dogSetAnim(RUN_LEAN_R);
 		else self dogSetAnim(RUNNING);
-
-		dir = vectornormalize(delta);
-		stepDist = DOG_SPEED * DOG_TICK;
-		dist = sqrt(distSq);
-		if (stepDist > dist) stepDist = dist;
-
-		targetOrigin = isDefined(target) ? target.origin : dest;
-		dir = self dogApplySeparation(dir, targetOrigin, prevPos);
-
-		next = self.origin + (dir * stepDist);
-
-		if (!(self dogCanStep(self.origin, next)))
-		{
-			dir = self dogDeflect(dir, stepDist);
-			if (!isDefined(dir))
-			{
-				blocked++;
-				if (blocked >= DOG_BLOCKED_TICKS)
-					return false;
-
-				self dogSetAnim(IDLE);
-				self.stuckTime += DOG_TICK;
-				wait DOG_TICK;
-				continue;
-			}
-
-			next = self.origin + (dir * stepDist);
-			targetYaw = vectortoyaw(dir);
-		}
-
-		blocked = 0;
-
-		ground = self dogGetGround(next);
-		nextAngles = (0, targetYaw, 0);
-		if (isDefined(ground) && isDefined(ground["position"]))
-		{
-			next = ground["position"];
-			nextAngles = dogGetGroundAngles(ground, targetYaw);
-		}
-
-		self rotateTo(nextAngles, DOG_TICK + 0.04);
-		self moveTo(next, DOG_TICK + 0.04);
-
-		if (distanceSquared(self.origin, prevPos) <= DOG_STUCK_DIST_SQ)
-			self.stuckTime += DOG_TICK;
-		else
-		{
-			self.stuckTime = 0;
-			prevPos = self.origin;
-		}
-
-		if (self.stuckTime > 1.2) return false;
 
 		if (isDefined(target) && isDefined(self.lastTargetOrigin))
 		{
@@ -883,6 +821,7 @@ dogMoveDirect(victim)
 
 dogResetPath()
 {
+	self lethalbeats\botactor\model_navigation::model_nav_reset_path();
 	self.path = [];
 	self.pathIndex = 0;
 	self.lastPathTime = 0;
@@ -893,204 +832,41 @@ dogResetPath()
 
 dogApplySeparation(dir, targetOrigin, prevPos)
 {
-	if (!isDefined(level.dogs) || level.dogs.size <= 1) return dir;
-
-	separationForce = (0, 0, 0);
-	separationRadius = DOG_SEPARATION_RADIUS;
-	separationRadiusSq = separationRadius * separationRadius;
-	nearbyCount = 0;
-
-	myDistToTarget = distance(self.origin, targetOrigin);
-	isMoving = distanceSquared(self.origin, prevPos) > 4;
-
-	if (!isMoving) return dir;
-
-	foreach (other in level.dogs)
-	{
-		if (!isDefined(other) || other == self) continue;
-
-		distToOtherSq = distanceSquared(self.origin, other.origin);
-		if (distToOtherSq < separationRadiusSq && distToOtherSq > 1)
-		{
-			awayDir = (self.origin[0] - other.origin[0], self.origin[1] - other.origin[1], 0);
-			if (awayDir[0] == 0 && awayDir[1] == 0) awayDir = (1, 0, 0);
-			else awayDir = vectorNormalize(awayDir);
-
-			strength = 1.0 - (sqrt(distToOtherSq) / separationRadius);
-			separationForce = separationForce + (awayDir * strength);
-			nearbyCount++;
-		}
-	}
-
-	if (nearbyCount > 0)
-	{
-		separationForce = vectorNormalize(separationForce);
-		separationWeight = 0.0;
-		if (myDistToTarget > 200)
-		{
-			if (myDistToTarget > 600) separationWeight = 0.4;
-			else separationWeight = ((myDistToTarget - 200) / 400) * 0.4;
-		}
-
-		desiredWeight = 1.0 - separationWeight;
-		return vectorNormalize((dir * desiredWeight) + (separationForce * separationWeight));
-	}
-
-	return dir;
+	return self lethalbeats\botactor\model_navigation::model_nav_apply_separation(dir, targetOrigin, prevPos, level.dogs, DOG_SEPARATION_RADIUS);
 }
 
 dogGetGround(point)
 {
-	if (!isDefined(point)) return undefined;
-
-	ignoreEnt = self.hitBox;
-	bestTrace = undefined;
-	bestDist = 999999;
-
-	start = point + (0, 0, 24);
-	end = point - (0, 0, 96);
-	trace = bulletTrace(start, end, false, ignoreEnt);
-
-	if (isDefined(trace) && isDefined(trace["position"]) && trace["surfacetype"] != "none" && trace["normal"][2] >= DOG_MIN_GROUND_NORMAL_Z)
-	{
-		if (trace["position"][2] < self.origin[2] - 15)
-			trace["position"] = playerPhysicsTrace(start, end, false, ignoreEnt);
-		return trace;
-	}
-
-	step = 12;
-	radius = 36;
-	for (x = -radius; x <= radius; x += step)
-	{
-		for (y = -radius; y <= radius; y += step)
-		{
-			start = point + (x, y, 24);
-			end   = point + (x, y, -96);
-			trace = bulletTrace(start, end, false, ignoreEnt);
-
-			if (!isDefined(trace)) continue;
-			if (!isDefined(trace["position"])) continue;
-			if (trace["surfacetype"] == "none") continue;
-			if (trace["normal"][2] < DOG_MIN_GROUND_NORMAL_Z) continue;
-
-			if (trace["position"][2] < self.origin[2] - 15)
-				trace["position"] = playerPhysicsTrace(start, end, false, ignoreEnt);
-
-			dist = distanceSquared(point, trace["position"]);
-			if (dist < bestDist)
-			{
-				bestDist = dist;
-				bestTrace = trace;
-			}
-		}
-	}
-
-	return bestTrace;
+	return self lethalbeats\botactor\model_navigation::model_nav_get_ground(point, self.hitBox, DOG_MIN_GROUND_NORMAL_Z);
 }
 
 dogGetGroundAngles(ground, targetYaw)
 {
-	flatAngles = (0, targetYaw, 0);
-	if (!isDefined(ground) || !isDefined(ground["normal"])) return flatAngles;		
-	if (ground["normal"][2] < DOG_MIN_GROUND_NORMAL_Z) return flatAngles;
-
-	groundAngles = lethalbeats\vector::vector_angles_orient_to_normal(ground["normal"], targetYaw);
-	pitch = angleClamp180(groundAngles[0]);
-	roll = angleClamp180(groundAngles[2]);
-	
-	if (abs(pitch) > DOG_MAX_ORIENT_PITCH || abs(roll) > DOG_MAX_ORIENT_ROLL) return flatAngles;
-
-	return (pitch, targetYaw, roll);
+	return lethalbeats\botactor\model_navigation::model_nav_get_ground_angles(ground, targetYaw, DOG_MAX_ORIENT_PITCH, DOG_MAX_ORIENT_ROLL, DOG_MIN_GROUND_NORMAL_Z);
 }
 
 dogCanMoveDirect(target)
 {
 	if (!isDefined(target)) return false;
-	goal = target.origin;
-	if (abs(goal[2] - self.origin[2]) > 48) return false;
-	if (!(self dogCanStep(self.origin, goal))) return false;
-	return self dogPathIsNavigable(self.origin, goal);
+	return self lethalbeats\botactor\model_navigation::model_nav_can_move_direct(target.origin, self.hitBox, 48);
 }
 
 dogStepTrace(from, to)
 {
-	lift = (0, 0, DOG_STEP_Z);
-
-	dogTraceIgnore = isDefined(self.hitBox) ? self.hitBox : self;
-
-	start = playerPhysicsTrace(from, from + lift, false, dogTraceIgnore);
-	if (!isDefined(start)) start = from + lift;
-
-	end = playerPhysicsTrace(to, to + lift, false, dogTraceIgnore);
-	if (!isDefined(end)) end = to + lift;
-
-	hit = playerPhysicsTrace(start, end, false, dogTraceIgnore);
-	if (!isDefined(hit)) return undefined;
-
-	return hit;
+	return self lethalbeats\botactor\model_navigation::model_nav_step_trace(from, to, DOG_STEP_Z, self.hitBox);
 }
 
 dogCanStep(from, to)
 {
-	hit = self dogStepTrace(from, to);
-	if (!isDefined(hit)) return false;
-	return distanceSquared(hit, to + (0, 0, DOG_STEP_Z)) <= DOG_STEP_SLOP_SQ;
+	return self lethalbeats\botactor\model_navigation::model_nav_can_step(from, to, DOG_STEP_Z, DOG_STEP_SLOP_SQ, self.hitBox);
 }
 
-/*
-///DocStringBegin
-detail: <Entity> dogDeflect(dir: <Vector3>, stepDist: <Float>): <Vector3 | Undefined>
-summary: A nearby walkable direction, or undefined if trapped. Angles up to 110° escape corners, while small adjustments only push the dog into the wall.
-///DocStringEnd
-*/
 dogDeflect(dir, stepDist)
 {
-	yaw = vectortoyaw(dir);
-	deflections = DOG_DEFLECT_ANGLES;
-
-	for (i = 0; i < deflections.size; i++)
-	{
-		test = anglestoforward((0, yaw + deflections[i], 0));
-		test = vectornormalize((test[0], test[1], 0));
-
-		if (self dogCanStep(self.origin, self.origin + (test * stepDist)))
-			return test;
-	}
-
-	return undefined;
+	return self lethalbeats\botactor\model_navigation::model_nav_deflect(dir, stepDist, DOG_STEP_Z, DOG_STEP_SLOP_SQ, self.hitBox, DOG_DEFLECT_ANGLES);
 }
 
 dogPathIsNavigable(start, end)
 {
-	if (!isDefined(level.waypoints) || !level.waypoints.size) return true;
-
-	distSq = distanceSquared(start, end);
-	if (distSq < 64 * 64) return true;
-
-	dist = sqrt(distSq);
-	dir = (end[0] - start[0], end[1] - start[1], end[2] - start[2]);
-	dir = (dir[0] / dist, dir[1] / dist, dir[2] / dist);
-
-	step = 64;
-	samples = int(dist / step);
-	if (samples < 1) samples = 1;
-
-	maxDistSq = 140 * 140;
-	for (i = 1; i <= samples; i++)
-	{
-		samplePos = start + (dir[0] * (step * i), dir[1] * (step * i), dir[2] * (step * i));
-		nearest = lethalbeats\botactor\navigation::_botgetNearestWaypoint(samplePos, true);
-
-		if (!isDefined(nearest) || !isDefined(level.waypoints[nearest]))
-			return false;
-
-		wpOrigin = level.waypoints[nearest].origin;
-		if (distanceSquared((wpOrigin[0], wpOrigin[1], samplePos[2]), samplePos) > maxDistSq)
-			return false;
-
-		if (abs(wpOrigin[2] - samplePos[2]) > 64)
-			return false;
-	}
-	
-	return true;
+	return self lethalbeats\botactor\model_navigation::model_nav_path_is_navigable(start, end, 140 * 140, 64);
 }

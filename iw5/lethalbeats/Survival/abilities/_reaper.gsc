@@ -105,7 +105,8 @@ _handleDamage()
                 thread maps\mp\gametypes\_missions::vehicleKilled(self.owner, self, undefined, attacker, damage, meansOfDeath, weapon);
             }
 
-            if (self.owner.team == "axis") self lethalbeats\survival\utility::bot_kill(attacker);
+            if ((isDefined(self.owner) && isDefined(self.owner.team) && self.owner.team == "axis") || (isDefined(self.team) && self.team == "axis"))
+                self lethalbeats\survival\utility::bot_kill(attacker);
             self thread maps\mp\killstreaks\_remotemortar::remoteexplode();
             return;
         }
@@ -283,6 +284,8 @@ _axisReaperAI()
     self endon("death");
     self endon("remote_done");
 
+    self thread _axisReaperDeathWatcher();
+
     wait 3;
 
     self.targetent = spawnfx(level.remote_mortar_fx["laserTarget"], (0, 0, 0));
@@ -357,4 +360,11 @@ _axisReaperTargetingAI()
         }
         wait 0.05;
     }
+}
+
+_axisReaperDeathWatcher()
+{
+    self waittill("death");
+    if (!isDefined(self.bot_kill_processed) || !self.bot_kill_processed)
+        self lethalbeats\survival\utility::bot_kill();
 }

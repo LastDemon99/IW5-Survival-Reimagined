@@ -541,6 +541,9 @@ lbSurvivalDeathCrash()
 
 	self waittill("death");
 	
+	if (!isDefined(self.bot_kill_processed) || !self.bot_kill_processed)
+		self bot_kill();
+	
 	if (isDefined(self.currentGoalPos))
 		level.activeHeliGoals = array_remove(level.activeHeliGoals, self.currentGoalPos);
 	
