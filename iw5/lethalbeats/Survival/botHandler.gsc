@@ -438,7 +438,7 @@ botCatchupWatcher()
 		if (!isDefined(level.bots_total_count) || level.bots_total_count <= 0) continue;
 		if (isDefined(self.is_catching_up) && self.is_catching_up) continue;
 
-		survivors = survivors(true);
+		survivors = array_filter(survivors(true), ::survivor_filter);
 		if (!isDefined(survivors) || !survivors.size) continue;
 
 		nearestSurvivor = self lethalbeats\player::player_get_nearest_entity(survivors);

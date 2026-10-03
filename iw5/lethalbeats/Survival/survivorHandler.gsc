@@ -283,7 +283,7 @@ onPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, 
 	
 	if (self.inLastStand)
 	{
-		if (self.lastStandBar.type == "revive")
+		if (isDefined(self.lastStandBar) && isDefined(self.lastStandBar.type) && self.lastStandBar.type == "revive")
 		{
 			self.lastStandBar.frac -= 0.15;
 			self.lastStandBar.frac = max(0, self.lastStandBar.frac);
@@ -319,6 +319,7 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 		self survivor_take_body_armor();
 	}
 
+	self player_clear_last_stand();
 	self player_drop_weapon();
 	
 	self [[level.prevCallbackPlayerKilled]](eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc, timeOffset, deathAnimDuration);

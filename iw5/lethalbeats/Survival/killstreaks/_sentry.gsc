@@ -239,10 +239,18 @@ _sentry_burstFireStart()
 
 	if (self.owner.team == "axis")
 	{
-		self playSound("stinger_locking");
 		target = self getturrettarget(false);
-		if (isDefined(target) && isPlayer(target) && target lethalbeats\player::player_has_perk("specialty_blindeye"))
-			wait (0.5 * getDvarFloat("survival_blindeye_windup_mult"));
+		if (isDefined(target) && isPlayer(target))
+		{
+			if (!isAlive(target) || (isDefined(target.sessionState) && target.sessionState != "playing") || (isDefined(target.inLastStand) && target.inLastStand))
+			{
+				self cleartargetentity();
+				return;
+			}
+			self playSound("stinger_locking");
+			if (target lethalbeats\player::player_has_perk("specialty_blindeye"))
+				wait (0.5 * getDvarFloat("survival_blindeye_windup_mult"));
+		}
 	}
 	else wait 0.5;
 
@@ -260,6 +268,16 @@ _sentry_burstFireStart()
 		numShots = randomIntRange(minShots, maxShots + 1);		
 		for (i = 0; i < numShots && !self.overheated; i++)
 		{
+			if (self.owner.team == "axis")
+			{
+				target = self getturrettarget(false);
+				if (isDefined(target) && isPlayer(target) && (!isAlive(target) || (isDefined(target.sessionState) && target.sessionState != "playing") || (isDefined(target.inLastStand) && target.inLastStand)))
+				{
+					self cleartargetentity();
+					return;
+				}
+			}
+
 			if (is_gl) playsoundatpos(self.origin, "weap_m203_fire_npc");
 			
 			self shootTurret();

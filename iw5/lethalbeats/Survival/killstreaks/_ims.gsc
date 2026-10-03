@@ -287,6 +287,8 @@ _ims_attacktargets()
             if (isdefined(self.owner) && target == self.owner) continue;
             if (level.teambased && target.pers["team"] == self.team) continue;
             if (!maps\mp\_utility::isreallyalive(target)) continue;
+            if (isDefined(target.sessionState) && target.sessionState != "playing") continue;
+            if (isDefined(target.inLastStand) && target.inLastStand) continue;
         }
         else if (isdefined(target.owner))
         {

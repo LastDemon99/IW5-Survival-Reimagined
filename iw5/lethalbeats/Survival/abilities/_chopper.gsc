@@ -127,7 +127,7 @@ createLBSurvival()
 
 	if (lb.hasNodeSystem)
 	{
-		survivors = survivors(true);
+		survivors = lethalbeats\array::array_filter(survivors(true), ::survivor_filter);
 		if(isDefined(survivors) && survivors.size > 0)
 			closestNode = maps\mp\killstreaks\_helicopter_guard::lbSupport_getClosestNode(array_random(survivors).origin);
 		else
@@ -138,7 +138,7 @@ createLBSurvival()
 	}
 	else
 	{
-		survivors = survivors(true);
+		survivors = lethalbeats\array::array_filter(survivors(true), ::survivor_filter);
 		target = (isDefined(survivors) && survivors.size > 0) ? array_random(survivors).origin : level.mapcenter;
 		lb.targetPos = (target * (1,1,0)) + (0,0,flyHeight);
 	}
@@ -269,7 +269,7 @@ followPlayer_Dynamic()
             self.timeForNextMove = gettime(); // force repositioning after shooting
         }
 
-		survivors = survivors(true);
+		survivors = lethalbeats\array::array_filter(survivors(true), ::survivor_filter);
 		if (!survivors.size)
 		{
 			wait 1;

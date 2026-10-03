@@ -476,8 +476,11 @@ player_show()
 
 player_is_valid_target()
 {
+	if (!isDefined(self) || !isPlayer(self) || !isAlive(self)) return false;
+	if (isDefined(self.sessionState) && self.sessionState != "playing") return false;
+	if (isDefined(self.inLastStand) && self.inLastStand) return false;
 	if (self.team == "axis") return true;
-	return self survivor_is_alive() && !self.inLastStand;
+	return survivor_filter(self);
 }
 
 player_drop_weapon(isDeath)
@@ -1707,7 +1710,7 @@ survivor_wait_skip()
 
 survivor_filter(survivor)
 {
-	if (!isDefined(survivor) || !isPlayer(survivor) || survivor.team != "allies" || !isAlive(survivor) || survivor.dogKnockdown) return false;
+	if (!isDefined(survivor) || !isPlayer(survivor) || survivor.team != "allies" || !isAlive(survivor) || survivor.dogKnockdown || (isDefined(survivor.inLastStand) && survivor.inLastStand)) return false;
 	if (isDefined(survivor.sessionState) && survivor.sessionState != "playing") return false;
 	if (isDefined(level.survivors_deaths) && isDefined(survivor.guid) && isDefined(level.survivors_deaths[survivor.guid])) return false;
 	if (isDefined(level.survivors_bleedout) && isDefined(survivor.guid) && isDefined(level.survivors_bleedout[survivor.guid])) return false;
@@ -2551,8 +2554,7 @@ bot_get_air_target(originRef, remoteEnt)
     foreach(survivor in survivors(true))
     {
         if (!isDefined(survivor) || !isPlayer(survivor)) continue;
-        if (!(survivor player_is_valid_target())) continue;
-        if (!maps\mp\_utility::isReallyAlive(survivor) || survivor.inLastStand) continue;
+        if (!survivor_filter(survivor)) continue;
         
         if (isDefined(remoteEnt))
         {

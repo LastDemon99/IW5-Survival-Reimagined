@@ -56,7 +56,9 @@ giveAirstrike()
 {
 	lethalbeats\Survival\utility::level_wait_vehicle_limit();
 	self lethalbeats\survival\utility::bot_kill();
-	location = lethalbeats\array::array_random(lethalbeats\survival\utility::survivors(true)).origin;
+	targets = lethalbeats\array::array_filter(lethalbeats\survival\utility::survivors(true), lethalbeats\survival\utility::survivor_filter);
+	if (!targets.size) return;
+	location = lethalbeats\array::array_random(targets).origin;
 	thread maps\mp\killstreaks\_airstrike::doAirstrike(undefined, location, 94, self, self.team, "super_airstrike");
 	lethalbeats\player::players_play_sound("US_1mc_enemy_airstrike", "allies");
 }
@@ -67,7 +69,7 @@ givePredator()
     lethalbeats\player::players_play_sound("US_1mc_enemy_predator", "allies");
 	self lethalbeats\survival\utility::bot_kill();
 
-    survivors = lethalbeats\survival\utility::survivors(true);
+    survivors = lethalbeats\array::array_filter(lethalbeats\survival\utility::survivors(true), lethalbeats\survival\utility::survivor_filter);
 	if (!survivors.size) return;
 
 	exposed_survivors = [];

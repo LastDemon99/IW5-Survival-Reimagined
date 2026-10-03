@@ -430,6 +430,12 @@ dogAttack(target)
 	wait DOG_ATTACK_TIME / 3;
 	if (isDefined(target) && distanceSquared(self.origin, target.origin) <= DOG_ATTACK_DIST * DOG_ATTACK_DIST)
 	{
+		if (isDefined(target.inLastStand) && target.inLastStand)
+		{
+			self.isAttacking = false;
+			return;
+		}
+
 		if (self.biteCount > 1 && !target.dogKnockdown)
 		{
 			self dogKnockdown(target);
@@ -464,7 +470,7 @@ dogPain(isConcussion)
 	self playSound(PAIN_SOUND);
 	self dogSetAnim(RUN_PAIN, true);
 
-	if (isDefined(self.knockdownState) && isDefined(self.victim)) self dogKnockdownStandUp(self);
+	if (isDefined(self.knockdownState) && isDefined(self.victim)) self dogKnockdownStandUp(self.victim);
 	else wait isConcussion ? DOG_CONCUSSED_TIME : DOG_PAIN_TIME;
 
 	self.isConcussed = false;
@@ -696,11 +702,22 @@ dogKnockdownStandUp(player)
 	{
 		player unlink();
 		player setOrigin(self.spot.spawnOrigin);
-		player setStance("stand");
-		player lethalbeats\player::player_enable_weapons();
-		player lethalbeats\player::player_enable_usability();
-		player lethalbeats\survival\utility::player_show();
 		player.dogKnockdown = false;
+		player lethalbeats\survival\utility::player_show();
+
+		if (isDefined(player.inLastStand) && player.inLastStand)
+		{
+			if (isDefined(player.lastStandBar) && isDefined(player.lastStandBar.type) && player.lastStandBar.type == "revive")
+				player lethalbeats\survival\utility::survivor_revive();
+			else
+				player setStance("prone");
+		}
+		else
+		{
+			player setStance("stand");
+			player lethalbeats\player::player_enable_weapons();
+			player lethalbeats\player::player_enable_usability();
+		}
 	}
 
 	self.knockdownState = undefined;
