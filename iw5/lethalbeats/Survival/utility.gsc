@@ -539,6 +539,57 @@ _dropWeapon(weapon, ammoData, weaponData, throw, slot)
 	trigger thread _onModelDeath(weaponModel);
 }
 
+_dropped_weapon_pool_get(origin, modelName)
+{
+	model = undefined;
+	if (isDefined(level.dropped_weapons_pool))
+	{
+		foreach(item in level.dropped_weapons_pool)
+		{
+			if (isDefined(item) && !item.inUse)
+			{
+				model = item;
+				break;
+			}
+		}
+	}
+
+	if (!isDefined(model))
+	{
+		model = spawn("script_model", origin);
+		model.isPooledWeapon = true;
+		if (!isDefined(level.dropped_weapons_pool))
+			level.dropped_weapons_pool = [];
+		level.dropped_weapons_pool[level.dropped_weapons_pool.size] = model;
+	}
+
+	model notify("recycled");
+	model.inUse = true;
+	model.origin = origin;
+	model.angles = (0, 0, 0);
+	model setModel(modelName);
+	model show();
+	return model;
+}
+
+_dropped_weapon_pool_release(model)
+{
+	if (!isDefined(model)) return;
+
+	model notify("recycled");
+	model.inUse = false;
+	model hide();
+	model.origin = (0, 0, -10000);
+	model.angles = (0, 0, 0);
+
+	if (isDefined(model.trigger))
+	{
+		trigger = model.trigger;
+		model.trigger = undefined;
+		trigger lethalbeats\trigger::trigger_delete();
+	}
+}
+
 _dropWeaponPlaced(modelName, slot)
 {
 	origin = slot ? self.origin + anglesToForward(self getPlayerAngles()) * 20 : self.origin;
@@ -552,7 +603,7 @@ _dropWeaponPlaced(modelName, slot)
     if (isDefined(normalTrace) && isDefined(normalTrace["normal"]))
         dropAngles = lethalbeats\vector::vector_angles_orient_to_normal(normalTrace["normal"], self.angles[1]) + (0, 0, 90);
 
-    weaponModel = lethalbeats\utility::spawn_model(ground + (0, 0, 0.5), modelName);
+    weaponModel = _dropped_weapon_pool_get(ground + (0, 0, 0.5), modelName);
     weaponModel.angles = dropAngles;
 
 	if (slot) weaponModel rotateYaw(45, 0.15);
@@ -570,11 +621,12 @@ _dropWeaponThrown(modelName)
     moveVector = trace["position"] - start;
     randomRotation = (randomIntRange(-350, 350), randomIntRange(-350, 350), randomIntRange(-350, 350));
 
-    weaponModel = lethalbeats\utility::spawn_model(start, modelName);
+    weaponModel = _dropped_weapon_pool_get(start, modelName);
     weaponModel rotateVelocity(randomRotation, 1.2, 0.1);
     weaponModel moveGravity(moveVector, 1.2);
 
 	weaponModel endon("death");
+	weaponModel endon("recycled");
     for(i = 0; i < 100; i++)
     {
         trace = bullettrace(weaponModel.origin, weaponModel.origin - (0, 0, 35), false, weaponModel);
@@ -595,6 +647,7 @@ _dropWeaponThrown(modelName)
 _deleteWeaponAfterAWhile()
 {
 	self endon("death");
+	self endon("recycled");
 	self.trigger endon("ammo_pickup");
 	self.trigger endon("weapon_pickup");
 
@@ -605,8 +658,8 @@ _deleteWeaponAfterAWhile()
 		level waittill("wave_start");
 		if (level.wave_num >= waitWave)
 		{
-			if (isDefined(self.trigger)) self.trigger lethalbeats\trigger::trigger_delete();
-			self delete();
+			delete_dropped_weapon(self);
+			break;
 		}
 	}
 }
@@ -614,7 +667,7 @@ _deleteWeaponAfterAWhile()
 _onModelDeath(weaponModel)
 {
 	self endon("death");
-	weaponModel waittill("death");
+	weaponModel lethalbeats\utility::waittill_any_return("death", "recycled");
 	self lethalbeats\trigger::trigger_delete();
 }
 
@@ -1891,13 +1944,7 @@ delete_dropped_weapon(model)
 		return;
 	}
 
-	if (isDefined(model.trigger))
-	{
-		trigger = model.trigger;
-		model delete();
-		trigger lethalbeats\trigger::trigger_delete();
-	}
-	else model delete();
+	_dropped_weapon_pool_release(model);
 }
 
 add_corpse(model)
@@ -1918,6 +1965,12 @@ delete_corpse(model)
 	if (!isDefined(model))
 	{
 		level.corpses = array_remove_undefined(level.corpses);
+		return;
+	}
+
+	if (isDefined(model.isPooledDog))
+	{
+		model lethalbeats\survival\abilities\_dog::dogPoolRelease();
 		return;
 	}
 

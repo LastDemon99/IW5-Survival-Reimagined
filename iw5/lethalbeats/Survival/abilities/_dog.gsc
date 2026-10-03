@@ -83,6 +83,7 @@ init()
 	precacheShellShock("dog_bite");
 	precacheShader("compassping_enemyyelling");
 	precacheMiniMapIcon("compassping_enemyyelling");
+	level.dogPool = [];
 }
 
 giveAbility()
@@ -97,14 +98,64 @@ giveAbility()
 	self suicide();
 }
 
-spawnDog(owner)
+dogPoolGet(owner, origin)
 {
-	origin = owner.origin;
-	ground = dogGetGround(origin);
-	if (isDefined(ground) && isDefined(ground["position"])) origin = ground["position"];
-	
-	dog = spawn("script_model", origin);
-	dog setModel("german_sheperd_dog");
+	dog = undefined;
+
+	if (isDefined(level.dogPool))
+	{
+		foreach(item in level.dogPool)
+		{
+			if (isDefined(item) && item.inPool)
+			{
+				dog = item;
+				break;
+			}
+		}
+	}
+
+	if (!isDefined(dog) && isDefined(level.corpses) && level.corpses.size > 0 && isDefined(level.dogPool))
+	{
+		foreach(item in level.dogPool)
+		{
+			if (isDefined(item) && lethalbeats\array::array_contains(level.corpses, item))
+			{
+				level.corpses = lethalbeats\array::array_remove(level.corpses, item);
+				dog = item;
+				dog dogPoolRelease();
+				break;
+			}
+		}
+	}
+
+	if (!isDefined(dog))
+	{
+		dog = spawn("script_model", origin);
+		dog setModel("german_sheperd_dog");
+		dog.isPooledDog = true;
+
+		hitBox = spawn("script_model", dog.origin + (0, 0, 25));
+		hitBox.angles = dog.angles;
+		hitBox setModel("com_plasticcase_trap_bombsquad");
+		hitBox hide();
+		hitBox linkTo(dog);
+		dog.hitBox = hitBox;
+
+		compassIcon = spawnPlane(owner, "script_model", dog.origin, "compassping_enemyyelling", "compassping_enemyyelling");
+		compassIcon notSolid();
+		compassIcon linkTo(dog, "tag_origin", (0, 0, 0), (0, 0, 0));
+		dog.icon = compassIcon;
+
+		if (!isDefined(level.dogPool))
+			level.dogPool = [];
+		level.dogPool[level.dogPool.size] = dog;
+	}
+
+	dog notify("dog_recycled");
+	dog.inPool = false;
+	dog.bot_kill_processed = undefined;
+	dog.knockdownState = undefined;
+	dog.origin = origin;
 	dog.angles = (0, owner.angles[1], 0);
 	dog notSolid();
 	dog.team = "axis";
@@ -128,37 +179,79 @@ spawnDog(owner)
 	dog.stuckTime = 0;
 	dog.lastOrigin = dog.origin;
 
-	if (!isDefined(level.dogs)) level.dogs = [];
-	level.dogs[level.dogs.size] = dog;
-
-	hitBox = spawn("script_model", dog.origin + (0, 0, 25));
+	hitBox = dog.hitBox;
+	hitBox.origin = dog.origin + (0, 0, 25);
 	hitBox.angles = dog.angles;
-	hitBox setModel("com_plasticcase_trap_bombsquad");
 	hitBox hide();
-	hitBox setcandamage(1);
+	hitBox setCanDamage(1);
 	hitBox setCanRadiusDamage(1);
 	hitBox.health = 999999;
 	hitBox.maxHealth = dog.maxHealth;
 	hitBox.damageTaken = 0;
 	hitBox linkTo(dog);
-	dog.hitBox = hitBox;
+
+	compassIcon = dog.icon;
+	compassIcon.origin = dog.origin;
+	compassIcon linkTo(dog, "tag_origin", (0, 0, 0), (0, 0, 0));
+	compassIcon show();
+
+	dog show();
 	dog lethalbeats\botactor\model_navigation::model_nav_init(DOG_SPEED, DOG_TICK, hitBox);
 
-	compassIcon = spawnPlane(owner, "script_model", dog.origin, "compassping_enemyyelling", "compassping_enemyyelling");
-	compassIcon notSolid();
-	compassIcon linkTo(dog, "tag_origin", (0, 0, 0), (0, 0, 0));
-	dog.icon = compassIcon;
+	return dog;
+}
+
+dogPoolRelease()
+{
+	if (!isDefined(self)) return;
+
+	self notify("dog_recycled");
+	self hide();
+	self.origin = (0, 0, -10000);
+	self.inPool = true;
+	self.isAttacking = false;
+	self.currentAnim = "";
+	self.bot_kill_processed = undefined;
+	self.knockdownState = undefined;
+
+	if (isDefined(self.hitBox))
+	{
+		self.hitBox unlink();
+		self.hitBox hide();
+		self.hitBox.origin = (0, 0, -10000);
+		self.hitBox setCanDamage(0);
+		self.hitBox setCanRadiusDamage(0);
+	}
+
+	if (isDefined(self.icon))
+	{
+		self.icon unlink();
+		self.icon hide();
+		self.icon.origin = (0, 0, -10000);
+	}
+}
+
+spawnDog(owner)
+{
+	origin = owner.origin;
+	ground = dogGetGround(origin);
+	if (isDefined(ground) && isDefined(ground["position"])) origin = ground["position"];
 	
-	if (self lethalbeats\survival\utility::bot_is_martyrdom())
+	dog = dogPoolGet(owner, origin);
+
+	if (!isDefined(level.dogs)) level.dogs = [];
+	level.dogs[level.dogs.size] = dog;
+
+	if (owner lethalbeats\survival\utility::bot_is_martyrdom())
 	{
 		dog lethalbeats\survival\abilities\_martyrdom::giveAbility();
 		dog.is_martyrdom = true;
 	}
 	else dog.is_martyrdom = false;
 
-	dog dogSetAnim(RUNNING);
+	dog dogSetAnim(RUNNING, true);
 	dog thread dogThink();
-	dog thread onDogDamage(hitBox);
+	dog thread onDogDamage(dog.hitBox);
 	dog thread onDogDeath();
 	dog thread dogSoundsLoop();
 
@@ -169,6 +262,7 @@ onDogDamage(hitBox)
 {
 	level endon("game_ended");
 	self endon("dog_death");
+	self endon("dog_recycled");
 	hitBox endon("death");
 
 	for (;;)
@@ -209,15 +303,23 @@ onDogDamage(hitBox)
 
 onDogDeath()
 {
+	self endon("dog_recycled");
 	self waittill("dog_death", attacker, knockdownMelee);
 
 	if (!isDefined(knockdownMelee)) knockdownMelee = false;
-	if (isDefined(self.hitBox)) self.hitBox delete();
-	if (isDefined(self.icon)) self.icon delete();
+	if (isDefined(self.hitBox))
+	{
+		self.hitBox hide();
+		self.hitBox setCanDamage(0);
+		self.hitBox setCanRadiusDamage(0);
+	}
+	if (isDefined(self.icon)) self.icon hide();
 	if (isDefined(level.dogs)) level.dogs = lethalbeats\array::array_remove(level.dogs, self);
 	if (self.is_martyrdom) self notify("detonate", attacker);
 	if (isDefined(self.victim) && self.victim.dogKnockdown) self.victim notify("dog_saved");
-	if (!knockdownMelee) self lethalbeats\survival\utility::bot_kill(attacker);
+	self notify("death");
+	if (!knockdownMelee && (!isDefined(self.bot_kill_processed) || !self.bot_kill_processed))
+		self lethalbeats\survival\utility::bot_kill(attacker);
 
 	if (isDefined(self.knockdownState) && isDefined(self.victim)) self dogKnockdownStandUp(self.victim);
 	if (!knockdownMelee) self scriptModelPlayAnim(DOG_PREFIX + DEATH);
@@ -232,6 +334,7 @@ dogThink()
 {
 	level endon("game_ended");
 	self endon("dog_death");
+	self endon("dog_recycled");
 
 	target = undefined;
 
@@ -372,6 +475,7 @@ dogSoundsLoop()
 {
 	level endon("game_ended");
 	self endon("dog_death");
+	self endon("dog_recycled");
 
 	for (;;)
 	{
@@ -559,7 +663,12 @@ dogKnockdownMeleeDeath(player)
 	player notifyOnPlayerCommand("dog_melee", "+melee_zoom");
 	player waittill("dog_melee");
 	
-	self.hitBox delete();
+	if (isDefined(self.hitBox))
+	{
+		self.hitBox hide();
+		self.hitBox setCanDamage(0);
+		self.hitBox setCanRadiusDamage(0);
+	}
 	self.body.origin += (anglesToForward(self.angles) * 7);
 	self.body scriptModelPlayAnim("player_3rd_dog_knockdown_neck_snap");
 	self.hands scriptModelPlayAnim("player_view_dog_knockdown_neck_snap");

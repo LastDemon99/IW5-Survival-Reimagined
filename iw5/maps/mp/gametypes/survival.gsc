@@ -254,6 +254,13 @@ onStartGametype()
 	level.claymores = [];
 	level.droppedWeapons = [];
 	level.corpses = [];
+	level.dropped_weapons_pool = [];
+	level.dogPool = [];
+	level.martyrdom_c4_pool = [];
+	level.martyrdom_fx_pool = [];
+	level.chemical_tank_pool = [];
+	level.chemical_mine_pool = [];
+	level.chemical_fx_pool = [];
 	level.botsIMS = [];
 	level.botsSentry = [];
 	level.rankedmatch = 0;
