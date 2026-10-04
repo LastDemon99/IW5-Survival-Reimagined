@@ -143,12 +143,14 @@ onBuy(page, item, price, index)
             break;
         case WEAPON_REMOVE_ATTACHS:
             self.weaponData[ATTACHS] = array_remove(self.weaponData[ATTACHS], item);
+            price = int(price * getPrice("remove_attach_multiplier"));
             break;
         case WEAPON_BUFFS:
             self.weaponData[BUFFS] = array_append(self.weaponData[BUFFS], item);
             break;
         case WEAPON_REMOVE_BUFFS:
             self.weaponData[BUFFS] = array_remove(self.weaponData[BUFFS], item);
+            price = int(price * getPrice("remove_buff_multiplier"));
             break;
         case WEAPON_CAMOS:
             self.weaponData[CAMO] = attach_get_camo_index(item);
@@ -229,7 +231,6 @@ onUpdateOption(index, item, option_label, price_label)
     
     player = self.owner;
     player setOption(index, option_label);
-    player setPrice(index, price_label);
 
     if (self.page == WEAPON_AMMO)
     {
@@ -250,21 +251,23 @@ onUpdateOption(index, item, option_label, price_label)
         return;
     }
 
-    if (price_label == OPTION_DISABLE) return;
-
-    switch(self.page)
+    if (price_label != OPTION_DISABLE)
     {
-        case WEAPON_UPGRADES:
-            if (index == INDEX_ATTACH_SLOT) price_label = self getAttachSlotPrice(price_label);
-            else if (index == INDEX_BUFF_SLOT) price_label = self getBuffSlotPrice(price_label);
-            break;
-        case WEAPON_REMOVE_ATTACHS: 
-            price_label *= getPrice("remove_attach_multiplier");
-            break;
-        case WEAPON_REMOVE_BUFFS:
-            price_label *= getPrice("remove_buff_multiplier");
-            break;
+        switch(self.page)
+        {
+            case WEAPON_UPGRADES:
+                if (index == INDEX_ATTACH_SLOT) price_label = self getAttachSlotPrice(price_label);
+                else if (index == INDEX_BUFF_SLOT) price_label = self getBuffSlotPrice(price_label);
+                break;
+            case WEAPON_REMOVE_ATTACHS: 
+                price_label = int(price_label * getPrice("remove_attach_multiplier"));
+                break;
+            case WEAPON_REMOVE_BUFFS:
+                price_label = int(price_label * getPrice("remove_buff_multiplier"));
+                break;
+        }
     }
+
     player setPrice(index, price_label);
 }
 

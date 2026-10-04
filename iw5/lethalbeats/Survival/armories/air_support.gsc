@@ -71,6 +71,7 @@ onBuy(item, price, index)
 {
     if (self.page == AIR_SUPPORT_REMOVE_PERKS)
     {
+        price = int(price * getPrice("remove_perk_multiplier"));
         self.owner survivor_remove_perk(getPerkFromKsPerk(item));
         self.owner buyItem(price);
         return;
@@ -133,7 +134,7 @@ onUpdateOption(index, item, option_label, price_label)
     if (price_label == OPTION_BUY) 
     {
         price_label = getPrice(item);
-        if (self.page == AIR_SUPPORT_REMOVE_PERKS) price_label *= getPrice("remove_perk_multiplier");
+        if (self.page == AIR_SUPPORT_REMOVE_PERKS) price_label = int(price_label * getPrice("remove_perk_multiplier"));
     }
 
     self.owner setOption(index, option_label);
