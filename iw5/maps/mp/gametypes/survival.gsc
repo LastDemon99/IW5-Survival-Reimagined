@@ -40,8 +40,8 @@ main()
 	setDvarIfUninitialized("survival_wait_shops", 1);
 	setDvarIfUninitialized("survival_wave_start", 1);
 	setDvarIfUninitialized("survival_wait_respawn", 0);
-	setDvarIfUninitialized("survival_map_vote", 0);
-	setDvarIfUninitialized("survival_rotate_wait", 15);
+	setDvarIfUninitialized("survival_vote_map_time", 20);
+	setDvarIfUninitialized("survival_vote_difficulty_time", 10);
 	setDvarIfUninitialized("survival_start_armor", 250);
 	setDvarIfUninitialized("survival_start_money", 500);
 	setDvarIfUninitialized("survival_enemy_multiplier", 1);
@@ -443,13 +443,8 @@ onSurvivorSkipIntermission()
 
 onEndLevel()
 {
-	level waittill("all_survivors_death", delay);
-	if (getDvarInt("survival_map_vote"))
-	{
-		level thread lethalbeats\Survival\voteSystem::vote_start();
-		return;
-	}
-	level_rotate_map(delay);
+	level waittill("all_survivors_death");
+	level lethalbeats\Survival\voteMap::vote_start();
 }
 
 onNormalDeath(victim, attacker, lifeId)

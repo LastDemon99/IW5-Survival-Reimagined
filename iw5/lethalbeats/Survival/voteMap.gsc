@@ -26,6 +26,8 @@
 #define DVAR_VOTE_WINNING_DIFF_IDX "ui_vote_winning_diff_idx"
 #define DVAR_VOTE_WINNING_DIFF_TITLE "ui_vote_winning_diff_title"
 #define DVAR_CURRENT_DSR "current_dsr"
+#define DVAR_VOTE_MAP_TIME "survival_vote_map_time"
+#define DVAR_VOTE_DIFF_TIME "survival_vote_difficulty_time"
 
 // MENUS
 #define MENU_SURVIVAL_MAP_VOTE "survival_map_vote"
@@ -55,6 +57,8 @@ vote_sync_player(player)
 	if (!isDefined(player) || !isDefined(level.vote_in_progress) || !level.vote_in_progress)
 		return;
 
+	player set_cached_client_dvar(DVAR_VOTE_MAP_TIME, isDefined(level.vote_map_time) ? level.vote_map_time : getDvarInt(DVAR_VOTE_MAP_TIME));
+	player set_cached_client_dvar(DVAR_VOTE_DIFF_TIME, isDefined(level.vote_diff_time) ? level.vote_diff_time : getDvarInt(DVAR_VOTE_DIFF_TIME));
 	player set_cached_client_dvar(DVAR_VOTE_PHASE, level.vote_phase);
 	player set_cached_client_dvar(DVAR_VOTE_TIMER, level.vote_timer);
 	player set_cached_client_dvar(DVAR_VOTE_PROGRESS, level.vote_progress);
@@ -79,23 +83,65 @@ vote_sync_player(player)
 
 init_vote_data()
 {
+	map_time = getDvarInt(DVAR_VOTE_MAP_TIME);
+	if (map_time <= 0)
+	{
+		map_time = 25;
+		setDvar(DVAR_VOTE_MAP_TIME, map_time);
+	}
+
+	diff_time = getDvarInt(DVAR_VOTE_DIFF_TIME);
+	if (diff_time <= 0)
+	{
+		diff_time = 10;
+		setDvar(DVAR_VOTE_DIFF_TIME, diff_time);
+	}
+
+	level.vote_map_time = map_time;
+	level.vote_diff_time = diff_time;
+
 	level.vote_maps = [];
-	level.vote_maps[0] = create_vote_item("mp_paris", "RESISTANCE");
+	level.vote_maps[0] = create_vote_item("mp_seatown", "SEATOWN");
 	level.vote_maps[1] = create_vote_item("mp_dome", "DOME");
-	level.vote_maps[2] = create_vote_item("mp_seatown", "SEATOWN");
-	level.vote_maps[3] = create_vote_item("mp_village", "VILLAGE");
-	level.vote_maps[4] = create_vote_item("mp_underground", "UNDERGROUND");
-	level.vote_maps[5] = create_vote_item("mp_bravo", "MISSION");
-	level.vote_maps[6] = create_vote_item("mp_plaza2", "ARKADEN");
-	level.vote_maps[7] = create_vote_item("mp_alpha", "LOCKDOWN");
+	level.vote_maps[2] = create_vote_item("mp_plaza2", "ARKADEN");
+	level.vote_maps[3] = create_vote_item("mp_mogadishu", "BAKAARA");
+	level.vote_maps[4] = create_vote_item("mp_paris", "RESISTANCE");
+	level.vote_maps[5] = create_vote_item("mp_exchange", "DOWNTURN");
+	level.vote_maps[6] = create_vote_item("mp_bootleg", "BOOTLEG");
+	level.vote_maps[7] = create_vote_item("mp_carbon", "CARBON");
 	level.vote_maps[8] = create_vote_item("mp_hardhat", "HARDHAT");
-	level.vote_maps[9] = create_vote_item("mp_carbon", "CARBON");
-	level.vote_maps[10] = create_vote_item("mp_lambeth", "FALLEN");
-	level.vote_maps[11] = create_vote_item("mp_radar", "OUTPOST");
-	level.vote_maps[12] = create_vote_item("mp_mogadishu", "BAKAARA");
+	level.vote_maps[9] = create_vote_item("mp_alpha", "LOCKDOWN");
+	level.vote_maps[10] = create_vote_item("mp_village", "VILLAGE");
+	level.vote_maps[11] = create_vote_item("mp_lambeth", "FALLEN");
+	level.vote_maps[12] = create_vote_item("mp_radar", "OUTPOST");
 	level.vote_maps[13] = create_vote_item("mp_interchange", "INTERCHANGE");
-	level.vote_maps[14] = create_vote_item("mp_bootleg", "BOOTLEG");
-	level.vote_maps[15] = create_vote_item("mp_park", "DOWNTURN");
+	level.vote_maps[14] = create_vote_item("mp_underground", "UNDERGROUND");
+	level.vote_maps[15] = create_vote_item("mp_bravo", "MISSION");
+	level.vote_maps[16] = create_vote_item("mp_italy", "PIAZZA");
+	level.vote_maps[17] = create_vote_item("mp_park", "LIBERATION");
+	level.vote_maps[18] = create_vote_item("mp_overwatch", "OVERWATCH");
+	level.vote_maps[19] = create_vote_item("mp_morningwood", "BLACK BOX");
+	level.vote_maps[20] = create_vote_item("mp_meteora", "SANCTUARY");
+	level.vote_maps[21] = create_vote_item("mp_cement", "FOUNDATION");
+	level.vote_maps[22] = create_vote_item("mp_qadeem", "OASIS");
+	level.vote_maps[23] = create_vote_item("mp_restrepo_ss", "LOOKOUT");
+	level.vote_maps[24] = create_vote_item("mp_hillside_ss", "GETAWAY");
+	level.vote_maps[25] = create_vote_item("mp_courtyard_ss", "EROSION");
+	level.vote_maps[26] = create_vote_item("mp_aground_ss", "AGROUND");
+	level.vote_maps[27] = create_vote_item("mp_terminal_cls", "TERMINAL");
+	level.vote_maps[28] = create_vote_item("mp_six_ss", "VORTEX");
+	level.vote_maps[29] = create_vote_item("mp_burn_ss", "U-TURN");
+	level.vote_maps[30] = create_vote_item("mp_crosswalk_ss", "INTERSECTION");
+	level.vote_maps[31] = create_vote_item("mp_shipbreaker", "DECOMMISSION");
+	level.vote_maps[32] = create_vote_item("mp_roughneck", "OFF SHORE");
+	level.vote_maps[33] = create_vote_item("mp_moab", "GULCH");
+	level.vote_maps[34] = create_vote_item("mp_boardwalk", "BOARDWALK");
+	level.vote_maps[35] = create_vote_item("mp_nola", "PARISH");
+	level.vote_maps[36] = create_vote_item("mp_favela", "FAVELA");
+	level.vote_maps[37] = create_vote_item("mp_highrise", "HIGHRISE");
+	level.vote_maps[38] = create_vote_item("mp_nightshift", "SKIDROW");
+	level.vote_maps[39] = create_vote_item("mp_nuked", "NUKETOWN");
+	level.vote_maps[40] = create_vote_item("mp_rust", "RUST");
 
 	level.vote_diffs = [];
 	level.vote_diffs[0] = create_vote_item("survival_easy", get_localized_string("MENU_RECRUIT_CAPS", "RECRUIT"));
@@ -104,7 +150,7 @@ init_vote_data()
 	level.vote_diffs[3] = create_vote_item("survival_insane", get_localized_string("MENU_VETERAN_CAPS", "VETERAN"));
 
 	level.vote_phase = 1;
-	level.vote_timer = 10;
+	level.vote_timer = map_time;
 	level.vote_progress = 1.0;
 	level.winning_map = "";
 	level.winning_map_idx = -1;
@@ -127,8 +173,10 @@ init_vote_data()
 		vote_broadcast_dvar(DVAR_VOTE_DIFF_PREFIX + i, 0);
 	}
 
+	vote_broadcast_dvar(DVAR_VOTE_MAP_TIME, map_time);
+	vote_broadcast_dvar(DVAR_VOTE_DIFF_TIME, diff_time);
 	vote_broadcast_dvar(DVAR_VOTE_PHASE, 1);
-	vote_broadcast_dvar(DVAR_VOTE_TIMER, 10);
+	vote_broadcast_dvar(DVAR_VOTE_TIMER, map_time);
 	vote_broadcast_dvar(DVAR_VOTE_PROGRESS, 1.0);
 	vote_broadcast_dvar(DVAR_VOTE_WINNING_MAP, "");
 	vote_broadcast_dvar(DVAR_VOTE_WINNING_MAP_IDX, -1);
@@ -167,10 +215,13 @@ vote_start()
 
 	level.vote_phase = 1;
 	vote_broadcast_dvar(DVAR_VOTE_PHASE, 1);
-	for (t = 100; t >= 0; t--)
+	map_time = isDefined(level.vote_map_time) ? level.vote_map_time : getDvarInt(DVAR_VOTE_MAP_TIME);
+	if (map_time <= 0) map_time = 25;
+	total_ticks = int(map_time * 10);
+	for (t = total_ticks; t >= 0; t--)
 	{
-		level.vote_timer = int(ceil(t / 10));
-		level.vote_progress = t / 100.0;
+		level.vote_timer = int(ceil(t / 10.0));
+		level.vote_progress = total_ticks > 0 ? (float(t) / float(total_ticks)) : 0.0;
 		vote_broadcast_dvar(DVAR_VOTE_TIMER, level.vote_timer);
 		vote_broadcast_dvar(DVAR_VOTE_PROGRESS, level.vote_progress);
 		wait 0.1;
@@ -185,17 +236,25 @@ vote_start()
 	vote_broadcast_dvar(DVAR_VOTE_WINNING_MAP_TITLE, winMap[WINNER_TITLE]);
 
 	level.vote_phase = 2;
+	diff_time = isDefined(level.vote_diff_time) ? level.vote_diff_time : getDvarInt(DVAR_VOTE_DIFF_TIME);
+	if (diff_time <= 0) diff_time = 10;
+	level.vote_timer = diff_time;
+	level.vote_progress = 1.0;
 	vote_broadcast_dvar(DVAR_VOTE_PHASE, 2);
+	vote_broadcast_dvar(DVAR_VOTE_TIMER, diff_time);
+	vote_broadcast_dvar(DVAR_VOTE_PROGRESS, 1.0);
+
 	foreach (player in survivors())
 	{
 		player closepopupmenu(MENU_SURVIVAL_MAP_VOTE);
 		player openpopupmenu(MENU_SURVIVAL_MAP_VOTE);
 	}
 
-	for (t = 100; t >= 0; t--)
+	total_ticks = int(diff_time * 10);
+	for (t = total_ticks; t >= 0; t--)
 	{
-		level.vote_timer = int(ceil(t / 10));
-		level.vote_progress = t / 100.0;
+		level.vote_timer = int(ceil(t / 10.0));
+		level.vote_progress = total_ticks > 0 ? (float(t) / float(total_ticks)) : 0.0;
 		vote_broadcast_dvar(DVAR_VOTE_TIMER, level.vote_timer);
 		vote_broadcast_dvar(DVAR_VOTE_PROGRESS, level.vote_progress);
 		wait 0.1;
