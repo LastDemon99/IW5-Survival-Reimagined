@@ -13,8 +13,6 @@
 </p>
 
 > [!IMPORTANT]
->
-> This mod required: [IW5 Bot Warfare](https://github.com/ineedbots/piw5_bot_warfare)
 > 
 > Mod under development
 > 
@@ -23,7 +21,6 @@
 - [Survival Mod Trailer](https://www.youtube.com/watch?v=dLZ6dSQqObk)
 - [Survival Private Match Install](https://youtu.be/6RxgkRCW0f4)
 - [Survival Map Edit](https://youtu.be/VmC0uUfFp_c)
-
 
 # <a name="key-features"></a>Key Features
 - Unlimited waves.
@@ -41,8 +38,11 @@ If you enter a dedicated server that has the mod you will not have to do anythin
 ### Private Match
 1. Press `windows + r` and paste the path `%localappdata%/plutonium/storage/iw5/` unzip the `IW5-Survival-Reimagined` rar file in that directory.
 2. In the game console type `loadmod survival` to load the mod.
-3. Load DSR navigate in `Private Match -> Game Setup -> Load Recipe From Disk -> survival_normal -> Ok -> ESC -> Start Game`.<br><br>
-4. To play with friends in a private game, you must use Radmin, create a private match and then your friends join with the console command connect yourIP (everyone needs the mod installed).
+
+> [!IMPORTANT]
+>
+> Matches with friends require being on the same network or having UPnP enabled. Otherwise use IW5-Survival-Loader or Radmin or Hamachi. (Everyone needs the mod installed)
+>
 
 **If you find it difficult to load the mod you can also directly download and use the Survival Loader**
 
@@ -60,7 +60,7 @@ If you enter a dedicated server that has the mod you will not have to do anythin
 **To report bugs, make suggestions or need help, visit our discord: [LethalBeats](https://discord.gg/R7TXwSP9kq)**
 
 # <a name="download"></a>Download
-- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v4.0.0/IW5-Survival-Reimagined.rar)
+- Mod files (Manual installation): [IW5_SURVIVAL_REIMAGINED](https://github.com/LastDemon99/IW5-Survival-Reimagined/releases/download/iw5-mp-survival-v4.0.1/IW5-Survival-Reimagined.rar)
 - Survival Loader (Installer and loader): [IW5_SurvivalLoader.exe](`Temporarily disabled for maintenance`)
 
 # <a name="credits"></a>Credits
