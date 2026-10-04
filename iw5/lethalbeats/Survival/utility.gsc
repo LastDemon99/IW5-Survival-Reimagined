@@ -494,8 +494,16 @@ player_drop_weapon(isDeath)
 	if (!isSurvivor || !isDeath)
 	{
 		weapon = self getCurrentWeapon();
-		if (!isdefined(weapon) || weapon == "none" || weapon_get_class(weapon) == "explosive") weapon = self.prevWeapon;
-		if (!isdefined(weapon)) return;
+		if (!isDefined(weapon) || weapon == "none" || !isDefined(self player_get_weapon_index(weapon)))
+		{
+			weapon = self.prevWeapon;
+			if (!isDefined(weapon) || weapon == "none" || !isDefined(self player_get_weapon_index(weapon)))
+			{
+				primaries = self getWeaponsListPrimaries();
+				if (primaries.size > 0) weapon = primaries[0];
+			}
+		}
+		if (!isDefined(weapon) || weapon == "none") return;
 
 		if (lethalbeats\string::string_starts_with(weapon, "alt_")) weapon = getSubStr(weapon, 4, weapon.size);
 		self.lastdroppableweapon = weapon;
@@ -523,7 +531,8 @@ _dropWeapon(weapon, ammoData, weaponData, throw, slot)
 	self takeWeapon(weapon);
 
 	displayName = lethalbeats\weapon::weapon_get_display_name(weapon);
-    modelName = lethalbeats\weapon::weapon_get_model(weapon);
+	modelName = lethalbeats\weapon::weapon_get_model(weapon);
+	if (!isDefined(modelName) || modelName == "") return;
 	weaponModel = throw ? self _dropWeaponThrown(modelName) : self _dropWeaponPlaced(modelName, slot);
 
     trigger = lethalbeats\trigger::trigger_create(weaponModel.origin, 45);
@@ -704,11 +713,20 @@ _weaponPickupMonitor(weaponName, ammoData, weaponData, weaponModel)
 		player playSound("weap_ammo_pickup");
 		weaponModel hide();
 
-        if (lethalbeats\weapon::weapon_get_class(currWeapon) == "explosive")
+        if (!isDefined(player player_get_weapon_index(currWeapon)))
         {
             currWeapon = player.prevWeapon;
-            player switchToWeaponImmediate(currWeapon);
-            player waittill("weapon_change");
+            if (!isDefined(currWeapon) || currWeapon == "none" || !isDefined(player player_get_weapon_index(currWeapon)))
+            {
+                primaries = player getWeaponsListPrimaries();
+                if (primaries.size > 0) currWeapon = primaries[0];
+            }
+            if (isDefined(currWeapon) && currWeapon != "none")
+            {
+                player switchToWeaponImmediate(currWeapon);
+                player waittill("weapon_change");
+                waittillframeend;
+            }
         }
 
         weapons = player player_get_weapons();

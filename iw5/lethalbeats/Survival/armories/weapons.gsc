@@ -350,7 +350,7 @@ isDisabledOption(item, index)
 
 newWeaponData(weapon, weapon_buffs)
 {
-    if (!isDefined(weapon))
+    if (!isDefined(weapon) || weapon == "" || weapon == "none")
     {
         data = [];
         data[BUILD_NAME] = "none";
@@ -367,9 +367,6 @@ newWeaponData(weapon, weapon_buffs)
         data[CLASS] = "none";
         return data;
     }
-
-    while(weapon == "none")
-        wait 0.15;
 
     data = [];
     data[BUILD_NAME] = weapon;
