@@ -44,6 +44,9 @@ survivor_uav_drone_sequence(lifeId, player)
 	player endon("disconnect");
 	player endon("joined_team");
 	player endon("joined_spectators");
+	level endon("game_ended");
+
+	player thread close_hud_on_game_ended();
 
 	uav = get_allied_uav_model();
 
@@ -51,10 +54,10 @@ survivor_uav_drone_sequence(lifeId, player)
 	else if (isdefined(level.uavrig)) uavOrigin = level.uavrig.origin + (0, -4000, 5000);
 	else uavOrigin = player.origin + (0, -3500, 4500);
 
-	
 	cameraRig = spawn("script_model", uavOrigin);
 	cameraRig setmodel("vehicle_predator_b");
 	cameraRig hide();
+	cameraRig thread clean_camera_on_player_disconnect(player);
 
 	aimTarget = isdefined(level.mapcenter) ? level.mapcenter : (0, 0, 0);
 	tagOrigin = cameraRig gettagorigin("tag_player");
@@ -83,11 +86,7 @@ survivor_uav_drone_sequence(lifeId, player)
 		targetPos = startPos + (forward * 20000);
 
 		player unlink();
-		if (isdefined(cameraRig))
-		{
-			cameraRig lethalbeats\hud::hud_delete_2d_objective();
-			cameraRig delete();
-		}
+		if (isdefined(cameraRig)) cameraRig delete();
 
 		rocket = magicbullet("remotemissile_projectile_mp", startPos, targetPos, player);
 
@@ -107,18 +106,14 @@ survivor_uav_drone_sequence(lifeId, player)
 		rocket.type = "remote";
 		rocket thread maps\mp\gametypes\_weapons::addmissiletosighttraces(player.team);
 		rocket thread maps\mp\killstreaks\_remotemissile::handledamage();
+		rocket thread close_hud_on_rocket_death(player);
 		maps\mp\killstreaks\_remotemissile::missileeyes(player, rocket);
-		rocket waittill("death");
 		player closeMenu("missilecam_hud_hd");
 	}
 	else
 	{
 		player unlink();
-		if (isdefined(cameraRig))
-		{
-			cameraRig lethalbeats\hud::hud_delete_2d_objective();
-			cameraRig delete();
-		}
+		if (isdefined(cameraRig)) cameraRig delete();
 		player thermalvisionoff();
 		player thermalvisionfofoverlayoff();
 		player visionsetnakedforplayer("", 0.5);
@@ -187,7 +182,29 @@ wait_player_command(notifyName, action)
 wait_player_damage()
 {
 	self endon("predator_action");
-	self waittill_any("damage", "death");
+	self waittill_any("damage", "death", "last_stand");
 	self notify("predator_action", "abort");
+	self closeMenu("missilecam_hud_hd");
+}
+
+close_hud_on_rocket_death(player)
+{
+	player endon("disconnect");
+	level endon("game_ended");
+	self waittill("death");
+	player closeMenu("missilecam_hud_hd");
+}
+
+clean_camera_on_player_disconnect(player)
+{
+	self endon("death");
+	player waittill_any("disconnect", "joined_team", "joined_spectators");
+	if (isdefined(self)) self delete();
+}
+
+close_hud_on_game_ended()
+{
+	self endon("disconnect");
+	level waittill("game_ended");
 	self closeMenu("missilecam_hud_hd");
 }
