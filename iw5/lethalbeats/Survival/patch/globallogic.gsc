@@ -115,6 +115,23 @@ init()
     replaceFunc(maps\mp\_utility::isEMPed, ::_isEMPed);
     replaceFunc(maps\mp\_load::deletedestructiblekillcament, ::deleteDestructibleKillCamEnt);
 
+    // BOT WARFARE
+    setDvar("bots_main", 0);
+    setDvar("bots_main_menu", 0);
+    setDvar("bots_main_chat", 0);
+    setDvar("bots_main_debug", 0);
+    setDvar("bots_manage_add", 0);
+    setDvar("bots_manage_fill", 0);
+    replaceFunc(scripts\mp\bots::init, ::blank);
+    replaceFunc(scripts\mp\bots_adapter_piw5::init, ::blank);
+    replaceFunc(scripts\mp\bots_chat::init, ::blank);
+    replaceFunc(scripts\mp\bots_menu::init, ::blank);
+    replaceFunc(scripts\mp\bots_wp_editor::init, ::blank);
+    replaceFunc(maps\mp\bots\_bot::init, ::blank);
+    replaceFunc(maps\mp\bots\_bot_chat::init, ::blank);
+    replaceFunc(maps\mp\bots\_menu::init, ::blank);
+    replaceFunc(maps\mp\bots\_wp_editor::init, ::blank);
+
     precacheShader("waypoint_revive");
 
     level.maxrank = int(tablelookup("mp/rankTable.csv", 0, "maxrank", 1));
